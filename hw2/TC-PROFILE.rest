@@ -1,0 +1,459 @@
+### Feature A — FR-04: Personal Profile Management
+### TC-PROFILE.rest — 23 test cases (Domain Testing + BVA + Gap Analysis)
+### Tool: REST Client extension (VS Code)
+###
+### HƯỚNG DẪN SỬ DỤNG:
+###   1. Cài extension "REST Client" trong VS Code
+###   2. Start backend: cd backend && node server.js   (port 3000)
+###   3. Chạy TC-LOGIN bên dưới → copy giá trị token từ response → paste vào @token
+###   4. Chạy từng TC theo thứ tự; đọc comment kỳ vọng trước khi chạy
+###   5. Điền kết quả vào cột Status trong HW02_Main_Report_Template.md
+
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6InVzZXIiLCJpYXQiOjE3ODI0OTQyODd9.IOr6eTaAXQxGN6jaWEYNZZoeeGtiQrNpfsZWsifSkiM
+@validName = Nguyen Van A
+@validPhone = 912345678
+@validAddr = 123 Le Loi, Q1, TP.HCM
+
+# ============================================================
+# BƯỚC 0 — Lấy JWT token (BẮT BUỘC chạy trước)
+# ============================================================
+
+### TC-LOGIN | POST /api/login → lấy JWT cho user thường
+# → Copy "token" trong response → paste vào @token ở trên
+POST {{baseUrl}}/api/login
+Content-Type: application/json
+
+{
+  "email": "test@eshop.com",
+  "password": "Test1234!"
+}
+
+###
+
+### TC-LOGIN-ADMIN | POST /api/login → lấy JWT cho admin (dùng cho TC-PROFILE-012 xác nhận)
+POST {{baseUrl}}/api/login
+Content-Type: application/json
+
+{
+  "email": "admin@eshop.com",
+  "password": "Admin123!"
+}
+
+###
+
+# ============================================================
+# DOMAIN TESTING — TC-PROFILE-001 đến TC-PROFILE-014
+# ============================================================
+
+### TC-PROFILE-001 | EC-NAME-1, EC-PHONE-1, EC-ADDR-1, EC-AUTH-1 | Happy path — tất cả hợp lệ
+# Expected: 200 {"message":"Profile updated"}
+# Sau đó GET /me trả đúng name/phone/address mới
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-001b | GET /api/users/me — xác nhận TC-001 đã lưu đúng
+# Expected: name="Nguyen Van A", phone="912345678", shipping_address="123 Le Loi, Q1, TP.HCM"
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+###
+
+### TC-PROFILE-002 | EC-NAME-2 | name = "" (rỗng) — bypass HTML required
+# Expected (kỳ vọng): 400, báo lỗi tên bắt buộc
+# Thực tế (dự đoán BUG-A-03): 200, lưu tên rỗng vào DB
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "",
+  "phone": "{{validPhone}}",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-003 | EC-NAME-3 | name = "   " (chỉ khoảng trắng)
+# Expected (kỳ vọng): 400, báo lỗi tên không hợp lệ
+# Thực tế (dự đoán BUG-A-03): 200, lưu "   " làm tên
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "   ",
+  "phone": "{{validPhone}}",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-004 | EC-NAME-4 | Stored XSS qua name
+# Expected (kỳ vọng): Server từ chối hoặc sanitize; không lưu script tag
+# Thực tế (dự đoán BUG-A-02): Lưu raw → XSS thực thi khi Web render dangerouslySetInnerHTML
+# Sau khi PUT: đăng nhập lại trên Web → quan sát navbar "Chào, ..."
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "<script>alert('XSS')</script>",
+  "phone": "{{validPhone}}",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-005 | EC-PHONE-2 | phone chứa ký tự không phải số — bypass regex client
+# Expected (kỳ vọng): 400, định dạng phone không hợp lệ
+# Thực tế (dự đoán BUG-A-03): 200, server lưu "09abc12345"
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "09abc12345",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-006 | EC-PHONE-3 | phone bắt đầu bằng 0 (số VN thật) — bypass regex client
+# Bước 1 (Web): nhập 0912345678 → kỳ vọng alert regex "Số điện thoại không hợp lệ"
+# Bước 2 (REST/Postman): bypass client → kiểm tra server
+# Expected server (kỳ vọng): 400
+# Thực tế (BUG-A-05 + BUG-A-03): Server 200 + regex client sai (số VN 0-đầu là hợp lệ)
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "0912345678",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-007 | EC-PHONE-4 | phone quá ngắn — 5 chữ số (đại diện điển hình, không phải biên)
+# Expected (kỳ vọng): 400, phone quá ngắn
+# Thực tế (dự đoán BUG-A-03): 200, lưu "91234"
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "91234",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-008 | EC-PHONE-5 | phone quá dài — 14 chữ số (đại diện điển hình, không phải biên)
+# Expected (kỳ vọng): 400, phone quá dài
+# Thực tế (dự đoán BUG-A-03): 200, lưu số 14 chữ số
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "91234567890123",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-009 | EC-PHONE-6 | phone = "" (rỗng)
+# Expected: cần xác minh spec — optional (200) hay required (400)?
+# Thực tế (dự đoán): 200, lưu phone rỗng vào DB
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-010 | EC-ADDR-2 | shipping_address = "" (rỗng)
+# Expected (kỳ vọng): 400, địa chỉ bắt buộc
+# Thực tế (dự đoán BUG-A-03): 200, lưu địa chỉ rỗng
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": ""
+}
+
+###
+
+### TC-PROFILE-011 | EC-ADDR-3 | Stored XSS qua shipping_address
+# Expected (kỳ vọng): Server từ chối hoặc sanitize
+# Thực tế (dự đoán BUG-A-04): lưu raw → Stored XSS khi address được render
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": "<img src=x onerror=alert(1)>"
+}
+
+###
+
+### TC-PROFILE-012 | EC-ROLE-1 | Privilege escalation: user thường gửi role=admin
+# Expected (kỳ vọng): Server bỏ qua trường role; GET /me vẫn trả role: "user"
+# Thực tế (BUG-A-01 ĐÃ XÁC NHẬN trong code server.js:124): role đổi thành "admin"
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": "123 Le Loi",
+  "role": "admin"
+}
+
+###
+
+### TC-PROFILE-012b | Xác nhận TC-012 — kiểm tra role trong response
+# Expected: role = "user"
+# Nếu BUG-A-01 confirmed: role = "admin"
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+###
+
+### TC-PROFILE-013 | EC-AUTH-2 | Không có Authorization header
+# Expected: 401 {"error":"Unauthorized"}
+PUT {{baseUrl}}/api/users/me
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": "123 Le Loi"
+}
+
+###
+
+### TC-PROFILE-014 | EC-AUTH-3 | Token sai định dạng / giả mạo
+# Expected: 403 {"error":"Forbidden"}
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer invalid_token_xyz
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": "123 Le Loi"
+}
+
+###
+
+# ============================================================
+# GAP ANALYSIS — TC-PROFILE-015 đến TC-PROFILE-019
+# (bổ sung sau human review — phát hiện qua đọc code thật)
+# ============================================================
+
+### TC-PROFILE-015 | Gap #1 | GET /me rò rỉ password (plaintext) + reset_token
+# Expected: response body KHÔNG chứa field "password" và "reset_token"
+# Thực tế (BUG-A-07 Critical): server.js:113 dùng SELECT * → trả cả password + reset_token
+# → Inspect response body bên dưới khi chạy
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+###
+
+### TC-PROFILE-016 | Gap #2 | Partial update — STEP 1: set initial data có giá trị
+# Precondition: đảm bảo phone và address đang có giá trị trước khi test partial update
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-016b | Gap #2 | Partial update — STEP 2: chỉ gửi name (thiếu phone + address)
+# Expected: chỉ name đổi; phone="912345678" và address="123 Le Loi..." giữ nguyên
+# Thực tế (BUG-A-08 High): server.js:121 luôn SET cả 3 field → phone + address bị NULL
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Nguyen Van B"
+}
+
+###
+
+### TC-PROFILE-016c | Gap #2 | Partial update — STEP 3: xác nhận phone + address
+# Expected: phone="912345678", shipping_address="123 Le Loi, Q1, TP.HCM"
+# Nếu BUG-A-08 confirmed: phone=null, shipping_address=null
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+###
+
+### TC-PROFILE-017 | Gap #3 | Token hợp lệ về chữ ký nhưng đã hết hạn (expired)
+# Cách tạo token hết hạn:
+#   1. Dùng jwt.io với payload: {"id":2,"iat":1600000000,"exp":1600000001} và secret "mysecret"
+#   2. Hoặc dùng script Node: require('jsonwebtoken').sign({id:2},'mysecret',{expiresIn:'-1s'})
+# Expected: 403 {"error":"Forbidden"}
+# (Thay chuỗi EXPIRED_TOKEN bên dưới bằng token thật đã hết hạn)
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer EXPIRED_TOKEN_PASTE_HERE
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": "123 Le Loi"
+}
+
+###
+
+### TC-PROFILE-018 | Gap #4 | role=superadmin — giá trị rác ngoài enum {user, admin}
+# Expected: Server từ chối / bỏ qua role
+# Thực tế (mở rộng BUG-A-01): server.js:124 if(role) → lưu bất kỳ chuỗi → role="superadmin"
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "{{validPhone}}",
+  "shipping_address": "123 Le Loi",
+  "role": "superadmin"
+}
+
+###
+
+### TC-PROFILE-018b | Xác nhận TC-018 — kiểm tra role sau khi gửi "superadmin"
+# Expected: role = "user"
+# Nếu bug confirmed: role = "superadmin"
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+###
+
+### TC-PROFILE-019 | Gap #6 | Input cực dài — kiểm tra thiếu giới hạn độ dài
+# Expected (kỳ vọng): 400, server reject input quá dài
+# Thực tế (dự đoán bug): 200, lưu nguyên vào DB → nguy cơ storage/DoS
+# ⚠️ File .rest không nhúng được 100.000 ký tự; dùng chuỗi 500 ký tự để kiểm cơ bản.
+#    Để test đủ 100.000 ký tự: dùng Postman pre-request script:
+#    pm.environment.set("bigString", "A".repeat(100000))
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "phone": "{{validPhone}}",
+  "shipping_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+}
+
+###
+
+# ============================================================
+# BVA — TC-PROFILE-101 đến TC-PROFILE-104
+# Boundary Value Analysis (3-value) — độ dài phone
+# Biên đóng: min=9, max=10 → 4 TC duy nhất (min-1=8, min=9, max=10, max+1=11)
+# Ký tự đầu '9' (≠ 0) để tránh defect masking với BUG-A-05
+# ============================================================
+
+### TC-PROFILE-101 | BVA min-1 | phone 8 chữ số — dưới biên dưới
+# (a) Web: nhập "91234567" → kỳ vọng alert "Số điện thoại không hợp lệ"
+# (b) REST: Expected server 400; Thực tế (BUG-A-03): 200, lưu phone 8 số vào DB
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "91234567",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-102 | BVA min (9 số) + max-1 (9 số) — biên dưới hợp lệ
+# Expected: 200; GET /me trả về phone="912345678"
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "912345678",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-102b | Xác nhận TC-102
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+###
+
+### TC-PROFILE-103 | BVA min+1 (10 số) + max (10 số) — biên trên hợp lệ
+# Expected: 200; GET /me trả về phone="9123456789"
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "9123456789",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-PROFILE-103b | Xác nhận TC-103
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+###
+
+### TC-PROFILE-104 | BVA max+1 | phone 11 chữ số — trên biên trên
+# (a) Web: nhập "91234567890" → kỳ vọng alert "Số điện thoại không hợp lệ"
+# (b) REST: Expected server 400; Thực tế (BUG-A-03): 200, lưu phone 11 số vào DB
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "phone": "91234567890",
+  "shipping_address": "{{validAddr}}"
+}
+
+###

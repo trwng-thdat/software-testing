@@ -68,7 +68,7 @@
    - JWT `token`: phải hợp lệ; `authenticateToken` middleware tại `server.js:100-110` kiểm tra.
 
 3. **Phát hiện thêm khi đọc code (ảnh hưởng đến oracle):**
-   - `frontend-web/src/App.jsx:27`: `dangerouslySetInnerHTML={{ __html: \`Chào, ${user.name}\` }}` → **Stored XSS** nếu `name` chứa HTML/script tag.
+   - `frontend-web/src/App.jsx:27`: `dangerouslySetInnerHTML={{ __html: \`Chào, ${user.name}\` }}`→ **Stored XSS** nếu`name` chứa HTML/script tag.
    - `frontend-mobile/App.js:302`: mobile gửi `{ name, phone, shippingAddress }` (camelCase) nhưng server đọc `shipping_address` (snake_case) → **địa chỉ không bao giờ được lưu qua mobile app** (silent bug).
 
 4. **Phân vùng tương đương (valid/invalid):** xem bảng A.1.2 — 17 lớp tương đương.
@@ -79,70 +79,70 @@
 
 ### A.1.2 Bảng phân tích Equivalence Classes
 
-| Biến               | Lớp (EC)    | Loại             | Mô tả lớp                                                   | Giá trị đại diện                  |
-| ------------------ | ----------- | ---------------- | ----------------------------------------------------------- | --------------------------------- |
-| `name`             | EC-NAME-1   | Valid            | Chuỗi không rỗng, có ít nhất 1 ký tự non-whitespace        | `Nguyen Van A`                    |
-| `name`             | EC-NAME-2   | Invalid          | Chuỗi rỗng `""`                                            | `""`                              |
-| `name`             | EC-NAME-3   | Invalid          | Chuỗi chỉ gồm khoảng trắng                                  | `"   "`                           |
-| `name`             | EC-NAME-4   | Invalid/Security | XSS payload — kỳ vọng sanitize; thực tế là Stored XSS      | `<script>alert('XSS')</script>`   |
-| `phone`            | EC-PHONE-1  | Valid            | 9–10 chữ số, ký tự đầu từ 1–9 (đúng regex client)          | `912345678`                       |
-| `phone`            | EC-PHONE-2  | Invalid          | Chứa ký tự không phải số                                    | `09abc12345`                      |
-| `phone`            | EC-PHONE-3  | Invalid          | Bắt đầu bằng 0 (vi phạm regex client; nhưng đây là số VN thật) | `0912345678`                  |
-| `phone`            | EC-PHONE-4  | Invalid          | Quá ngắn — < 9 chữ số (dùng giá trị điển hình, không phải biên) | `91234` (5 số)               |
-| `phone`            | EC-PHONE-5  | Invalid          | Quá dài — > 10 chữ số (dùng giá trị điển hình, không phải biên) | `91234567890123` (14 số)     |
-| `phone`            | EC-PHONE-6  | Invalid          | Rỗng `""` — phone không được cung cấp                       | `""`                              |
-| `shipping_address` | EC-ADDR-1   | Valid            | Địa chỉ không rỗng, text tự do                              | `123 Le Loi, Q1, TP.HCM`         |
-| `shipping_address` | EC-ADDR-2   | Invalid          | Rỗng `""`                                                  | `""`                              |
-| `shipping_address` | EC-ADDR-3   | Invalid/Security | XSS payload — Stored XSS khi địa chỉ được render            | `<img src=x onerror=alert(1)>`    |
-| `role`             | EC-ROLE-1   | Invalid/Security | User thường gửi `role=admin` để leo thang quyền             | `admin`                           |
-| JWT `token`        | EC-AUTH-1   | Valid            | Token hợp lệ từ `POST /api/login`                           | JWT trả về sau khi login thành công |
-| JWT `token`        | EC-AUTH-2   | Invalid          | Thiếu Authorization header                                  | *(không gửi header)*              |
-| JWT `token`        | EC-AUTH-3   | Invalid          | Token sai định dạng / giả mạo                               | `Bearer invalid_token_xyz`        |
+| Biến               | Lớp (EC)   | Loại             | Mô tả lớp                                                       | Giá trị đại diện                    |
+| ------------------ | ---------- | ---------------- | --------------------------------------------------------------- | ----------------------------------- |
+| `name`             | EC-NAME-1  | Valid            | Chuỗi không rỗng, có ít nhất 1 ký tự non-whitespace             | `Nguyen Van A`                      |
+| `name`             | EC-NAME-2  | Invalid          | Chuỗi rỗng `""`                                                 | `""`                                |
+| `name`             | EC-NAME-3  | Invalid          | Chuỗi chỉ gồm khoảng trắng                                      | `"   "`                             |
+| `name`             | EC-NAME-4  | Invalid/Security | XSS payload — kỳ vọng sanitize; thực tế là Stored XSS           | `<script>alert('XSS')</script>`     |
+| `phone`            | EC-PHONE-1 | Valid            | 9–10 chữ số, ký tự đầu từ 1–9 (đúng regex client)               | `912345678`                         |
+| `phone`            | EC-PHONE-2 | Invalid          | Chứa ký tự không phải số                                        | `09abc12345`                        |
+| `phone`            | EC-PHONE-3 | Invalid          | Bắt đầu bằng 0 (vi phạm regex client; nhưng đây là số VN thật)  | `0912345678`                        |
+| `phone`            | EC-PHONE-4 | Invalid          | Quá ngắn — < 9 chữ số (dùng giá trị điển hình, không phải biên) | `91234` (5 số)                      |
+| `phone`            | EC-PHONE-5 | Invalid          | Quá dài — > 10 chữ số (dùng giá trị điển hình, không phải biên) | `91234567890123` (14 số)            |
+| `phone`            | EC-PHONE-6 | Invalid          | Rỗng `""` — phone không được cung cấp                           | `""`                                |
+| `shipping_address` | EC-ADDR-1  | Valid            | Địa chỉ không rỗng, text tự do                                  | `123 Le Loi, Q1, TP.HCM`            |
+| `shipping_address` | EC-ADDR-2  | Invalid          | Rỗng `""`                                                       | `""`                                |
+| `shipping_address` | EC-ADDR-3  | Invalid/Security | XSS payload — Stored XSS khi địa chỉ được render                | `<img src=x onerror=alert(1)>`      |
+| `role`             | EC-ROLE-1  | Invalid/Security | User thường gửi `role=admin` để leo thang quyền                 | `admin`                             |
+| JWT `token`        | EC-AUTH-1  | Valid            | Token hợp lệ từ `POST /api/login`                               | JWT trả về sau khi login thành công |
+| JWT `token`        | EC-AUTH-2  | Invalid          | Thiếu Authorization header                                      | _(không gửi header)_                |
+| JWT `token`        | EC-AUTH-3  | Invalid          | Token sai định dạng / giả mạo                                   | `Bearer invalid_token_xyz`          |
 
-> *Ghi chú EC-PHONE-3:* regex client `^[1-9][0-9]{8,9}$` từ chối `0912345678` — đây là số VN hợp lệ → **design bug trong regex** (cần ghi vào Bugs section). Mục tiêu của TC-PROFILE-006 là xác nhận server có chấp nhận số này không khi bypass client.
+> _Ghi chú EC-PHONE-3:_ regex client `^[1-9][0-9]{8,9}$` từ chối `0912345678` — đây là số VN hợp lệ → **design bug trong regex** (cần ghi vào Bugs section). Mục tiêu của TC-PROFILE-006 là xác nhận server có chấp nhận số này không khi bypass client.
 
 ### A.1.3 Test cases — Domain Testing
 
 <!-- Technique: Domain Testing (Equivalence Partitioning). Mỗi invalid class 1 TC riêng. Test via Postman (direct API) trừ khi ghi rõ "qua Web". Status điền sau khi chạy SUT. -->
 
-| TC ID          | Phủ EC                                      | Preconditions                              | Test data (Body JSON)                                                                                              | Các bước (tóm tắt)                                                                             | Expected result                                                                                          | Status  |
-| -------------- | ------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------- |
-| TC-PROFILE-001 | EC-NAME-1, EC-PHONE-1, EC-ADDR-1, EC-AUTH-1 | Đã đăng nhập (user: `test@eshop.com`)      | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                          | POST /api/login lấy token → PUT /api/users/me với toàn bộ trường hợp lệ → GET /api/users/me  | 200 `{"message":"Profile updated"}`; GET /me trả về đúng name, phone, address mới                       | Not Run |
-| TC-PROFILE-002 | EC-NAME-2                                   | Đã đăng nhập (user thường)                 | `{"name":"","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                      | PUT /api/users/me qua Postman (bypass HTML required)                                           | **Kỳ vọng:** 400, báo lỗi tên bắt buộc. **Thực tế (dự đoán bug):** 200, lưu tên rỗng vào DB             | Not Run |
-| TC-PROFILE-003 | EC-NAME-3                                   | Đã đăng nhập (user thường)                 | `{"name":"   ","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                   | PUT /api/users/me qua Postman với tên chỉ có khoảng trắng                                      | **Kỳ vọng:** 400, báo lỗi tên không hợp lệ. **Thực tế (dự đoán bug):** 200, lưu `"   "` làm tên        | Not Run |
-| TC-PROFILE-004 | EC-NAME-4                                   | Đã đăng nhập (user thường)                 | `{"name":"<script>alert('XSS')</script>","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`         | PUT /api/users/me → GET /api/users/me → Đăng nhập lại → quan sát navbar Web render `Chào, ...` | **Kỳ vọng:** Server từ chối hoặc sanitize; không execute script. **Thực tế (dự đoán BUG):** Script lưu raw; khi Web render `dangerouslySetInnerHTML` → XSS thực thi | Not Run |
-| TC-PROFILE-005 | EC-PHONE-2                                  | Đã đăng nhập (user thường)                 | `{"name":"Nguyen Van A","phone":"09abc12345","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                         | PUT /api/users/me qua Postman (bypass regex client)                                            | **Kỳ vọng:** 400, báo định dạng phone không hợp lệ. **Thực tế (dự đoán bug):** 200, server lưu `09abc12345` vào DB | Not Run |
-| TC-PROFILE-006 | EC-PHONE-3                                  | Đã đăng nhập (user thường)                 | `{"name":"Nguyen Van A","phone":"0912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                         | Bước 1: Test qua Web → kỳ vọng alert regex. Bước 2: Test qua Postman → kiểm tra server        | Web: alert "Số điện thoại không hợp lệ". Postman: **Kỳ vọng** 400; **Thực tế (bug đôi):** Server 200 + regex client sai (số VN 0-đầu thật ra là hợp lệ) | Not Run |
-| TC-PROFILE-007 | EC-PHONE-4                                  | Đã đăng nhập (user thường)                 | `{"name":"Nguyen Van A","phone":"91234","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                              | PUT /api/users/me qua Postman với phone 5 chữ số                                               | **Kỳ vọng:** 400, phone quá ngắn. **Thực tế (dự đoán bug):** 200, server lưu `91234`                    | Not Run |
-| TC-PROFILE-008 | EC-PHONE-5                                  | Đã đăng nhập (user thường)                 | `{"name":"Nguyen Van A","phone":"91234567890123","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                     | PUT /api/users/me qua Postman với phone 14 chữ số                                              | **Kỳ vọng:** 400, phone quá dài. **Thực tế (dự đoán bug):** 200, server lưu số 14 chữ số                | Not Run |
-| TC-PROFILE-009 | EC-PHONE-6                                  | Đã đăng nhập (user thường)                 | `{"name":"Nguyen Van A","phone":"","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                   | PUT /api/users/me qua Postman với phone rỗng                                                   | **Kỳ vọng (nếu phone optional):** 200, lưu phone rỗng. **Kỳ vọng (nếu required):** 400. Thực tế: cần xác minh spec | Not Run |
-| TC-PROFILE-010 | EC-ADDR-2                                   | Đã đăng nhập (user thường)                 | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":""}`                                                 | PUT /api/users/me qua Postman với địa chỉ rỗng                                                 | **Kỳ vọng:** 400, địa chỉ bắt buộc. **Thực tế (dự đoán bug):** 200, server lưu địa chỉ rỗng            | Not Run |
-| TC-PROFILE-011 | EC-ADDR-3                                   | Đã đăng nhập (user thường)                 | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"<img src=x onerror=alert(1)>"}`                     | PUT /api/users/me → GET /api/users/me → Kiểm tra trang hiển thị địa chỉ trên Web              | **Kỳ vọng:** Server từ chối hoặc sanitize XSS. **Thực tế (dự đoán bug):** Server lưu raw → Stored XSS khi địa chỉ được render | Not Run |
-| TC-PROFILE-012 | EC-ROLE-1                                   | Đã đăng nhập (user thường, role=user)      | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi","role":"admin"}`                        | PUT /api/users/me → GET /api/users/me → kiểm tra trường `role` trong response                 | **Kỳ vọng:** Server bỏ qua trường `role`; GET /me vẫn trả về `role: "user"`. **Thực tế (BUG ĐÃ XÁC NHẬN trong code):** `role` bị đổi thành `admin` → privilege escalation | Not Run |
-| TC-PROFILE-013 | EC-AUTH-2                                   | Chưa đăng nhập / không có token            | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi"}` (không có Authorization header)      | PUT /api/users/me **không có** header `Authorization`                                          | 401 `{"error":"Unauthorized"}`                                                                           | Not Run |
-| TC-PROFILE-014 | EC-AUTH-3                                   | Có token giả mạo                           | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi"}` + `Authorization: Bearer invalid_token_xyz` | PUT /api/users/me với token sai định dạng                                                | 403 `{"error":"Forbidden"}`                                                                              | Not Run |
+| TC ID          | Phủ EC                                      | Preconditions                         | Test data (Body JSON)                                                                                                     | Các bước (tóm tắt)                                                                             | Expected result                                                                                                                                                           | Status  |
+| -------------- | ------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| TC-PROFILE-001 | EC-NAME-1, EC-PHONE-1, EC-ADDR-1, EC-AUTH-1 | Đã đăng nhập (user: `test@eshop.com`) | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                 | POST /api/login lấy token → PUT /api/users/me với toàn bộ trường hợp lệ → GET /api/users/me    | 200 `{"message":"Profile updated"}`; GET /me trả về đúng name, phone, address mới                                                                                         | Not Run |
+| TC-PROFILE-002 | EC-NAME-2                                   | Đã đăng nhập (user thường)            | `{"name":"","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                             | PUT /api/users/me qua Postman (bypass HTML required)                                           | **Kỳ vọng:** 400, báo lỗi tên bắt buộc. **Thực tế (dự đoán bug):** 200, lưu tên rỗng vào DB                                                                               | Not Run |
+| TC-PROFILE-003 | EC-NAME-3                                   | Đã đăng nhập (user thường)            | `{"name":"   ","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                          | PUT /api/users/me qua Postman với tên chỉ có khoảng trắng                                      | **Kỳ vọng:** 400, báo lỗi tên không hợp lệ. **Thực tế (dự đoán bug):** 200, lưu `"   "` làm tên                                                                           | Not Run |
+| TC-PROFILE-004 | EC-NAME-4                                   | Đã đăng nhập (user thường)            | `{"name":"<script>alert('XSS')</script>","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                | PUT /api/users/me → GET /api/users/me → Đăng nhập lại → quan sát navbar Web render `Chào, ...` | **Kỳ vọng:** Server từ chối hoặc sanitize; không execute script. **Thực tế (dự đoán BUG):** Script lưu raw; khi Web render `dangerouslySetInnerHTML` → XSS thực thi       | Not Run |
+| TC-PROFILE-005 | EC-PHONE-2                                  | Đã đăng nhập (user thường)            | `{"name":"Nguyen Van A","phone":"09abc12345","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                | PUT /api/users/me qua Postman (bypass regex client)                                            | **Kỳ vọng:** 400, báo định dạng phone không hợp lệ. **Thực tế (dự đoán bug):** 200, server lưu `09abc12345` vào DB                                                        | Not Run |
+| TC-PROFILE-006 | EC-PHONE-3                                  | Đã đăng nhập (user thường)            | `{"name":"Nguyen Van A","phone":"0912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                | Bước 1: Test qua Web → kỳ vọng alert regex. Bước 2: Test qua Postman → kiểm tra server         | Web: alert "Số điện thoại không hợp lệ". Postman: **Kỳ vọng** 400; **Thực tế (bug đôi):** Server 200 + regex client sai (số VN 0-đầu thật ra là hợp lệ)                   | Not Run |
+| TC-PROFILE-007 | EC-PHONE-4                                  | Đã đăng nhập (user thường)            | `{"name":"Nguyen Van A","phone":"91234","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                     | PUT /api/users/me qua Postman với phone 5 chữ số                                               | **Kỳ vọng:** 400, phone quá ngắn. **Thực tế (dự đoán bug):** 200, server lưu `91234`                                                                                      | Not Run |
+| TC-PROFILE-008 | EC-PHONE-5                                  | Đã đăng nhập (user thường)            | `{"name":"Nguyen Van A","phone":"91234567890123","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                            | PUT /api/users/me qua Postman với phone 14 chữ số                                              | **Kỳ vọng:** 400, phone quá dài. **Thực tế (dự đoán bug):** 200, server lưu số 14 chữ số                                                                                  | Not Run |
+| TC-PROFILE-009 | EC-PHONE-6                                  | Đã đăng nhập (user thường)            | `{"name":"Nguyen Van A","phone":"","shipping_address":"123 Le Loi, Q1, TP.HCM"}`                                          | PUT /api/users/me qua Postman với phone rỗng                                                   | **Kỳ vọng (nếu phone optional):** 200, lưu phone rỗng. **Kỳ vọng (nếu required):** 400. Thực tế: cần xác minh spec                                                        | Not Run |
+| TC-PROFILE-010 | EC-ADDR-2                                   | Đã đăng nhập (user thường)            | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":""}`                                                       | PUT /api/users/me qua Postman với địa chỉ rỗng                                                 | **Kỳ vọng:** 400, địa chỉ bắt buộc. **Thực tế (dự đoán bug):** 200, server lưu địa chỉ rỗng                                                                               | Not Run |
+| TC-PROFILE-011 | EC-ADDR-3                                   | Đã đăng nhập (user thường)            | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"<img src=x onerror=alert(1)>"}`                           | PUT /api/users/me → GET /api/users/me → Kiểm tra trang hiển thị địa chỉ trên Web               | **Kỳ vọng:** Server từ chối hoặc sanitize XSS. **Thực tế (dự đoán bug):** Server lưu raw → Stored XSS khi địa chỉ được render                                             | Not Run |
+| TC-PROFILE-012 | EC-ROLE-1                                   | Đã đăng nhập (user thường, role=user) | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi","role":"admin"}`                              | PUT /api/users/me → GET /api/users/me → kiểm tra trường `role` trong response                  | **Kỳ vọng:** Server bỏ qua trường `role`; GET /me vẫn trả về `role: "user"`. **Thực tế (BUG ĐÃ XÁC NHẬN trong code):** `role` bị đổi thành `admin` → privilege escalation | Not Run |
+| TC-PROFILE-013 | EC-AUTH-2                                   | Chưa đăng nhập / không có token       | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi"}` (không có Authorization header)             | PUT /api/users/me **không có** header `Authorization`                                          | 401 `{"error":"Unauthorized"}`                                                                                                                                            | Not Run |
+| TC-PROFILE-014 | EC-AUTH-3                                   | Có token giả mạo                      | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi"}` + `Authorization: Bearer invalid_token_xyz` | PUT /api/users/me với token sai định dạng                                                      | 403 `{"error":"Forbidden"}`                                                                                                                                               | Not Run |
 
 ### A.1.4 Truy vết coverage (EC ↔ TC)
 
-| Lớp (EC)    | Phủ bởi TC     | Ghi chú                                                          |
-| ----------- | -------------- | ---------------------------------------------------------------- |
-| EC-NAME-1   | TC-PROFILE-001 |                                                                  |
-| EC-NAME-2   | TC-PROFILE-002 |                                                                  |
-| EC-NAME-3   | TC-PROFILE-003 |                                                                  |
-| EC-NAME-4   | TC-PROFILE-004 | Security test — Stored XSS qua dangerouslySetInnerHTML           |
-| EC-PHONE-1  | TC-PROFILE-001 |                                                                  |
-| EC-PHONE-2  | TC-PROFILE-005 |                                                                  |
-| EC-PHONE-3  | TC-PROFILE-006 | Cả Web (client regex) lẫn Postman (server bypass)                |
-| EC-PHONE-4  | TC-PROFILE-007 | Giá trị đại diện điển hình (5 số); biên 8 số xử lý ở A.2 BVA    |
-| EC-PHONE-5  | TC-PROFILE-008 | Giá trị đại diện điển hình (14 số); biên 11 số xử lý ở A.2 BVA  |
-| EC-PHONE-6  | TC-PROFILE-009 |                                                                  |
-| EC-ADDR-1   | TC-PROFILE-001 |                                                                  |
-| EC-ADDR-2   | TC-PROFILE-010 |                                                                  |
-| EC-ADDR-3   | TC-PROFILE-011 | Security test — Stored XSS qua address field                     |
-| EC-ROLE-1   | TC-PROFILE-012 | Bug đã xác nhận trong code (server.js:124)                       |
-| EC-AUTH-1   | TC-PROFILE-001 | Token hợp lệ là precondition của mọi TC valid                    |
-| EC-AUTH-2   | TC-PROFILE-013 |                                                                  |
-| EC-AUTH-3   | TC-PROFILE-014 |                                                                  |
+| Lớp (EC)   | Phủ bởi TC     | Ghi chú                                                        |
+| ---------- | -------------- | -------------------------------------------------------------- |
+| EC-NAME-1  | TC-PROFILE-001 |                                                                |
+| EC-NAME-2  | TC-PROFILE-002 |                                                                |
+| EC-NAME-3  | TC-PROFILE-003 |                                                                |
+| EC-NAME-4  | TC-PROFILE-004 | Security test — Stored XSS qua dangerouslySetInnerHTML         |
+| EC-PHONE-1 | TC-PROFILE-001 |                                                                |
+| EC-PHONE-2 | TC-PROFILE-005 |                                                                |
+| EC-PHONE-3 | TC-PROFILE-006 | Cả Web (client regex) lẫn Postman (server bypass)              |
+| EC-PHONE-4 | TC-PROFILE-007 | Giá trị đại diện điển hình (5 số); biên 8 số xử lý ở A.2 BVA   |
+| EC-PHONE-5 | TC-PROFILE-008 | Giá trị đại diện điển hình (14 số); biên 11 số xử lý ở A.2 BVA |
+| EC-PHONE-6 | TC-PROFILE-009 |                                                                |
+| EC-ADDR-1  | TC-PROFILE-001 |                                                                |
+| EC-ADDR-2  | TC-PROFILE-010 |                                                                |
+| EC-ADDR-3  | TC-PROFILE-011 | Security test — Stored XSS qua address field                   |
+| EC-ROLE-1  | TC-PROFILE-012 | Bug đã xác nhận trong code (server.js:124)                     |
+| EC-AUTH-1  | TC-PROFILE-001 | Token hợp lệ là precondition của mọi TC valid                  |
+| EC-AUTH-2  | TC-PROFILE-013 |                                                                |
+| EC-AUTH-3  | TC-PROFILE-014 |                                                                |
 
 ## A.2 Boundary Value Analysis
 
@@ -156,17 +156,18 @@ Feature: FR-04 Personal profile management. Endpoint: `PUT /api/users/me`. Tái 
 
 **Bước 1 — Biến áp dụng được BVA (có thứ tự)**
 
-| Biến               | Áp dụng BVA? | Lý do                                                                     |
-| ------------------ | ------------ | ------------------------------------------------------------------------- |
-| `độ dài phone`     | ✅ Có        | Biến số có thứ tự — biên dưới và biên trên xác định rõ ràng qua regex     |
-| `name` (nội dung)  | ❌ Không     | Text tự do, không có thứ tự; không xác định được biên có nghĩa           |
-| `shipping_address` | ❌ Không     | Text tự do, không có thứ tự                                               |
-| `role`             | ❌ Không     | Biến danh mục (categorical), không có thứ tự                              |
-| JWT `token`        | ❌ Không     | Biến xác thực nhị phân (valid/invalid), không có thứ tự                   |
+| Biến               | Áp dụng BVA? | Lý do                                                                 |
+| ------------------ | ------------ | --------------------------------------------------------------------- |
+| `độ dài phone`     | ✅ Có        | Biến số có thứ tự — biên dưới và biên trên xác định rõ ràng qua regex |
+| `name` (nội dung)  | ❌ Không     | Text tự do, không có thứ tự; không xác định được biên có nghĩa        |
+| `shipping_address` | ❌ Không     | Text tự do, không có thứ tự                                           |
+| `role`             | ❌ Không     | Biến danh mục (categorical), không có thứ tự                          |
+| JWT `token`        | ❌ Không     | Biến xác thực nhị phân (valid/invalid), không có thứ tự               |
 
 **Bước 2 — Xác định biên của `độ dài phone`**
 
 Nguồn: regex `^[1-9][0-9]{8,9}$` tại [frontend-web/src/pages/Profile.jsx:43](../../group05_eshop/frontend-web/src/pages/Profile.jsx#L43) và [frontend-mobile/App.js:287](../../group05_eshop/frontend-mobile/App.js#L287).
+
 - Phân tích: `[1-9]` = 1 ký tự đầu; `[0-9]{8,9}` = 8 hoặc 9 ký tự tiếp → tổng độ dài: **9 đến 10 ký tự**.
 - **Biên dưới: `min = 9` (đóng, `≥ 9`).**
 - **Biên trên: `max = 10` (đóng, `≤ 10`).**
@@ -189,38 +190,38 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ### A.2.2 Bảng giá trị biên
 
-| Biến           | Biên (đóng/mở)   | Điểm BVA     | Độ dài | Giá trị ví dụ  | Kỳ vọng đúng (client)    | Kỳ vọng thực tế (server via Postman) |
-| -------------- | ---------------- | ------------ | ------ | -------------- | ------------------------ | ------------------------------------- |
-| `độ dài phone` | dưới, đóng (≥9)  | min-1        | 8 số   | `91234567`     | Invalid (quá ngắn)       | **Bug: 200 OK (lưu phone 8 số)**      |
-| `độ dài phone` | dưới, đóng (≥9)  | min          | 9 số   | `912345678`    | Valid                    | 200 OK ✓                              |
-| `độ dài phone` | dưới, đóng (≥9)  | min+1        | 10 số  | `9123456789`   | Valid                    | 200 OK ✓                              |
-| `độ dài phone` | trên, đóng (≤10) | max-1        | 9 số   | `912345678`    | Valid *(= min, gộp TC)*  | 200 OK ✓ *(= min)*                    |
-| `độ dài phone` | trên, đóng (≤10) | max          | 10 số  | `9123456789`   | Valid *(= min+1, gộp TC)*| 200 OK ✓ *(= min+1)*                  |
-| `độ dài phone` | trên, đóng (≤10) | max+1        | 11 số  | `91234567890`  | Invalid (quá dài)        | **Bug: 200 OK (lưu phone 11 số)**     |
+| Biến           | Biên (đóng/mở)   | Điểm BVA | Độ dài | Giá trị ví dụ | Kỳ vọng đúng (client)     | Kỳ vọng thực tế (server via Postman) |
+| -------------- | ---------------- | -------- | ------ | ------------- | ------------------------- | ------------------------------------ |
+| `độ dài phone` | dưới, đóng (≥9)  | min-1    | 8 số   | `91234567`    | Invalid (quá ngắn)        | **Bug: 200 OK (lưu phone 8 số)**     |
+| `độ dài phone` | dưới, đóng (≥9)  | min      | 9 số   | `912345678`   | Valid                     | 200 OK ✓                             |
+| `độ dài phone` | dưới, đóng (≥9)  | min+1    | 10 số  | `9123456789`  | Valid                     | 200 OK ✓                             |
+| `độ dài phone` | trên, đóng (≤10) | max-1    | 9 số   | `912345678`   | Valid _(= min, gộp TC)_   | 200 OK ✓ _(= min)_                   |
+| `độ dài phone` | trên, đóng (≤10) | max      | 10 số  | `9123456789`  | Valid _(= min+1, gộp TC)_ | 200 OK ✓ _(= min+1)_                 |
+| `độ dài phone` | trên, đóng (≤10) | max+1    | 11 số  | `91234567890` | Invalid (quá dài)         | **Bug: 200 OK (lưu phone 11 số)**    |
 
-> *Do miền `[9, 10]` chỉ rộng 2 đơn vị: `max-1 = min = 9` và `max = min+1 = 10` → gộp thành 4 TC duy nhất thay vì 6.*
+> _Do miền `[9, 10]` chỉ rộng 2 đơn vị: `max-1 = min = 9` và `max = min+1 = 10` → gộp thành 4 TC duy nhất thay vì 6._
 
 ### A.2.3 Test cases — BVA
 
 <!-- Technique: Boundary Value Analysis (3-value). Mã bắt đầu từ 101. Test qua Postman để kiểm cả client lẫn server. Ký tự đầu '9' (≠ 0) để chỉ kiểm độ dài, tránh defect masking với BUG-A-05. -->
 
-| TC ID          | Điểm biên phủ                      | Preconditions                | Test data (Body JSON)                                                                              | Các bước (tóm tắt)                                                                                                                       | Expected result                                                                                                                                      | Status  |
-| -------------- | ---------------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| TC-PROFILE-101 | min-1 (8 số)                       | Đã đăng nhập (user thường)   | `{"name":"Nguyen Van A","phone":"91234567","shipping_address":"123 Le Loi, Q1, TP.HCM"}`           | POST /api/login → lấy JWT; (a) Test qua Web: nhập phone 8 số → observe alert; (b) PUT /api/users/me qua Postman với JWT                  | (a) Web: alert "Số điện thoại không hợp lệ". (b) Server: **Kỳ vọng 400**; **Dự đoán bug:** 200, lưu phone 8 số vào DB                               | Not Run |
-| TC-PROFILE-102 | min (9 số), max-1 (9 số)           | Đã đăng nhập (user thường)   | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`          | POST /api/login → PUT /api/users/me (qua cả Web và Postman) với phone 9 số; GET /api/users/me để xác nhận                                | 200 `{"message":"Profile updated"}`; GET /me trả về `phone: "912345678"` — biên dưới hợp lệ                                                          | Not Run |
-| TC-PROFILE-103 | min+1 (10 số), max (10 số)         | Đã đăng nhập (user thường)   | `{"name":"Nguyen Van A","phone":"9123456789","shipping_address":"123 Le Loi, Q1, TP.HCM"}`         | POST /api/login → PUT /api/users/me với phone 10 số; GET /api/users/me để xác nhận                                                       | 200 `{"message":"Profile updated"}`; GET /me trả về `phone: "9123456789"` — biên trên hợp lệ                                                         | Not Run |
-| TC-PROFILE-104 | max+1 (11 số)                      | Đã đăng nhập (user thường)   | `{"name":"Nguyen Van A","phone":"91234567890","shipping_address":"123 Le Loi, Q1, TP.HCM"}`        | POST /api/login → lấy JWT; (a) Test qua Web: nhập phone 11 số → observe alert; (b) PUT /api/users/me qua Postman                         | (a) Web: alert "Số điện thoại không hợp lệ". (b) Server: **Kỳ vọng 400**; **Dự đoán bug:** 200, lưu phone 11 số vào DB                              | Not Run |
+| TC ID          | Điểm biên phủ              | Preconditions              | Test data (Body JSON)                                                                       | Các bước (tóm tắt)                                                                                                      | Expected result                                                                                                        | Status  |
+| -------------- | -------------------------- | -------------------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------- |
+| TC-PROFILE-101 | min-1 (8 số)               | Đã đăng nhập (user thường) | `{"name":"Nguyen Van A","phone":"91234567","shipping_address":"123 Le Loi, Q1, TP.HCM"}`    | POST /api/login → lấy JWT; (a) Test qua Web: nhập phone 8 số → observe alert; (b) PUT /api/users/me qua Postman với JWT | (a) Web: alert "Số điện thoại không hợp lệ". (b) Server: **Kỳ vọng 400**; **Dự đoán bug:** 200, lưu phone 8 số vào DB  | Not Run |
+| TC-PROFILE-102 | min (9 số), max-1 (9 số)   | Đã đăng nhập (user thường) | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`   | POST /api/login → PUT /api/users/me (qua cả Web và Postman) với phone 9 số; GET /api/users/me để xác nhận               | 200 `{"message":"Profile updated"}`; GET /me trả về `phone: "912345678"` — biên dưới hợp lệ                            | Not Run |
+| TC-PROFILE-103 | min+1 (10 số), max (10 số) | Đã đăng nhập (user thường) | `{"name":"Nguyen Van A","phone":"9123456789","shipping_address":"123 Le Loi, Q1, TP.HCM"}`  | POST /api/login → PUT /api/users/me với phone 10 số; GET /api/users/me để xác nhận                                      | 200 `{"message":"Profile updated"}`; GET /me trả về `phone: "9123456789"` — biên trên hợp lệ                           | Not Run |
+| TC-PROFILE-104 | max+1 (11 số)              | Đã đăng nhập (user thường) | `{"name":"Nguyen Van A","phone":"91234567890","shipping_address":"123 Le Loi, Q1, TP.HCM"}` | POST /api/login → lấy JWT; (a) Test qua Web: nhập phone 11 số → observe alert; (b) PUT /api/users/me qua Postman        | (a) Web: alert "Số điện thoại không hợp lệ". (b) Server: **Kỳ vọng 400**; **Dự đoán bug:** 200, lưu phone 11 số vào DB | Not Run |
 
 ### A.2.4 Truy vết coverage (Biên ↔ TC)
 
-| Điểm biên     | Độ dài | Phủ bởi TC     | Ghi chú                                                         |
-| ------------- | ------ | -------------- | --------------------------------------------------------------- |
-| min-1         | 8 số   | TC-PROFILE-101 | Invalid — dưới biên dưới                                        |
-| min           | 9 số   | TC-PROFILE-102 | Valid — tại biên dưới                                           |
-| min+1         | 10 số  | TC-PROFILE-103 | Valid — trên biên dưới 1 bước                                   |
-| max-1         | 9 số   | TC-PROFILE-102 | Valid — dưới biên trên 1 bước (= min → cùng TC-PROFILE-102)    |
-| max           | 10 số  | TC-PROFILE-103 | Valid — tại biên trên (= min+1 → cùng TC-PROFILE-103)          |
-| max+1         | 11 số  | TC-PROFILE-104 | Invalid — trên biên trên                                        |
+| Điểm biên | Độ dài | Phủ bởi TC     | Ghi chú                                                     |
+| --------- | ------ | -------------- | ----------------------------------------------------------- |
+| min-1     | 8 số   | TC-PROFILE-101 | Invalid — dưới biên dưới                                    |
+| min       | 9 số   | TC-PROFILE-102 | Valid — tại biên dưới                                       |
+| min+1     | 10 số  | TC-PROFILE-103 | Valid — trên biên dưới 1 bước                               |
+| max-1     | 9 số   | TC-PROFILE-102 | Valid — dưới biên trên 1 bước (= min → cùng TC-PROFILE-102) |
+| max       | 10 số  | TC-PROFILE-103 | Valid — tại biên trên (= min+1 → cùng TC-PROFILE-103)       |
+| max+1     | 11 số  | TC-PROFILE-104 | Invalid — trên biên trên                                    |
 
 ## A.3 AI Gap Analysis
 
@@ -228,54 +229,54 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ### A.3.1 Bảng phân tích gap
 
-| #   | Test case / bug AI bỏ sót | Bạn bổ sung gì | Nguyên nhân AI sót |
-| --- | ------------------------- | -------------- | ------------------ |
-| 1 | **GET `/api/users/me` rò rỉ dữ liệu nhạy cảm.** [server.js:113](../../group05_eshop/backend/server.js#L113) dùng `SELECT * FROM users` rồi `res.json(user)` → trả luôn `password` (lưu **plaintext**) và `reset_token`. Không TC nào của AI kiểm output của GET. | TC-PROFILE-015 (assert response GET /me **không** chứa `password`/`reset_token`) + **BUG-A-07** (Sensitive Data Exposure, Critical). | **Giới hạn cách AI khung hoá bài toán.** AI hiểu FR-04 = "validate input của PUT" nên chỉ phân vùng các biến *đầu vào*. Skill domain-testing (Bước 1) có nhắc cả "biến output/điều kiện" nhưng AI bỏ qua vì prompt và ngữ cảnh nghiêng hẳn về input-validation. Đây là **prompt + AI framing limitation**. |
-| 2 | **Partial update ghi đè NULL.** [server.js:121](../../group05_eshop/backend/server.js#L121) luôn `SET name=?, shipping_address=?, phone=?`. PUT thiếu 1 field → field đó = `undefined` → SQLite lưu **NULL**, xoá dữ liệu cũ. AI luôn gửi đủ 3 field nên không bao giờ chạm tình huống này. | TC-PROFILE-016 (PUT chỉ `{name}`, xác nhận `phone`/`address` cũ bị mất) + **BUG-A-08** (Data loss on partial update, High). | **Phân lớp tương đương sai do độ phức tạp ngữ nghĩa.** AI gộp lớp "field **thiếu** (absent/`undefined`)" chung với "field **rỗng** (`""`)" — trong khi với cơ chế destructuring JS + UPDATE không điều kiện, đây là **2 lớp tương đương khác hành vi**. Phải đọc kỹ code mới thấy → **inherent complexity** của feature. |
-| 3 | **Lớp con "token hợp lệ nhưng đã hết hạn".** EC-AUTH chỉ có valid / missing / malformed. JWT đúng chữ ký nhưng **expired** là lớp con riêng (`jwt.verify` trả `err` → 403), AI không tách. | TC-PROFILE-017 (dùng token hết hạn → kỳ vọng 403). | **Giới hạn AI khi phân vùng biến phi-input rõ ràng.** AI coi token là nhị phân valid/invalid, không phân vùng theo **trục thời gian**. Lý thuyết EC cho phép chia nhỏ lớp valid; AI dừng ở mức thô. |
-| 4 | **Giá trị `role` tuỳ ý ngoài enum.** AI chỉ test `role="admin"`. Code [server.js:124](../../group05_eshop/backend/server.js#L124) `if (role)` ghi **bất kỳ** chuỗi nào (vd `"superadmin"`); ngược lại `role=""` falsy → **không thể** xoá/đặt lại role. | TC-PROFILE-018 (PUT `role="superadmin"` → kỳ vọng bị từ chối; thực tế lưu raw, phá vỡ enum role). | **AI chọn 1 đại diện "hấp dẫn nhất" thay vì phủ kín miền.** Với `role`, AI chỉ lấy ca tấn công kinh điển (`admin`) mà bỏ lớp "giá trị rác ngoài tập {user, admin}" và lớp "role rỗng". **AI bias** về ca nổi tiếng. |
-| 5 | **BUG-A-06 (mobile camelCase mismatch) không có TC dẫn.** Bug được AI ghi nhận từ đọc code tĩnh nhưng **không** TC nào trong A.1.3 thực thi nó. | Ghi chú bổ sung: BUG-A-06 sẽ được phủ bởi test case của **Feature D** (mobile); thêm tham chiếu chéo để không bỏ sót khi execute. | **AI tách rời "đọc code phát hiện bug" và "thiết kế TC thực thi bug".** Quan sát tĩnh không tự động sinh ca kiểm chứng động → cần con người nối lại. |
-| 6 | **`name` / `shipping_address` không có giới hạn độ dài → input không chặn trên.** AI đánh dấu 2 biến này "không áp dụng BVA" vì không có biên thứ tự. | TC-PROFILE-105 (BVA mở rộng): gửi `name`/`address` ~100.000 ký tự → kỳ vọng bị giới hạn; thực tế server lưu nguyên → nguy cơ storage/DoS. | **AI áp quy tắc BVA quá máy móc.** "Không có biên định nghĩa" bị AI hiểu thành "không cần test", trong khi **sự vắng mặt của biên trên chính là một phát hiện** đáng probe. **AI literal rule-following.** |
+| #   | Test case / bug AI bỏ sót                                                                                                                                                                                                                                                                   | Bạn bổ sung gì                                                                                                                       | Nguyên nhân AI sót                                                                                                                                                                                                                                                                                                       |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | **GET `/api/users/me` rò rỉ dữ liệu nhạy cảm.** [server.js:113](../../group05_eshop/backend/server.js#L113) dùng `SELECT * FROM users` rồi `res.json(user)` → trả luôn `password` (lưu **plaintext**) và `reset_token`. Không TC nào của AI kiểm output của GET.                            | TC-PROFILE-015 (assert response GET /me **không** chứa `password`/`reset_token`) + **BUG-A-07** (Sensitive Data Exposure, Critical). | **Giới hạn cách AI khung hoá bài toán.** AI hiểu FR-04 = "validate input của PUT" nên chỉ phân vùng các biến _đầu vào_. Skill domain-testing (Bước 1) có nhắc cả "biến output/điều kiện" nhưng AI bỏ qua vì prompt và ngữ cảnh nghiêng hẳn về input-validation. Đây là **prompt + AI framing limitation**.               |
+| 2   | **Partial update ghi đè NULL.** [server.js:121](../../group05_eshop/backend/server.js#L121) luôn `SET name=?, shipping_address=?, phone=?`. PUT thiếu 1 field → field đó = `undefined` → SQLite lưu **NULL**, xoá dữ liệu cũ. AI luôn gửi đủ 3 field nên không bao giờ chạm tình huống này. | TC-PROFILE-016 (PUT chỉ `{name}`, xác nhận `phone`/`address` cũ bị mất) + **BUG-A-08** (Data loss on partial update, High).          | **Phân lớp tương đương sai do độ phức tạp ngữ nghĩa.** AI gộp lớp "field **thiếu** (absent/`undefined`)" chung với "field **rỗng** (`""`)" — trong khi với cơ chế destructuring JS + UPDATE không điều kiện, đây là **2 lớp tương đương khác hành vi**. Phải đọc kỹ code mới thấy → **inherent complexity** của feature. |
+| 3   | **Lớp con "token hợp lệ nhưng đã hết hạn".** EC-AUTH chỉ có valid / missing / malformed. JWT đúng chữ ký nhưng **expired** là lớp con riêng (`jwt.verify` trả `err` → 403), AI không tách.                                                                                                  | TC-PROFILE-017 (dùng token hết hạn → kỳ vọng 403).                                                                                   | **Giới hạn AI khi phân vùng biến phi-input rõ ràng.** AI coi token là nhị phân valid/invalid, không phân vùng theo **trục thời gian**. Lý thuyết EC cho phép chia nhỏ lớp valid; AI dừng ở mức thô.                                                                                                                      |
+| 4   | **Giá trị `role` tuỳ ý ngoài enum.** AI chỉ test `role="admin"`. Code [server.js:124](../../group05_eshop/backend/server.js#L124) `if (role)` ghi **bất kỳ** chuỗi nào (vd `"superadmin"`); ngược lại `role=""` falsy → **không thể** xoá/đặt lại role.                                     | TC-PROFILE-018 (PUT `role="superadmin"` → kỳ vọng bị từ chối; thực tế lưu raw, phá vỡ enum role).                                    | **AI chọn 1 đại diện "hấp dẫn nhất" thay vì phủ kín miền.** Với `role`, AI chỉ lấy ca tấn công kinh điển (`admin`) mà bỏ lớp "giá trị rác ngoài tập {user, admin}" và lớp "role rỗng". **AI bias** về ca nổi tiếng.                                                                                                      |
+| 5   | **BUG-A-06 (mobile camelCase mismatch) không có TC dẫn.** Bug được AI ghi nhận từ đọc code tĩnh nhưng **không** TC nào trong A.1.3 thực thi nó.                                                                                                                                             | Ghi chú bổ sung: BUG-A-06 sẽ được phủ bởi test case của **Feature D** (mobile); thêm tham chiếu chéo để không bỏ sót khi execute.    | **AI tách rời "đọc code phát hiện bug" và "thiết kế TC thực thi bug".** Quan sát tĩnh không tự động sinh ca kiểm chứng động → cần con người nối lại.                                                                                                                                                                     |
+| 6   | **`name` / `shipping_address` không có giới hạn độ dài → input không chặn trên.** AI đánh dấu 2 biến này "không áp dụng BVA" vì không có biên thứ tự.                                                                                                                                       | TC-PROFILE-019: gửi `name`/`address` ~100.000 ký tự → kỳ vọng bị giới hạn; thực tế server lưu nguyên → nguy cơ storage/DoS.          | **AI áp quy tắc BVA quá máy móc.** "Không có biên định nghĩa" bị AI hiểu thành "không cần test", trong khi **sự vắng mặt của biên trên chính là một phát hiện** đáng probe. **AI literal rule-following.**                                                                                                               |
 
 ### A.3.2 Test case bổ sung (do con người thêm sau review)
 
-> Tiếp tục dải mã: Domain Testing `015–018`, BVA `105`. Tất cả test qua **Postman (direct API)** để bypass client.
+> Tiếp tục dải mã Domain Testing `015–019`. Tất cả test qua **Postman (direct API)** để bypass client.
 
-| TC ID | Phủ gap | Preconditions | Test data / thao tác | Expected result | Status |
-| ----- | ------- | ------------- | -------------------- | --------------- | ------ |
-| TC-PROFILE-015 | Gap #1 | Đã đăng nhập (user thường) | `GET /api/users/me` với JWT hợp lệ → kiểm tra toàn bộ field trong response body | **Kỳ vọng:** body **không** chứa `password`, `reset_token`. **Thực tế (BUG-A-07):** trả `password` (plaintext) + `reset_token` | Not Run |
-| TC-PROFILE-016 | Gap #2 | User đang có `phone="912345678"`, `shipping_address="123 Le Loi"` | `PUT /api/users/me` body chỉ `{"name":"Nguyen Van B"}` (cố tình thiếu phone & address) → `GET /api/users/me` | **Kỳ vọng:** chỉ `name` đổi; `phone`/`address` giữ nguyên. **Thực tế (BUG-A-08):** `phone` & `shipping_address` bị set NULL → mất dữ liệu | Not Run |
-| TC-PROFILE-017 | Gap #3 | Có 1 JWT đã hết hạn (valid signature, `exp` quá khứ) | `PUT /api/users/me` + `Authorization: Bearer <expired_jwt>` | 403 `{"error":"Forbidden"}` | Not Run |
-| TC-PROFILE-018 | Gap #4 | Đã đăng nhập (user thường, role=user) | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi","role":"superadmin"}` → `GET /api/users/me` | **Kỳ vọng:** từ chối / bỏ qua `role`. **Thực tế:** lưu `role="superadmin"` (giá trị ngoài enum {user, admin}) — mở rộng BUG-A-01 | Not Run |
-| TC-PROFILE-105 | Gap #6 (BVA) | Đã đăng nhập (user thường) | `{"name":"<100.000 ký tự 'A'>","phone":"912345678","shipping_address":"<100.000 ký tự>"}` | **Kỳ vọng:** server giới hạn độ dài → 400. **Thực tế (dự đoán bug):** 200, lưu nguyên chuỗi khổng lồ vào DB | Not Run |
+| TC ID          | Phủ gap | Preconditions                                                     | Test data / thao tác                                                                                                    | Expected result                                                                                                                           | Status  |
+| -------------- | ------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| TC-PROFILE-015 | Gap #1  | Đã đăng nhập (user thường)                                        | `GET /api/users/me` với JWT hợp lệ → kiểm tra toàn bộ field trong response body                                         | **Kỳ vọng:** body **không** chứa `password`, `reset_token`. **Thực tế (BUG-A-07):** trả `password` (plaintext) + `reset_token`            | Not Run |
+| TC-PROFILE-016 | Gap #2  | User đang có `phone="912345678"`, `shipping_address="123 Le Loi"` | `PUT /api/users/me` body chỉ `{"name":"Nguyen Van B"}` (cố tình thiếu phone & address) → `GET /api/users/me`            | **Kỳ vọng:** chỉ `name` đổi; `phone`/`address` giữ nguyên. **Thực tế (BUG-A-08):** `phone` & `shipping_address` bị set NULL → mất dữ liệu | Not Run |
+| TC-PROFILE-017 | Gap #3  | Có 1 JWT đã hết hạn (valid signature, `exp` quá khứ)              | `PUT /api/users/me` + `Authorization: Bearer <expired_jwt>`                                                             | 403 `{"error":"Forbidden"}`                                                                                                               | Not Run |
+| TC-PROFILE-018 | Gap #4  | Đã đăng nhập (user thường, role=user)                             | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi","role":"superadmin"}` → `GET /api/users/me` | **Kỳ vọng:** từ chối / bỏ qua `role`. **Thực tế:** lưu `role="superadmin"` (giá trị ngoài enum {user, admin}) — mở rộng BUG-A-01          | Not Run |
+| TC-PROFILE-019 | Gap #6  | Đã đăng nhập (user thường)                                        | `{"name":"<100.000 ký tự 'A'>","phone":"912345678","shipping_address":"<100.000 ký tự>"}`                               | **Kỳ vọng:** server giới hạn độ dài → 400. **Thực tế (dự đoán bug):** 200, lưu nguyên chuỗi khổng lồ vào DB                               | Not Run |
 
-> ⚠️ Hai gap #1 và #2 sinh ra **2 bug mới** đã bổ sung vào bảng A.4 (BUG-A-07, BUG-A-08). Tổng test case Feature A sau review: **23** = 14 (Domain gốc) + 4 (BVA gốc) + 4 (Domain bổ sung 015–018) + 1 (BVA bổ sung 105).
+> ⚠️ Hai gap #1 và #2 sinh ra **2 bug mới** đã bổ sung vào bảng A.4 (BUG-A-07, BUG-A-08). Tổng test case Feature A sau review: **23** = 14 (Domain gốc 001–014) + 4 (BVA gốc 101–104) + 5 (Domain bổ sung 015–019).
 
 ## A.4 Bugs phát hiện (Feature A)
 
 <!-- Ứng viên bug đã xác nhận trong code (không cần execute để thấy). Điền GitHub Issue + Screenshot sau khi execute. -->
 
-| Bug ID   | Found by TC    | Tiêu đề                                                                                          | Severity | GitHub Issue | Screenshot |
-| -------- | -------------- | ------------------------------------------------------------------------------------------------ | -------- | ------------ | ---------- |
-| BUG-A-01 | TC-PROFILE-012 | Privilege escalation: user thường tự gán `role=admin` qua `PUT /api/users/me` (server.js:124)   | Critical | `<#issue>`   | `<ảnh>`    |
-| BUG-A-02 | TC-PROFILE-004 | Stored XSS: `name` chứa HTML/script lưu raw vào DB; navbar Web render qua `dangerouslySetInnerHTML` (App.jsx:27) → script thực thi | High | `<#issue>` | `<ảnh>` |
-| BUG-A-03 | TC-PROFILE-002, TC-PROFILE-003, TC-PROFILE-005, TC-PROFILE-007, TC-PROFILE-008, TC-PROFILE-010 | Thiếu validation server-side: `name`, `phone`, `shipping_address` không được validate tại server — bypass qua Postman bỏ qua toàn bộ ràng buộc client | High | `<#issue>` | `<ảnh>` |
-| BUG-A-04 | TC-PROFILE-011 | Stored XSS: `shipping_address` chứa XSS payload lưu raw; potential render ở các trang hiển thị địa chỉ | Medium | `<#issue>` | `<ảnh>` |
-| BUG-A-05 | TC-PROFILE-006 | Design bug trong regex phone: `^[1-9][0-9]{8,9}$` từ chối số VN hợp lệ bắt đầu bằng 0 (vd `0912345678`) — số VN thật đều bắt đầu bằng 0 | Medium | `<#issue>` | `<ảnh>` |
-| BUG-A-06 | *(Mobile test)* | Mobile field name mismatch: `frontend-mobile/App.js:302` gửi `shippingAddress` (camelCase) nhưng server đọc `shipping_address` → address không bao giờ lưu được qua mobile app | Medium | `<#issue>` | `<ảnh>` |
-| BUG-A-07 | TC-PROFILE-015 | Sensitive Data Exposure: `GET /api/users/me` dùng `SELECT *` (server.js:113) trả cả `password` (lưu plaintext) và `reset_token` về client | Critical | `<#issue>` | `<ảnh>` |
-| BUG-A-08 | TC-PROFILE-016 | Data loss: `PUT /api/users/me` luôn `SET name,shipping_address,phone` (server.js:121) → cập nhật thiếu field sẽ ghi NULL đè dữ liệu cũ (không hỗ trợ partial update) | High | `<#issue>` | `<ảnh>` |
+| Bug ID   | Found by TC                                                                                    | Tiêu đề                                                                                                                                                                        | Severity | GitHub Issue | Screenshot |
+| -------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ------------ | ---------- |
+| BUG-A-01 | TC-PROFILE-012                                                                                 | Privilege escalation: user thường tự gán `role=admin` qua `PUT /api/users/me` (server.js:124)                                                                                  | Critical | `<#issue>`   | `<ảnh>`    |
+| BUG-A-02 | TC-PROFILE-004                                                                                 | Stored XSS: `name` chứa HTML/script lưu raw vào DB; navbar Web render qua `dangerouslySetInnerHTML` (App.jsx:27) → script thực thi                                             | High     | `<#issue>`   | `<ảnh>`    |
+| BUG-A-03 | TC-PROFILE-002, TC-PROFILE-003, TC-PROFILE-005, TC-PROFILE-007, TC-PROFILE-008, TC-PROFILE-010 | Thiếu validation server-side: `name`, `phone`, `shipping_address` không được validate tại server — bypass qua Postman bỏ qua toàn bộ ràng buộc client                          | High     | `<#issue>`   | `<ảnh>`    |
+| BUG-A-04 | TC-PROFILE-011                                                                                 | Stored XSS: `shipping_address` chứa XSS payload lưu raw; potential render ở các trang hiển thị địa chỉ                                                                         | Medium   | `<#issue>`   | `<ảnh>`    |
+| BUG-A-05 | TC-PROFILE-006                                                                                 | Design bug trong regex phone: `^[1-9][0-9]{8,9}$` từ chối số VN hợp lệ bắt đầu bằng 0 (vd `0912345678`) — số VN thật đều bắt đầu bằng 0                                        | Medium   | `<#issue>`   | `<ảnh>`    |
+| BUG-A-06 | _(Mobile test)_                                                                                | Mobile field name mismatch: `frontend-mobile/App.js:302` gửi `shippingAddress` (camelCase) nhưng server đọc `shipping_address` → address không bao giờ lưu được qua mobile app | Medium   | `<#issue>`   | `<ảnh>`    |
+| BUG-A-07 | TC-PROFILE-015                                                                                 | Sensitive Data Exposure: `GET /api/users/me` dùng `SELECT *` (server.js:113) trả cả `password` (lưu plaintext) và `reset_token` về client                                      | Critical | `<#issue>`   | `<ảnh>`    |
+| BUG-A-08 | TC-PROFILE-016                                                                                 | Data loss: `PUT /api/users/me` luôn `SET name,shipping_address,phone` (server.js:121) → cập nhật thiếu field sẽ ghi NULL đè dữ liệu cũ (không hỗ trợ partial update)           | High     | `<#issue>`   | `<ảnh>`    |
 
 ### Kết quả execute Feature A (tóm tắt)
 
-| Chỉ số             | Số lượng |
-| ------------------ | -------- |
+| Chỉ số             | Số lượng                                      |
+| ------------------ | --------------------------------------------- |
 | Test case thiết kế | 23 (14 Domain + 4 BVA + 5 bổ sung sau review) |
-| Đã execute         | `<...>`  |
-| Pass               | `<...>`  |
-| Fail               | `<...>`  |
-| Chưa execute       | `<...>`  |
-| Bug tìm được       | `<...>`  |
+| Đã execute         | `<...>`                                       |
+| Pass               | `<...>`                                       |
+| Fail               | `<...>`                                       |
+| Chưa execute       | `<...>`                                       |
+| Bug tìm được       | `<...>`                                       |
 
 ---
 
@@ -292,6 +293,7 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 - **Môi trường test:** `<điền sau>`.
 
 > ⚠️ **Điểm nghi vấn trong code (ứng viên bug):**
+>
 > 1. `apply-coupon` dùng `>` thay vì `>=` ở `min_order_amount` → đơn đúng bằng mức tối thiểu bị từ chối (off-by-one).
 > 2. Công thức `percent`: `discount = floor(total * (1 - discount_value))` với `discount_value` là số nguyên (vd 10) → sai hoàn toàn về mặt toán học.
 
@@ -306,23 +308,23 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ### B.1.2 Bảng phân tích Equivalence Classes
 
-| Biến               | Lớp (EC)    | Loại    | Mô tả lớp                          | Giá trị đại diện |
-| ------------------ | ----------- | ------- | ---------------------------------- | ---------------- |
-| `total_amount`     | EC-TOTAL-1  | Valid   | Số nguyên dương                    | `200000`         |
-| `total_amount`     | EC-TOTAL-2  | Invalid | Bằng 0                             | `0`              |
-| `total_amount`     | EC-TOTAL-3  | Invalid | Âm                                 | `-50000`         |
-| `total_amount`     | EC-TOTAL-4  | Invalid | Không phải số / thiếu              | `"abc"` / (bỏ trống) |
-| `shipping_address` | EC-SADDR-1  | Valid   | Địa chỉ không rỗng                 | `123 Le Loi`     |
-| `shipping_address` | EC-SADDR-2  | Invalid | Rỗng / thiếu                       | `""`             |
+| Biến               | Lớp (EC)   | Loại    | Mô tả lớp             | Giá trị đại diện     |
+| ------------------ | ---------- | ------- | --------------------- | -------------------- |
+| `total_amount`     | EC-TOTAL-1 | Valid   | Số nguyên dương       | `200000`             |
+| `total_amount`     | EC-TOTAL-2 | Invalid | Bằng 0                | `0`                  |
+| `total_amount`     | EC-TOTAL-3 | Invalid | Âm                    | `-50000`             |
+| `total_amount`     | EC-TOTAL-4 | Invalid | Không phải số / thiếu | `"abc"` / (bỏ trống) |
+| `shipping_address` | EC-SADDR-1 | Valid   | Địa chỉ không rỗng    | `123 Le Loi`         |
+| `shipping_address` | EC-SADDR-2 | Invalid | Rỗng / thiếu          | `""`                 |
 
 ### B.1.3 Test cases — Domain Testing
 
 > ⏳ **Thiết kế chi tiết qua skill `domain-testing` rồi điền vào đây** (mã `TC-CHECKOUT-001…`). Sau đó execute để điền Status.
 
-| TC ID           | Phủ EC | Test data | Expected result | Status  |
-| --------------- | ------ | --------- | --------------- | ------- |
+| TC ID           | Phủ EC                 | Test data               | Expected result        | Status  |
+| --------------- | ---------------------- | ----------------------- | ---------------------- | ------- |
 | TC-CHECKOUT-001 | EC-TOTAL-1, EC-SADDR-1 | `200000` / `123 Le Loi` | 200, tạo đơn `pending` | Not Run |
-| `<bổ sung>`     |        |           |                 | Not Run |
+| `<bổ sung>`     |                        |                         |                        | Not Run |
 
 ## B.2 Boundary Value Analysis
 
@@ -333,18 +335,18 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ### B.2.2 Bảng giá trị biên (quanh min_order_amount = 300000, mã SAVE10)
 
-| Biến           | Điểm  | Giá trị  | Kỳ vọng đúng (theo spec)            |
-| -------------- | ----- | -------- | ----------------------------------- |
-| `total_amount` | min-1 | `299999` | Không đủ điều kiện → từ chối mã      |
+| Biến           | Điểm  | Giá trị  | Kỳ vọng đúng (theo spec)                                          |
+| -------------- | ----- | -------- | ----------------------------------------------------------------- |
+| `total_amount` | min-1 | `299999` | Không đủ điều kiện → từ chối mã                                   |
 | `total_amount` | min   | `300000` | **Đủ điều kiện → chấp nhận** (code dùng `>` nên sẽ từ chối → BUG) |
-| `total_amount` | min+1 | `300001` | Đủ điều kiện → chấp nhận             |
+| `total_amount` | min+1 | `300001` | Đủ điều kiện → chấp nhận                                          |
 
 ### B.2.3 Test cases — BVA
 
 > ⏳ Điền qua skill `boundary-value-analysis` (mã `TC-CHECKOUT-101…`).
 
-| TC ID           | Điểm biên | Test data | Expected result | Status  |
-| --------------- | --------- | --------- | --------------- | ------- |
+| TC ID           | Điểm biên    | Test data                 | Expected result                  | Status  |
+| --------------- | ------------ | ------------------------- | -------------------------------- | ------- |
 | TC-CHECKOUT-101 | min (300000) | total=300000, code=SAVE10 | Chấp nhận mã (dò bug off-by-one) | Not Run |
 
 ## B.3 AI Gap Analysis · B.4 Bugs
@@ -366,6 +368,7 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 - **Môi trường test:** `<điền sau>`.
 
 > ⚠️ **Điểm nghi vấn (ứng viên bug):**
+>
 > 1. [server.js:550-551](../../group05_eshop/backend/server.js#L550-L551) cho phép `canceled → delivered` — chuyển trạng thái **vô lý** (đơn đã hủy lại thành đã giao).
 > 2. Route chỉ `authenticateToken`, **không kiểm tra `role === admin`** → user thường cũng đổi được trạng thái đơn (authorization bug).
 
@@ -379,25 +382,25 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ### C.1.2 Bảng phân tích Equivalence Classes (ma trận transition)
 
-| Lớp (EC)        | Loại    | Mô tả (from → to)                     | Đại diện                       |
-| --------------- | ------- | ------------------------------------- | ------------------------------ |
-| EC-TRANS-1      | Valid   | Chuyển hợp lệ                         | `pending → confirmed`          |
-| EC-TRANS-2      | Valid   | Chuyển hợp lệ                         | `confirmed → shipping`         |
-| EC-TRANS-3      | Valid   | Chuyển hợp lệ                         | `shipping → delivered`         |
-| EC-TRANS-4      | Invalid | Chuyển bị cấm (đúng kỳ vọng)          | `delivered → shipping`         |
-| EC-TRANS-5      | Invalid | Chuyển vô lý (nghi BUG cho phép)      | `canceled → delivered`         |
-| EC-TARGET-1     | Invalid | Trạng thái đích không thuộc tập hợp lệ | `target = "done"`             |
-| EC-ID-1         | Invalid | `order_id` không tồn tại              | `99999`                        |
-| EC-AUTH-1       | Invalid | Gọi bằng token user thường (nghi BUG) | role=user                      |
+| Lớp (EC)    | Loại    | Mô tả (from → to)                      | Đại diện               |
+| ----------- | ------- | -------------------------------------- | ---------------------- |
+| EC-TRANS-1  | Valid   | Chuyển hợp lệ                          | `pending → confirmed`  |
+| EC-TRANS-2  | Valid   | Chuyển hợp lệ                          | `confirmed → shipping` |
+| EC-TRANS-3  | Valid   | Chuyển hợp lệ                          | `shipping → delivered` |
+| EC-TRANS-4  | Invalid | Chuyển bị cấm (đúng kỳ vọng)           | `delivered → shipping` |
+| EC-TRANS-5  | Invalid | Chuyển vô lý (nghi BUG cho phép)       | `canceled → delivered` |
+| EC-TARGET-1 | Invalid | Trạng thái đích không thuộc tập hợp lệ | `target = "done"`      |
+| EC-ID-1     | Invalid | `order_id` không tồn tại               | `99999`                |
+| EC-AUTH-1   | Invalid | Gọi bằng token user thường (nghi BUG)  | role=user              |
 
 ### C.1.3 Test cases — Domain Testing
 
 > ⏳ Điền qua skill `domain-testing` (mã `TC-ADMIN_ORDER-001…`).
 
-| TC ID             | Phủ EC | Preconditions | Test data | Expected result | Status  |
-| ----------------- | ------ | ------------- | --------- | --------------- | ------- |
-| TC-ADMIN_ORDER-001| EC-TRANS-1 | Đơn ở `pending`, login admin | status=`confirmed` | 200, đơn thành `confirmed` | Not Run |
-| `<bổ sung>`       |        |               |           |                 | Not Run |
+| TC ID              | Phủ EC     | Preconditions                | Test data          | Expected result            | Status  |
+| ------------------ | ---------- | ---------------------------- | ------------------ | -------------------------- | ------- |
+| TC-ADMIN_ORDER-001 | EC-TRANS-1 | Đơn ở `pending`, login admin | status=`confirmed` | 200, đơn thành `confirmed` | Not Run |
+| `<bổ sung>`        |            |                              |                    |                            | Not Run |
 
 ## C.2 Boundary Value Analysis
 
@@ -408,10 +411,10 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ### C.2.2 Bảng giá trị biên (`order_id`)
 
-| Biến       | Điểm  | Giá trị | Kỳ vọng                     |
-| ---------- | ----- | ------- | --------------------------- |
-| `order_id` | min-1 | `0`     | Invalid / không tìm thấy    |
-| `order_id` | min   | `1`     | Valid (nếu đơn tồn tại)     |
+| Biến       | Điểm  | Giá trị     | Kỳ vọng                  |
+| ---------- | ----- | ----------- | ------------------------ |
+| `order_id` | min-1 | `0`         | Invalid / không tìm thấy |
+| `order_id` | min   | `1`         | Valid (nếu đơn tồn tại)  |
 | `order_id` | max+1 | `<maxId+1>` | Invalid / không tìm thấy |
 
 ### C.2.3 Test cases — BVA
@@ -448,27 +451,27 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ### D.1.2 Bảng phân tích Equivalence Classes
 
-| Biến       | Lớp (EC)     | Loại    | Mô tả lớp                                            | Giá trị đại diện      |
-| ---------- | ------------ | ------- | ---------------------------------------------------- | --------------------- |
-| `name`     | EC-MNAME-1   | Valid   | Không rỗng                                           | `Nguyen Van A`        |
-| `name`     | EC-MNAME-2   | Invalid | Rỗng                                                 | `""`                  |
-| `email`    | EC-MEMAIL-1  | Valid   | Đúng định dạng & chưa tồn tại                        | `new@domain.com`      |
-| `email`    | EC-MEMAIL-2  | Invalid | Sai định dạng                                        | `abc@`                |
-| `email`    | EC-MEMAIL-3  | Invalid | Đã tồn tại (kỳ vọng từ chối; nghi BUG cho qua)       | `test@eshop.com`      |
-| `password` | EC-MPWD-1    | Valid   | ≥8 ký tự, đủ 4 loại                                  | `Abcd123!`            |
-| `password` | EC-MPWD-2    | Invalid | Thiếu chữ hoa                                        | `abcd123!`            |
-| `password` | EC-MPWD-3    | Invalid | Thiếu số                                             | `Abcdefg!`            |
-| `password` | EC-MPWD-4    | Invalid | Thiếu ký tự đặc biệt                                 | `Abcd1234`            |
-| `password` | EC-MPWD-5    | Invalid | <8 ký tự                                             | `Ab1!`                |
+| Biến       | Lớp (EC)    | Loại    | Mô tả lớp                                      | Giá trị đại diện |
+| ---------- | ----------- | ------- | ---------------------------------------------- | ---------------- |
+| `name`     | EC-MNAME-1  | Valid   | Không rỗng                                     | `Nguyen Van A`   |
+| `name`     | EC-MNAME-2  | Invalid | Rỗng                                           | `""`             |
+| `email`    | EC-MEMAIL-1 | Valid   | Đúng định dạng & chưa tồn tại                  | `new@domain.com` |
+| `email`    | EC-MEMAIL-2 | Invalid | Sai định dạng                                  | `abc@`           |
+| `email`    | EC-MEMAIL-3 | Invalid | Đã tồn tại (kỳ vọng từ chối; nghi BUG cho qua) | `test@eshop.com` |
+| `password` | EC-MPWD-1   | Valid   | ≥8 ký tự, đủ 4 loại                            | `Abcd123!`       |
+| `password` | EC-MPWD-2   | Invalid | Thiếu chữ hoa                                  | `abcd123!`       |
+| `password` | EC-MPWD-3   | Invalid | Thiếu số                                       | `Abcdefg!`       |
+| `password` | EC-MPWD-4   | Invalid | Thiếu ký tự đặc biệt                           | `Abcd1234`       |
+| `password` | EC-MPWD-5   | Invalid | <8 ký tự                                       | `Ab1!`           |
 
 ### D.1.3 Test cases — Domain Testing
 
 > ⏳ Điền qua skill `domain-testing` (mã `TC-MOB_REG-001…`).
 
-| TC ID         | Phủ EC | Test data | Expected result | Status  |
-| ------------- | ------ | --------- | --------------- | ------- |
-| TC-MOB_REG-001| EC-MNAME-1, EC-MEMAIL-1, EC-MPWD-1 | `Nguyen Van A` / `new@domain.com` / `Abcd123!` | Đăng ký thành công, về màn login | Not Run |
-| `<bổ sung>`   |        |           |                 | Not Run |
+| TC ID          | Phủ EC                             | Test data                                      | Expected result                  | Status  |
+| -------------- | ---------------------------------- | ---------------------------------------------- | -------------------------------- | ------- |
+| TC-MOB_REG-001 | EC-MNAME-1, EC-MEMAIL-1, EC-MPWD-1 | `Nguyen Van A` / `new@domain.com` / `Abcd123!` | Đăng ký thành công, về màn login | Not Run |
+| `<bổ sung>`    |                                    |                                                |                                  | Not Run |
 
 ## D.2 Boundary Value Analysis
 
@@ -479,21 +482,21 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ### D.2.2 Bảng giá trị biên
 
-| Biến             | Điểm  | Giá trị (độ dài → ví dụ) | Kỳ vọng |
-| ---------------- | ----- | ------------------------ | ------- |
-| `độ dài password`| min-1 | 7 → `Aa1@bcd`            | Invalid |
-| `độ dài password`| min   | 8 → `Aa1@bcde`           | Valid   |
-| `độ dài password`| min+1 | 9 → `Aa1@bcdef`          | Valid   |
+| Biến              | Điểm  | Giá trị (độ dài → ví dụ) | Kỳ vọng |
+| ----------------- | ----- | ------------------------ | ------- |
+| `độ dài password` | min-1 | 7 → `Aa1@bcd`            | Invalid |
+| `độ dài password` | min   | 8 → `Aa1@bcde`           | Valid   |
+| `độ dài password` | min+1 | 9 → `Aa1@bcdef`          | Valid   |
 
 ### D.2.3 Test cases — BVA
 
 > ⏳ Điền qua skill `boundary-value-analysis` (mã `TC-MOB_REG-101…`). (Đối chiếu với file đã có [BVA-FR01.md](../../group05_eshop/tests/test-design/BVA-FR01.md) — cùng kỹ thuật, khác feature.)
 
-| TC ID          | Điểm biên | Test data (password) | Expected result | Status  |
-| -------------- | --------- | -------------------- | --------------- | ------- |
+| TC ID          | Điểm biên | Test data (password) | Expected result                       | Status  |
+| -------------- | --------- | -------------------- | ------------------------------------- | ------- |
 | TC-MOB_REG-101 | min-1 (7) | `Aa1@bcd`            | Báo "mật khẩu quá yếu", không gửi API | Not Run |
-| TC-MOB_REG-102 | min (8)   | `Aa1@bcde`           | Đăng ký thành công | Not Run |
-| TC-MOB_REG-103 | min+1 (9) | `Aa1@bcdef`          | Đăng ký thành công | Not Run |
+| TC-MOB_REG-102 | min (8)   | `Aa1@bcde`           | Đăng ký thành công                    | Not Run |
+| TC-MOB_REG-103 | min+1 (9) | `Aa1@bcdef`          | Đăng ký thành công                    | Not Run |
 
 ## D.3 AI Gap Analysis · D.4 Bugs
 
@@ -569,15 +572,15 @@ Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1
 
 ## A.1 Student Information
 
-| Field                   | Value                                 |
-| :---------------------- | :------------------------------------ |
-| Student name (printed): | Trương Thành Đạt                      |
-| Student ID:             | 23217344                              |
-| Class / Cohort:         | Kiểm thử phần mềm - 23KTPM3           |
-| Assignment ID:          | HW02                                  |
-| Assignment date:        | `<dd/mm/2026>`                        |
-| AI tool(s) used:        | Claude Code (claude-opus-4-8)         |
-| AI tool(s) used:        | [ ] Yes [ ] No                        |
+| Field                   | Value                         |
+| :---------------------- | :---------------------------- |
+| Student name (printed): | Trương Thành Đạt              |
+| Student ID:             | 23217344                      |
+| Class / Cohort:         | Kiểm thử phần mềm - 23KTPM3   |
+| Assignment ID:          | HW02                          |
+| Assignment date:        | `<dd/mm/2026>`                |
+| AI tool(s) used:        | Claude Code (claude-opus-4-8) |
+| AI tool(s) used:        | [ ] Yes [ ] No                |
 
 ## A.2 Audit Table — one row per artifact
 
