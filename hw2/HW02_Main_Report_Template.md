@@ -150,51 +150,106 @@
 
 ### A.2.1 Các bước áp dụng (step-by-step)
 
-1. **Biến áp dụng được BVA:** `độ dài phone` (số chữ số) — biến có thứ tự. (Biến không có thứ tự, không làm BVA: `name`, `shipping_address` nội dung tự do, `role`.)
-2. **Xác định biên đóng/mở:** theo regex `^[1-9][0-9]{8,9}$` → độ dài hợp lệ là **[9, 10]** (cả hai biên đóng).
-3. **Chiến lược đã chọn & lý do:** 3-value (min-1, min, min+1 và max-1, max, max+1) để bắt cả lỗi off-by-one ở hai đầu.
-4. **Lập bảng giá trị biên:** xem A.2.2.
-5. **Thiết kế test case (one variable at a time):** chỉ thay đổi độ dài phone; các trường khác giữ hợp lệ.
+**Bước 0 — Xác định feature & tái dùng EC**
+
+Feature: FR-04 Personal profile management. Endpoint: `PUT /api/users/me`. Tái dùng bảng Equivalence Classes từ A.1.2 (17 lớp tương đương) — không đọc lại nguồn từ đầu. Biên xác định từ cùng regex đã phân tích ở A.1.
+
+**Bước 1 — Biến áp dụng được BVA (có thứ tự)**
+
+| Biến               | Áp dụng BVA? | Lý do                                                                     |
+| ------------------ | ------------ | ------------------------------------------------------------------------- |
+| `độ dài phone`     | ✅ Có        | Biến số có thứ tự — biên dưới và biên trên xác định rõ ràng qua regex     |
+| `name` (nội dung)  | ❌ Không     | Text tự do, không có thứ tự; không xác định được biên có nghĩa           |
+| `shipping_address` | ❌ Không     | Text tự do, không có thứ tự                                               |
+| `role`             | ❌ Không     | Biến danh mục (categorical), không có thứ tự                              |
+| JWT `token`        | ❌ Không     | Biến xác thực nhị phân (valid/invalid), không có thứ tự                   |
+
+**Bước 2 — Xác định biên của `độ dài phone`**
+
+Nguồn: regex `^[1-9][0-9]{8,9}$` tại [frontend-web/src/pages/Profile.jsx:43](../../group05_eshop/frontend-web/src/pages/Profile.jsx#L43) và [frontend-mobile/App.js:287](../../group05_eshop/frontend-mobile/App.js#L287).
+- Phân tích: `[1-9]` = 1 ký tự đầu; `[0-9]{8,9}` = 8 hoặc 9 ký tự tiếp → tổng độ dài: **9 đến 10 ký tự**.
+- **Biên dưới: `min = 9` (đóng, `≥ 9`).**
+- **Biên trên: `max = 10` (đóng, `≤ 10`).**
+- **Oracle lưu ý:** Server (`backend/server.js:118-135`) **không validate** độ dài phone → test qua Postman (bypass client) cho thấy server chấp nhận mọi độ dài → lộ bug thiếu server-side validation.
+
+**Bước 3 — Chiến lược: 3-value BVA**
+
+Chọn **3-value BVA** (ISTQB FL §4.2.2): kiểm {min-1, min, min+1} và {max-1, max, max+1} để bắt lỗi **off-by-one** (nhầm `<` với `≤`). Vì miền `[9,10]` chỉ rộng 2 đơn vị: `min+1 = max = 10` và `max-1 = min = 9` → 6 điểm lý thuyết hợp nhất còn **4 điểm test** (8, 9, 10, 11) → 4 TC.
+
+**Bước 4 — Bảng giá trị biên:** xem A.2.2.
+
+**Bước 5–6 — Thiết kế test case & format chuẩn:** xem A.2.3. Mỗi điểm biên → 1 TC riêng; `name` và `shipping_address` giữ valid để cô lập biến `phone`.
+
+**Bước 7 — Truy vết Boundary ↔ TC:** xem A.2.4.
+
+**Bước 8 — Nghi vấn bug (off-by-one & thiếu chặn biên)**
+
+- **BUG-BVA-01 — Thiếu server-side validation cho độ dài phone:** TC-PROFILE-101 (8 số) và TC-PROFILE-104 (11 số) dự kiến server trả 400; thực tế (dự đoán) trả 200 và lưu phone không hợp lệ → không có biên nào ở server. Đây là mở rộng của BUG-A-03.
+- **BUG-BVA-02 — Regex không nhận số 0-đầu ở biên max:** Số điện thoại 10 chữ số bắt đầu `0` (vd `0912345678`) là số VN hợp lệ nhưng regex từ chối — lỗi thiết kế regex (đã ghi BUG-A-05), không phải off-by-one.
 
 ### A.2.2 Bảng giá trị biên
 
-| Biến           | Biên (đóng/mở) | Điểm  | Giá trị (độ dài → ví dụ) | Kỳ vọng |
-| -------------- | -------------- | ----- | ------------------------ | ------- |
-| `độ dài phone` | dưới (≥9)      | min-1 | 8 số → `91234567`        | Invalid |
-| `độ dài phone` | dưới (≥9)      | min   | 9 số → `912345678`       | Valid   |
-| `độ dài phone` | dưới (≥9)      | min+1 | 10 số → `9123456789`     | Valid   |
-| `độ dài phone` | trên (≤10)     | max-1 | 9 số → `912345678`       | Valid   |
-| `độ dài phone` | trên (≤10)     | max   | 10 số → `9123456789`     | Valid   |
-| `độ dài phone` | trên (≤10)     | max+1 | 11 số → `91234567890`    | Invalid |
+| Biến           | Biên (đóng/mở)   | Điểm BVA     | Độ dài | Giá trị ví dụ  | Kỳ vọng đúng (client)    | Kỳ vọng thực tế (server via Postman) |
+| -------------- | ---------------- | ------------ | ------ | -------------- | ------------------------ | ------------------------------------- |
+| `độ dài phone` | dưới, đóng (≥9)  | min-1        | 8 số   | `91234567`     | Invalid (quá ngắn)       | **Bug: 200 OK (lưu phone 8 số)**      |
+| `độ dài phone` | dưới, đóng (≥9)  | min          | 9 số   | `912345678`    | Valid                    | 200 OK ✓                              |
+| `độ dài phone` | dưới, đóng (≥9)  | min+1        | 10 số  | `9123456789`   | Valid                    | 200 OK ✓                              |
+| `độ dài phone` | trên, đóng (≤10) | max-1        | 9 số   | `912345678`    | Valid *(= min, gộp TC)*  | 200 OK ✓ *(= min)*                    |
+| `độ dài phone` | trên, đóng (≤10) | max          | 10 số  | `9123456789`   | Valid *(= min+1, gộp TC)*| 200 OK ✓ *(= min+1)*                  |
+| `độ dài phone` | trên, đóng (≤10) | max+1        | 11 số  | `91234567890`  | Invalid (quá dài)        | **Bug: 200 OK (lưu phone 11 số)**     |
+
+> *Do miền `[9, 10]` chỉ rộng 2 đơn vị: `max-1 = min = 9` và `max = min+1 = 10` → gộp thành 4 TC duy nhất thay vì 6.*
 
 ### A.2.3 Test cases — BVA
 
-<!-- Technique: Boundary Value Analysis (3-value). Mã bắt đầu từ 101. Test data dùng ký tự đầu khác 0 để chỉ kiểm độ dài. -->
+<!-- Technique: Boundary Value Analysis (3-value). Mã bắt đầu từ 101. Test qua Postman để kiểm cả client lẫn server. Ký tự đầu '9' (≠ 0) để chỉ kiểm độ dài, tránh defect masking với BUG-A-05. -->
 
-| TC ID          | Điểm biên | Preconditions | Test data (phone) | Các bước (tóm tắt)        | Expected result                          | Status  |
-| -------------- | --------- | ------------- | ----------------- | ------------------------- | ---------------------------------------- | ------- |
-| TC-PROFILE-101 | min-1 (8) | Đã đăng nhập  | `91234567`        | PUT /me với phone 8 số    | Bị từ chối (dưới biên dưới)              | Not Run |
-| TC-PROFILE-102 | min (9)   | Đã đăng nhập  | `912345678`       | PUT /me với phone 9 số    | Cập nhật thành công                      | Not Run |
-| TC-PROFILE-103 | min+1 (10)| Đã đăng nhập  | `9123456789`      | PUT /me với phone 10 số   | Cập nhật thành công                      | Not Run |
-| TC-PROFILE-104 | max+1 (11)| Đã đăng nhập  | `91234567890`     | PUT /me với phone 11 số   | Bị từ chối (trên biên trên)              | Not Run |
+| TC ID          | Điểm biên phủ                      | Preconditions                | Test data (Body JSON)                                                                              | Các bước (tóm tắt)                                                                                                                       | Expected result                                                                                                                                      | Status  |
+| -------------- | ---------------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| TC-PROFILE-101 | min-1 (8 số)                       | Đã đăng nhập (user thường)   | `{"name":"Nguyen Van A","phone":"91234567","shipping_address":"123 Le Loi, Q1, TP.HCM"}`           | POST /api/login → lấy JWT; (a) Test qua Web: nhập phone 8 số → observe alert; (b) PUT /api/users/me qua Postman với JWT                  | (a) Web: alert "Số điện thoại không hợp lệ". (b) Server: **Kỳ vọng 400**; **Dự đoán bug:** 200, lưu phone 8 số vào DB                               | Not Run |
+| TC-PROFILE-102 | min (9 số), max-1 (9 số)           | Đã đăng nhập (user thường)   | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi, Q1, TP.HCM"}`          | POST /api/login → PUT /api/users/me (qua cả Web và Postman) với phone 9 số; GET /api/users/me để xác nhận                                | 200 `{"message":"Profile updated"}`; GET /me trả về `phone: "912345678"` — biên dưới hợp lệ                                                          | Not Run |
+| TC-PROFILE-103 | min+1 (10 số), max (10 số)         | Đã đăng nhập (user thường)   | `{"name":"Nguyen Van A","phone":"9123456789","shipping_address":"123 Le Loi, Q1, TP.HCM"}`         | POST /api/login → PUT /api/users/me với phone 10 số; GET /api/users/me để xác nhận                                                       | 200 `{"message":"Profile updated"}`; GET /me trả về `phone: "9123456789"` — biên trên hợp lệ                                                         | Not Run |
+| TC-PROFILE-104 | max+1 (11 số)                      | Đã đăng nhập (user thường)   | `{"name":"Nguyen Van A","phone":"91234567890","shipping_address":"123 Le Loi, Q1, TP.HCM"}`        | POST /api/login → lấy JWT; (a) Test qua Web: nhập phone 11 số → observe alert; (b) PUT /api/users/me qua Postman                         | (a) Web: alert "Số điện thoại không hợp lệ". (b) Server: **Kỳ vọng 400**; **Dự đoán bug:** 200, lưu phone 11 số vào DB                              | Not Run |
 
 ### A.2.4 Truy vết coverage (Biên ↔ TC)
 
-| Điểm biên  | Phủ bởi TC     |
-| ---------- | -------------- |
-| min-1 (8)  | TC-PROFILE-101 |
-| min (9)    | TC-PROFILE-102 |
-| min+1 (10) | TC-PROFILE-103 |
-| max (10)   | TC-PROFILE-103 |
-| max+1 (11) | TC-PROFILE-104 |
+| Điểm biên     | Độ dài | Phủ bởi TC     | Ghi chú                                                         |
+| ------------- | ------ | -------------- | --------------------------------------------------------------- |
+| min-1         | 8 số   | TC-PROFILE-101 | Invalid — dưới biên dưới                                        |
+| min           | 9 số   | TC-PROFILE-102 | Valid — tại biên dưới                                           |
+| min+1         | 10 số  | TC-PROFILE-103 | Valid — trên biên dưới 1 bước                                   |
+| max-1         | 9 số   | TC-PROFILE-102 | Valid — dưới biên trên 1 bước (= min → cùng TC-PROFILE-102)    |
+| max           | 10 số  | TC-PROFILE-103 | Valid — tại biên trên (= min+1 → cùng TC-PROFILE-103)          |
+| max+1         | 11 số  | TC-PROFILE-104 | Invalid — trên biên trên                                        |
 
 ## A.3 AI Gap Analysis
 
-<!-- Điền sau khi chạy skill + review: AI bỏ sót test case/bug nào? VÌ SAO sót? -->
+> **Phương pháp review (human review — bắt buộc theo HW02 §2 & §6.3):** Sau khi AI sinh 14 TC Domain Testing + 4 TC BVA, tôi tự đối chiếu lại từng TC với **code thật** (`server.js`, `database.js`, `Profile.jsx`) thay vì chỉ với prompt. Trọng tâm review: (a) AI có coi cả **biến output** là đối tượng test không, hay chỉ test input? (b) các lớp tương đương có thật sự **rời nhau** không (đặc biệt "field thiếu" vs "field rỗng")? (c) lớp "valid token" có cần chia nhỏ theo thời gian không? Kết quả: tìm thấy **6 gap** AI bỏ sót, trong đó 2 gap dẫn tới bug nghiêm trọng chưa từng được phủ.
 
-| #   | Test case / bug AI bỏ sót | Bạn bổ sung gì | Nguyên nhân AI sót              |
-| --- | ------------------------- | -------------- | ------------------------------- |
-| 1   | `<...>`                   | `<...>`        | `<prompt/AI limit/độ phức tạp>` |
+### A.3.1 Bảng phân tích gap
+
+| #   | Test case / bug AI bỏ sót | Bạn bổ sung gì | Nguyên nhân AI sót |
+| --- | ------------------------- | -------------- | ------------------ |
+| 1 | **GET `/api/users/me` rò rỉ dữ liệu nhạy cảm.** [server.js:113](../../group05_eshop/backend/server.js#L113) dùng `SELECT * FROM users` rồi `res.json(user)` → trả luôn `password` (lưu **plaintext**) và `reset_token`. Không TC nào của AI kiểm output của GET. | TC-PROFILE-015 (assert response GET /me **không** chứa `password`/`reset_token`) + **BUG-A-07** (Sensitive Data Exposure, Critical). | **Giới hạn cách AI khung hoá bài toán.** AI hiểu FR-04 = "validate input của PUT" nên chỉ phân vùng các biến *đầu vào*. Skill domain-testing (Bước 1) có nhắc cả "biến output/điều kiện" nhưng AI bỏ qua vì prompt và ngữ cảnh nghiêng hẳn về input-validation. Đây là **prompt + AI framing limitation**. |
+| 2 | **Partial update ghi đè NULL.** [server.js:121](../../group05_eshop/backend/server.js#L121) luôn `SET name=?, shipping_address=?, phone=?`. PUT thiếu 1 field → field đó = `undefined` → SQLite lưu **NULL**, xoá dữ liệu cũ. AI luôn gửi đủ 3 field nên không bao giờ chạm tình huống này. | TC-PROFILE-016 (PUT chỉ `{name}`, xác nhận `phone`/`address` cũ bị mất) + **BUG-A-08** (Data loss on partial update, High). | **Phân lớp tương đương sai do độ phức tạp ngữ nghĩa.** AI gộp lớp "field **thiếu** (absent/`undefined`)" chung với "field **rỗng** (`""`)" — trong khi với cơ chế destructuring JS + UPDATE không điều kiện, đây là **2 lớp tương đương khác hành vi**. Phải đọc kỹ code mới thấy → **inherent complexity** của feature. |
+| 3 | **Lớp con "token hợp lệ nhưng đã hết hạn".** EC-AUTH chỉ có valid / missing / malformed. JWT đúng chữ ký nhưng **expired** là lớp con riêng (`jwt.verify` trả `err` → 403), AI không tách. | TC-PROFILE-017 (dùng token hết hạn → kỳ vọng 403). | **Giới hạn AI khi phân vùng biến phi-input rõ ràng.** AI coi token là nhị phân valid/invalid, không phân vùng theo **trục thời gian**. Lý thuyết EC cho phép chia nhỏ lớp valid; AI dừng ở mức thô. |
+| 4 | **Giá trị `role` tuỳ ý ngoài enum.** AI chỉ test `role="admin"`. Code [server.js:124](../../group05_eshop/backend/server.js#L124) `if (role)` ghi **bất kỳ** chuỗi nào (vd `"superadmin"`); ngược lại `role=""` falsy → **không thể** xoá/đặt lại role. | TC-PROFILE-018 (PUT `role="superadmin"` → kỳ vọng bị từ chối; thực tế lưu raw, phá vỡ enum role). | **AI chọn 1 đại diện "hấp dẫn nhất" thay vì phủ kín miền.** Với `role`, AI chỉ lấy ca tấn công kinh điển (`admin`) mà bỏ lớp "giá trị rác ngoài tập {user, admin}" và lớp "role rỗng". **AI bias** về ca nổi tiếng. |
+| 5 | **BUG-A-06 (mobile camelCase mismatch) không có TC dẫn.** Bug được AI ghi nhận từ đọc code tĩnh nhưng **không** TC nào trong A.1.3 thực thi nó. | Ghi chú bổ sung: BUG-A-06 sẽ được phủ bởi test case của **Feature D** (mobile); thêm tham chiếu chéo để không bỏ sót khi execute. | **AI tách rời "đọc code phát hiện bug" và "thiết kế TC thực thi bug".** Quan sát tĩnh không tự động sinh ca kiểm chứng động → cần con người nối lại. |
+| 6 | **`name` / `shipping_address` không có giới hạn độ dài → input không chặn trên.** AI đánh dấu 2 biến này "không áp dụng BVA" vì không có biên thứ tự. | TC-PROFILE-105 (BVA mở rộng): gửi `name`/`address` ~100.000 ký tự → kỳ vọng bị giới hạn; thực tế server lưu nguyên → nguy cơ storage/DoS. | **AI áp quy tắc BVA quá máy móc.** "Không có biên định nghĩa" bị AI hiểu thành "không cần test", trong khi **sự vắng mặt của biên trên chính là một phát hiện** đáng probe. **AI literal rule-following.** |
+
+### A.3.2 Test case bổ sung (do con người thêm sau review)
+
+> Tiếp tục dải mã: Domain Testing `015–018`, BVA `105`. Tất cả test qua **Postman (direct API)** để bypass client.
+
+| TC ID | Phủ gap | Preconditions | Test data / thao tác | Expected result | Status |
+| ----- | ------- | ------------- | -------------------- | --------------- | ------ |
+| TC-PROFILE-015 | Gap #1 | Đã đăng nhập (user thường) | `GET /api/users/me` với JWT hợp lệ → kiểm tra toàn bộ field trong response body | **Kỳ vọng:** body **không** chứa `password`, `reset_token`. **Thực tế (BUG-A-07):** trả `password` (plaintext) + `reset_token` | Not Run |
+| TC-PROFILE-016 | Gap #2 | User đang có `phone="912345678"`, `shipping_address="123 Le Loi"` | `PUT /api/users/me` body chỉ `{"name":"Nguyen Van B"}` (cố tình thiếu phone & address) → `GET /api/users/me` | **Kỳ vọng:** chỉ `name` đổi; `phone`/`address` giữ nguyên. **Thực tế (BUG-A-08):** `phone` & `shipping_address` bị set NULL → mất dữ liệu | Not Run |
+| TC-PROFILE-017 | Gap #3 | Có 1 JWT đã hết hạn (valid signature, `exp` quá khứ) | `PUT /api/users/me` + `Authorization: Bearer <expired_jwt>` | 403 `{"error":"Forbidden"}` | Not Run |
+| TC-PROFILE-018 | Gap #4 | Đã đăng nhập (user thường, role=user) | `{"name":"Nguyen Van A","phone":"912345678","shipping_address":"123 Le Loi","role":"superadmin"}` → `GET /api/users/me` | **Kỳ vọng:** từ chối / bỏ qua `role`. **Thực tế:** lưu `role="superadmin"` (giá trị ngoài enum {user, admin}) — mở rộng BUG-A-01 | Not Run |
+| TC-PROFILE-105 | Gap #6 (BVA) | Đã đăng nhập (user thường) | `{"name":"<100.000 ký tự 'A'>","phone":"912345678","shipping_address":"<100.000 ký tự>"}` | **Kỳ vọng:** server giới hạn độ dài → 400. **Thực tế (dự đoán bug):** 200, lưu nguyên chuỗi khổng lồ vào DB | Not Run |
+
+> ⚠️ Hai gap #1 và #2 sinh ra **2 bug mới** đã bổ sung vào bảng A.4 (BUG-A-07, BUG-A-08). Tổng test case Feature A sau review: **23** = 14 (Domain gốc) + 4 (BVA gốc) + 4 (Domain bổ sung 015–018) + 1 (BVA bổ sung 105).
 
 ## A.4 Bugs phát hiện (Feature A)
 
@@ -208,12 +263,14 @@
 | BUG-A-04 | TC-PROFILE-011 | Stored XSS: `shipping_address` chứa XSS payload lưu raw; potential render ở các trang hiển thị địa chỉ | Medium | `<#issue>` | `<ảnh>` |
 | BUG-A-05 | TC-PROFILE-006 | Design bug trong regex phone: `^[1-9][0-9]{8,9}$` từ chối số VN hợp lệ bắt đầu bằng 0 (vd `0912345678`) — số VN thật đều bắt đầu bằng 0 | Medium | `<#issue>` | `<ảnh>` |
 | BUG-A-06 | *(Mobile test)* | Mobile field name mismatch: `frontend-mobile/App.js:302` gửi `shippingAddress` (camelCase) nhưng server đọc `shipping_address` → address không bao giờ lưu được qua mobile app | Medium | `<#issue>` | `<ảnh>` |
+| BUG-A-07 | TC-PROFILE-015 | Sensitive Data Exposure: `GET /api/users/me` dùng `SELECT *` (server.js:113) trả cả `password` (lưu plaintext) và `reset_token` về client | Critical | `<#issue>` | `<ảnh>` |
+| BUG-A-08 | TC-PROFILE-016 | Data loss: `PUT /api/users/me` luôn `SET name,shipping_address,phone` (server.js:121) → cập nhật thiếu field sẽ ghi NULL đè dữ liệu cũ (không hỗ trợ partial update) | High | `<#issue>` | `<ảnh>` |
 
 ### Kết quả execute Feature A (tóm tắt)
 
 | Chỉ số             | Số lượng |
 | ------------------ | -------- |
-| Test case thiết kế | 18 (14 Domain + 4 BVA) |
+| Test case thiết kế | 23 (14 Domain + 4 BVA + 5 bổ sung sau review) |
 | Đã execute         | `<...>`  |
 | Pass               | `<...>`  |
 | Fail               | `<...>`  |
@@ -451,7 +508,7 @@
 | Chỉ số             | A    | B    | C    | D    | Tổng |
 | ------------------ | ---- | ---- | ---- | ---- | ---- |
 | Số feature         | 1    | 1    | 1    | 1    | 4    |
-| Test case thiết kế | 18   | `<>` | `<>` | `<>` | `<>` |
+| Test case thiết kế | 23   | `<>` | `<>` | `<>` | `<>` |
 | Đã execute         | `<>` | `<>` | `<>` | `<>` | `<>` |
 | Pass               | `<>` | `<>` | `<>` | `<>` | `<>` |
 | Fail               | `<>` | `<>` | `<>` | `<>` | `<>` |
