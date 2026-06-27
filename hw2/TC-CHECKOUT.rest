@@ -1,0 +1,352 @@
+### Feature B — FR-08: Checkout
+### TC-CHECKOUT.rest — 20 test cases (Domain Testing + BVA + Gap Analysis)
+### Tool: REST Client extension (VS Code)
+###
+### HƯỚNG DẪN SỬ DỤNG:
+###   1. Cài extension "REST Client" trong VS Code
+###   2. Reset DB: cd group05_eshop/backend && node database.js
+###   3. Start backend: node server.js (port 3000)
+###   4. Chạy TC-LOGIN bên dưới → copy "token" từ response → paste vào @token
+###   5. Chạy từng TC theo thứ tự; đọc comment kỳ vọng trước khi chạy
+###   6. Điền kết quả vào cột Status trong HW02_Main_Report_Template.md
+###
+### LƯU Ý:
+###   - TC-CHECKOUT-014 và TC-CHECKOUT-015 cần precondition nhiều bước (xem comment)
+###   - Mỗi lần reset DB thì @token cũng cần lấy lại
+
+@baseUrl = http://localhost:3000
+@token = <paste_token_here>
+@validAddr = 123 Le Loi, Q1, TP.HCM
+
+# ============================================================
+# BƯỚC 0 — Lấy JWT token (BẮT BUỘC chạy trước)
+# ============================================================
+
+### TC-LOGIN | POST /api/login → lấy JWT cho user thường (user_id = 2)
+# → Copy "token" trong response → paste vào @token ở trên
+POST {{baseUrl}}/api/login
+Content-Type: application/json
+
+{
+  "email": "test@eshop.com",
+  "password": "Test1234!"
+}
+
+###
+
+# ============================================================
+# DOMAIN TESTING — TC-CHECKOUT-001 đến TC-CHECKOUT-014
+# ============================================================
+
+### TC-CHECKOUT-001 | EC-TOTAL-1, EC-SADDR-1, EC-AUTH-1 | Happy path — checkout hợp lệ
+# Kỳ vọng: 200 {"message":"Checkout successful","orderId":<id>}
+# Sau đó GET /api/orders/my-orders kiểm tra đơn mới có status "pending"
+POST {{baseUrl}}/api/checkout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "total_amount": 400000,
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-CHECKOUT-001b | GET /api/orders/my-orders — xác nhận đơn đã tạo ở TC-001
+# Kỳ vọng: đơn mới nhất có total_amount=400000, status="pending"
+GET {{baseUrl}}/api/orders/my-orders
+Authorization: Bearer {{token}}
+
+###
+
+### TC-CHECKOUT-002 | EC-TOTAL-2 | total_amount = 0
+# Kỳ vọng: 400, báo lỗi total_amount không hợp lệ
+# Thực tế (BUG-B-03): 200, tạo đơn với total_amount=0
+POST {{baseUrl}}/api/checkout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "total_amount": 0,
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-CHECKOUT-003 | EC-TOTAL-3 | total_amount âm
+# Kỳ vọng: 400, báo lỗi total_amount không hợp lệ
+# Thực tế (BUG-B-03): 200, tạo đơn với total_amount=-50000
+POST {{baseUrl}}/api/checkout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "total_amount": -50000,
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-CHECKOUT-004 | EC-TOTAL-4 | total_amount là chuỗi không phải số
+# Kỳ vọng: 400, lỗi kiểu dữ liệu
+# Thực tế (BUG-B-03): 200, SQLite coerce "abc" → 0, lưu total_amount=0
+POST {{baseUrl}}/api/checkout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "total_amount": "abc",
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-CHECKOUT-005 | EC-TOTAL-5 | thiếu field total_amount
+# Kỳ vọng: 400, field bắt buộc
+# Thực tế (BUG-B-03): 200, INSERT NULL vào cột total_amount
+POST {{baseUrl}}/api/checkout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-CHECKOUT-006 | EC-SADDR-2 | shipping_address rỗng
+# Kỳ vọng: 400, địa chỉ bắt buộc
+# Thực tế (BUG-B-03): 200, tạo đơn với shipping_address=""
+POST {{baseUrl}}/api/checkout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "total_amount": 400000,
+  "shipping_address": ""
+}
+
+###
+
+### TC-CHECKOUT-007 | EC-SADDR-3 | thiếu field shipping_address
+# Kỳ vọng: 400, field bắt buộc
+# Thực tế (BUG-B-03): 200, INSERT NULL vào cột shipping_address
+POST {{baseUrl}}/api/checkout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "total_amount": 400000
+}
+
+###
+
+### TC-CHECKOUT-008 | EC-AUTH-2 | không có Authorization header
+# Kỳ vọng: 401 {"error":"Unauthorized"}
+POST {{baseUrl}}/api/checkout
+Content-Type: application/json
+
+{
+  "total_amount": 400000,
+  "shipping_address": "{{validAddr}}"
+}
+
+###
+
+### TC-CHECKOUT-009 | EC-CODE-1, EC-CAMP-1 | SAVE10 (percent 10%), total=400000 > min=300000
+# Kỳ vọng: 200, discount=40000, final=360000
+# Thực tế (BUG-B-02): discount=-3600000, final=4000000 (công thức sai: total*(1-10))
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10",
+  "total_amount": 400000,
+  "user_id": 2
+}
+
+###
+
+### TC-CHECKOUT-010 | EC-CODE-2 | code rỗng
+# Kỳ vọng: 400 {"error":"Vui lòng nhập mã giảm giá"}
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "",
+  "total_amount": 400000
+}
+
+###
+
+### TC-CHECKOUT-011 | EC-CODE-3 | code không tồn tại trong DB
+# Kỳ vọng: 404 {"error":"Mã giảm giá không tồn tại hoặc đã bị vô hiệu hóa"}
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "FAKE999",
+  "total_amount": 400000
+}
+
+###
+
+### TC-CHECKOUT-012 | EC-CODE-4 | mã EXPIRED (expired_at = 2020-01-01)
+# LƯU Ý: EXPIRED có min_order_amount=100000, nên total=200000 > min → vào được nhánh check expiry
+# Kỳ vọng: 400 {"error":"Mã giảm giá đã hết hạn"}
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "EXPIRED",
+  "total_amount": 200000
+}
+
+###
+
+### TC-CHECKOUT-013 | EC-CAMP-2 | total_amount dưới ngưỡng tối thiểu của SAVE10 (min=300000)
+# Kỳ vọng: 400 {"error":"Đơn hàng chưa đủ giá trị tối thiểu 300.000 ₫..."}
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10",
+  "total_amount": 200000
+}
+
+###
+
+### TC-CHECKOUT-014 | EC-CODE-5 | SAVE10 đã dùng hết lượt (max_uses_per_user=1)
+# PRECONDITION — chạy 3 bước này theo thứ tự:
+#   Bước 1: Chạy TC-CHECKOUT-014-step1 (áp SAVE10 lần đầu)
+#   Bước 2: Chạy TC-CHECKOUT-014-step2 (ghi coupon_usage vào DB)
+#   Bước 3: Chạy TC-CHECKOUT-014-step3 (áp SAVE10 lần 2 → kỳ vọng từ chối)
+
+### TC-CHECKOUT-014-step1 | Áp SAVE10 lần đầu — lấy coupon_id từ response
+# Kỳ vọng: 200, coupon_id=1 (SAVE10), discount âm do BUG-B-02
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10",
+  "total_amount": 400000,
+  "user_id": 2
+}
+
+###
+
+### TC-CHECKOUT-014-step2 | Ghi coupon_usage (coupon_id=1, user_id=2 từ token)
+# → Simulates đã dùng SAVE10 một lần
+POST {{baseUrl}}/api/coupon-usage
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "coupon_id": 1
+}
+
+###
+
+### TC-CHECKOUT-014-step3 | Áp SAVE10 lần 2 — kỳ vọng từ chối vì đã đạt giới hạn
+# Kỳ vọng: 400 {"error":"Bạn đã sử dụng mã này 1 lần (đã đạt giới hạn)"}
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10",
+  "total_amount": 400000,
+  "user_id": 2
+}
+
+###
+
+# ============================================================
+# BOUNDARY VALUE ANALYSIS — TC-CHECKOUT-101 đến TC-CHECKOUT-103
+# ============================================================
+# Biên: min_order_amount của SAVE10 = 300000
+# Chiến lược 3-value: {min-1=299999, min=300000, min+1=300001}
+# RESET DB trước khi chạy nhóm BVA để đảm bảo SAVE10 chưa bị dùng
+
+### TC-CHECKOUT-101 | BVA min-1 | total=299999 — dưới ngưỡng, từ chối là đúng
+# Kỳ vọng: 400 "Đơn hàng chưa đủ giá trị tối thiểu 300.000 ₫..."
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10",
+  "total_amount": 299999
+}
+
+###
+
+### TC-CHECKOUT-102 | BVA min | total=300000 — đúng ngưỡng
+# Kỳ vọng (spec >=): 200, coupon applied
+# Thực tế (BUG-B-01): 400, từ chối vì 300000 > 300000 = false (off-by-one)
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10",
+  "total_amount": 300000
+}
+
+###
+
+### TC-CHECKOUT-103 | BVA min+1 | total=300001 — trên ngưỡng, chấp nhận
+# Kỳ vọng: discount=30000 (10%), final=270001
+# Thực tế (BUG-B-02): discount=-2700009, final=3000010 (công thức sai)
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10",
+  "total_amount": 300001
+}
+
+###
+
+# ============================================================
+# GAP ANALYSIS — TC-CHECKOUT-015 đến TC-CHECKOUT-017
+# ============================================================
+
+### TC-CHECKOUT-015 | EC-UID-2, EC-CODE-5 | Bypass max_uses bằng cách bỏ user_id
+# PRECONDITION: SAVE10 đã được user_id=2 dùng 1 lần
+#   Nếu chưa có precondition, chạy TC-CHECKOUT-014-step1 và step2 trước
+# Kỳ vọng: 400 từ chối vì đã đạt giới hạn
+# Thực tế (BUG-B-04): 200, áp thành công vì if(user_id)=false → bỏ qua kiểm tra lượt dùng
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10",
+  "total_amount": 400000
+}
+
+###
+
+### TC-CHECKOUT-016 | EC-TYPE-2, EC-CODE-1 | VIP100 (fixed 100k) — đối chứng nhánh fixed
+# Kỳ vọng: 200, discount_amount=100000, final_amount=300000
+# Đối chứng: nếu TC này pass đúng thì BUG-B-02 chỉ xảy ra ở nhánh percent
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "VIP100",
+  "total_amount": 400000,
+  "user_id": 2
+}
+
+###
+
+### TC-CHECKOUT-017 | EC-TYPE-1 | apply-coupon thiếu total_amount
+# Kỳ vọng: 400 lỗi thiếu/sai total_amount
+# Thực tế: 400 nhưng báo nhầm "Đơn hàng chưa đủ giá trị tối thiểu..."
+# vì undefined > 300000 = false — thiếu validate kiểu dữ liệu
+POST {{baseUrl}}/api/apply-coupon
+Content-Type: application/json
+
+{
+  "code": "SAVE10"
+}
+
+###

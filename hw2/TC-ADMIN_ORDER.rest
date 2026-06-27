@@ -1,0 +1,268 @@
+### Feature C — FR-18: Order Management (Admin)
+### TC-ADMIN_ORDER.rest — 16 test cases (Domain Testing + BVA)
+### Tool: REST Client extension (VS Code)
+###
+### HƯỚNG DẪN SỬ DỤNG:
+###   1. Cài extension "REST Client" trong VS Code
+###   2. Reset DB: cd group05_eshop/backend && node database.js
+###   3. Start backend: node server.js (port 3000)
+###   4. Chạy TC-LOGIN-ADMIN và TC-LOGIN-USER → copy token → paste vào @adminToken / @userToken
+###   5. Chạy từng TC theo thứ tự; đọc comment kỳ vọng trước khi chạy
+###   6. Điền kết quả vào cột Status trong HW02_Main_Report_Template.md
+
+@baseUrl = http://localhost:3000
+@adminToken = <paste_admin_token_here>
+@userToken = <paste_user_token_here>
+
+# ============================================================
+# BƯỚC 0 — Lấy JWT tokens (BẮT BUỘC chạy trước)
+# ============================================================
+
+### TC-LOGIN-ADMIN | POST /api/login → lấy JWT cho admin
+# → Copy "token" trong response → paste vào @adminToken
+POST {{baseUrl}}/api/login
+Content-Type: application/json
+
+{
+  "email": "admin@eshop.com",
+  "password": "Admin123!"
+}
+
+###
+
+### TC-LOGIN-USER | POST /api/login → lấy JWT cho user thường
+# → Copy "token" trong response → paste vào @userToken
+POST {{baseUrl}}/api/login
+Content-Type: application/json
+
+{
+  "email": "test@eshop.com",
+  "password": "Test1234!"
+}
+
+###
+
+# ============================================================
+# BƯỚC CHUẨN BỊ — Tạo đơn hàng để có dữ liệu test
+# ============================================================
+
+### TC-SETUP-CHECKOUT | POST /api/checkout — tạo đơn hàng mới (status=pending)
+# Chạy để lấy orderId cho các TC bên dưới
+# Nếu reset DB, orderId thường = 1
+POST {{baseUrl}}/api/checkout
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "total_amount": 400000,
+  "shipping_address": "123 Le Loi, Q1, TP.HCM"
+}
+
+###
+
+### TC-SETUP-VERIFY | GET /api/orders/my-orders — xác nhận đơn đã tạo
+GET {{baseUrl}}/api/orders/my-orders
+Authorization: Bearer {{userToken}}
+
+###
+
+# ============================================================
+# DOMAIN TESTING — TC-ADMIN_ORDER-001 đến TC-ADMIN_ORDER-013
+# ============================================================
+
+### TC-ADMIN_ORDER-001 | GET /api/admin/orders — happy path với admin token
+# Kỳ vọng: 200, trả về mảng JSON tất cả đơn hàng (có user_name)
+GET {{baseUrl}}/api/admin/orders
+Authorization: Bearer {{adminToken}}
+
+###
+
+### TC-ADMIN_ORDER-002 | GET /api/admin/orders — với user thường (BUG-C-01)
+# Kỳ vọng: 403 (route admin, thiếu quyền)
+# Thực tế (BUG-C-01): 200 — route chỉ authenticateToken, không check role=admin
+GET {{baseUrl}}/api/admin/orders
+Authorization: Bearer {{userToken}}
+
+###
+
+### TC-ADMIN_ORDER-003 | GET /api/admin/orders — không có token
+# Kỳ vọng: 401 {"error":"Unauthorized"}
+GET {{baseUrl}}/api/admin/orders
+
+###
+
+### TC-ADMIN_ORDER-004 | EC-TRANS-1 | PUT pending → confirmed
+# PRECONDITION: có đơn ID=1 ở trạng thái pending (vừa tạo ở SETUP)
+# Kỳ vọng: 200 {"message":"Order status updated"}
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "confirmed"
+}
+
+###
+
+### TC-ADMIN_ORDER-005 | EC-TRANS-2 | PUT pending → canceled
+# PRECONDITION: reset DB + tạo đơn mới (orderId=1 ở pending)
+# Kỳ vọng: 200 {"message":"Order status updated"}
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "canceled"
+}
+
+###
+
+### TC-ADMIN_ORDER-006 | EC-TRANS-3 | PUT confirmed → shipping
+# PRECONDITION: đơn ID=1 ở trạng thái confirmed (chạy TC-004 trước)
+# Kỳ vọng: 200 {"message":"Order status updated"}
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "shipping"
+}
+
+###
+
+### TC-ADMIN_ORDER-007 | EC-TRANS-4 | PUT confirmed → canceled
+# PRECONDITION: cần đơn riêng ở trạng thái confirmed (tạo đơn mới + confirm)
+# Kỳ vọng: 200 {"message":"Order status updated"}
+# (Dùng orderId khác nếu TC-006 đã làm orderId=1 thành shipping)
+PUT {{baseUrl}}/api/admin/orders/2/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "canceled"
+}
+
+###
+
+### TC-ADMIN_ORDER-008 | EC-TRANS-5 | PUT shipping → delivered
+# PRECONDITION: đơn ID=1 ở trạng thái shipping (chạy TC-006 trước)
+# Kỳ vọng: 200 {"message":"Order status updated"}
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "delivered"
+}
+
+###
+
+### TC-ADMIN_ORDER-009 | EC-TRANS-6 | PUT delivered → canceled (terminal state)
+# PRECONDITION: đơn ID=1 ở trạng thái delivered (chạy TC-008 trước)
+# Kỳ vọng: 400 {"error":"Invalid state transition from delivered to canceled"}
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "canceled"
+}
+
+###
+
+### TC-ADMIN_ORDER-010 | EC-TRANS-7 | PUT canceled → delivered (BUG-C-02)
+# PRECONDITION: đơn ở trạng thái canceled (chạy TC-005 tạo đơn rồi cancel)
+# Kỳ vọng: 400 (nghiệp vụ: đơn đã hủy không thể thành đã giao)
+# Thực tế (BUG-C-02): 200 — server.js:550-551 cho phép transition vô lý này
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "delivered"
+}
+
+###
+
+### TC-ADMIN_ORDER-011 | EC-TARGET-1 | PUT status không hợp lệ ("done")
+# PRECONDITION: có đơn bất kỳ; đăng nhập admin
+# Kỳ vọng: 400 — isValidTransition=false vì "done" không match transition nào
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "done"
+}
+
+###
+
+### TC-ADMIN_ORDER-012 | EC-ID-1 | PUT order_id không tồn tại (99999)
+# Kỳ vọng: 404 {"error":"Order not found"}
+PUT {{baseUrl}}/api/admin/orders/99999/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "confirmed"
+}
+
+###
+
+### TC-ADMIN_ORDER-013 | EC-AUTH-1 | PUT bằng token user thường (BUG-C-01)
+# PRECONDITION: có đơn pending; đăng nhập user thường
+# Kỳ vọng: 403 (route admin, thiếu quyền)
+# Thực tế (BUG-C-01): 200 — không kiểm tra role
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "status": "confirmed"
+}
+
+###
+
+# ============================================================
+# BOUNDARY VALUE ANALYSIS — TC-ADMIN_ORDER-101 đến TC-ADMIN_ORDER-103
+# ============================================================
+# Biến: order_id (số nguyên dương, min=1 sau seed)
+# Chiến lược 3-value: {min-1=0, min=1, max+1=99999}
+# Các TC dùng transition pending→confirmed để cô lập tác động của biên id
+
+### TC-ADMIN_ORDER-101 | BVA min-1 | order_id = 0 (dưới biên)
+# Kỳ vọng: 404 — SQLite coerce 0, không match bản ghi nào
+PUT {{baseUrl}}/api/admin/orders/0/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "confirmed"
+}
+
+###
+
+### TC-ADMIN_ORDER-102 | BVA min | order_id = 1 (đúng biên nhỏ nhất)
+# PRECONDITION: reset DB → tạo đơn → đơn ID=1 ở pending
+# Kỳ vọng: 200, transition thành công
+PUT {{baseUrl}}/api/admin/orders/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "confirmed"
+}
+
+###
+
+### TC-ADMIN_ORDER-103 | BVA max+1 | order_id = 99999 (chắc chắn ngoài range)
+# Kỳ vọng: 404 {"error":"Order not found"}
+PUT {{baseUrl}}/api/admin/orders/99999/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "confirmed"
+}
+
+###

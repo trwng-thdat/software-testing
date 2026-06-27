@@ -328,7 +328,7 @@ Authorization: Bearer {{token}}
 # Expected: 403 {"error":"Forbidden"}
 # (Thay chuỗi EXPIRED_TOKEN bên dưới bằng token thật đã hết hạn)
 PUT {{baseUrl}}/api/users/me
-Authorization: Bearer EXPIRED_TOKEN_PASTE_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3ODI1MjI1NDcsImV4cCI6MTc4MjUyMjU0Nn0.J1-bD5b52fF1ScWcTbWhrJqwkahn4L8U4MB2wMF37kQ
 Content-Type: application/json
 
 {
