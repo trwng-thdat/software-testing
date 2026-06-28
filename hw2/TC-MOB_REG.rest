@@ -1,0 +1,253 @@
+### Feature D (Mobile) — D3: Mobile – Registration
+### TC-MOB_REG.rest — 17 test cases (Domain Testing + BVA + Gap Analysis)
+### Tool: REST Client extension (VS Code)
+###
+### HƯỚNG DẪN SỬ DỤNG:
+###   1. Cài extension "REST Client" trong VS Code
+###   2. Reset DB (để có sẵn seed test@eshop.com cho TC-004): cd backend && node database.js
+###   3. Start backend: node server.js   (port 3000)
+###   4. Chạy từng TC theo thứ tự; đọc comment kỳ vọng trước khi chạy
+###   5. Với TC-012 (plaintext) cần đọc DB sau khi đăng ký — xem lệnh sqlite3 ở comment
+###   6. Endpoint POST /api/register KHÔNG cần Authorization (đăng ký mới)
+###   7. Điền kết quả vào cột Status trong HW02_Main_Report_Template.md
+###
+### LƯU Ý: mỗi lần đăng ký thành công sẽ tạo 1 bản ghi mới. Nếu chạy lại nhiều lần,
+###        đổi email hoặc reset DB để tránh nhiễu (email không UNIQUE — BUG-D-02).
+
+@baseUrl = http://localhost:3000
+@validName = Nguyen Van A
+@validPwd = Abcd123!
+
+# ============================================================
+# DOMAIN TESTING — TC-MOB_REG-001 đến TC-MOB_REG-008
+# ============================================================
+
+### TC-MOB_REG-001 | EC-MNAME-1, EC-MEMAIL-1, EC-MPWD-1 | Happy path — dữ liệu hợp lệ
+# Expected: 200 {"message":"User registered successfully","id":<n>}
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "new@domain.com",
+  "password": "{{validPwd}}"
+}
+
+###
+
+### TC-MOB_REG-002 | EC-MNAME-2 | name rỗng — bypass mobile, server không chặn
+# Expected: 400 (name bắt buộc). Thực tế (BUG-D-01): 200, INSERT name=""
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "new2@domain.com",
+  "password": "{{validPwd}}"
+}
+
+###
+
+### TC-MOB_REG-003 | EC-MEMAIL-2 | email sai định dạng
+# Expected: 400 (email không hợp lệ). Thực tế (BUG-D-01): 200, INSERT email="abc@"
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "abc@",
+  "password": "{{validPwd}}"
+}
+
+###
+
+### TC-MOB_REG-004 | EC-MEMAIL-3 | email đã tồn tại (test@eshop.com có sẵn sau seed)
+# Expected: 400/409 (email đã dùng). Thực tế (BUG-D-02): 200, tạo tài khoản thứ 2 cùng email
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "Nguyen Van B",
+  "email": "test@eshop.com",
+  "password": "{{validPwd}}"
+}
+
+###
+
+### TC-MOB_REG-005 | EC-MPWD-2 | password thiếu chữ hoa — mobile chặn; API không chặn
+# Expected: 400. Thực tế (BUG-D-01): 200, INSERT password yếu
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "new3@domain.com",
+  "password": "abcd123!"
+}
+
+###
+
+### TC-MOB_REG-006 | EC-MPWD-3 | password thiếu chữ số — mobile chặn; API không chặn
+# Expected: 400. Thực tế (BUG-D-01): 200, INSERT password thiếu số
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "new4@domain.com",
+  "password": "Abcdefg!"
+}
+
+###
+
+### TC-MOB_REG-007 | EC-MPWD-4 | password thiếu ký tự đặc biệt — mobile chặn; API không chặn
+# Expected: 400. Thực tế (BUG-D-01): 200, INSERT password thiếu special char
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "new5@domain.com",
+  "password": "Abcd1234"
+}
+
+###
+
+### TC-MOB_REG-008 | EC-MPWD-5 | password < 8 ký tự — mobile chặn; API không chặn
+# Expected: 400. Thực tế (BUG-D-01): 200, INSERT password 4 ký tự
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "new6@domain.com",
+  "password": "Ab1!"
+}
+
+###
+
+# ============================================================
+# GAP ANALYSIS (bổ sung sau review) — TC-MOB_REG-009 đến TC-MOB_REG-014
+# ============================================================
+
+### TC-MOB_REG-009 | Gap #1 | thiếu field name trong body — undefined → NULL
+# Expected: 400 (name bắt buộc). Thực tế (BUG-D-01): 200, INSERT name=NULL
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "email": "gap9@domain.com",
+  "password": "{{validPwd}}"
+}
+
+###
+
+### TC-MOB_REG-010 | Gap #1 | thiếu field email trong body — undefined → NULL
+# Expected: 400 (email bắt buộc). Thực tế (BUG-D-01): 200, INSERT email=NULL
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "password": "{{validPwd}}"
+}
+
+###
+
+### TC-MOB_REG-011 | Gap #1 | thiếu field password trong body — undefined → NULL
+# Expected: 400 (password bắt buộc). Thực tế (BUG-D-01): 200, INSERT password=NULL
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "gap11@domain.com"
+}
+
+###
+
+### TC-MOB_REG-012 | Gap #2, #3 | Plaintext password + response không lộ password
+# Bước 1: đăng ký
+# Expected response: 200, body {"message":...,"id":...} KHÔNG chứa field "password"
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "HashTest",
+  "email": "hash@domain.com",
+  "password": "{{validPwd}}"
+}
+
+# Bước 2: ĐỌC DB để kiểm tra plaintext (chạy trong terminal, KHÔNG phải REST Client):
+#   sqlite3 backend/database.sqlite "SELECT email, password FROM users WHERE email='hash@domain.com';"
+# Expected: giá trị hash (bcrypt...). Thực tế (BUG-D-03): lưu "Abcd123!" plaintext
+
+###
+
+### TC-MOB_REG-013 | Gap #6 | password có ký tự đặc biệt NGOÀI whitelist SRS {@$!%*?&} (vd '#')
+# Expected (theo SRS FR-01): từ chối — '#' không thuộc tập cho phép
+# Thực tế (BUG-D-04): regex mobile [^A-Za-z\d] chấp nhận '#' → API 200, INSERT vào DB
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "SpecChar",
+  "email": "spec@domain.com",
+  "password": "Abcd123#"
+}
+
+###
+
+### TC-MOB_REG-014 | Gap #5 | Trường "Xác nhận mật khẩu" (confirm password)
+# KHÔNG test được qua API — form mobile (App.js) không có field confirmPassword.
+# Kiểm chứng bằng CODE REVIEW: đọc frontend-mobile/App.js (handleRegister, state
+#   registerName/registerEmail/registerPassword) → xác nhận KHÔNG có confirm password.
+# Expected (SRS FR-01): có trường xác nhận, từ chối nếu 2 mật khẩu không khớp.
+# Thực tế (BUG-D-05): form mobile bỏ qua hoàn toàn yêu cầu này.
+# (Không có HTTP request cho TC này.)
+
+###
+
+# ============================================================
+# BOUNDARY VALUE ANALYSIS (độ dài password, biên dưới = 8) — TC-MOB_REG-101 đến 103
+# ============================================================
+
+### TC-MOB_REG-101 | min-1 (7 ký tự) | dưới biên — server không được chấp nhận
+# (a) Mobile app: hiện "Mật khẩu quá yếu!"
+# (b) API: Expected 400. Thực tế (BUG-D-01): 200, INSERT "Aa1@bcd" (7 ký tự)
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "bva1@domain.com",
+  "password": "Aa1@bcd"
+}
+
+###
+
+### TC-MOB_REG-102 | min (8 ký tự) | tại biên — cả mobile và server phải chấp nhận
+# Expected: 200 {"message":"User registered successfully","id":<n>}
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "bva2@domain.com",
+  "password": "Aa1@bcde"
+}
+
+###
+
+### TC-MOB_REG-103 | min+1 (9 ký tự) | trên biên — cả mobile và server phải chấp nhận
+# Expected: 200 {"message":"User registered successfully","id":<n>}
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{
+  "name": "{{validName}}",
+  "email": "bva3@domain.com",
+  "password": "Aa1@bcdef"
+}
+
+###
