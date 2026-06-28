@@ -1001,7 +1001,8 @@ Qua 4 feature, AI sinh test case nhanh và phủ tốt các lớp tương đươ
 
 # 5. Git Commit Log
 
-- File log đính kèm: [git-commit-log.txt](git-commit-log.txt) (13 commit, đặt cùng thư mục `hw2/`)
+- File log đính kèm: [git-commit-log.txt](git-commit-log.txt) (21 commit tới thời điểm xuất log, đặt cùng thư mục `hw2/`).
+- Các commit HW02 từ 26/06/2026 trở đi — mỗi bước test của mỗi feature (Domain → BVA → .rest → execute → bug/issue) là một commit riêng; các commit trước đó thuộc HW01 trong cùng repo.
 - Lệnh tạo: `git log --pretty=format:"%h %ad %s" --date=short > git-commit-log.txt`
 
 ---

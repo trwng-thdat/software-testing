@@ -1,0 +1,21 @@
+e9edbef 2026-06-28 finalize HW02 report: AI audit table + verdicts, self-assessment, update issue links, compliance fixes (critique 281 words, declaration, instructor)
+4c7b193 2026-06-28 add README: test summary, self-assessment, demo video link
+a986699 2026-06-28 add github issue links and image
+9388704 2026-06-28 upload images for feature c and d
+96dd102 2026-06-28 add audit log in main report
+b215f9b 2026-06-28 add .rest file for testing feature d
+4526d2a 2026-06-28 generate testcases for feature C and D
+8b8c4b3 2026-06-28 upload images for pool b
+eb535f4 2026-06-27 test SUT on feature B
+759ec3e 2026-06-27 generate testcase for feature b
+e8ae90b 2026-06-27 add .rest file for testing
+15bab31 2026-06-27 add github issue images of pool a
+c0c63fb 2026-06-27 create .rest for SUT
+fca4214 2026-06-26 generate testcases for feature A using Boundary Value Analysis technique
+4e81b55 2026-06-26 generate testcase for feature A base on domain testing technique
+851683b 2026-06-08 Add AI disclosure form, privacy checklist, and related resources for HW01 submission
+46ebc47 2026-06-07 Add AI Audit Report, Disclosure Form, and Privacy Checklist; include GitHub issues image and hallucination rule
+26818cb 2026-06-07 chore: finnish requirement 3
+c6a800d 2026-06-06 feat: add AI Audit Report template for assignments
+4a69500 2026-06-04 feat: add HW01 assignment document, prompt log, mindmap, and templates
+a9527b4 2026-06-04 feat: add image resources
