@@ -5,7 +5,7 @@
 | Trường              | Giá trị                                          |
 | ------------------- | ------------------------------------------------ |
 | Họ tên              | Trương Thành Đạt                                 |
-| MSSV                | 23217344                                         |
+| MSSV                | 23127344                                         |
 | Lớp / Nhóm          | Kiểm thử phần mềm - 23KTPM3                      |
 | Assignment          | HW02 — Domain Testing                            |
 | Ngày nộp            | 29/06/2026                                       |
@@ -1033,7 +1033,7 @@ Qua 4 feature, AI sinh test case nhanh và phủ tốt các lớp tương đươ
 | Field                   | Value                                                 |
 | :---------------------- | :---------------------------------------------------- |
 | Student name (printed): | Trương Thành Đạt                                      |
-| Student ID:             | 23217344                                              |
+| Student ID:             | 23127344                                              |
 | Class / Cohort:         | Kiểm thử phần mềm - 23KTPM3                           |
 | Assignment ID:          | HW02                                                  |
 | Assignment date:        | 27/06/2026                                            |
@@ -1104,7 +1104,7 @@ AI nên được dùng để tăng tốc bản nháp: liệt kê biến, phân l
 | Field                   | Value                                                    |
 | :---------------------- | :------------------------------------------------------- |
 | Student name (printed): | Trương Thành Đạt                                         |
-| Student ID:             | 23217344                                                 |
+| Student ID:             | 23127344                                                 |
 | Course:                 | CS423 / CSC13003 – Software Testing                      |
 | Instructor:             | Trần Thị Bích Hạnh, Trương Phước Lộc, Ngô Ngọc Đăng Khoa |
 | Date:                   | 29/06/2026                                               |

@@ -3,7 +3,7 @@
 | Trường              | Giá trị                                                |
 | ------------------- | ------------------------------------------------------ |
 | Họ tên              | Trương Thành Đạt                                       |
-| MSSV                | 23217344                                               |
+| MSSV                | 23127344                                               |
 | Lớp / Nhóm          | Kiểm thử phần mềm - 23KTPM3                            |
 | Môn học             | CS423 / CSC13003 – Software Testing                    |
 | Assignment          | HW02 — Domain Testing                                  |
@@ -66,9 +66,8 @@
 | ----------------------------------------- | -------------------------------------------------------------------------- |
 | Báo cáo chính (Domain Testing + BVA)      | `HW02_Main_Report_Template.md` (+ bản PDF)                                 |
 | Bug report (kèm link GitHub Issues + ảnh) | Mục A.4 / B.4 / C.4 / D.4 trong báo cáo chính; `images/`                   |
-| Bug report — title & description (issue)   | `bug-reports-github-issues.md`                                             |
 | AI Critique (200–300 từ)                  | Section 4 của báo cáo chính                                                |
-| AI Audit Report                           | `../../audit.md` (Phụ lục A)                                               |
+| AI Audit Report                           | `audit.md` (Phụ lục A)                                               |
 | Git commit log                            | `git-commit-log.txt`                                                       |
 | Agent Skills                              | `.claude/skills/` (domain-testing, boundary-value-analysis, gen-audit-log) |
 | File thực thi test                        | `TC-PROFILE.rest`, `TC-CHECKOUT.rest`, `TC-ADMIN_ORDER.rest`, `TC-MOB_REG.rest` |
