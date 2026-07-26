@@ -2,17 +2,17 @@
 
 ## 0. Thông tin Sinh viên
 
-| Trường                 | Giá trị                 |
-| ---------------------- | ----------------------- |
-| Họ và tên              | Trương Thành Đạt        |
-| MSSV                   | 23127344                |
-| Lớp / Nhóm | Kiểm thử phần mềm - 23KTPM3 |
-| Bài tập | HW04 - Automation Testing |
-| Ngày nộp               | 25/07/2026              |
-| Điểm tự đánh giá | 100 |
-| Link repository GitHub | TODO                    |
-| Link GitHub Issues     | TODO                    |
-| Link video demo        | TODO                    |
+| Trường                 | Giá trị                     |
+| ---------------------- | --------------------------- |
+| Họ và tên              | Trương Thành Đạt            |
+| MSSV                   | 23127344                    |
+| Lớp / Nhóm             | Kiểm thử phần mềm - 23KTPM3 |
+| Bài tập                | HW04 - Automation Testing   |
+| Ngày nộp               | 25/07/2026                  |
+| Điểm tự đánh giá       | 100                         |
+| Link repository GitHub | TODO                        |
+| Link GitHub Issues     | TODO                        |
+| Link video demo        | TODO                        |
 
 ---
 
@@ -31,17 +31,17 @@
 
 ## 2. Môi trường Tự động hóa
 
-| Mục                      | Giá trị                                                        |
-| ------------------------ | -------------------------------------------------------------- |
-| Repository SUT           | https://github.com/ttbhanh/eshop-sut                           |
-| Framework tự động        | Selenium                                                       |
-| Ngôn ngữ                 | TypeScript                                                     |
-| Phiên bản test runner    | N/A                                                            |
-| Bộ trình duyệt           | Firefox, Chrome, Edge                                          |
-| Công cụ báo cáo          | TODO: Playwright HTML reporter / Allure                        |
-| Hệ điều hành             | Windows 11                                                     |
-| Phiên bản Node / runtime | > 20                                                           |
-| Chuỗi nhận dạng báo cáo  | `Run by: <MSSV>`                                               |
+| Mục                      | Giá trị                                 |
+| ------------------------ | --------------------------------------- |
+| Repository SUT           | https://github.com/ttbhanh/eshop-sut    |
+| Framework tự động        | Selenium                                |
+| Ngôn ngữ                 | TypeScript                              |
+| Phiên bản test runner    | N/A                                     |
+| Bộ trình duyệt           | Firefox, Chrome, Edge                   |
+| Công cụ báo cáo          | TODO: Playwright HTML reporter / Allure |
+| Hệ điều hành             | Windows 11                              |
+| Phiên bản Node / runtime | > 20                                    |
+| Chuỗi nhận dạng báo cáo  | `Run by: <MSSV>`                        |
 
 ### 2.1 Cấu trúc Dự án
 
@@ -87,13 +87,14 @@
 
 ## A.0 Phạm vi Tính năng và Tham chiếu
 
-- Mục đích tính năng: TODO.
-- Các trang / route liên quan: TODO.
-- Vai trò người dùng chính: TODO.
+- Mục đích tính năng: Kiểm tra trang danh sách sản phẩm và chức năng tìm kiếm sản phẩm theo tên.
+- Các trang / route liên quan: Trang chủ / trang danh sách sản phẩm; API `GET /api/products`, `GET /api/products?search=keyword`.
+- Vai trò người dùng chính: Khách / người dùng chưa đăng nhập.
 - Các nguồn tham chiếu được sử dụng để xây dựng test:
-  - TODO: SRS / API spec / file nguồn / test cases HW02.
-- Script tự động: TODO.
-- File dữ liệu: TODO.
+  - `software-testing/hw4/docs/README.md` - FR-05: Xem danh sách & Tìm kiếm sản phẩm.
+  - `software-testing/hw4/docs/api_specification.md` - 3.1 `GET /api/products`, query `?search=keyword`.
+- Script tự động: `selenium/tests/product-listing-search.spec.ts` (sẽ tạo khi viết automation).
+- File dữ liệu: `selenium/data/product-listing-search.data.json` (sẽ tạo khi viết automation).
 
 ## A.1 Quy trình Tạo Script bằng AI
 
@@ -107,26 +108,37 @@
 
 > Yêu cầu tối thiểu: ít nhất 12 test case cho tính năng này.
 
-| ID TC                 | Kịch bản | Loại                   | Dataset key | Tự động? | Tên test | Kiểm chứng chính | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
-| --------------------- | -------- | ---------------------- | ----------- | -------- | -------- | ---------------- | ---------------- | --------------- | ---------- |
-| TC-PRODUCT_SEARCH-001 | TODO     | Tích cực               | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-002 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-003 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-004 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-005 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-006 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-007 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-008 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-009 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-010 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-011 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-PRODUCT_SEARCH-012 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
+| ID TC                 | Kịch bản                                                       | Loại                     | Dataset key                       | Tự động? | Tên test                                          | Kiểm chứng chính                                                           | Kết quả mong đợi                                                                                            | Kết quả thực tế | Trạng thái |
+| --------------------- | -------------------------------------------------------------- | ------------------------ | --------------------------------- | -------- | ------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------- | ---------- |
+| TC-PRODUCT_SEARCH-001 | Mở trang danh sách sản phẩm và hiển thị grid sản phẩm          | Tích cực                 | product_list_default              | Có       | FR-05 displays product grid on home page          | Kiểm tra danh sách/grid hiển thị; số sản phẩm > 0                          | Trang hiển thị danh sách tất cả sản phẩm dạng lưới; không hiển thị empty state khi có dữ liệu               | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-002 | Mỗi sản phẩm hiển thị đủ ảnh, tên và giá                       | Tích cực                 | product_card_required_fields      | Có       | FR-05 product card shows image name and price     | Kiểm tra ảnh, alt text, tên, giá trên từng card                            | Mỗi sản phẩm có ảnh với alt text mô tả, tên sản phẩm và giá                                                 | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-003 | Giá sản phẩm hiển thị đơn vị VND và phân cách hàng nghìn       | Tích cực                 | product_price_format_vnd          | Có       | FR-05 product price uses VND format               | Kiểm tra text giá theo định dạng `₫` và phân cách hàng nghìn               | Giá có đơn vị `₫` và định dạng phân cách hàng nghìn, ví dụ `100.000 ₫` hoặc `100,000 ₫` theo UI             | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-004 | Trang danh sách sản phẩm chỉ có đúng một thẻ `h1`              | Tích cực / UI semantics  | page_single_h1                    | Có       | FR-05 page has exactly one h1                     | Đếm số lượng `h1` trên trang                                               | Trang chỉ có đúng 1 thẻ `h1`                                                                                | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-005 | Hiển thị trạng thái loading khi đang tải dữ liệu sản phẩm      | Tích cực / trạng thái UI | product_loading_state             | Có       | FR-05 shows loading state while fetching products | Chặn/làm chậm response và kiểm tra loading indicator                       | Trong lúc chờ `GET /api/products`, UI hiển thị trạng thái loading phù hợp                                   | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-006 | Tìm kiếm bằng từ khóa khớp tên sản phẩm                        | Tích cực                 | search_valid_keyword              | Có       | FR-05 searches products by matching keyword       | Nhập keyword; kiểm tra URL/API query và kết quả chứa keyword               | Hệ thống gọi/lọc theo `search=keyword`; danh sách chỉ hiển thị sản phẩm phù hợp theo tên                    | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-007 | Tìm kiếm không phân biệt chữ hoa/chữ thường                    | Tích cực / biên dữ liệu  | search_case_insensitive           | Có       | FR-05 search is case insensitive                  | So sánh kết quả với keyword chữ hoa và chữ thường                          | Hai keyword khác nhau về hoa/thường trả về cùng nhóm sản phẩm phù hợp                                       | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-008 | Tìm kiếm với từ khóa có khoảng trắng đầu/cuối                  | Biên                     | search_trimmed_keyword            | Có       | FR-05 trims search keyword whitespace             | Nhập keyword có leading/trailing spaces; kiểm tra kết quả                  | Hệ thống xử lý từ khóa sau khi trim hoặc trả về kết quả tương đương keyword hợp lệ                          | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-009 | Tìm kiếm bằng chuỗi không khớp sản phẩm nào                    | Tiêu cực                 | search_no_result                  | Có       | FR-05 shows empty state for no result             | Nhập keyword không tồn tại; kiểm tra empty state                           | Không hiển thị product card; UI hiển thị thông báo empty state phù hợp                                      | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-010 | Tìm kiếm bằng chuỗi rỗng sau khi xóa keyword                   | Tích cực / biên          | search_empty_keyword              | Có       | FR-05 empty search restores all products          | Nhập keyword rồi xóa; kiểm tra danh sách mặc định                          | Khi ô tìm kiếm rỗng, trang hiển thị lại danh sách tất cả sản phẩm                                           | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-011 | Từ khóa tìm kiếm chứa HTML/script không được render thành HTML | Tiêu cực / bảo mật       | search_html_injection_safe_render | Có       | FR-05 safely renders html search keyword          | Nhập `<img src=x onerror=alert(1)>`; kiểm tra DOM và không có alert/script | Từ khóa được hiển thị/ xử lý an toàn dạng text; không render HTML, không thực thi script                    | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-012 | API tìm kiếm sản phẩm theo tên trả về dữ liệu phù hợp          | Tích cực / API-backed    | api_search_keyword                | Có       | FR-05 API search returns matching products        | Gọi `GET /api/products?search=keyword`; kiểm tra status và tên sản phẩm    | API trả `200`; danh sách trả về chỉ gồm sản phẩm có tên phù hợp keyword hoặc mảng rỗng nếu không có kết quả | Chưa chạy       | Chưa chạy  |
 
 ## A.3 Dữ liệu Kiểm thử Hướng Dữ liệu (Data-Driven)
 
-| Data key | Giá trị nhập | Dữ liệu mong đợi | Ghi chú |
-| -------- | ------------ | ---------------- | ------- |
-| TODO     | TODO         | TODO             | TODO    |
+| Data key                          | Giá trị nhập                                                | Dữ liệu mong đợi                                                     | Ghi chú                                             |
+| --------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------- |
+| product_list_default              | Mở trang danh sách sản phẩm với search rỗng                 | Có ít nhất 1 product card; grid hiển thị                             | Dùng làm happy path mặc định                        |
+| product_card_required_fields      | Dữ liệu sản phẩm bất kỳ trong danh sách                     | Card có `img`, alt text, tên, giá                                    | Có thể kiểm tra trên tất cả card hoặc card đầu tiên |
+| product_price_format_vnd          | Dữ liệu giá sản phẩm trong danh sách                        | Giá hiển thị đơn vị `₫` và phân cách hàng nghìn                      | Regex định dạng cần khớp UI thực tế                 |
+| page_single_h1                    | Trang danh sách sản phẩm                                    | Số lượng `h1` bằng 1                                                 | Yêu cầu accessibility/semantic từ README            |
+| product_loading_state             | Làm chậm response `GET /api/products`                       | Loading indicator xuất hiện trước khi data render                    | Cần network intercept hoặc delay backend            |
+| search_valid_keyword              | `keyword`: TODO chọn tên/từ khóa có tồn tại trong seed data | Kết quả tìm kiếm chứa sản phẩm phù hợp keyword                       | Điền keyword thật sau khi xem seed data             |
+| search_case_insensitive           | `keywordLower`: TODO; `keywordUpper`: TODO                  | Hai lần tìm trả nhóm kết quả tương đương                             | Dựa trên cùng một keyword tồn tại                   |
+| search_trimmed_keyword            | `keyword`: `"  TODO  "`                                     | Kết quả tương đương keyword đã trim                                  | Chọn keyword tồn tại                                |
+| search_no_result                  | `keyword`: `zzzz-no-product-23127344`                       | Empty state hiển thị; không có product card                          | Keyword cố ý không tồn tại                          |
+| search_empty_keyword              | Nhập keyword hợp lệ rồi clear input                         | Danh sách mặc định được khôi phục                                    | Kiểm tra sau thao tác clear                         |
+| search_html_injection_safe_render | `keyword`: `<img src=x onerror=alert(1)>`                   | Không render HTML; không alert/script; text được xử lý an toàn       | Test bảo mật render keyword                         |
+| api_search_keyword                | `keyword`: TODO chọn keyword tồn tại                        | `GET /api/products?search=keyword` trả status 200 và dữ liệu phù hợp | API-backed assertion cho FR-05                      |
 
 ## A.4 Minh chứng Thực thi Đa trình duyệt
 
@@ -160,13 +172,15 @@
 
 ## B.0 Phạm vi Tính năng và Tham chiếu
 
-- Mục đích tính năng: TODO.
-- Các trang / route liên quan: TODO.
-- Vai trò người dùng chính: TODO.
+- Mục đích tính năng: Kiểm tra giỏ hàng, bao gồm thêm sản phẩm, gom số lượng sản phẩm trùng, chỉnh số lượng, xóa sản phẩm, empty state, điều hướng mua tiếp và tổng tiền.
+- Các trang / route liên quan: Trang chủ / danh sách sản phẩm, trang chi tiết sản phẩm, `/cart`; API `GET /api/cart`, `POST /api/cart`.
+- Vai trò người dùng chính: Khách / người dùng chưa đăng nhập; người dùng đã đăng nhập khi cần kiểm tra API có token.
 - Các nguồn tham chiếu được sử dụng để xây dựng test:
-  - TODO: SRS / API spec / file nguồn / test cases HW02.
-- Script tự động: TODO.
-- File dữ liệu: TODO.
+  - `software-testing/hw4/docs/eshop-sut/README.md` - FR-07: Giỏ hàng; FR-23 Navigation; FR-24 Feedback & State.
+  - `software-testing/hw4/docs/eshop-sut/api_specification.md` - 4.1 `GET /api/cart`, 4.2 `POST /api/cart`.
+  - `software-testing/hw4/docs/eshop-sut/frontend-web/src/pages/Cart.jsx` và `context/CartContext.jsx` để tham khảo UI/state hiện tại.
+- Script tự động: `selenium/tests/shopping-cart.spec.ts` (sẽ tạo khi viết automation).
+- File dữ liệu: `selenium/data/shopping-cart.data.json` (sẽ tạo khi viết automation).
 
 ## B.1 Quy trình Tạo Script bằng AI
 
@@ -180,26 +194,37 @@
 
 > Yêu cầu tối thiểu: ít nhất 12 test case cho tính năng này.
 
-| ID TC       | Kịch bản | Loại                   | Dataset key | Tự động? | Tên test | Kiểm chứng chính | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
-| ----------- | -------- | ---------------------- | ----------- | -------- | -------- | ---------------- | ---------------- | --------------- | ---------- |
-| TC-CART-001 | TODO     | Tích cực               | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-002 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-003 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-004 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-005 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-006 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-007 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-008 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-009 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-010 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-011 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-CART-012 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
+| ID TC       | Kịch bản                                                               | Loại                    | Dataset key                     | Tự động? | Tên test                                             | Kiểm chứng chính                                                        | Kết quả mong đợi                                                                                          | Kết quả thực tế | Trạng thái |
+| ----------- | ---------------------------------------------------------------------- | ----------------------- | ------------------------------- | -------- | ---------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------- | ---------- |
+| TC-CART-001 | Mở giỏ hàng khi chưa có sản phẩm                                       | Tích cực / empty state  | cart_empty_state                | Có       | FR-07 displays empty cart state                      | Kiểm tra nội dung empty state và link tiếp tục mua sắm                  | Giỏ hàng trống hiển thị hình/icon minh họa hoặc thông báo rõ ràng; có link/nút quay về trang chủ          | Chưa chạy       | Chưa chạy  |
+| TC-CART-002 | Thêm một sản phẩm vào giỏ từ danh sách sản phẩm                        | Tích cực                | cart_add_single_product         | Có       | FR-07 adds one product to cart                       | Bấm thêm vào giỏ; mở `/cart`; kiểm tra dòng sản phẩm                    | Giỏ hàng có đúng 1 dòng sản phẩm với tên, đơn giá, số lượng, thành tiền và thao tác xóa                   | Chưa chạy       | Chưa chạy  |
+| TC-CART-003 | Thêm cùng một sản phẩm hai lần                                         | Tích cực / nghiệp vụ    | cart_add_same_product_twice     | Có       | FR-07 merges duplicate product quantity              | Thêm cùng product 2 lần; đếm số dòng và quantity                        | Không tạo dòng mới; sản phẩm chỉ xuất hiện 1 dòng và số lượng tăng tương ứng                              | Chưa chạy       | Chưa chạy  |
+| TC-CART-004 | Thêm hai sản phẩm khác nhau vào giỏ                                    | Tích cực                | cart_add_two_distinct_products  | Có       | FR-07 displays distinct cart rows                    | Thêm 2 product khác nhau; kiểm tra số dòng                              | Giỏ hàng hiển thị 2 dòng riêng biệt; mỗi dòng có đúng tên, đơn giá, số lượng và thành tiền                | Chưa chạy       | Chưa chạy  |
+| TC-CART-005 | Tăng số lượng sản phẩm bằng nút `+`                                    | Tích cực                | cart_increment_quantity         | Có       | FR-07 increments item quantity                       | Bấm `+`; kiểm tra quantity và thành tiền                                | Số lượng tăng thêm 1; thành tiền dòng và tổng cộng được tính lại đúng                                     | Chưa chạy       | Chưa chạy  |
+| TC-CART-006 | Giảm số lượng sản phẩm bằng nút `-` khi số lượng > 1                   | Tích cực                | cart_decrement_quantity         | Có       | FR-07 decrements item quantity                       | Bấm `-`; kiểm tra quantity và thành tiền                                | Số lượng giảm 1; không âm; thành tiền dòng và tổng cộng được tính lại đúng                                | Chưa chạy       | Chưa chạy  |
+| TC-CART-007 | Không cho giảm số lượng xuống dưới 1                                   | Biên                    | cart_quantity_min_one           | Có       | FR-07 enforces minimum quantity one                  | Với quantity = 1, bấm `-` hoặc nhập giá trị nhỏ hơn 1                   | Số lượng tối thiểu vẫn là 1 hoặc item chỉ bị xóa sau khi có hành động xóa được xác nhận                   | Chưa chạy       | Chưa chạy  |
+| TC-CART-008 | Xóa sản phẩm nhưng hủy ở dialog xác nhận                               | Tiêu cực / xác nhận     | cart_delete_cancel              | Có       | FR-07 keeps item when delete is cancelled            | Bấm xóa; chọn Cancel trong dialog                                       | Sản phẩm vẫn còn trong giỏ; số lượng và tổng cộng không đổi                                               | Chưa chạy       | Chưa chạy  |
+| TC-CART-009 | Xóa sản phẩm và đồng ý ở dialog xác nhận                               | Tích cực                | cart_delete_confirm             | Có       | FR-07 removes item after confirmation                | Bấm xóa; chọn OK trong dialog                                           | Sản phẩm bị xóa khỏi giỏ; tổng cộng cập nhật; nếu hết sản phẩm thì hiển thị empty state                   | Chưa chạy       | Chưa chạy  |
+| TC-CART-010 | Kiểm tra nhãn tổng tiền                                                | Tích cực / UI content   | cart_total_label                | Có       | FR-07 uses total label tong cong                     | Kiểm tra text nhãn tổng tiền trên trang giỏ hàng                        | Trang giỏ hàng hiển thị nhãn chính xác `Tổng cộng`, không hiển thị `Tổng tạm tính`                       | Chưa chạy       | Chưa chạy  |
+| TC-CART-011 | Nút tiếp tục mua sắm quay về trang chủ                                 | Tích cực / điều hướng   | cart_continue_shopping          | Có       | FR-07 navigates back to home from cart               | Bấm nút/link tiếp tục mua sắm                                           | Người dùng được điều hướng về trang chủ/danh sách sản phẩm                                                | Chưa chạy       | Chưa chạy  |
+| TC-CART-012 | API thêm sản phẩm vào giỏ yêu cầu token và lưu đúng dữ liệu sản phẩm   | API-backed / bảo mật    | api_cart_add_requires_token     | Có       | FR-07 API cart requires auth and stores cart item    | Gọi `POST /api/cart` không token và có token; sau đó gọi `GET /api/cart` | Không token bị từ chối; có token trả thành công; `GET /api/cart` trả item đúng id, name, price, quantity | Chưa chạy       | Chưa chạy  |
 
 ## B.3 Dữ liệu Kiểm thử Hướng Dữ liệu (Data-Driven)
 
-| Data key | Giá trị nhập | Dữ liệu mong đợi | Ghi chú |
-| -------- | ------------ | ---------------- | ------- |
-| TODO     | TODO         | TODO             | TODO    |
+| Data key                       | Giá trị nhập                                                                 | Dữ liệu mong đợi                                                              | Ghi chú                                             |
+| ------------------------------ | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------- |
+| cart_empty_state               | Mở `/cart` với cart rỗng                                                      | Empty state rõ ràng; có link/nút tiếp tục mua sắm                             | Reset cart trước khi chạy                           |
+| cart_add_single_product        | `productA`: TODO chọn sản phẩm seed; `quantity`: 1                            | 1 dòng cart; thành tiền = `price * 1`                                         | Dữ liệu sản phẩm lấy từ API/seed                    |
+| cart_add_same_product_twice    | `productA`; thêm 2 lần, mỗi lần quantity 1                                    | 1 dòng duy nhất; quantity = 2                                                  | Kiểm tra rule gom dòng trùng                        |
+| cart_add_two_distinct_products | `productA`, `productB`; mỗi sản phẩm quantity 1                               | 2 dòng cart riêng biệt                                                         | Chọn 2 product khác id                              |
+| cart_increment_quantity        | `productA`; quantity ban đầu 1; thao tác `+`                                  | quantity = 2; thành tiền và tổng cộng cập nhật                                | Cần selector nút tăng số lượng                      |
+| cart_decrement_quantity        | `productA`; quantity ban đầu 2; thao tác `-`                                  | quantity = 1; thành tiền và tổng cộng cập nhật                                | Cần selector nút giảm số lượng                      |
+| cart_quantity_min_one          | `productA`; quantity ban đầu 1; thao tác giảm hoặc nhập 0                     | quantity không nhỏ hơn 1                                                       | Boundary quantity                                   |
+| cart_delete_cancel             | `productA`; bấm xóa rồi Cancel                                                | Item vẫn tồn tại; tổng cộng không đổi                                          | Cần xử lý browser alert/dialog                      |
+| cart_delete_confirm            | `productA`; bấm xóa rồi OK                                                    | Item bị xóa; cart rỗng thì empty state xuất hiện                               | Cần xử lý browser alert/dialog                      |
+| cart_total_label               | Cart có ít nhất 1 item                                                        | Text hiển thị `Tổng cộng`; không có `Tổng tạm tính`                            | Assert theo FR-07                                   |
+| cart_continue_shopping         | Mở `/cart`; bấm tiếp tục mua sắm                                               | URL trở về trang chủ/danh sách sản phẩm                                        | Kiểm tra route sau click                            |
+| api_cart_add_requires_token    | Không token; token hợp lệ; body `{ id, name, price, quantity }`               | Unauthorized khi thiếu token; success khi có token; cart lưu đúng item         | Token lấy từ login API hoặc tài khoản test `.env`   |
 
 ## B.4 Minh chứng Thực thi Đa trình duyệt
 
@@ -233,13 +258,15 @@
 
 ## C.0 Phạm vi Tính năng và Tham chiếu
 
-- Mục đích tính năng: TODO.
-- Các trang / route liên quan: TODO.
+- Mục đích tính năng: Kiểm tra chức năng quản lý danh mục cho admin, bao gồm xem danh sách, thêm mới, cập nhật, xóa và validate tên danh mục bắt buộc.
+- Các trang / route liên quan: Trang admin quản lý danh mục; API `GET /api/categories`, `POST /api/categories`, `PUT /api/categories/:id`, `DELETE /api/categories/:id`.
 - Vai trò người dùng chính: Admin.
 - Các nguồn tham chiếu được sử dụng để xây dựng test:
-  - TODO: SRS / API spec / file nguồn / test cases HW02.
-- Script tự động: TODO.
-- File dữ liệu: TODO.
+  - `software-testing/hw4/docs/eshop-sut/README.md` - FR-14: Quản lý Danh mục.
+  - `software-testing/hw4/docs/eshop-sut/api_specification.md` - 3.4 Categories.
+  - `software-testing/hw4/docs/eshop-sut/frontend-admin/src/App.jsx` và `backend/server.js` để tham khảo UI/API hiện tại.
+- Script tự động: `selenium/tests/category-management.spec.ts` (sẽ tạo khi viết automation).
+- File dữ liệu: `selenium/data/category-management.data.json` (sẽ tạo khi viết automation).
 
 ## C.1 Quy trình Tạo Script bằng AI
 
@@ -253,26 +280,37 @@
 
 > Yêu cầu tối thiểu: ít nhất 12 test case cho tính năng này.
 
-| ID TC                 | Kịch bản | Loại                   | Dataset key | Tự động? | Tên test | Kiểm chứng chính | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
-| --------------------- | -------- | ---------------------- | ----------- | -------- | -------- | ---------------- | ---------------- | --------------- | ---------- |
-| TC-ADMIN_CATEGORY-001 | TODO     | Tích cực               | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-002 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-003 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-004 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-005 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-006 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-007 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-008 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-009 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-010 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-011 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
-| TC-ADMIN_CATEGORY-012 | TODO     | Tích cực/Tiêu cực/Biên | TODO        | Có/Không | TODO     | TODO             | TODO             | TODO            | TODO       |
+| ID TC                 | Kịch bản                                                       | Loại                   | Dataset key                         | Tự động? | Tên test                                                  | Kiểm chứng chính                                                              | Kết quả mong đợi                                                                                      | Kết quả thực tế | Trạng thái |
+| --------------------- | -------------------------------------------------------------- | ---------------------- | ----------------------------------- | -------- | --------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------- | ---------- |
+| TC-ADMIN_CATEGORY-001 | Admin mở trang quản lý danh mục và xem danh sách hiện có       | Tích cực               | category_list_default               | Có       | FR-14 displays existing categories                         | Kiểm tra bảng/list danh mục và dữ liệu seed                                   | Trang admin hiển thị danh sách danh mục hiện có, gồm tên danh mục và thao tác tương ứng                | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-002 | Thêm danh mục mới với tên hợp lệ                               | Tích cực               | category_create_valid               | Có       | FR-14 creates category with valid name                     | Nhập tên; submit; kiểm tra UI và API list                                     | Danh mục mới được tạo, xuất hiện trong danh sách và `GET /api/categories` trả về item mới              | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-003 | Không cho thêm danh mục khi tên rỗng                           | Tiêu cực / validation  | category_create_empty_name          | Có       | FR-14 rejects empty category name                          | Submit form với tên rỗng                                                      | Hệ thống không tạo danh mục; hiển thị lỗi/validation tên bắt buộc                                      | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-004 | Không cho thêm danh mục khi tên chỉ gồm khoảng trắng           | Biên / validation      | category_create_whitespace_name     | Có       | FR-14 rejects whitespace category name                     | Nhập `"   "`; submit                                                          | Hệ thống trim/validate và không tạo danh mục trắng                                                     | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-005 | Thêm danh mục có dấu tiếng Việt                                | Tích cực / dữ liệu     | category_create_vietnamese_name     | Có       | FR-14 supports vietnamese category name                    | Tạo danh mục tên tiếng Việt                                                   | Danh mục được lưu và hiển thị đúng dấu tiếng Việt                                                      | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-006 | Thêm danh mục có ký tự đặc biệt an toàn                        | Tiêu cực / bảo mật     | category_create_html_safe_name      | Có       | FR-14 safely renders html-like category name               | Nhập `<script>alert(1)</script>` hoặc HTML-like text                           | Không thực thi script; nếu được lưu thì render dạng text an toàn, hoặc bị validation từ chối rõ ràng   | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-007 | Cập nhật tên danh mục hợp lệ qua API/admin UI                  | Tích cực               | category_update_valid               | Có       | FR-14 updates category name                                | Tạo category tạm; cập nhật tên; kiểm tra list                                 | Tên danh mục được cập nhật đúng; id giữ nguyên                                                         | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-008 | Không cho cập nhật tên danh mục thành rỗng                     | Tiêu cực / validation  | category_update_empty_name          | Có       | FR-14 rejects empty name on update                         | PUT/update với name rỗng                                                       | Hệ thống không đổi tên sang rỗng; trả lỗi hoặc UI validation rõ ràng                                    | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-009 | Xóa danh mục sau khi xác nhận                                  | Tích cực               | category_delete_valid               | Có       | FR-14 deletes category                                     | Tạo category tạm; bấm xóa/xác nhận; kiểm tra list/API                         | Danh mục bị xóa khỏi UI và không còn trong `GET /api/categories`                                      | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-010 | Hủy thao tác xóa danh mục                                      | Tiêu cực / xác nhận    | category_delete_cancel              | Có       | FR-14 keeps category when delete is cancelled              | Bấm xóa rồi Cancel trong dialog                                                | Danh mục vẫn tồn tại; danh sách không đổi                                                              | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-011 | API danh mục yêu cầu xác thực cho thao tác ghi                 | API-backed / bảo mật   | api_category_write_requires_token   | Có       | FR-14 category write APIs require token                    | Gọi POST/PUT/DELETE không token                                                | Các thao tác ghi bị từ chối khi thiếu token; không thay đổi dữ liệu danh mục                           | Chưa chạy       | Chưa chạy  |
+| TC-ADMIN_CATEGORY-012 | API tạo-xem-cập nhật-xóa danh mục end-to-end                  | API-backed / E2E       | api_category_crud_end_to_end        | Có       | FR-14 category API supports CRUD flow                      | POST tạo; GET kiểm tra; PUT đổi tên; DELETE xóa; GET kiểm tra lần cuối         | API trả response thành công ở từng bước; dữ liệu cuối cùng phản ánh đúng luồng CRUD                    | Chưa chạy       | Chưa chạy  |
 
 ## C.3 Dữ liệu Kiểm thử Hướng Dữ liệu (Data-Driven)
 
-| Data key | Giá trị nhập | Dữ liệu mong đợi | Ghi chú |
-| -------- | ------------ | ---------------- | ------- |
-| TODO     | TODO         | TODO             | TODO    |
+| Data key                         | Giá trị nhập                                                                    | Dữ liệu mong đợi                                                             | Ghi chú                                           |
+| -------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------- |
+| category_list_default            | Mở trang admin danh mục hoặc gọi `GET /api/categories`                          | Danh sách có category seed như Điện thoại/Laptop/Phụ kiện                    | Dựa trên seed database                            |
+| category_create_valid            | `name`: `HW04 Category 23127344`                                                 | Category mới xuất hiện trong UI/API                                           | Tên nên unique theo MSSV để dễ cleanup            |
+| category_create_empty_name       | `name`: empty string                                                             | Không tạo category; có validation/lỗi                                         | Assert theo FR-14 tên bắt buộc                    |
+| category_create_whitespace_name  | `name`: `"   "`                                                                  | Không tạo category trắng                                                       | Kiểm tra trim/validation                          |
+| category_create_vietnamese_name  | `name`: `Phụ kiện kiểm thử 23127344`                                             | Lưu và hiển thị đúng Unicode tiếng Việt                                       | Kiểm tra i18n dữ liệu                             |
+| category_create_html_safe_name   | `name`: `<script>alert(1)</script>`                                              | Không execute script; render an toàn hoặc reject rõ ràng                      | Security/rendering case                           |
+| category_update_valid            | `initialName`: `HW04 Old 23127344`; `updatedName`: `HW04 Updated 23127344`       | Category giữ id và đổi sang tên mới                                           | Có thể thực hiện bằng API setup                   |
+| category_update_empty_name       | `initialName`: `HW04 Update Empty 23127344`; `updatedName`: empty string         | Không đổi sang tên rỗng                                                       | API hiện tại có thể cần human review nếu sai spec |
+| category_delete_valid            | `name`: `HW04 Delete 23127344`; confirm delete = OK                              | Category không còn trong list/API                                             | Cleanup sau test                                  |
+| category_delete_cancel           | `name`: `HW04 Cancel Delete 23127344`; confirm delete = Cancel                   | Category vẫn tồn tại                                                          | Cần xử lý browser dialog                          |
+| api_category_write_requires_token| Không token; endpoints POST/PUT/DELETE `/api/categories`                        | Write APIs bị từ chối khi thiếu token                                         | Token lấy từ login API khi test positive          |
+| api_category_crud_end_to_end     | Token hợp lệ; create/update/delete category unique theo MSSV/timestamp           | CRUD flow thành công; dữ liệu cuối cùng đúng                                  | API-backed assertion                              |
 
 ## C.4 Minh chứng Thực thi Đa trình duyệt
 
@@ -383,11 +421,11 @@
 
 ## 9. Phê bình AI (200-300 từ)
 
-TODO: Viết một đoạn văn từ 200-300 từ. Đề cập đến:
+Trong bài tập này, các script được tạo bởi AI nhìn chung có vẻ đúng về mặt cú pháp và bao phủ được nhiều thao tác kiểm thử cơ bản. Tuy nhiên, kết quả đó vẫn chưa thể được xem là hoàn toàn đáng tin cậy nếu không có con người rà soát lại. Hạn chế quan trọng là AI có thể không hiểu đầy đủ business flow của hệ thống, chẳng hạn thứ tự thao tác thực tế của người dùng, điều kiện dữ liệu trước khi chạy test, hoặc trạng thái mong đợi sau mỗi bước. Vì vậy, script có thể chạy được nhưng vẫn kiểm tra sai hành vi cần kiểm chứng, hoặc bỏ qua các ràng buộc nghiệp vụ quan trọng.
 
-- AI đã làm sai, thiên kiến hoặc không đầy đủ ở đâu?
-- Tại sao nó không phát hiện ra vấn đề?
-- Nguyên tắc bạn đã học được về việc cộng tác với AI trong bài tập này là gì?
+Ngoài ra, lỗi cũng có thể xuất hiện ở mức triển khai, như chọn sai locator, assert chưa đủ chặt chẽ, xử lý bất đồng bộ chưa ổn định, hoặc sử dụng chưa đúng framework kiểm thử. Nguyên nhân một phần đến từ việc prompt chưa nêu đủ các nguyên tắc và điều kiện nghiêm ngặt, ví dụ yêu cầu script phải chạy được end-to-end trên môi trường thật và phải xác minh kết quả theo đặc tả. Tuy nhiên, nếu chỉ nhấn mạnh “làm sao cho chạy được”, AI cũng có thể tạo ra cách vá lỗi làm test pass nhưng lệch khỏi ý tưởng ban đầu.
+
+Do đó, khi cộng tác với AI, cần xem AI như công cụ hỗ trợ tạo bản nháp nhanh, không phải người thay thế hoàn toàn kiểm thử viên. Con người vẫn phải review, chạy thử, đối chiếu với yêu cầu nghiệp vụ và cải tiến script từng bước để kết quả cuối cùng vừa ổn định vừa phản ánh đúng mục tiêu kiểm thử.
 
 ---
 
