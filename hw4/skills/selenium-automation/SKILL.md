@@ -1,320 +1,250 @@
 ---
 name: selenium-automation
-description: Tạo và duy trì Selenium automation cho các tính năng web của HW04 EShop từ tài liệu được cung cấp (README, API, SRS...). Sử dụng khi người dùng yêu cầu tự động hóa tính năng, tạo script Selenium, chuyển đổi FR thành UI test, hoặc scaffold project selenium/. Kỹ năng tạo các file test TypeScript trong selenium/tests/ và dữ liệu JSON trong selenium/data/. Phải hỏi người dùng FR nào cần thực hiện nếu tài liệu có nhiều FR và yêu cầu chưa rõ ràng.
+description: Generate, refactor, and verify Selenium automation for HW04 using TypeScript, Mocha, Chai, selenium-webdriver, mochawesome HTML reports, JSON data-driven tests, .env-based configuration, and mandatory three-browser execution. Use when the user asks to create Selenium scripts, automate HW04 features, run cross-browser tests, produce HTML reports, or update Selenium automation instructions.
 ---
 
-# Selenium Automation - HW04 Tự động hóa Web EShop
+# Selenium Automation - HW04
 
-## Mục tiêu
+Use this skill to create a reproducible Selenium automation project for HW04. The output must be runnable, data-driven, documented, and auditable.
 
-Tạo các script tự động hóa Selenium cho HW04 bằng tài liệu do người dùng cung cấp. Các script tạo ra phải:
+## Core Requirements
 
-- **Hướng tính năng (Feature-targeted):** mỗi FR một script.
-- **Hướng dữ liệu (Data-driven):** mọi đầu vào kiểm thử và giá trị mong đợi được đọc từ file JSON trong `selenium/data/`.
-- **Dựa trên TypeScript:** Selenium WebDriver + Mocha + Chai.
-- **Dự án có thể chạy được (Runnable as a project):** bao gồm `package.json`, `tsconfig.json`, cấu hình, bộ hỗ trợ, test và file dữ liệu.
-- **Thân thiện với minh chứng:** các script hỗ trợ chạy đa trình duyệt và tạo báo cáo HTML theo yêu cầu HW04.
+- Use **TypeScript + Mocha + Chai + selenium-webdriver + mochawesome**.
+- Store feature test data in `selenium/data/<feature-name>.data.json`; tests must read input and expected values from JSON, not hardcode datasets in specs.
+- Store all runtime information in `selenium/.env`; never hardcode student identity, frontend URL, API URL, browser list, or headless mode in test logic.
+- Run every selected feature on **three browsers**: `chrome`, `edge`, and `firefox`.
+- For 3 selected HW04 features, execute at least **9 browser runs total**: `3 features * 3 browsers`.
+- Every browser run must create an HTML report using **mochawesome**.
+- Browser reports for the same feature must **not overwrite each other**. Each browser must write a different HTML filename in the same feature report folder.
+- Every HTML report must visibly contain `Run by: <StudentID>`, student name, browser, feature, and ISO timestamp in a title, header, footer, or report metadata.
+- Do not fabricate execution results. If the SUT, a browser, a driver, or configuration is unavailable, report the blocker clearly.
 
-Không tạo script dựa trên dự đoán. Hãy đọc tài liệu do người dùng cung cấp trước.
+For Selenium, prefer **Chrome / Edge / Firefox**. If the assignment wording mentions Chromium / Firefox / WebKit, explain that WebKit is a Playwright target; this Selenium skill satisfies the accepted Selenium-compatible set: Chrome / Edge / Firefox.
 
----
+## Required Sources
 
-## Tài liệu đầu vào yêu cầu
+Before writing scripts:
 
-Khi người dùng yêu cầu tạo automation Selenium, hãy tìm kiếm hoặc yêu cầu các tài liệu như:
+1. Read website documentation such as `docs/README.md`, SRS, API specification, existing test case tables, and the HW04 report template.
+2. If no website documentation is found, ask the user for the docs before generating automation.
+3. If docs contain multiple FRs and the user did not specify which FR to automate, ask which FR(s) to implement.
+4. If docs do not provide frontend URL/domain/route information, skip UI Selenium scripts and state why.
+5. If docs do not provide API endpoints/contracts, skip API helpers and API-backed assertions and state why.
 
-- Website README hoặc hướng dẫn cài đặt chứa:
-  - domain website / base URL;
-  - tài khoản mặc định;
-  - port frontend/backend;
-  - lệnh cài đặt và chạy.
-- Đặc tả API chứa:
-  - các endpoint;
-  - body request/response;
-  - hành vi xác thực;
-  - các thao tác thay đổi trạng thái hữu ích cho thiết lập hoặc dọn dẹp.
-- Tài liệu SRS / tính năng chứa:
-  - danh sách FR;
-  - quy tắc nghiệp vụ;
-  - quy tắc kiểm chứng;
-  - hành vi UI mong đợi.
-- Các test case thủ công hiện có, nếu có.
+## Project Structure
 
-Nếu các file này tồn tại cục bộ, hãy đọc chúng trước khi triển khai. Nếu thiếu và không thể suy luận an toàn, hãy yêu cầu người dùng cung cấp.
-
-Nếu không tìm thấy bất kỳ tài liệu nào liên quan đến website cần kiểm thử, hãy dừng lại và hỏi người dùng cung cấp tài liệu website trước khi tạo automation. Không tạo Selenium script dựa trên giả định về một ứng dụng chưa có tài liệu.
-
-Nếu tài liệu không cung cấp website URL, domain, frontend port, hoặc route/màn hình liên quan, không cần tạo script GUI/UI. Trong trường hợp này chỉ scaffold cấu trúc, data file, README placeholder, hoặc tạo API-only test nếu đặc tả API đủ rõ.
-
-Nếu tài liệu không cung cấp đặc tả API, không cần tạo API helper, API setup/cleanup, hoặc API-backed assertion. Trong trường hợp này chỉ tạo GUI-only test nếu website URL và hành vi UI đã được tài liệu hóa.
-
----
-
-## Quy tắc Chọn FR
-
-Nếu tài liệu chứa nhiều FR và người dùng chưa nêu rõ FR nào cần tự động hóa, hãy dừng lại và hỏi:
-
-> Tôi nên thực hiện Selenium script cho FR nào?
-
-Nếu người dùng đã chỉ định FR, ví dụ `FR-05`, `FR-07`, hoặc `FR-14`, chỉ thực hiện FR đó. Không tự ý chọn FR khác.
-
-Với HW04, các tính năng di động trong Pool D nằm ngoài phạm vi vì bài tập này chỉ tự động hóa frontend web.
-
----
-
-## Cấu trúc Dự án Đầu ra
-
-Tạo hoặc cập nhật cấu trúc:
+Create or update:
 
 ```text
 selenium/
+  .env.example
+  .gitignore
   package.json
   tsconfig.json
   .mocharc.json
   README.md
   data/
-    fr-name.data.json
+    <feature-name>.data.json
+  reports/
+    <feature-name>/
+      chrome.html
+      edge.html
+      firefox.html
+      assets/
+  bug-snapshots/
+    BUGS.md
+    <TC-ID>.png
   tests/
-    fr-name.spec.ts
+    <feature-name>.spec.ts
   utils/
     config.ts
     driver.ts
-    data.ts
-    assertions.ts
-    report.ts
-    screenshot.ts
+    reportMetadata.ts
+    bugReporter.ts
+    api.ts
 ```
 
-Sử dụng tên file tính năng lowercase kebab-case ổn định:
+Use one spec file per feature. Use one JSON data file per feature.
 
-- `FR-05 Product listing and search` -> `product-listing-search.spec.ts` và `product-listing-search.data.json`
-- `FR-07 Shopping cart` -> `shopping-cart.spec.ts` và `shopping-cart.data.json`
-- `FR-14 Category management (CRUD)` -> `category-management.spec.ts` và `category-management.data.json`
+## .env Contract
 
-Nếu repository hiện tại đã có quy ước đặt tên, hãy tuân theo nó trong khi giữ các vị trí bắt buộc `selenium/tests/` và `selenium/data/`.
+Create `selenium/.env.example` and make `selenium/README.md` instruct the user to copy it to `selenium/.env` and fill in their information.
 
----
+Required variables:
 
-## Yêu cầu Hướng dữ liệu (Data-Driven)
-
-Mỗi bài test phải lấy đầu vào từ JSON trong `selenium/data/`.
-
-Được phép trong test script:
-
-- import/tải dữ liệu JSON;
-- duyệt qua các mục dữ liệu;
-- sử dụng hằng số cho selector, URL, và cấu hình môi trường.
-
-Không được phép trong test script:
-
-- mảng các test case inline;
-- đối tượng inline chứa các hàng dữ liệu đầu vào;
-- hardcoded các thông báo mong đợi hoặc giá trị mong đợi vốn thuộc về bộ dữ liệu.
-
-Hình dạng JSON khuyến nghị:
-
-```json
-{
-  "feature": "FR-05 Liệt kê và tìm kiếm sản phẩm",
-  "basePath": "/products",
-  "cases": [
-    {
-      "id": "TC-PRODUCT_SEARCH-001",
-      "title": "Tìm kiếm bằng từ khóa sản phẩm hợp lệ",
-      "type": "positive",
-      "input": {
-        "keyword": "phone"
-      },
-      "expected": {
-        "status": "results-visible",
-        "containsText": "phone"
-      }
-    }
-  ]
-}
+```env
+STUDENT_ID=
+STUDENT_NAME=
+FRONTEND_URL=http://localhost:5173
+API_URL=http://localhost:3000
+BROWSERS=chrome,edge,firefox
+HEADLESS=true
+REPORT_BASE_DIR=reports
+RUN_TIMESTAMP=
 ```
 
-TypeScript test phải định nghĩa các interface cho cấu trúc JSON.
+Optional variables may include feature-specific accounts, passwords, admin credentials, seeded product names, or timeouts. Keep secrets out of git and add `.env` to `selenium/.gitignore`.
 
----
+`utils/config.ts` must:
 
-## Quy tắc Test Script
+- Load `.env` with `dotenv/config`.
+- Validate required variables at startup.
+- Parse `BROWSERS` into an allowlist of `chrome`, `edge`, `firefox`.
+- Expose `RUN_BY = "Run by: " + STUDENT_ID`.
+- Expose an ISO timestamp. If `RUN_TIMESTAMP` is empty, generate `new Date().toISOString()`.
 
-Với mỗi FR, tạo chính xác một file spec:
+## Browser Execution
 
-```text
-selenium/tests/<fr-name>.spec.ts
-```
+Implement scripts so the user can run one browser, one feature, and the full matrix.
 
-Mỗi mục dữ liệu trở thành một khối Mocha `it()`, ví dụ:
-
-```ts
-for (const testCase of data.cases) {
-  it(`${testCase.id} - ${testCase.title}`, async () => {
-    // các bước test
-  });
-}
-```
-
-Quy tắc:
-
-- Sử dụng Selenium WebDriver, Mocha, và Chai.
-- Sử dụng `async/await`.
-- Sử dụng explicit wait với `driver.wait(...)`; tránh dùng sleep cố định trừ khi vì timeout nghiệp vụ thực tế.
-- Ưu tiên các selector ổn định từ ứng dụng. Nếu không có, hãy dùng selector ngữ nghĩa ít dễ vỡ nhất và ghi lại rủi ro vào `selenium/README.md`.
-- Kiểm chứng dựa trên đặc tả, không phải dựa trên cách triển khai lỗi hiện tại.
-- Sử dụng ít nhất ba mẫu kiểm chứng khác nhau trong bộ tính năng khi có thể:
-  - sự hiển thị / sự tồn tại;
-  - văn bản/nội dung;
-  - URL/điều hướng;
-  - giá trị đầu vào/trạng thái;
-  - đếm/độ dài danh sách;
-  - trạng thái enabled/disabled;
-  - kiểm chứng trạng thái dựa trên API.
-- Chỉ sử dụng các helper API cho thiết lập, dọn dẹp, đăng nhập, hoặc kiểm chứng trạng thái khi đặc tả API cho phép.
-- Không che giấu các bài test thất bại. Nếu kết quả thực tế khác với mong đợi, hãy để test thất bại.
-
----
-
-## Đa trình duyệt và Báo cáo
-
-HW04 yêu cầu mỗi tính năng chạy trên ba trình duyệt. Cấu hình các script để nhận `BROWSER` từ môi trường:
-
-- `chrome`
-- `firefox`
-- `edge` hoặc trình duyệt thứ ba khả dụng khác.
-
-Dự án nên bao gồm các script tương tự như:
+Recommended `package.json` scripts:
 
 ```json
 {
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "test": "mocha",
-    "test:chrome": "cross-env BROWSER=chrome mocha",
-    "test:firefox": "cross-env BROWSER=firefox mocha",
-    "test:edge": "cross-env BROWSER=edge mocha",
-    "test:all-browsers": "npm run test:chrome && npm run test:firefox && npm run test:edge"
+    "test:feature": "mocha",
+    "test:chrome": "cross-env BROWSER=chrome REPORT_FILENAME=chrome mocha",
+    "test:edge": "cross-env BROWSER=edge REPORT_FILENAME=edge mocha",
+    "test:firefox": "cross-env BROWSER=firefox REPORT_FILENAME=firefox mocha",
+    "test:all-browsers": "npm run test:chrome && npm run test:edge && npm run test:firefox"
   }
 }
 ```
 
-Cấu hình một reporter HTML như `mochawesome` trừ khi dự án đã sử dụng công cụ báo cáo HTML khác. Báo cáo phải hiển thị rõ ràng:
+When generating final instructions, include concrete commands for:
+
+- Installing dependencies.
+- Creating `.env` from `.env.example`.
+- Running one feature on one browser.
+- Running one feature on all three browsers.
+- Running all selected features on all three browsers.
+- Opening report paths.
+
+## Report Rules
+
+Use **mochawesome**; do not use Allure and do not use Playwright HTML reporter in this Selenium project.
+
+Configure each feature to produce exactly one report folder:
 
 ```text
-Run by: <MSSV>
+selenium/reports/<feature-name>/
 ```
 
-và một dấu thời gian ISO. Nếu MSSV chưa rõ, hãy dùng biến môi trường như `STUDENT_ID` và ghi lại cách chạy:
+Inside that folder, each browser run must produce one HTML file:
 
-```powershell
-$env:STUDENT_ID="23127344"; npm run test:all-browsers
-```
+- `chrome.html`
+- `edge.html`
+- `firefox.html`
 
----
-
-## Cổng Xác minh Trước khi Hoàn tất
-
-Sau khi viết hoặc chỉnh sửa script, không được kết thúc tác vụ chỉ bằng cách nói "đã tạo file". Phải kiểm tra để đảm bảo project có thể chạy được, hoặc nêu rõ blocker cụ thể nếu không thể chạy.
-
-Thực hiện theo thứ tự:
-
-1. Vào thư mục `selenium/`.
-2. Chạy `npm install` nếu `node_modules/` chưa tồn tại hoặc dependency mới được thêm vào.
-3. Chạy kiểm tra tĩnh:
-   - `npm run typecheck` nếu có script;
-   - nếu chưa có, thêm script `"typecheck": "tsc --noEmit"` vào `package.json` rồi chạy.
-4. Chạy test mục tiêu cho FR vừa tạo:
-   - ưu tiên lệnh theo FR, ví dụ `npm run test:product-listing-search`;
-   - nếu chưa có lệnh riêng, chạy `npm test -- --grep "<FR-ID hoặc TC prefix>"`;
-   - nếu cần xác minh HW04 đầy đủ và môi trường cho phép, chạy `npm run test:all-browsers`.
-5. Kiểm tra reporter có sinh HTML report và report có metadata `Run by: <MSSV>` cùng timestamp ISO.
-6. Nếu test fail vì bug thật của SUT, giữ test fail, ghi lại bug/evidence theo README và báo cáo rõ test đã chạy được nhưng phát hiện defect.
-7. Nếu không thể chạy vì thiếu SUT, thiếu URL, thiếu API, thiếu browser/driver, hoặc tài liệu chưa đủ, không được giả vờ thành công. Hãy báo cáo:
-   - lệnh đã thử;
-   - lỗi/blocker chính;
-   - phần nào vẫn đã xác minh được, ví dụ typecheck pass;
-   - người dùng cần cung cấp/chạy thêm gì.
-
-Khi sửa lỗi compile/runtime trong script, ưu tiên sửa ngay rồi chạy lại. Chỉ dừng khi script đã typecheck và chạy được, hoặc blocker bên ngoài đã rõ ràng.
-
----
-
-## Yêu cầu README
-
-Sau khi viết hoặc cập nhật script Selenium, bắt buộc tạo hoặc cập nhật `selenium/README.md` để hướng dẫn cách sử dụng script. README phải đủ rõ để người khác có thể cài đặt, cấu hình, chạy test và tìm báo cáo mà không cần hỏi lại.
-
-Tạo hoặc cập nhật `selenium/README.md` với:
-
-- các công cụ tiên quyết;
-- cách cài đặt dependencies;
-- cách khởi động EShop frontend/backend;
-- cấu hình base URL và API URL;
-- cấu hình metadata student ID/report;
-- lệnh chạy một FR;
-- lệnh chạy tất cả ba trình duyệt;
-- nơi tạo báo cáo HTML;
-- nơi lưu trữ ảnh chụp màn hình;
-- các rủi ro selector đã biết hoặc các case chưa tự động hóa.
-
----
-
-## Quy trình Triển khai
-
-1. Đọc tài liệu người dùng cung cấp.
-2. Xác định danh sách FR và FR được chọn.
-3. Nếu có nhiều FR và yêu cầu chưa rõ, hỏi FR nào cần thực hiện.
-4. Trích xuất:
-   - base URL/domain;
-   - đường dẫn trang liên quan;
-   - vai trò người dùng/tài khoản;
-   - quy tắc nghiệp vụ;
-   - endpoint API để thiết lập/dọn dẹp;
-   - thông báo kiểm chứng và lỗi mong đợi.
-   Nếu không trích xuất được website URL/domain, bỏ qua phần GUI script và giải thích tài liệu nào còn thiếu. Nếu không trích xuất được endpoint API, bỏ qua API helper và API-backed assertion.
-5. Tạo hoặc cập nhật `selenium/package.json`, `selenium/tsconfig.json`, `.mocharc.json`, và các utility dùng chung.
-6. Tạo `selenium/data/<fr-name>.data.json`.
-7. Tạo `selenium/tests/<fr-name>.spec.ts`.
-8. Làm cho script chỉ tiêu thụ tập dữ liệu JSON cho đầu vào và giá trị mong đợi.
-9. Tạo hoặc cập nhật `selenium/README.md` hướng dẫn cách cài đặt, cấu hình, chạy script, chạy từng FR, chạy đa trình duyệt, và xem báo cáo.
-10. Chạy cổng xác minh trước khi hoàn tất: install dependency nếu cần, typecheck, chạy test FR vừa tạo, và kiểm tra report nếu môi trường khả dụng.
-11. Nếu phát hiện lỗi compile/runtime do script, sửa và chạy lại.
-12. Báo cáo những gì đã tạo, lệnh đã chạy, kết quả xác minh, và những gì còn cần dữ liệu do người dùng cung cấp hoặc chạy trên SUT trực tiếp.
-
----
-
-## Checklist Chất lượng
-
-Trước khi hoàn tất, hãy xác thực:
-
-- [ ] FR được yêu cầu đã rõ ràng.
-- [ ] Domain website/base URL lấy từ tài liệu hoặc cấu hình môi trường.
-- [ ] Dữ liệu đầu vào test nằm trong `selenium/data/<fr-name>.data.json`.
-- [ ] File spec đọc dữ liệu từ JSON.
-- [ ] Không có mảng/đối tượng test case inline trong spec.
-- [ ] Mỗi test case có ID, tiêu đề, loại, đầu vào, và kết quả mong đợi.
-- [ ] Dự án có thể chạy từ `selenium/` với `npm install` và `npm test`.
-- [ ] `npm run typecheck` đã chạy thành công, hoặc blocker được ghi rõ.
-- [ ] Test cho FR vừa tạo đã được chạy, hoặc blocker bên ngoài được ghi rõ.
-- [ ] Các lệnh đa trình duyệt tồn tại.
-- [ ] HTML report đã được kiểm tra sau khi chạy, hoặc lý do chưa sinh report được ghi rõ.
-- [ ] Cấu hình báo cáo HTML bao gồm `Run by: <MSSV>` và dấu thời gian.
-- [ ] README giải thích cách chạy và nơi lưu trữ minh chứng.
-- [ ] README đã được tạo/cập nhật sau khi viết script.
-
----
-
-## Nhắc nhở Kiểm toán (Audit)
-
-Đối với công việc HW04, ghi lại từng artifact do AI tạo ra vào:
+Use mochawesome reporter options or a small report wrapper script to set:
 
 ```text
-software-testing/hw4/[AI-02] - FIT@HCMUS - AI Audit Report_VN.md
+reportDir=reports/<feature-name>
+reportFilename=<browser>
+overwrite=true
+html=true
+json=true
+charts=true
 ```
 
-Tuân theo các quy tắc mẫu:
+`reportFilename` must be computed from the current browser, for example `chrome`, `edge`, or `firefox`. Do not keep a static value such as `index`, `report`, `mochawesome`, or `<feature-name>`, because that makes later browser runs overwrite earlier reports.
 
-- dán prompt gốc nguyên văn;
-- dán output AI nguyên văn hoặc tóm tắt đường dẫn artifact đã tạo nếu đã đính kèm file đầy đủ;
-- gắn nhãn phán quyết là `HỢP LỆ`, `KHÔNG HỢP LỆ`, hoặc `CHƯA HOÀN THIỆN`;
-- giải thích lý do sử dụng yêu cầu HW04, ISTQB, hoặc slide môn học;
-- ghi rõ sinh viên đã xem xét hoặc thay đổi những gì.
+`overwrite=true` is allowed only because the browser filename is unique. It may replace `chrome.html` when Chrome is rerun, but it must never replace `edge.html` or `firefox.html`.
+
+For example, after running FR-05 on all browsers, the expected shape is:
+
+```text
+selenium/reports/product-listing-search/
+  chrome.html
+  edge.html
+  firefox.html
+  assets/
+```
+
+Add visible metadata through `utils/reportMetadata.ts`. After mochawesome generates each HTML file, inject or verify a visible header/footer containing:
+
+```text
+Run by: <StudentID>
+Student: <StudentName>
+Browser: <browser>
+Timestamp: <ISO timestamp>
+Feature: <feature-name>
+```
+
+The metadata must be readable by opening the HTML report directly in a browser. Do not rely only on console output or JSON metadata.
+
+After each browser run, verify `reports/<feature-name>/<browser>.html` exists and contains all required metadata strings.
+
+After `test:all-browsers`, verify all three files exist at the same time:
+
+```text
+reports/<feature-name>/chrome.html
+reports/<feature-name>/edge.html
+reports/<feature-name>/firefox.html
+```
+
+If only one HTML file exists after a three-browser run, treat it as a report-generation bug, fix `reportFilename`/report wrapper logic, and rerun.
+
+## Test Design Mapping
+
+- Each test case ID in the source document becomes one Mocha `it()`.
+- Group tests with `describe()` by feature and scenario category.
+- Turn preconditions into executable setup, not comments.
+- Assert according to the specification, not according to the current buggy behavior.
+- Use stable selectors from the app where available. Prefer semantic selectors, labels, roles, stable attributes, then CSS selectors. Avoid brittle selectors unless no alternative exists and document the reason.
+- For API-backed checks, use `fetch` from Node 18+ or a small typed helper in `utils/api.ts`.
+- Use `driver.wait(until...)`; avoid hard sleeps except for real business timeouts.
+
+## Bug Evidence
+
+When actual behavior differs from expected:
+
+- Keep the test failing; do not swallow assertion errors.
+- For UI failures, capture a screenshot to `selenium/bug-snapshots/<TC-ID>.png`. Use a stable filename and overwrite it on rerun.
+- Reset `selenium/bug-snapshots/BUGS.md` at the start of each run.
+- Add mochawesome context with TC ID, expected value, actual value, browser, feature, and screenshot path.
+- For API-only failures, add textual context without a screenshot.
+
+## README Requirements
+
+After writing or updating scripts, create or update `selenium/README.md`. It must instruct the user to:
+
+- Install dependencies.
+- Create `selenium/.env` from `.env.example`.
+- Fill in `STUDENT_ID`, `STUDENT_NAME`, `FRONTEND_URL`, `API_URL`, `BROWSERS`, and `HEADLESS`.
+- Start the SUT backend and frontend.
+- Run one feature on `chrome`, `edge`, and `firefox`.
+- Run the full HW04 matrix and confirm at least 9 browser runs for 3 features.
+- Open each HTML report under `selenium/reports/<feature>/<browser>.html`.
+- Check that every report visibly displays `Run by: <StudentID>`.
+- Interpret bug screenshots and `bug-snapshots/BUGS.md`.
+
+The README must not tell users to edit test source code for identity or URLs; those values come from `.env`.
+
+## Verification Gate
+
+Before saying the task is done:
+
+1. Run dependency installation if dependencies are missing.
+2. Run `npm run typecheck` from `selenium/`.
+3. If the SUT is available, run the requested feature on all configured browsers.
+4. Confirm each run produced `reports/<feature>/<browser>.html`.
+5. Confirm the feature report folder contains separate `chrome.html`, `edge.html`, and `firefox.html` files after the full browser run.
+6. Search each report for `Run by: <StudentID>`, student name, browser, feature, and ISO timestamp.
+7. Fix compile, runtime, report-path, metadata, and report-overwrite issues, then rerun.
+8. If blocked by missing SUT, browser, driver, or `.env`, state the exact blocker and the command the user should run next.
+
+## Completion Checklist
+
+- `selenium/.env.example` exists and `.env` is gitignored.
+- `selenium/README.md` explains `.env` creation and cross-browser execution.
+- Every selected feature has one spec file and one JSON data file.
+- Tests are data-driven and assert expected behavior from docs.
+- Browser list comes from `.env` or `BROWSER`, not hardcoded in specs.
+- Chrome, Edge, and Firefox runs are supported.
+- For 3 HW04 features, the suite can produce at least 9 browser reports.
+- Each feature report folder preserves three separate browser files: `chrome.html`, `edge.html`, and `firefox.html`.
+- Every report path is deterministic and contains visible `Run by: <StudentID>`.
+- Verification results or blockers are reported honestly.
