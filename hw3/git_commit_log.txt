@@ -1,0 +1,12 @@
+GIT COMMIT LOG — HW03 Kiểm thử Giao diện và Tính khả dụng
+Được tạo bằng lệnh: git log --pretty=format:"%h | %ad | %an | %s" --date=iso --reverse -- hw3/
+(Chạy lệnh trên sau khi hoàn thành công việc và dán kết quả vào bên dưới, thay thế placeholder này.)
+
+TODO: dán kết quả `git log` tại đây, tối thiểu phải có một commit cho mỗi bước:
+- thiết kế checklist
+- thực thi checklist
+- ghi nhận bug
+- từng phiên trong 7 phiên usability
+- phân tích usability
+- kiểm thử cross-platform
+- tổng hợp báo cáo cuối cùng
