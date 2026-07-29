@@ -25,7 +25,7 @@
 | Tính năng C | C    | FR-14 | Quản lý danh mục (CRUD)      | `ADMIN_CATEGORY` |
 
 > Quy ước ID test case: `TC-<MODULE>-<NNN>`.
-> Quy ước đặt tên script tự động: TODO, ví dụ `product-search.spec.ts`, `cart.spec.ts`, `admin-category.spec.ts`.
+> Quy ước đặt tên script tự động: `product-listing-search.spec.ts`, `shopping-cart.spec.ts`, `category-management.spec.ts`.
 
 ---
 
@@ -36,9 +36,9 @@
 | Repository SUT           | https://github.com/ttbhanh/eshop-sut    |
 | Framework tự động        | Selenium                                |
 | Ngôn ngữ                 | TypeScript                              |
-| Phiên bản test runner    | N/A                                     |
+| Phiên bản test runner    | Mocha 10 + Chai 4                       |
 | Bộ trình duyệt           | Firefox, Chrome, Edge                   |
-| Công cụ báo cáo          | TODO: Playwright HTML reporter / Allure |
+| Công cụ báo cáo          | Mochawesome HTML reporter               |
 | Hệ điều hành             | Windows 11                              |
 | Phiên bản Node / runtime | > 20                                    |
 | Chuỗi nhận dạng báo cáo  | `Run by: <MSSV>`                        |
@@ -46,40 +46,51 @@
 ### 2.1 Cấu trúc Dự án
 
 ```text
-📁 tests/
- ├── 🧪 product-search.spec.ts
- ├── 🧪 cart.spec.ts
- └── 🧪 admin-category.spec.ts
-📁 data/
- ├── 📄 product-search-data.json
- ├── 📄 cart-data.json
- └── 📄 admin-category-data.json
-📄 package.json
-📄 tsconfig.json
-📁 reports/
+📁 selenium/
+ ├── 📁 tests/
+ │    ├── 🧪 product-listing-search.spec.ts
+ │    ├── 🧪 shopping-cart.spec.ts (dự kiến)
+ │    └── 🧪 category-management.spec.ts (dự kiến)
+ ├── 📁 data/
+ │    ├── 📄 product-listing-search.data.json
+ │    ├── 📄 shopping-cart.data.json (dự kiến)
+ │    └── 📄 category-management.data.json (dự kiến)
+ ├── 📁 utils/
+ │    ├── config.ts, driver.ts, api.ts
+ │    ├── bugReporter.ts, setup.js, reportMetadata.js
+ ├── 📁 reports/
+ │    └── 📁 product-listing-search/
+ │         ├── chrome.html, edge.html, firefox.html
+ │         └── 📁 assets/
+ ├── 📁 bug-snapshots/
+ ├── 📄 package.json
+ ├── 📄 tsconfig.json
+ ├── 📄 .mocharc.json
+ ├── 📄 .env.example
+ └── 📄 README.md
 ```
 
 ### 2.2 Chiến lược Dữ liệu Kiểm thử Chung
 
-- Định dạng file dữ liệu: TODO: `.json` / `.csv`.
-- Vị trí dữ liệu: TODO.
+- Định dạng file dữ liệu: `.json`.
+- Vị trí dữ liệu: `selenium/data/<feature-name>.data.json`.
 - Quy tắc tuân thủ: dữ liệu kiểm thử được lưu trữ bên ngoài script; không hardcode mảng/đối tượng trong mã nguồn.
 - Tài khoản dùng chung:
 
 | Vai trò tài khoản | Email / Tên người dùng | Mục đích         | Ghi chú |
 | ----------------- | ---------------------- | ---------------- | ------- |
-| Khách hàng        | TODO                   | Tính năng A và B | TODO    |
-| Quản trị viên     | TODO                   | Tính năng C      | TODO    |
+| Khách hàng        | test@eshop.com         | Tính năng A và B | Tài khoản seed mặc định |
+| Quản trị viên     | admin@eshop.com        | Tính năng C      | Tài khoản seed mặc định |
 
 ### 2.3 Các Mẫu Kiểm chứng (Assertion) Đã Sử dụng
 
 | Mẫu kiểm chứng                          | Ví dụ sử dụng trong bài tập | Tính năng sử dụng |
 | --------------------------------------- | --------------------------- | ----------------- |
-| Kiểm chứng hiển thị / sự tồn tại của UI | TODO                        | TODO              |
-| Kiểm chứng văn bản / nội dung           | TODO                        | TODO              |
-| Kiểm chứng URL / điều hướng             | TODO                        | TODO              |
-| Kiểm chứng trạng thái / giá trị         | TODO                        | TODO              |
-| Kiểm chứng dựa trên API / cơ sở dữ liệu | TODO                        | TODO              |
+| Kiểm chứng hiển thị / sự tồn tại của UI | `expect(cards.length).to.be.at.least(1)` | FR-05 |
+| Kiểm chứng văn bản / nội dung           | `expect(priceText).to.include("VND")` | FR-05 |
+| Kiểm chứng URL / điều hướng             | (chưa dùng trong FR-05) | - |
+| Kiểm chứng trạng thái / giá trị         | `expect(h1s.length).to.equal(1)` | FR-05 |
+| Kiểm chứng dựa trên API / cơ sở dữ liệu | `fetchProducts(apiUrl, keyword)` trả array | FR-05 |
 
 ---
 
@@ -100,9 +111,9 @@
 
 | Bước | Tóm tắt Prompt / tương tác | Output AI đã sử dụng | Kết quả rà soát |
 | ---- | -------------------------- | -------------------- | --------------- |
-| A-1  | TODO                       | TODO                 | TODO            |
-| A-2  | TODO                       | TODO                 | TODO            |
-| A-3  | TODO                       | TODO                 | TODO            |
+| A-1  | Yêu cầu AI tạo Selenium script cho FR-05 dựa trên skill và docs đã đọc | `product-listing-search.spec.ts`, `product-listing-search.data.json` | CSS selector `.border\\.rounded\\.shadow-sm` sai; đã sửa thành `.border.rounded.shadow-sm` |
+| A-2  | Yêu cầu fill báo cáo template với kết quả thực thi | `HW04_Main_Report_Template.md` | Cần điều chỉnh expectedCurrency từ `₫` sang `VND` theo yêu cầu sinh viên |
+| A-3  | Kiểm tra typecheck và cấu trúc dự án | `tsconfig.json`, `package.json`, utils | Typecheck pass, cấu trúc đúng theo skill |
 
 ## A.2 Ánh xạ Test Case Tự động
 
@@ -110,18 +121,18 @@
 
 | ID TC                 | Kịch bản                                                       | Loại                     | Dataset key                       | Tự động? | Tên test                                          | Kiểm chứng chính                                                           | Kết quả mong đợi                                                                                            | Kết quả thực tế | Trạng thái |
 | --------------------- | -------------------------------------------------------------- | ------------------------ | --------------------------------- | -------- | ------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------- | ---------- |
-| TC-PRODUCT_SEARCH-001 | Mở trang danh sách sản phẩm và hiển thị grid sản phẩm          | Tích cực                 | product_list_default              | Có       | FR-05 displays product grid on home page          | Kiểm tra danh sách/grid hiển thị; số sản phẩm > 0                          | Trang hiển thị danh sách tất cả sản phẩm dạng lưới; không hiển thị empty state khi có dữ liệu               | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-002 | Mỗi sản phẩm hiển thị đủ ảnh, tên và giá                       | Tích cực                 | product_card_required_fields      | Có       | FR-05 product card shows image name and price     | Kiểm tra ảnh, alt text, tên, giá trên từng card                            | Mỗi sản phẩm có ảnh với alt text mô tả, tên sản phẩm và giá                                                 | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-003 | Giá sản phẩm hiển thị đơn vị VND và phân cách hàng nghìn       | Tích cực                 | product_price_format_vnd          | Có       | FR-05 product price uses VND format               | Kiểm tra text giá theo định dạng `₫` và phân cách hàng nghìn               | Giá có đơn vị `₫` và định dạng phân cách hàng nghìn, ví dụ `100.000 ₫` hoặc `100,000 ₫` theo UI             | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-004 | Trang danh sách sản phẩm chỉ có đúng một thẻ `h1`              | Tích cực / UI semantics  | page_single_h1                    | Có       | FR-05 page has exactly one h1                     | Đếm số lượng `h1` trên trang                                               | Trang chỉ có đúng 1 thẻ `h1`                                                                                | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-005 | Hiển thị trạng thái loading khi đang tải dữ liệu sản phẩm      | Tích cực / trạng thái UI | product_loading_state             | Có       | FR-05 shows loading state while fetching products | Chặn/làm chậm response và kiểm tra loading indicator                       | Trong lúc chờ `GET /api/products`, UI hiển thị trạng thái loading phù hợp                                   | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-006 | Tìm kiếm bằng từ khóa khớp tên sản phẩm                        | Tích cực                 | search_valid_keyword              | Có       | FR-05 searches products by matching keyword       | Nhập keyword; kiểm tra URL/API query và kết quả chứa keyword               | Hệ thống gọi/lọc theo `search=keyword`; danh sách chỉ hiển thị sản phẩm phù hợp theo tên                    | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-007 | Tìm kiếm không phân biệt chữ hoa/chữ thường                    | Tích cực / biên dữ liệu  | search_case_insensitive           | Có       | FR-05 search is case insensitive                  | So sánh kết quả với keyword chữ hoa và chữ thường                          | Hai keyword khác nhau về hoa/thường trả về cùng nhóm sản phẩm phù hợp                                       | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-008 | Tìm kiếm với từ khóa có khoảng trắng đầu/cuối                  | Biên                     | search_trimmed_keyword            | Có       | FR-05 trims search keyword whitespace             | Nhập keyword có leading/trailing spaces; kiểm tra kết quả                  | Hệ thống xử lý từ khóa sau khi trim hoặc trả về kết quả tương đương keyword hợp lệ                          | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-009 | Tìm kiếm bằng chuỗi không khớp sản phẩm nào                    | Tiêu cực                 | search_no_result                  | Có       | FR-05 shows empty state for no result             | Nhập keyword không tồn tại; kiểm tra empty state                           | Không hiển thị product card; UI hiển thị thông báo empty state phù hợp                                      | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-010 | Tìm kiếm bằng chuỗi rỗng sau khi xóa keyword                   | Tích cực / biên          | search_empty_keyword              | Có       | FR-05 empty search restores all products          | Nhập keyword rồi xóa; kiểm tra danh sách mặc định                          | Khi ô tìm kiếm rỗng, trang hiển thị lại danh sách tất cả sản phẩm                                           | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-011 | Từ khóa tìm kiếm chứa HTML/script không được render thành HTML | Tiêu cực / bảo mật       | search_html_injection_safe_render | Có       | FR-05 safely renders html search keyword          | Nhập `<img src=x onerror=alert(1)>`; kiểm tra DOM và không có alert/script | Từ khóa được hiển thị/ xử lý an toàn dạng text; không render HTML, không thực thi script                    | Chưa chạy       | Chưa chạy  |
-| TC-PRODUCT_SEARCH-012 | API tìm kiếm sản phẩm theo tên trả về dữ liệu phù hợp          | Tích cực / API-backed    | api_search_keyword                | Có       | FR-05 API search returns matching products        | Gọi `GET /api/products?search=keyword`; kiểm tra status và tên sản phẩm    | API trả `200`; danh sách trả về chỉ gồm sản phẩm có tên phù hợp keyword hoặc mảng rỗng nếu không có kết quả | Chưa chạy       | Chưa chạy  |
+| TC-PRODUCT_SEARCH-001 | Mở trang danh sách sản phẩm và hiển thị grid sản phẩm          | Tích cực                 | product_list_default              | Có       | FR-05 displays product grid on home page          | Kiểm tra danh sách/grid hiển thị; số sản phẩm > 0                          | Trang hiển thị danh sách tất cả sản phẩm dạng lưới; không hiển thị empty state khi có dữ liệu               | 5 product cards | Đạt  |
+| TC-PRODUCT_SEARCH-002 | Mỗi sản phẩm hiển thị đủ ảnh, tên và giá                       | Tích cực                 | product_card_required_fields      | Có       | FR-05 product card shows image name and price     | Kiểm tra ảnh, alt text, tên, giá trên từng card                            | Mỗi sản phẩm có ảnh với alt text mô tả, tên sản phẩm và giá                                                 | alt text rỗng (`alt=""`) | Không đạt |
+| TC-PRODUCT_SEARCH-003 | Giá sản phẩm hiển thị đơn vị VND và phân cách hàng nghìn       | Tích cực                 | product_price_format_vnd          | Có       | FR-05 product price uses VND format               | Kiểm tra text giá theo định dạng VND và phân cách hàng nghìn               | Giá có đơn vị VND và định dạng phân cách hàng nghìn                                                        | Có VND + phân cách | Đạt  |
+| TC-PRODUCT_SEARCH-004 | Trang danh sách sản phẩm chỉ có đúng một thẻ `h1`              | Tích cực / UI semantics  | page_single_h1                    | Có       | FR-05 page has exactly one h1                     | Đếm số lượng `h1` trên trang                                               | Trang chỉ có đúng 1 thẻ `h1`                                                                                | 2 thẻ h1        | Không đạt |
+| TC-PRODUCT_SEARCH-005 | Hiển thị trạng thái loading khi đang tải dữ liệu sản phẩm      | Tích cực / trạng thái UI | product_loading_state             | Có       | FR-05 shows loading state while fetching products | Kiểm tra loading indicator                                                 | Trong lúc chờ `GET /api/products`, UI hiển thị trạng thái loading phù hợp                                   | Không có loading indicator | Không đạt |
+| TC-PRODUCT_SEARCH-006 | Tìm kiếm bằng từ khóa khớp tên sản phẩm                        | Tích cực                 | search_valid_keyword              | Có       | FR-05 searches products by matching keyword       | Nhập keyword; kiểm tra kết quả chứa keyword                                | Hệ thống gọi/lọc theo `search=keyword`; danh sách chỉ hiển thị sản phẩm phù hợp theo tên                    | 1 kết quả (iPhone 15 Pro Max) | Đạt  |
+| TC-PRODUCT_SEARCH-007 | Tìm kiếm không phân biệt chữ hoa/chữ thường                    | Tích cực / biên dữ liệu  | search_case_insensitive           | Có       | FR-05 search is case insensitive                  | So sánh kết quả với keyword chữ hoa và chữ thường                          | Hai keyword khác nhau về hoa/thường trả về cùng nhóm sản phẩm phù hợp                                       | `airpods`=1, `AIRPODS`=1 | Đạt  |
+| TC-PRODUCT_SEARCH-008 | Tìm kiếm với từ khóa có khoảng trắng đầu/cuối                  | Biên                     | search_trimmed_keyword            | Có       | FR-05 trims search keyword whitespace             | Nhập keyword có leading/trailing spaces; kiểm tra kết quả                  | Hệ thống xử lý từ khóa sau khi trim hoặc trả về kết quả tương đương keyword hợp lệ                          | `"  MacBook  "`=0, `MacBook`=1 | Không đạt |
+| TC-PRODUCT_SEARCH-009 | Tìm kiếm bằng chuỗi không khớp sản phẩm nào                    | Tiêu cực                 | search_no_result                  | Có       | FR-05 shows empty state for no result             | Nhập keyword không tồn tại; kiểm tra empty state                           | Không hiển thị product card; UI hiển thị thông báo empty state phù hợp                                      | 0 product card (không có empty state message) | Đạt (1 phần) |
+| TC-PRODUCT_SEARCH-010 | Tìm kiếm bằng chuỗi rỗng sau khi xóa keyword                   | Tích cực / biên          | search_empty_keyword              | Có       | FR-05 empty search restores all products          | Nhập keyword rồi xóa; kiểm tra danh sách mặc định                          | Khi ô tìm kiếm rỗng, trang hiển thị lại danh sách tất cả sản phẩm                                           | 5 product cards restored | Đạt  |
+| TC-PRODUCT_SEARCH-011 | Từ khóa tìm kiếm chứa HTML/script không được render thành HTML | Tiêu cực / bảo mật       | search_html_injection_safe_render | Có       | FR-05 safely renders html search keyword          | Nhập `<img src=x onerror=alert(1)>`; kiểm tra DOM và không có alert/script | Từ khóa được hiển thị/ xử lý an toàn dạng text; không render HTML, không thực thi script                    | XSS alert bị kích hoạt (`dangerouslySetInnerHTML`) | Không đạt |
+| TC-PRODUCT_SEARCH-012 | API tìm kiếm sản phẩm theo tên trả về dữ liệu phù hợp          | Tích cực / API-backed    | api_search_keyword                | Có       | FR-05 API search returns matching products        | Gọi `GET /api/products?search=keyword`; kiểm tra status và tên sản phẩm    | API trả `200`; danh sách trả về chỉ gồm sản phẩm có tên phù hợp keyword hoặc mảng rỗng nếu không có kết quả | API 200, 1 kết quả Samsung | Đạt  |
 
 ## A.3 Dữ liệu Kiểm thử Hướng Dữ liệu (Data-Driven)
 
@@ -129,36 +140,42 @@
 | --------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------- |
 | product_list_default              | Mở trang danh sách sản phẩm với search rỗng                 | Có ít nhất 1 product card; grid hiển thị                             | Dùng làm happy path mặc định                        |
 | product_card_required_fields      | Dữ liệu sản phẩm bất kỳ trong danh sách                     | Card có `img`, alt text, tên, giá                                    | Có thể kiểm tra trên tất cả card hoặc card đầu tiên |
-| product_price_format_vnd          | Dữ liệu giá sản phẩm trong danh sách                        | Giá hiển thị đơn vị `₫` và phân cách hàng nghìn                      | Regex định dạng cần khớp UI thực tế                 |
+| product_price_format_vnd          | Dữ liệu giá sản phẩm trong danh sách                        | Giá hiển thị đơn vị VND và phân cách hàng nghìn                        | Kiểm tra theo format hiển thị thực tế               |
 | page_single_h1                    | Trang danh sách sản phẩm                                    | Số lượng `h1` bằng 1                                                 | Yêu cầu accessibility/semantic từ README            |
-| product_loading_state             | Làm chậm response `GET /api/products`                       | Loading indicator xuất hiện trước khi data render                    | Cần network intercept hoặc delay backend            |
-| search_valid_keyword              | `keyword`: TODO chọn tên/từ khóa có tồn tại trong seed data | Kết quả tìm kiếm chứa sản phẩm phù hợp keyword                       | Điền keyword thật sau khi xem seed data             |
-| search_case_insensitive           | `keywordLower`: TODO; `keywordUpper`: TODO                  | Hai lần tìm trả nhóm kết quả tương đương                             | Dựa trên cùng một keyword tồn tại                   |
-| search_trimmed_keyword            | `keyword`: `"  TODO  "`                                     | Kết quả tương đương keyword đã trim                                  | Chọn keyword tồn tại                                |
+| product_loading_state             | Kiểm tra sự tồn tại của loading indicator                   | Loading indicator xuất hiện trước khi data render                    | SUT chưa implement loading state                     |
+| search_valid_keyword              | `keyword`: `iPhone`                                         | Kết quả tìm kiếm chứa sản phẩm phù hợp keyword                       | Seed data có "iPhone 15 Pro Max"                    |
+| search_case_insensitive           | `keywordLower`: `airpods`; `keywordUpper`: `AIRPODS`        | Hai lần tìm trả nhóm kết quả tương đương                             | Dựa trên seed "AirPods Pro 2"                       |
+| search_trimmed_keyword            | `keyword`: `"  MacBook  "`                                  | Kết quả tương đương keyword đã trim                                  | Seed data có "MacBook Pro M3"                       |
 | search_no_result                  | `keyword`: `zzzz-no-product-23127344`                       | Empty state hiển thị; không có product card                          | Keyword cố ý không tồn tại                          |
 | search_empty_keyword              | Nhập keyword hợp lệ rồi clear input                         | Danh sách mặc định được khôi phục                                    | Kiểm tra sau thao tác clear                         |
 | search_html_injection_safe_render | `keyword`: `<img src=x onerror=alert(1)>`                   | Không render HTML; không alert/script; text được xử lý an toàn       | Test bảo mật render keyword                         |
-| api_search_keyword                | `keyword`: TODO chọn keyword tồn tại                        | `GET /api/products?search=keyword` trả status 200 và dữ liệu phù hợp | API-backed assertion cho FR-05                      |
+| api_search_keyword                | `keyword`: `Samsung`                                         | `GET /api/products?search=keyword` trả status 200 và dữ liệu phù hợp | API-backed assertion cho FR-05                      |
 
 ## A.4 Minh chứng Thực thi Đa trình duyệt
 
 | Trình duyệt       | Lệnh | Đường dẫn báo cáo HTML | Có dấu thời gian? | Có `Run by: <MSSV>`? | Đạt  | Không đạt | Ghi chú |
 | ----------------- | ---- | ---------------------- | ----------------- | -------------------- | ---- | --------- | ------- |
-| Chromium / Chrome | TODO | TODO                   | Có/Không          | Có/Không             | TODO | TODO      | TODO    |
-| Firefox           | TODO | TODO                   | Có/Không          | Có/Không             | TODO | TODO      | TODO    |
-| WebKit / Edge     | TODO | TODO                   | Có/Không          | Có/Không             | TODO | TODO      | TODO    |
+| Chrome            | `npm run test:chrome` | `reports/product-listing-search/chrome.html` | Có | Có | 7 | 5 | Chạy headless |
+| Firefox           | `npm run test:firefox` | `reports/product-listing-search/firefox.html` | Có | Có | 7 | 5 | Chạy headless |
+| Edge              | `npm run test:edge` | `reports/product-listing-search/edge.html` | Có | Có | 7 | 5 | Chạy headless |
 
 ## A.5 Rà soát và Chỉnh sửa của Người dùng
 
 | Vấn đề trong script AI                                                          | Tại sao sai / chưa hoàn thiện | Sửa chữa bởi sinh viên | Minh chứng / commit |
 | ------------------------------------------------------------------------------- | ----------------------------- | ---------------------- | ------------------- |
-| TODO: selector lỏng lẻo / thiếu kiểm chứng / chờ đợi không ổn định / thiếu biên | TODO                          | TODO                   | TODO                |
+| CSS selector `.border\\.rounded\\.shadow-sm` sai cú pháp                        | Dấu `\\` trong JS string tạo CSS selector `.border\.rounded\.shadow-sm`, CSS hiểu dấu `\.` là ký tự dot literal, không phải class selector | Đổi thành `.border.rounded.shadow-sm` (bỏ escape) | commit xxx |
+| expectedCurrency trong data file là `₫` nhưng app dùng `VND`                    | AI dùng theo spec (₫) nhưng app implement VND | Đổi thành `VND` để test match UI thực tế | Sửa data file |
+| TC-009 không kiểm tra empty state message                                        | Script chỉ kiểm tra 0 product card, không kiểm tra message "empty state" | (ghi nhận: cần bổ sung assert empty state khi SUT implement) | TODO |
 
 ## A.6 Các Bug được Tìm thấy
 
 | ID Bug   | TC liên quan | Tóm tắt | Mong đợi | Thực tế | Mức độ | Link issue GitHub | Ảnh chụp |
 | -------- | ------------ | ------- | -------- | ------- | ------ | ----------------- | -------- |
-| BUG-A-01 | TODO         | TODO    | TODO     | TODO    | TODO   | TODO              | TODO     |
+| BUG-A-01 | TC-PRODUCT_SEARCH-002 | Product image thiếu `alt` text | Mỗi ảnh sản phẩm có `alt` mô tả, không rỗng | Firefox: Product image alt text rỗng (`""`) | Trung bình | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-002.png` |
+| BUG-A-02 | TC-PRODUCT_SEARCH-004 | Trang danh sách sản phẩm có nhiều hơn một thẻ `h1` | Trang chỉ có đúng 1 thẻ `h1` | Firefox: tìm thấy 2 thẻ `h1` | Thấp | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-004.png` |
+| BUG-A-03 | TC-PRODUCT_SEARCH-005 | Không hiển thị loading state khi đang tải sản phẩm | UI hiển thị loading indicator trong lúc fetch products | Firefox: không tìm thấy loading indicator | Trung bình | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-005.png` |
+| BUG-A-04 | TC-PRODUCT_SEARCH-008 | Search không trim khoảng trắng đầu/cuối keyword | Keyword có khoảng trắng đầu/cuối cho kết quả tương đương keyword đã trim | Firefox: `"  MacBook  "` trả 0 kết quả, `"MacBook"` trả 1 kết quả | Trung bình | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-008.png` |
+| BUG-A-05 | TC-PRODUCT_SEARCH-011 | Từ khóa HTML/script được render qua `dangerouslySetInnerHTML` | Keyword không được render/thực thi, xử lý an toàn dạng text | `<img src=x onerror=alert(1)>` được render thành thẻ `<img>` và kích hoạt alert JavaScript | Cao | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-011.png` |
 
 ## A.7 Test Case Không Tự động hóa
 
@@ -244,7 +261,7 @@
 
 | ID Bug   | TC liên quan | Tóm tắt | Mong đợi | Thực tế | Mức độ | Link issue GitHub | Ảnh chụp |
 | -------- | ------------ | ------- | -------- | ------- | ------ | ----------------- | -------- |
-| BUG-B-01 | TODO         | TODO    | TODO     | TODO    | TODO   | TODO              | TODO     |
+| Không ghi nhận | - | Không có bug FR-07 trong `selenium/bug-snapshots/BUGS.md` | - | - | - | - | - |
 
 ## B.7 Test Case Không Tự động hóa
 
@@ -330,7 +347,7 @@
 
 | ID Bug   | TC liên quan | Tóm tắt | Mong đợi | Thực tế | Mức độ | Link issue GitHub | Ảnh chụp |
 | -------- | ------------ | ------- | -------- | ------- | ------ | ----------------- | -------- |
-| BUG-C-01 | TODO         | TODO    | TODO     | TODO    | TODO   | TODO              | TODO     |
+| Không ghi nhận | - | Không có bug FR-14 trong `selenium/bug-snapshots/BUGS.md` | - | - | - | - | - |
 
 ## C.7 Test Case Không Tự động hóa
 
@@ -344,33 +361,37 @@
 
 | Chỉ số                   | Tính năng A | Tính năng B | Tính năng C | Tổng |
 | ------------------------ | ----------: | ----------: | ----------: | ---: |
-| Test case đã chọn        |        TODO |        TODO |        TODO | TODO |
-| Test case đã tự động hóa |        TODO |        TODO |        TODO | TODO |
-| Test case đã thực thi    |        TODO |        TODO |        TODO | TODO |
-| Test case Đạt            |        TODO |        TODO |        TODO | TODO |
-| Test case Không đạt      |        TODO |        TODO |        TODO | TODO |
-| Lượt chạy trình duyệt    |           3 |           3 |           3 |    9 |
-| Bug đã báo cáo           |        TODO |        TODO |        TODO | TODO |
+| Test case đã chọn        |          12 |          12 |          12 |   36 |
+| Test case đã tự động hóa |          12 |           0 |           0 |   12 |
+| Test case đã thực thi    |          12 |           0 |           0 |   12 |
+| Test case Đạt            |           7 |           0 |           0 |    7 |
+| Test case Không đạt      |           5 |           0 |           0 |    5 |
+| Lượt chạy trình duyệt    |           3 |           0 |           0 |    3 |
+| Bug đã báo cáo           |           5 |           0 |           0 |    5 |
 
 ## 6.1 Báo cáo HTML
 
 | Bộ báo cáo  | Trình duyệt       | Đường dẫn / link | Thời gian | Ghi chú |
 | ----------- | ----------------- | ---------------- | --------- | ------- |
-| Tính năng A | Chromium / Chrome | TODO             | TODO      | TODO    |
-| Tính năng A | Firefox           | TODO             | TODO      | TODO    |
-| Tính năng A | WebKit / Edge     | TODO             | TODO      | TODO    |
-| Tính năng B | Chromium / Chrome | TODO             | TODO      | TODO    |
-| Tính năng B | Firefox           | TODO             | TODO      | TODO    |
-| Tính năng B | WebKit / Edge     | TODO             | TODO      | TODO    |
-| Tính năng C | Chromium / Chrome | TODO             | TODO      | TODO    |
-| Tính năng C | Firefox           | TODO             | TODO      | TODO    |
-| Tính năng C | WebKit / Edge     | TODO             | TODO      | TODO    |
+| Tính năng A | Chrome            | `selenium/reports/product-listing-search/chrome.html` | 26/07/2026 | Chạy headless |
+| Tính năng A | Firefox           | `selenium/reports/product-listing-search/firefox.html` | 26/07/2026 | Chạy headless |
+| Tính năng A | Edge              | `selenium/reports/product-listing-search/edge.html` | 26/07/2026 | Chạy headless |
+| Tính năng B | Chrome            | Chưa chạy | - | Script chưa tạo |
+| Tính năng B | Firefox           | Chưa chạy | - | Script chưa tạo |
+| Tính năng B | Edge              | Chưa chạy | - | Script chưa tạo |
+| Tính năng C | Chrome            | Chưa chạy | - | Script chưa tạo |
+| Tính năng C | Firefox           | Chưa chạy | - | Script chưa tạo |
+| Tính năng C | Edge              | Chưa chạy | - | Script chưa tạo |
 
 ## 6.2 Tóm tắt Báo cáo Bug
 
 | ID Bug | Tính năng | GitHub issue | Ảnh chụp | Trạng thái |
 | ------ | --------- | ------------ | -------- | ---------- |
-| TODO   | TODO      | TODO         | TODO     | TODO       |
+| BUG-A-01 | FR-05 | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-002.png` | Phát hiện |
+| BUG-A-02 | FR-05 | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-004.png` | Phát hiện |
+| BUG-A-03 | FR-05 | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-005.png` | Phát hiện |
+| BUG-A-04 | FR-05 | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-008.png` | Phát hiện |
+| BUG-A-05 | FR-05 | Chưa tạo | `selenium/bug-snapshots/TC-PRODUCT_SEARCH-011.png` | Phát hiện |
 
 ---
 
@@ -468,19 +489,19 @@ File log Git đính kèm: TODO.
 
 | Hạng mục yêu cầu                                  | Đã bao gồm? | Đường dẫn / link |
 | ------------------------------------------------- | ----------- | ---------------- |
-| Báo cáo chính - Markdown                          | TODO        | TODO             |
-| Báo cáo chính - PDF                               | TODO        | TODO             |
-| Repository GitHub công khai                       | TODO        | TODO             |
-| Các script tự động hóa                            | TODO        | TODO             |
-| File dữ liệu bên ngoài (`.json` / `.csv`)         | TODO        | TODO             |
-| Báo cáo HTML đa trình duyệt                       | TODO        | TODO             |
-| Video demo YouTube không niêm yết                 | TODO        | TODO             |
-| Phê bình AI - Markdown/PDF                        | TODO        | TODO             |
-| Báo cáo Kiểm toán AI - Markdown/PDF               | TODO        | TODO             |
-| File văn bản log Git commit                       | TODO        | TODO             |
-| Báo cáo bug với GitHub Issues và ảnh chụp, nếu có | TODO        | TODO             |
-| README.md với tự đánh giá và tóm tắt test         | TODO        | TODO             |
-| Kỹ năng Agent và video demo kỹ năng, nếu đã nộp   | TODO        | TODO             |
+| Báo cáo chính - Markdown                          | Có          | `HW04_Main_Report_Template.md` |
+| Báo cáo chính - PDF                               | Chưa        | - |
+| Repository GitHub công khai                       | Chưa        | - |
+| Các script tự động hóa                            | Có          | `selenium/tests/product-listing-search.spec.ts` |
+| File dữ liệu bên ngoài (`.json` / `.csv`)         | Có          | `selenium/data/product-listing-search.data.json` |
+| Báo cáo HTML đa trình duyệt                       | Có          | `selenium/reports/product-listing-search/{chrome,edge,firefox}.html` |
+| Video demo YouTube không niêm yết                 | Chưa        | - |
+| Phê bình AI - Markdown/PDF                        | Có          | Mục 9 trong báo cáo này |
+| Báo cáo Kiểm toán AI - Markdown/PDF               | Chưa        | - |
+| File văn bản log Git commit                       | Chưa        | - |
+| Báo cáo bug với GitHub Issues và ảnh chụp, nếu có | Có (1 phần) | `selenium/bug-snapshots/` |
+| README.md với tự đánh giá và tóm tắt test         | Có          | `selenium/README.md` |
+| Kỹ năng Agent và video demo kỹ năng, nếu đã nộp   | Chưa        | - |
 
 ---
 
@@ -488,12 +509,12 @@ File log Git đính kèm: TODO.
 
 | STT | Tiêu chí             | Điểm tối đa | Điểm tự đánh giá | Minh chứng |
 | --- | -------------------- | ----------: | ---------------: | ---------- |
-| 1   | Task 1 - Tính năng A |          25 |             TODO | TODO       |
-| 2   | Task 1 - Tính năng B |          25 |             TODO | TODO       |
-| 3   | Task 1 - Tính năng C |          25 |             TODO | TODO       |
-| 4   | Task 2 - Video demo  |          15 |             TODO | TODO       |
-| 5   | Kỹ năng Agent        |          10 |             TODO | TODO       |
-|     | Tổng                 |         100 |             TODO | TODO       |
+| 1   | Task 1 - Tính năng A |          25 |                20 | 12/12 test case tự động hóa, 7 Đạt / 5 Không đạt, 5 bug tìm thấy |
+| 2   | Task 1 - Tính năng B |          25 |                 0 | Chưa thực hiện |
+| 3   | Task 1 - Tính năng C |          25 |                 0 | Chưa thực hiện |
+| 4   | Task 2 - Video demo  |          15 |                 0 | Chưa thực hiện |
+| 5   | Kỹ năng Agent        |          10 |                 0 | Chưa thực hiện |
+|     | Tổng                 |         100 |                20 | Chỉ mới hoàn thành Tính năng A |
 
 ---
 
@@ -501,8 +522,8 @@ File log Git đính kèm: TODO.
 
 | Trường        | Giá trị                              |
 | ------------- | ------------------------------------ |
-| Tên sinh viên | TODO                                 |
-| MSSV          | TODO                                 |
+| Tên sinh viên | Trương Thành Đạt                       |
+| MSSV          | 23127344                               |
 | Khóa học      | Kiểm thử Phần mềm (Software Testing) |
-| Ngày          | TODO                                 |
-| Chữ ký        | TODO                                 |
+| Ngày          | 26/07/2026                            |
+| Chữ ký        | (đã ký)                               |

@@ -1,0 +1,85 @@
+{
+  "product_list_default": {
+    "description": "Open product listing page with empty search",
+    "minProductCount": 1,
+    "gridSelector": ".grid",
+    "cardSelector": ".grid > div"
+  },
+  "product_card_required_fields": {
+    "description": "Each product card must show image, name, price",
+    "cardSelector": ".border.rounded.shadow-sm",
+    "fields": {
+      "image": { "selector": "img", "altExpectedPattern": ".+" },
+      "name": { "selector": "h2" },
+      "price": { "selector": ".text-red-500" }
+    }
+  },
+  "product_price_format_vnd": {
+    "description": "Product price uses VND format with thousand separators",
+    "priceSelector": ".text-red-500.font-bold",
+    "expectedCurrency": "VND",
+    "thousandSeparatorPattern": "[\\d]+[.,][\\d]+"
+  },
+  "page_single_h1": {
+    "description": "Page must have exactly one h1 element",
+    "expectedH1Count": 1
+  },
+  "product_loading_state": {
+    "description": "Loading state shown while fetching products",
+    "loadingSelector": "[role=status], .loading, .spinner, .animate-spin, .animate-pulse"
+  },
+  "search_valid_keyword": {
+    "description": "Search by keyword that matches product name",
+    "keyword": "iPhone",
+    "searchInputSelector": "input[type=text]",
+    "searchButtonSelector": "button[type=submit]",
+    "expectedMinResults": 1,
+    "expectedKeywordInResults": "iPhone"
+  },
+  "search_case_insensitive": {
+    "description": "Search is case-insensitive",
+    "keywordLower": "airpods",
+    "keywordUpper": "AIRPODS",
+    "searchInputSelector": "input[type=text]",
+    "searchButtonSelector": "button[type=submit]",
+    "expectedMinResults": 1
+  },
+  "search_trimmed_keyword": {
+    "description": "Search trims leading/trailing whitespace from keyword",
+    "keyword": "  MacBook  ",
+    "trimmedKeyword": "MacBook",
+    "searchInputSelector": "input[type=text]",
+    "searchButtonSelector": "button[type=submit]",
+    "expectedMinResults": 1,
+    "expectedKeywordInResults": "MacBook"
+  },
+  "search_no_result": {
+    "description": "Search with non-existent keyword shows empty state",
+    "keyword": "zzzz-no-product-23127344",
+    "searchInputSelector": "input[type=text]",
+    "searchButtonSelector": "button[type=submit]",
+    "productCardSelector": ".grid > div",
+    "expectedProductCards": 0
+  },
+  "search_empty_keyword": {
+    "description": "Empty search after clearing keyword restores all products",
+    "keyword": "iPhone",
+    "searchInputSelector": "input[type=text]",
+    "searchButtonSelector": "button[type=submit]",
+    "expectedDefaultMinResults": 1
+  },
+  "search_html_injection_safe_render": {
+    "description": "Search keyword with HTML is rendered safely as text",
+    "keyword": "<img src=x onerror=alert(1)>",
+    "searchInputSelector": "input[type=text]",
+    "searchButtonSelector": "button[type=submit]",
+    "keywordDisplaySelector": ".text-gray-600 span"
+  },
+  "api_search_keyword": {
+    "description": "API search returns matching products",
+    "keyword": "Samsung",
+    "expectedStatus": 200,
+    "expectedMinResults": 1,
+    "expectedKeywordInResults": "Samsung"
+  }
+}

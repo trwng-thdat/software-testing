@@ -1,0 +1,86 @@
+{
+  "cart_empty_state": {
+    "description": "Open empty cart and verify empty state display",
+    "emptyStateHeadingSelector": "h2",
+    "expectedEmptyHeading": "Giỏ hàng của bạn đang trống",
+    "continueShoppingLinkSelector": "a[href='/']",
+    "expectedContinueShoppingText": "Tiếp tục mua sắm"
+  },
+  "cart_add_single_product": {
+    "description": "Add one product to cart and verify cart displays correct row",
+    "productCardSelector": ".border.rounded.shadow-sm",
+    "addToCartButtonIndex": 0,
+    "addToCartButtonSelector": "button:has-text('Thêm vào giỏ')",
+    "cartTableRowSelector": "table tbody tr",
+    "cartProductNameSelector": "table tbody tr td:nth-child(1)",
+    "cartProductPriceSelector": "table tbody tr td:nth-child(2)",
+    "cartProductQuantitySelector": "table tbody tr td:nth-child(3)",
+    "cartDeleteButtonSelector": "button.text-red-500",
+    "expectedRowCount": 1
+  },
+  "cart_add_same_product_twice": {
+    "description": "Add same product twice; SUT should merge (bug: SUT creates duplicate rows)",
+    "productCardSelector": ".border.rounded.shadow-sm",
+    "addToCartButtonIndex": 0,
+    "cartTableRowSelector": "table tbody tr",
+    "expectedRowCountMerged": 1,
+    "expectedQuantityIfMerged": 2
+  },
+  "cart_add_two_distinct_products": {
+    "description": "Add two different products and verify two distinct rows",
+    "productACardIndex": 0,
+    "productBCardIndex": 1,
+    "cartTableRowSelector": "table tbody tr",
+    "expectedRowCount": 2
+  },
+  "cart_increment_quantity": {
+    "description": "Cart should have +/- buttons for quantity adjustment per FR-07 spec",
+    "cartTableRowSelector": "table tbody tr",
+    "incrementButtonLabels": ["+"],
+    "expectedIncrementButtonExists": true
+  },
+  "cart_decrement_quantity": {
+    "description": "Cart should have decrement button per FR-07 spec",
+    "decrementButtonLabels": ["-"],
+    "expectedDecrementButtonExists": true
+  },
+  "cart_quantity_min_one": {
+    "description": "Cart should enforce minimum quantity of 1 per FR-07 spec",
+    "cartTableRowSelector": "table tbody tr",
+    "decrementButtonLabels": ["-"],
+    "minimumQuantity": 1
+  },
+  "cart_delete_cancel": {
+    "description": "Delete action should show confirmation dialog; cancelling keeps item",
+    "cartTableRowSelector": "table tbody tr",
+    "deleteButtonSelector": "button.text-red-500"
+  },
+  "cart_delete_confirm": {
+    "description": "Delete action with confirmation removes item from cart",
+    "cartTableRowSelector": "table tbody tr",
+    "deleteButtonSelector": "button.text-red-500"
+  },
+  "cart_total_label": {
+    "description": "Cart total label displays 'Tổng tạm tính'",
+    "totalLabelSelector": "div.text-xl.font-bold",
+    "expectedTotalLabel": "Tổng tạm tính"
+  },
+  "cart_continue_shopping": {
+    "description": "Continue shopping link navigates back to home page",
+    "continueShoppingLinkText": "Mua tiếp",
+    "expectedUrl": "/"
+  },
+  "api_cart_add_requires_token": {
+    "description": "POST /api/cart requires auth token; with token creates and returns cart item",
+    "testUserEmail": "test@eshop.com",
+    "testUserPassword": "Test1234!",
+    "cartItem": {
+      "id": 1,
+      "name": "iPhone 15 Pro Max",
+      "price": 33990000,
+      "quantity": 1
+    },
+    "expectedStatusWithoutToken": 401,
+    "expectedStatusWithToken": 200
+  }
+}

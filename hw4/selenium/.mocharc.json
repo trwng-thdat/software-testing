@@ -1,0 +1,16 @@
+{
+  "spec": "tests/**/*.spec.ts",
+  "require": [
+    "./utils/setup.js",
+    "./utils/reportMetadata.js",
+    "ts-node/register"
+  ],
+  "timeout": 60000,
+  "reporter": "mochawesome",
+  "reporterOptions": {
+    "overwrite": true,
+    "html": true,
+    "json": true,
+    "charts": true
+  }
+}
