@@ -1,43 +1,11 @@
-GIT COMMIT LOG - HW03 Kiem thu Giao dien va Tinh kha dung
-Sinh vien: Truong Thanh Dat - 23127344 - 23KTPM3
-Repository: https://github.com/trwng-thdat/software-testing
-Bug tracker: https://github.com/DuyITLOR/group05_eshop/issues (Issues #125-#154)
-
-Sinh bang lenh:
-  git log --pretty=format:"%h | %ad | %an | %s" --date=iso --reverse -- hw3/ selenium/
-
-Dinh dang: <commit hash> | <ngay gio ISO> | <tac gia> | <commit message>
-
-====================================================================================================
-LICH SU COMMIT THEO TUNG BUOC KIEM THU
-====================================================================================================
-
-e81375d | 2026-07-25 09:49:55 +0700 | trwng-thdat | feat: add inclass homework in week 3
-5a3b33d | 2026-07-29 21:27:48 +0700 | trwng-thdat | feat: initialize report template
-bc7d6d9 | 2026-07-29 22:10:29 +0700 | trwng-thdat | feat: add checklist for task 1
-e3b87bc | 2026-07-29 23:01:28 +0700 | trwng-thdat | feat: add bug report
-029a563 | 2026-07-29 23:44:48 +0700 | trwng-thdat | test(hw03-task1): add Selenium automation for GUI checklist execution
-b5c9bb6 | 2026-07-29 23:45:05 +0700 | trwng-thdat | test(hw03-task1): execute GUI checklist and record results + evidence
-0137846 | 2026-07-29 23:45:15 +0700 | trwng-thdat | docs(hw03-task1): add GUI checklist deliverable (CSV + Excel)
-c2f5f40 | 2026-07-29 23:45:25 +0700 | trwng-thdat | docs(hw03-task1): log 30 bugs and link GitHub Issues #125-#154
-414b55b | 2026-07-29 23:46:21 +0700 | trwng-thdat | docs(hw03): fill README self-assessment and Task 1 test summary
-
-====================================================================================================
-DOI CHIEU VOI YEU CAU "1 COMMIT / MOI BUOC" (muc 12 cua de bai)
-====================================================================================================
-
-[x] Thiet ke checklist          -> "feat: add checklist for task 1" / "docs: add testcases for all FR"
-[x] Thuc thi checklist          -> "test(hw03-task1): add Selenium automation..." +
-                                   "test(hw03-task1): execute GUI checklist and record results + evidence"
-[x] Ghi nhan bug                -> "feat: add bug report" +
-                                   "docs(hw03-task1): log 30 bugs and link GitHub Issues #125-#154"
-[x] Deliverable checklist       -> "docs(hw03-task1): add GUI checklist deliverable (CSV + Excel)"
-[x] Tong hop bao cao (Task 1)   -> "docs(hw03): fill README self-assessment and Task 1 test summary"
-[ ] Tung phien trong 7 phien usability  -> CHUA THUC HIEN (Task 2)
-[ ] Phan tich usability                 -> CHUA THUC HIEN (Task 2)
-[ ] Kiem thu cross-platform             -> CHUA THUC HIEN (Task 3)
-[ ] Tong hop bao cao cuoi cung          -> CHUA THUC HIEN (sau khi xong Task 2 + 3)
-
-Ghi chu: Task 1 (GUI Checklist) da hoan tat va co commit rieng cho tung buoc.
-Cac buoc con lai thuoc Task 2 va Task 3, se duoc commit bo sung khi thuc hien.
-Chay lai lenh git log o tren de cap nhat file nay sau moi buoc moi.
+63c02b7 | 2026-07-30 21:33 | docs(hw03-task3): add cross-platform matrix, report and 6 bug write-ups
+9da7c76 | 2026-07-30 21:33 | test(hw03-task3): execute 18 cases x 3 platforms (54 runs) + capture evidence
+b9f66ab | 2026-07-30 21:33 | test(hw03-task3): design 18 cross-platform test cases for EShop web frontend
+355ee18 | 2026-07-29 23:46 | docs(hw03): replace commit-log placeholder with real git history
+414b55b | 2026-07-29 23:46 | docs(hw03): fill README self-assessment and Task 1 test summary
+c2f5f40 | 2026-07-29 23:45 | docs(hw03-task1): log 30 bugs and link GitHub Issues #125-#154
+0137846 | 2026-07-29 23:45 | docs(hw03-task1): add GUI checklist deliverable (CSV + Excel)
+e3b87bc | 2026-07-29 23:01 | feat: add bug report
+bc7d6d9 | 2026-07-29 22:10 | feat: add checklist for task 1
+5a3b33d | 2026-07-29 21:27 | feat: initialize report template
+e81375d | 2026-07-25 09:49 | feat: add inclass homework in week 3
