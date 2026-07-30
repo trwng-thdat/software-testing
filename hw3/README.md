@@ -32,7 +32,23 @@
 | GitHub Issues đã tạo | **30** — [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) trên `DuyITLOR/group05_eshop`, mỗi issue có ảnh đính kèm |
 | Số người tham gia usability | 7 (TODO — xác nhận sau khi hoàn thành các phiên) |
 | Điểm SUS / UEQ-S trung bình | TODO |
-| Phạm vi bao phủ cross-platform | TODO (liệt kê các nền tảng) |
+| Phạm vi bao phủ cross-platform | **3 nền tảng** — P1 Chrome 141/Windows 11 (Blink), P2 Firefox 145/Windows 11 (Gecko), P3 Android Chrome/Pixel 7 Android 13 (Blink mobile, URL LAN thật) |
+| Số màn hình đã kiểm thử (Task 3) | **4** — Cart, Checkout, ProductDetail, Profile (không trùng Task 1) |
+| Số test case cross-platform đã thiết kế | **18** (CB-01…CB-18) |
+| Số lượt thực thi cross-platform | **54** (18 case × 3 nền tảng) |
+| Kết quả Task 3 | Passed **37** · Failed **16** · N/A **1** · BLOCKED **0** |
+| Số bug phát hiện — Task 3 (cross-platform) | **6** (BUG-CP-01…06) — Critical 2, High 1, Medium 3; trong đó **1 bug phân kỳ nền tảng** (chỉ lỗi trên Android Chrome) |
+
+### Chi tiết Task 3 theo nền tảng
+
+| Nền tảng | Engine | Viewport | PASS | FAIL | N/A |
+| --- | --- | --- | --- | --- | --- |
+| P1 — Chrome 141 / Windows 11 | Blink | 1440×900 | 13 | 5 | 0 |
+| P2 — Firefox 145 / Windows 11 | Gecko | 1440×900 | 12 | 5 | 1 |
+| P3 — Android Chrome / Pixel 7 | Blink mobile | 412×915 | 12 | 6 | 0 |
+| **Tổng cộng** | | | **37** | **16** | **1** |
+
+> Thực thi bằng [`cross-platform/run_cross_platform.py`](cross-platform/run_cross_platform.py) (Selenium 4.46 + Python 3.14). 16 ảnh của các case FAIL có overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL SUT tại [`cross-platform/screenshots/`](cross-platform/screenshots/). Ma trận đầy đủ: [`CrossPlatform_Matrix.csv`](cross-platform/CrossPlatform_Matrix.csv). Báo cáo: [`cross-platform/Report.md`](cross-platform/Report.md).
 
 ### Chi tiết Task 1 theo khía cạnh giao diện (IA)
 
@@ -56,7 +72,7 @@
 
 | Tệp / Thư mục | Nội dung | Trạng thái |
 | --- | --- | --- |
-| `Main_Report.md` (+ PDF) | Báo cáo chính: GUI checklist (Task 1) + đánh giá tính khả dụng (Task 2) + cross-platform (Task 3) | Task 1 ✅ · Task 2–3 TODO |
+| `Main_Report.md` (+ PDF) | Báo cáo chính: GUI checklist (Task 1) + đánh giá tính khả dụng (Task 2) + cross-platform (Task 3) | Task 1 ✅ · Task 3 ✅ · Task 2 TODO |
 | `bug_reports.md` | 30 bug Task 1, mỗi bug 1 khối Title + Description (repro, expected/actual, severity, ảnh) | ✅ |
 | `checklist/GUI_Checklist.csv` / `.xlsx` | Checklist 69 item (> 40) + kết quả thực thi + Test Summary | ✅ |
 | `screenshot/` | Ảnh chụp minh chứng cho toàn bộ 32 item Failed | ✅ |
@@ -65,7 +81,7 @@
 | `../selenium/` | Bộ tự động hoá thực thi checklist (Selenium + Python) + báo cáo HTML/Markdown | ✅ |
 | `AI_Critique.md` (+ PDF) | Phê bình AI (200–300 từ) | ⬜ TODO |
 | `usability/` | Kịch bản nhiệm vụ, danh sách 7 người tham gia, ghi chú phiên, điểm SUS/UEQ-S | ⬜ TODO |
-| `cross-platform/` | Ảnh chụp ≥ 3 nền tảng, có overlay `23127344@hcmus.edu.vn` | ⬜ TODO |
+| `cross-platform/` | Bộ test 18 case × 3 nền tảng (`run_cross_platform.py`), `Report.md`, `CrossPlatform_Matrix.csv`, `results.json`, 16 ảnh có overlay `23127344@hcmus.edu.vn` | ✅ (còn lại: ảnh bug thủ công + GitHub Issues) |
 | Agent Skills + video demo | Skill tái sử dụng + link YouTube minh hoạ | ⬜ TODO |
 
 ## Ghi chú
