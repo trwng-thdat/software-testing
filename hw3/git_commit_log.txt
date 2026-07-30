@@ -1,3 +1,5 @@
+19c7fce | 2026-07-30 21:47 | docs(hw03-task3): write full cross-platform report inline in Main_Report.md
+6ed63a8 | 2026-07-30 21:33 | docs(hw03): update git commit log with Task 3 steps
 63c02b7 | 2026-07-30 21:33 | docs(hw03-task3): add cross-platform matrix, report and 6 bug write-ups
 9da7c76 | 2026-07-30 21:33 | test(hw03-task3): execute 18 cases x 3 platforms (54 runs) + capture evidence
 b9f66ab | 2026-07-30 21:33 | test(hw03-task3): design 18 cross-platform test cases for EShop web frontend
