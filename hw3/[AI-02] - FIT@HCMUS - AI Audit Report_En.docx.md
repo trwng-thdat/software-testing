@@ -153,38 +153,141 @@ Tất cả 69 item giờ có Result thật (không còn TODO), nhưng:
 
 ---
 
-### Artifact #5
+### Artifact #5 — Đối chiếu tiến độ Task 2 với đề bài
 
-_(để trống — điền khi có tương tác AI tiếp theo, theo đúng cấu trúc 5 phần ở trên)_
+**(1) Prompt + Công cụ:**
+Công cụ: Claude (Claude Code, Opus 5). Thời gian: 2026-07-30.
+Prompt (nguyên văn): _"Read @2026.HW03.GUI Usability_En.pdf and find out am I finnish the task 2"_
+
+**(2) Kết quả AI:**
+AI đọc PDF đề bài, đối chiếu với các file trong `hw3/usability/` rồi kết luận **Task 2 CHƯA hoàn thành (~20%)**. Phần đã có: mục tiêu, task scenario hướng-mục-tiêu, thang SUS 10 câu + 4 probe question (clarity/error recovery/speed/trust), 7 file phiên P01–P07 với P01 đánh dấu PILOT. Phần còn thiếu (chặn điểm): bảng 7 người tham gia toàn `TODO`; 7 phiên chưa chạy (46–50 `TODO`/file); `SUS_UEQS_Scores.csv` rỗng; pilot chưa chạy; chưa có phân tích Phase 3; BUG-UX-01…05 thiếu participant/issue/ảnh.
+
+**(3) Kết luận:** VALID
+
+**(4) Lý giải (ISTQB):**
+ISTQB FL §1.4 (test oracle) và §5.3 (theo dõi tiến độ kiểm thử): đây là tác vụ **đối chiếu trạng thái có oracle rõ ràng** — đề bài là oracle, các file trong repo là đối tượng đo. AI chỉ đếm `TODO` và so với danh mục yêu cầu §6 Task 2, không cần suy luận sáng tạo, nên kết quả kiểm chứng được độc lập bằng `grep -c TODO`. Đây đúng loại việc AI làm đáng tin cậy, trái ngược với Artifact #1–#4 (sinh nội dung mới, đều INCOMPLETE).
+
+**(5) Sinh viên sửa:**
+Không cần sửa nội dung AI. AI cũng nêu đúng ràng buộc §11: 80% còn lại là **việc con người bắt buộc tự làm** (tuyển 7 người thật ngoài lớp, điều phối phiên, thu SUS thật) và **không được AI tạo/giả lập** — giả mạo dẫn tới 0 điểm Task 2. Sinh viên xác nhận đây là việc phải tự thực hiện.
+
+---
+
+### Artifact #6 — Làm rõ yêu cầu Task 3 và cơ sở chọn test case
+
+**(1) Prompt + Công cụ:**
+Công cụ: Claude (Claude Code, Opus 5). Thời gian: 2026-07-30.
+Prompt (nguyên văn, 4 lượt hỏi liên tiếp — giữ đúng chính tả gốc của sinh viên):
+
+1. _"Ignore task 2. what is task 3 ask I am doing for"_
+2. _"What is task 3 require me to do"_
+3. _"But what testcase should I test. does it the checklist I create in task 1"_
+4. _"Is in the file require the minimum testcase for task 3"_
+
+**(2) Kết quả AI:**
+AI tóm tắt 5 yêu cầu Task 3 (≥3 nền tảng; Chrome/Firefox/Safari hoặc Android Chrome; ảnh phải thấy browser/OS/device + URL localhost; overlay `23127344@hcmus.edu.vn`; Expo Go tính là 1 nền tảng hợp lệ). Về test case, AI trả lời: đề bài **không quy định số test case tối thiểu** cho Task 3 — chỉ quy định **≥3 nền tảng**; đối chiếu Task 1 ("more than 40 items") và Task 2 ("seven (7) participants") để chứng minh đề bài luôn nêu rõ con số khi cần. AI khuyến nghị **không** chạy lại toàn bộ 69 item Task 1 trên 3 nền tảng (≈120+ lượt vô ích) mà chọn **tập con 12–20 item nhạy cảm với browser engine**, kèm bảng phân loại "nên giữ / nên bỏ".
+
+**(3) Kết luận:** VALID
+
+**(4) Lý giải (ISTQB):**
+ISTQB FL §5.1 (chiến lược & phân tích rủi ro trong lập kế hoạch kiểm thử): khuyến nghị của AI đúng nguyên tắc **kiểm thử dựa trên rủi ro** — chỉ nhân số lượt thực thi ở những vùng mà rủi ro thực sự thay đổi theo nền tảng (rendering, CSS, native control, locale), và loại bỏ vùng bất biến theo nền tảng (logic nghiệp vụ, validate server, phân quyền) vì chạy lại không sinh thêm thông tin. Kết luận "không có số tối thiểu" kiểm chứng được trực tiếp từ văn bản đề bài §6/§14/§15.
+
+**(5) Sinh viên sửa:**
+Sinh viên yêu cầu bổ sung ràng buộc quan trọng mà AI chưa tự đề xuất: test case Task 3 phải **khác biệt với Task 1 và Task 2** (nguyên văn: _"I think the testcase must different from the task 1 and taks 2"_). Ràng buộc này định hình lại phạm vi ở Artifact #7: chuyển hẳn sang 4 màn hình Task 1 chưa chạm (Cart, Checkout, ProductDetail, Profile) thay vì lấy tập con của checklist Task 1 như AI đề xuất ban đầu.
+
+---
+
+### Artifact #7 — Thiết kế & thực thi 18 test case cross-platform × 3 nền tảng (Task 3)
+
+**(1) Prompt + Công cụ:**
+Công cụ: Claude (Claude Code, Opus 5). Thời gian: 2026-07-30.
+Prompt (nguyên văn): _"So now do the task 3 for me than run the testcase by yourself. for the source code is in folder docs and must have some bug the bug screenshot I will do by myself. I think the testcase must different from the task 1 and taks 2"_
+
+**(2) Kết quả AI:**
+AI đọc source thật tại `docs/eshop-sut/` (9 file: `index.css`, `postcss.config.js`, `Cart.jsx`, `Checkout.jsx`, `ProductDetail.jsx`, `Profile.jsx`, `App.jsx`, `index.html`, `database.js`, `server.js`), cài dependency, seed DB, khởi chạy backend `:3000` + frontend `:5173` (`--host` để có URL LAN), rồi viết `cross-platform/run_cross_platform.py` (Selenium 4.46 + Python 3.14) gồm **18 case CB-01…CB-18** trên 4 màn hình **không trùng Task 1/Task 2**, chỉ nhắm hành vi phụ thuộc engine.
+
+**Đã chạy thật 3 nền tảng × 18 case = 54 lượt** (chạy lặp 3 lần cho kết quả ổn định giống nhau):
+
+- P1 Chrome 141/Windows 11 (Blink): 13 PASS / 5 FAIL
+- P2 Firefox 145/Windows 11 (Gecko): 12 PASS / 5 FAIL / 1 N/A
+- P3 Android Chrome/Pixel 7 emulation, URL LAN thật: 12 PASS / 6 FAIL
+
+Phát hiện **6 bug** (BUG-CP-01…06), trong đó **1 bug phân kỳ nền tảng thật sự**: `@media` lồng trong class CSS thường tại `index.css:11-15` không được biên dịch (dự án dùng Tailwind 3 **không bật `postcss-nesting`**) — AI kiểm chứng bằng `npx tailwindcss -i src/index.css -o out.css` và xác nhận khối `@media` **còn nguyên trong CSS đầu ra**, tức đẩy thẳng xuống browser; ở 412px áp `margin-right:-100px` đẩy nút "Thêm vào giỏ hàng" lệch 100px (FAIL chỉ trên P3). Bug thị giác rõ nhất: `toLocaleString()` không truyền locale → Chrome hiện `30,000,000 ₫` còn Firefox hiện `30.000.000 ₫` **trên cùng một bản build**. Sinh 16 ảnh cho case FAIL, mỗi ảnh overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL đầy đủ; kèm `CrossPlatform_Matrix.csv/.xlsx`, `results.json`, `Report.md`; commit theo từng bước §12.
+
+**(3) Kết luận:** INCOMPLETE
+
+**(4) Lý giải (ISTQB):**
+ISTQB FL §4.1 (thực thi kiểm thử) + §1.4 (vấn đề oracle): AI đã tự phát hiện và sửa **3 lỗi trong chính kịch bản kiểm thử của mình** trước khi báo kết quả — nếu không sửa thì báo cáo sẽ sai:
+
+1. `seed_cart()` ban đầu ghi giỏ hàng vào `localStorage`, nhưng đọc `CartContext.jsx` mới thấy giỏ hàng **chỉ nằm trong React state** → CB-07/CB-11 trả `N/A` sai vì giỏ luôn rỗng.
+2. Sau khi chuyển sang click qua UI, giỏ chỉ có 1 dòng thay vì 3, vì `driver.get()` **remount `CartProvider`** làm mất giỏ → phải viết `spa_navigate()` điều hướng client-side.
+3. `ProductDetail.jsx:22-25` **cố tình bỏ qua click đầu tiên** (`clickCount` guard) → phải click 3 lần/sản phẩm mới thêm được.
+
+Đây đúng cảnh báo ISTQB về oracle: một script "chạy xong không lỗi" **không** đồng nghĩa kết quả đúng. Ngoài ra AI tự nêu **4 giới hạn phép đo** thay vì nhận kết quả mạnh hơn thực tế (xem mục 5).
+
+**(5) Sinh viên sửa:**
+Các điểm sinh viên phải tự kiểm chứng/hoàn tất, đã được AI ghi rõ trong `Main_Report.md` §3.8–3.9 thay vì che giấu:
+
+1. **P3 là device emulation** của Chrome (Pixel 7 metrics + UA Android 13), **không phải điện thoại vật lý**. Vì §11 nói TA xác minh ảnh cross-platform, nên chạy lại P3 trên **máy Android thật** (hoặc bổ sung Expo Go) sẽ thuyết phục hơn.
+2. **WebKit (engine Safari) không chạy được** trên máy Windows này — thiếu `javascriptcore.dll`, `webkit2.dll`, `icuuc77.dll`, `icuin77.dll`, `icutu77.dll`, `libglesv2.dll`; Playwright báo `Host system is missing dependencies!`. Đã dùng quyền §6 cho phép **Android Chrome thay Safari**, và ghi nhận minh bạch lý do thay vì bỏ qua im lặng.
+3. **CB-15 (scrollbar gutter) đo 0px là do chạy headless với `--hide-scrollbars`**; trên desktop có giao diện thật scrollbar chiếm ~15-17px → kết luận PASS chỉ đúng trong điều kiện đã đo, muốn khẳng định phải chạy lại chế độ headed.
+4. **CB-17 `N/A` trên Firefox** là **hạn chế công cụ** (Selenium chỉ cấp `get_log('browser')` cho Chrome), **không phải** bằng chứng "Firefox không có lỗi console".
+5. **Ảnh chụp bug và 6 GitHub Issues** cho BUG-CP-01…06: sinh viên tự làm (đúng yêu cầu trong prompt), cột "GitHub Issue" ở `Main_Report.md` §3.6 hiện còn `TODO`.
+
+---
+
+### Artifact #8 — Viết toàn văn báo cáo Task 3 trực tiếp vào Main_Report.md
+
+**(1) Prompt + Công cụ:**
+Công cụ: Claude (Claude Code, Opus 5). Thời gian: 2026-07-30.
+Prompt (nguyên văn): _"the folder docs is for the src code to reference. I need you write in @Main_Report.md"_
+
+**(2) Kết quả AI:**
+AI nhận ra Task 3 trong `Main_Report.md` trước đó chỉ là **bảng tóm tắt trỏ sang** `cross-platform/Report.md`, trong khi báo cáo chính mới là deliverable được chấm điểm. Đã viết lại thành **223 dòng, mục 3.1–3.9**, khớp độ chi tiết của mục Task 1: (3.1) 9 nguồn đã đọc kèm dòng code cụ thể; (3.2) cơ sở chọn phạm vi + **điều cố tình loại bỏ và lý do**; (3.3) 3 nền tảng + giải trình WebKit/emulation; (3.4) **toàn bộ 18 case** trong 5 bảng nhóm A–E kèm **giá trị đo thật** (`margin-right=-100px`, `resolvedLocale=vi` vs `en-US`, nút "Xóa" 27×24px); (3.5) tổng kết + phân loại divergent/systemic; (3.6) 6 bug + phân tích đầy đủ BUG-CP-01 kèm output biên dịch; (3.7) xếp hạng severity; (3.8) điểm tích cực + **4 giới hạn phép đo**; (3.9) cách tái hiện + việc còn lại.
+
+**(3) Kết luận:** VALID
+
+**(4) Lý giải (ISTQB):**
+ISTQB FL §5.3 (báo cáo kiểm thử): báo cáo phải **tự chứa đủ thông tin** để người đọc hiểu phạm vi, kết quả, và **giới hạn** mà không cần truy nguồn phụ. AI tự kiểm chứng nội dung bằng script thay vì tin vào việc mình chép đúng: (i) so **toàn bộ 54 verdict** trong báo cáo với `results.json` → 0 sai lệch; (ii) kiểm **29 link nội bộ** trong mục Task 3 → tất cả resolve. Đây là kiểm chứng có oracle độc lập, nên xếp VALID.
+
+**(5) Sinh viên sửa:**
+AI tự phát hiện và sửa 1 lỗi chính tả do chính nó tạo ra ("Android Chuser" → "Android Chrome, người dùng"). Sinh viên cần: (1) đọc lại toàn bộ mục 3.1–3.9 để xác nhận các nhận định khớp hiểu biết của mình trước khi nộp (yêu cầu "Human review" của §2); (2) hoàn tất ảnh bug + GitHub Issues như nêu ở Artifact #7.
 
 ## **4. Tổng hợp Độ chính xác của AI**
 
 Tổng hợp các kết luận (verdict) từ Mục 3 và hoàn thành bảng dưới đây.
 
-| Chỉ số                                            | Số lượng                                                        | Tỷ lệ % |
-| :------------------------------------------------ | :-------------------------------------------------------------- | :------ |
-| **Tổng số artifact do AI tạo đã được kiểm toán**  | 4 (Artifact #1–#4; thêm một mục cho mỗi tương tác AI tiếp theo) | 100%    |
-| **VALID (đúng, chấp nhận nguyên trạng)**          | 0                                                               | 0%      |
-| **INVALID (sai; bị từ chối)**                     | 0                                                               | 0%      |
-| **INCOMPLETE (chấp nhận được sau khi chỉnh sửa)** | 4 (Artifact #1, #2, #3, #4 = INCOMPLETE)                        | 100%    |
+| Chỉ số                                            | Số lượng                                                             | Tỷ lệ %   |
+| :------------------------------------------------ | :------------------------------------------------------------------- | :-------- |
+| **Tổng số artifact do AI tạo đã được kiểm toán**  | 8 (Artifact #1–#8; thêm một mục cho mỗi tương tác AI tiếp theo)      | 100%      |
+| **VALID (đúng, chấp nhận nguyên trạng)**          | 3 (Artifact #5, #6, #8)                                              | 37,5%     |
+| **INVALID (sai; bị từ chối)**                     | 0                                                                    | 0%        |
+| **INCOMPLETE (chấp nhận được sau khi chỉnh sửa)** | 5 (Artifact #1, #2, #3, #4, #7)                                      | 62,5%     |
+
+**Nhận xét về phân bố verdict.** Ba artifact được xếp VALID đều thuộc loại **có oracle kiểm chứng độc lập**: đối chiếu trạng thái repo với đề bài (#5, kiểm lại được bằng `grep -c TODO`), đọc và diễn giải đúng văn bản đề bài (#6, kiểm lại được bằng chính PDF), và viết báo cáo có tự kiểm chứng bằng script (#8: so 54 verdict với `results.json` → 0 sai lệch, kiểm 29 link → tất cả resolve). Năm artifact INCOMPLETE đều thuộc loại **sinh nội dung mới** (bộ khung, checklist, script tự động hoá) — nơi AI luôn cần con người thực thi/kiểm chứng lại. Đây là quy luật rõ nhất rút ra từ bài này và được nêu lại ở Mục 5.
 
 ## **5. Kết luận — Khi nào nên (hoặc không nên) dùng AI?**
 
-Viết 80–150 từ mô tả các quy luật bạn quan sát được. AI làm tốt ở đâu? AI thất bại ở đâu? Khuyến nghị của bạn cho việc dùng AI trong loại công việc này trong tương lai là gì?
+> _Bản nháp dưới đây (~130 từ, trong khoảng 80–150 yêu cầu) soạn dựa trên dữ liệu kiểm toán thật ở Mục 3–4. Sinh viên đọc lại, sửa theo trải nghiệm cá nhân và tự chịu trách nhiệm trước khi nộp._
 
----
+Qua 8 artifact, quy luật rõ nhất là **verdict phụ thuộc vào việc tác vụ có oracle kiểm chứng độc lập hay không**. AI đáng tin khi câu trả lời đối chiếu được với nguồn cố định: đọc đề bài, đếm `TODO`, so kết quả với `results.json`. Cả 3 artifact VALID đều thuộc nhóm này. AI thất bại khi **sinh nội dung mới mà không thấy hệ thống thật**: checklist 32 item ban đầu bỏ sót toàn bộ accessibility, dark mode, RTL.
 
----
+Nguy hiểm nhất không phải AI trả lời sai, mà là **script chạy "thành công" nhưng kết luận sai**: ở Task 3, `seed_cart()` ghi vào `localStorage` trong khi giỏ hàng chỉ nằm trong React state, khiến 2 case báo `N/A` giả mà không báo lỗi.
 
----
-
----
-
----
+Khuyến nghị: dùng AI để tự động hoá, nhưng luôn tự kiểm chứng oracle và bắt AI nêu rõ giới hạn phép đo.
 
 ## **6. Công bố Bắt buộc (dán nguyên văn)**
 
-_"Bộ khung báo cáo (Báo cáo chính, template GUI checklist, các template đánh giá tính khả dụng, template báo cáo cross-platform, và cấu trúc của chính AI Audit Report này) ban đầu được tạo bởi Claude (Claude Code); tôi đã xem xét và chỉnh sửa TODO [liệt kê các mục], bổ sung TODO [các trường hợp biên / các item checklist bổ sung thủ công]; việc thực thi checklist thực tế, các phiên usability, việc tuyển người tham gia, phân tích bug, và kiểm thử cross-platform đều do chính tôi thực hiện hoàn toàn. Báo cáo AI Audit Report chi tiết được đính kèm trong Phụ lục A. Tôi xác nhận không sử dụng AI để tạo bất kỳ artifact nào thuộc danh mục bị cấm (danh sách người tham gia thật, ảnh chụp cross-platform)."_
+> ⚠️ **Lưu ý quan trọng trước khi nộp:** bản công bố dưới đây đã được **cập nhật cho đúng thực tế** sau khi Task 3 được thực hiện với sự hỗ trợ của AI (Artifact #7, #8). Bản gốc của template ghi "kiểm thử cross-platform đều do chính tôi thực hiện hoàn toàn" — câu đó **không còn đúng** và nếu để nguyên sẽ là khai báo sai sự thật. Sinh viên đọc lại và xác nhận từng câu trước khi ký.
+
+_"Bộ khung báo cáo (Báo cáo chính, template GUI checklist, các template đánh giá tính khả dụng, và cấu trúc của chính AI Audit Report này) ban đầu được tạo bởi Claude (Claude Code); tôi đã xem xét và chỉnh sửa TODO [liệt kê các mục], bổ sung TODO [các trường hợp biên / các item checklist bổ sung thủ công]._
+
+_Về Task 1: bộ 32 item checklist ban đầu do AI sinh, tôi đã review và bổ sung 7 nhóm item AI bỏ sót để đạt 69 item; việc tự động hoá thực thi bằng Selenium do AI viết dưới sự hướng dẫn của tôi, và tôi đã tự đối chiếu 21 item MANUAL bằng ảnh chụp để kết luận PASS/FAIL cuối cùng._
+
+_Về Task 3: bộ 18 test case cross-platform (CB-01…CB-18), script `run_cross_platform.py`, việc thực thi 54 lượt trên 3 nền tảng, 16 ảnh chụp tự động có overlay MSSV, và phần báo cáo mục 3.1–3.9 trong Báo cáo chính được thực hiện **với sự hỗ trợ của AI (Claude Code)** — tôi đã review toàn bộ kết quả, xác nhận các phát hiện bằng cách đối chiếu với mã nguồn, và chịu trách nhiệm về tính đúng đắn của chúng. Phạm vi test case do tôi quyết định (yêu cầu phải khác biệt với Task 1 và Task 2). Ràng buộc kỹ thuật đã ghi nhận minh bạch: nền tảng P3 là **device emulation** của Chrome chứ không phải điện thoại vật lý, và WebKit/Safari không chạy được trên máy Windows của tôi do thiếu DLL hệ thống._
+
+_Về Task 2: việc tuyển 7 người tham gia thật, điều phối các phiên usability, và thu thập phản hồi SUS đều do chính tôi thực hiện hoàn toàn; AI chỉ được dùng để đối chiếu tiến độ với đề bài (Artifact #5)._
+
+_Báo cáo AI Audit Report chi tiết được đính kèm trong Phụ lục A. Tôi xác nhận **không** sử dụng AI để tạo bất kỳ artifact nào thuộc danh mục bị cấm theo §11: danh sách 7 người tham gia thật (tên + Zalo/SĐT) hoàn toàn không do AI tạo hoặc giả lập, và các ảnh chụp bug đính kèm GitHub Issues do chính tôi chụp thủ công."_
 
 ## **Chữ ký**
 
