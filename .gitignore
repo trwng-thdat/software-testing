@@ -14,3 +14,10 @@ Thumbs.db
 # Temp
 *.tmp
 .bugs_parsed.json
+
+# Screen recordings cua cac phien usability (HW03 Task 2)
+# ~1.1 GB, vuot gioi han 100 MB/file cua GitHub -> upload YouTube unlisted,
+# giu link trong hw3/submission/usability/recordings/README.md
+*.mp4
+*.mov
+*.mkv
