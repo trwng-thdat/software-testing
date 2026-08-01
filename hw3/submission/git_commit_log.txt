@@ -1,4 +1,5 @@
-4db9a64 | 2026-08-01 21:54 | docs(hw03): refresh git commit log with final hashes
+d27f68b | 2026-08-01 22:43 | docs(hw03-task1): add GitHub Issues page screenshot as bug-report evidence
+b5e431d | 2026-08-01 21:54 | docs(hw03): refresh git commit log with final hashes
 c3d9bca | 2026-08-01 21:54 | docs(hw03): refresh git commit log
 e8644c1 | 2026-08-01 21:54 | docs(hw03): log Artifact #9 in AI Audit Report
 56590b3 | 2026-08-01 21:51 | docs(hw03): add submission gap checklist against assignment spec
