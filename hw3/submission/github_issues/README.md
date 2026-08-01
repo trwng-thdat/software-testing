@@ -20,7 +20,18 @@
 | --- | --- | --- | --- |
 | Task 1 — GUI Checklist | BUG-GUI-01…30 | [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) | ✅ Đã tạo — xem `Main_Report.md` §1.6 |
 | Task 2 — Usability | BUG-UX-01…10 | — | ⬜ **Chưa tạo** |
-| Task 3 — Cross-Platform | BUG-CP-01…06 | — | ⬜ **Chưa tạo** — nội dung soạn sẵn tại `HW03_TASK3_GITHUB_ISSUES.md` (thư mục gốc repo) |
+| Task 3 — Cross-Platform | BUG-CP-01…06 | [#213–#218](https://github.com/DuyITLOR/group05_eshop/issues) | ✅ Đã tạo — xem `Main_Report.md` §3.6 |
+
+### Ánh xạ chi tiết — Task 3 (BUG-CP)
+
+| Bug | GitHub Issue | Severity | Case |
+| --- | --- | --- | --- |
+| BUG-CP-01 — `@media` lồng không được biên dịch | [#213](https://github.com/DuyITLOR/group05_eshop/issues/213) | High | CB-01 |
+| BUG-CP-02 — Định dạng tiền tệ đổi theo locale | [#214](https://github.com/DuyITLOR/group05_eshop/issues/214) | High | CB-06 |
+| BUG-CP-03 — Sửa được tổng tiền đơn hàng | [#215](https://github.com/DuyITLOR/group05_eshop/issues/215) | **Critical** | CB-08 |
+| BUG-CP-04 — Ô số lượng thiếu min/max/step | [#216](https://github.com/DuyITLOR/group05_eshop/issues/216) | Medium | CB-05 |
+| BUG-CP-05 — `alert()` chặn luồng, mobile tắt được | [#217](https://github.com/DuyITLOR/group05_eshop/issues/217) | Medium | CB-13 |
+| BUG-CP-06 — Vùng bấm dưới 44×44px | [#218](https://github.com/DuyITLOR/group05_eshop/issues/218) | Medium | CB-18 |
 
 ## Việc còn lại
 

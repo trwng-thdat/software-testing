@@ -13,7 +13,7 @@
 | --- | --- | --- | --- |
 | Task 1 — GUI Checklist | 30 | ✅ **Xong** | Nên chụp thêm ảnh issue chi tiết (thấy ảnh bug đính kèm) |
 | Task 2 — Usability Evaluation | 40 | 🟡 **6/7 phiên + 6 video** | Tuyển + chạy P07 · **điền SUS (vẫn rỗng)** · xử lý 1.1 GB video |
-| Task 3 — Cross-Platform | 20 | ✅ Gần xong | Kiểm tra overlay MSSV trên ảnh |
+| Task 3 — Cross-Platform | 20 | ✅ **Xong** | Chạy lại script cho overlay chữ to hơn (tuỳ chọn) |
 | Agent Skills | 10 | ❌ **Chưa có gì** | Viết skill + quay video demo |
 | Hồ sơ nộp (README, PDF, zip) | — | 🟡 | README ✅ · AI_Critique ✅ · **còn 3 bản PDF + đóng zip** |
 
@@ -148,7 +148,7 @@
 ### Còn thiếu ❌
 - [ ] **Xác minh mọi ảnh chụp có overlay `23127344@hcmus.edu.vn`** — §6 và §11 bắt buộc. Báo cáo tự nhận là có, nhưng cần mở từng ảnh trong `cross-platform/screenshots/` kiểm tra bằng mắt.
 - [ ] **Kiểm tra ảnh hiển thị rõ tên browser/OS/device + URL SUT** (§6) — đặc biệt ảnh P3 phải thấy URL `172.16.0.252:5173`.
-- [ ] **GitHub Issue cho các bug Task 3** — Main_Report §3.6 liệt kê ~6 bug (BUG-CP-01…) nhưng **chưa thấy link issue nào**. §Task 1/Task 2 đều yêu cầu report bug lên GitHub Issues; nên làm đồng nhất cho Task 3.
+- [x] **GitHub Issue cho các bug Task 3** ✅ — đã tạo **#213–#218** cho BUG-CP-01…06, link đã ghi vào Main_Report §3.6 và `github_issues/README.md`.
 - [ ] (Tuỳ chọn, cộng điểm) Test app mobile qua **Expo Go** trên điện thoại thật — hiện chưa có.
 
 ---

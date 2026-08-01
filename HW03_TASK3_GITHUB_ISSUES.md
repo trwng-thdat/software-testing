@@ -2,7 +2,15 @@
 
 > **Repo:** `DuyITLOR/group05_eshop` (cùng repo với Task 1, issues #125–#154)
 > **Cách dùng:** mỗi mục dưới đây là 1 issue. Copy phần **Title** vào ô tiêu đề, copy nguyên khối trong ô code vào phần mô tả, rồi **kéo thả ảnh** được liệt kê ở đầu mỗi mục vào cuối phần mô tả.
-> **Sau khi tạo xong:** ghi số issue thật vào cột `GitHub Issue` trong `Main_Report.md` §3.6, `cross-platform/Report.md` và `CrossPlatform_Matrix.csv` (hiện đang là `TODO`).
+> ✅ **ĐÃ TẠO XONG** — 6 issue đã lên GitHub: **#213–#218**. Số issue đã được ghi vào `Main_Report.md` §3.6 và `github_issues/README.md`.
+>
+> | Bug | Issue | Bug | Issue |
+> | --- | --- | --- | --- |
+> | BUG-CP-01 | [#213](https://github.com/DuyITLOR/group05_eshop/issues/213) | BUG-CP-04 | [#216](https://github.com/DuyITLOR/group05_eshop/issues/216) |
+> | BUG-CP-02 | [#214](https://github.com/DuyITLOR/group05_eshop/issues/214) | BUG-CP-05 | [#217](https://github.com/DuyITLOR/group05_eshop/issues/217) |
+> | BUG-CP-03 | [#215](https://github.com/DuyITLOR/group05_eshop/issues/215) | BUG-CP-06 | [#218](https://github.com/DuyITLOR/group05_eshop/issues/218) |
+>
+> File này giữ lại làm tham chiếu nội dung issue.
 
 ## Bảng tra nhanh — ảnh nào cho issue nào
 
