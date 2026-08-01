@@ -1,6 +1,6 @@
 # EShop GUI Checklist — Selenium Automation (HW03 Task 1)
 
-Tự động hoá **69 item checklist** GUI của `hw3/Main_Report.md` (Task 1 — Product List/Home + Login),
+Tự động hoá **69 item checklist** GUI của `Main_Report.md` (Task 1 — Product List/Home + Login),
 chạy trên **1 trình duyệt duy nhất (Chrome)**, tự chụp ảnh màn hình cho từng item, và in kết quả
 PASS / FAIL / MANUAL / ERROR ra console + file JSON/CSV.
 
@@ -84,7 +84,7 @@ Các cờ khác:
   kể cả PASS, để đối chiếu khi viết báo cáo — đề bài chỉ bắt buộc đính screenshot cho item FAIL, ảnh còn
   lại có thể bỏ qua khi nộp).
 - `results/results.json`, `results/results.csv` — bảng kết quả full (ID, Screen, IA, Expected, Result,
-  Notes, Screenshot path) — dùng để dán ngược vào cột `Result`/`Notes` của `hw3/Main_Report.md` và
+  Notes, Screenshot path) — dùng để dán ngược vào cột `Result`/`Notes` của `Main_Report.md` và
   `hw3/checklist/GUI_Checklist.csv`.
 - Console log tiến trình theo từng item khi chạy.
 
@@ -98,7 +98,7 @@ python generate_report.py
 
 Xuất ra:
 
-- `report/index.html` — báo cáo HTML có thể mở bằng trình duyệt, màu theo trạng thái PASS/FAIL/MANUAL/N/A,
+- `report/report.md` — báo cáo Markdown, phân nhóm theo trạng thái PASS/FAIL/MANUAL/N/A,
   link trực tiếp tới từng ảnh chụp (copy `screenshots/*.png` vào `report/screenshots/` để link hoạt động,
   hoặc mở `index.html` từ trong thư mục `selenium/` nơi `screenshots/` đã có sẵn).
 - `report/report.md` — bản Markdown tương đương, chia theo từng nhóm màn hình × IA, dùng để copy thẳng
@@ -106,7 +106,7 @@ Xuất ra:
 
 ## 6. Đối chiếu với báo cáo
 
-ID trong script khớp 1-1 với ID trong `hw3/Main_Report.md` (VD: `HOME-U01`, `LOGIN-F02`, ...). Sau khi
+ID trong script khớp 1-1 với ID trong `Main_Report.md` (VD: `HOME-U01`, `LOGIN-F02`, ...). Sau khi
 chạy xong, mở `report/report.md` (hoặc `results/results.csv`), copy cột `Result` + `Notes` dán vào bảng
 tương ứng trong báo cáo, rồi đính screenshot cho các dòng FAIL.
 

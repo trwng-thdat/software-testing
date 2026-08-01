@@ -103,11 +103,20 @@ OVERLAY_JS = """
   var d = document.createElement('div');
   d.id = 'hw03-overlay';
   d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483647;'
-    + 'background:#111;color:#0f0;font:bold 11px/1.4 monospace;padding:3px 6px;'
-    + 'pointer-events:none;box-sizing:border-box;';
-  // Two explicit lines: identity+platform, then the full URL (never truncated,
-  // since §6/§11 require the student ID and the SUT URL to be legible).
-  d.textContent = txt + ' | ' + platform;
+    + 'background:#111;font:bold 20px/1.5 monospace;padding:10px 14px;'
+    + 'pointer-events:none;box-sizing:border-box;'
+    + 'border-bottom:4px solid #0f0;';
+  // Three explicit lines. The student ID is rendered larger than the rest
+  // because §11 makes it the one element a grader must be able to read at a
+  // glance; platform and URL follow at normal weight.
+  var id = document.createElement('div');
+  id.style.cssText = 'color:#0f0;font-size:30px;letter-spacing:0.5px;';
+  id.textContent = txt;
+  d.appendChild(id);
+  var p = document.createElement('div');
+  p.style.cssText = 'color:#ff0;';
+  p.textContent = platform;
+  d.appendChild(p);
   var u = document.createElement('div');
   u.style.cssText = 'color:#6cf;word-break:break-all;';
   u.textContent = 'SUT: ' + location.href;

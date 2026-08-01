@@ -8,11 +8,11 @@
 
 | STT | Tiêu chí | Điểm | Tự đánh giá |
 | --- | --- | --- | --- |
-| 1 | Task 1 — GUI Checklist (thiết kế + thực thi + báo cáo bug) | 30 | TODO |
-| 2 | Task 2 — Đánh giá Tính khả dụng (kịch bản + 7 phiên thử + phân tích) | 40 | TODO |
-| 3 | Task 3 — Cross-Browser / Cross-Platform (≥ 3 nền tảng) | 20 | TODO |
-| 4 | Agent Skills | 10 | TODO |
-| | **Tổng cộng** | **100** | TODO |
+| 1 | Task 1 — GUI Checklist (thiết kế + thực thi + báo cáo bug) | 30 | TODO — tự chấm trước khi nộp |
+| 2 | Task 2 — Đánh giá Tính khả dụng (kịch bản + 7 phiên thử + phân tích) | 40 | TODO — điền sau khi hoàn tất P07 và chấm SUS |
+| 3 | Task 3 — Cross-Browser / Cross-Platform (≥ 3 nền tảng) | 20 | TODO — tự chấm trước khi nộp |
+| 4 | Agent Skills | 10 | TODO — tự chấm trước khi nộp |
+| | **Tổng cộng** | **100** | TODO — tổng 4 dòng trên, ghi vào tên file .zip |
 
 ## Báo cáo Tóm tắt Kiểm thử
 
@@ -28,10 +28,10 @@
 | Số item N/A (ngoài phạm vi) | 1 (HOME-N06 — breadcrumb không áp dụng cho Home theo FR-23) |
 | Lỗi thực thi (execution error) | 0 |
 | Số bug phát hiện — Task 1 (GUI) | **30** (BUG-GUI-01…30) — Critical 2, High 1, Medium 12, Low 15 |
-| Số bug phát hiện — Task 2 (usability) | TODO (dự kiến BUG-UX-01…05, xác nhận sau khi chạy đủ 7 phiên) |
+| Số bug phát hiện — Task 2 (usability) | **10** (BUG-UX-01…10) — trong đó 2 bug **chỉ phát hiện được qua người dùng thật**: nút hiện/ẩn mật khẩu hỏng (P01) và nhầm lẫn nhãn "Username" vs email (P05, non-IT) |
 | GitHub Issues đã tạo | **30** — [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) trên `DuyITLOR/group05_eshop`, mỗi issue có ảnh đính kèm |
-| Số người tham gia usability | 7 (TODO — xác nhận sau khi hoàn thành các phiên) |
-| Điểm SUS / UEQ-S trung bình | TODO |
+| Số người tham gia usability | **6/7 đã chạy** (P01–P06, có ghi hình đủ 6 phiên) · P07 chưa tuyển |
+| Điểm SUS / UEQ-S trung bình | TODO — người tham gia tự chấm, điền vào `usability/SUS_UEQS_Scores.csv` |
 | Phạm vi bao phủ cross-platform | **3 nền tảng** — P1 Chrome 141/Windows 11 (Blink), P2 Firefox 145/Windows 11 (Gecko), P3 Android Chrome/Pixel 7 Android 13 (Blink mobile, URL LAN thật) |
 | Số màn hình đã kiểm thử (Task 3) | **4** — Cart, Checkout, ProductDetail, Profile (không trùng Task 1) |
 | Số test case cross-platform đã thiết kế | **18** (CB-01…CB-18) |
@@ -48,7 +48,7 @@
 | P3 — Android Chrome / Pixel 7 | Blink mobile | 412×915 | 12 | 6 | 0 |
 | **Tổng cộng** | | | **37** | **16** | **1** |
 
-> Thực thi bằng [`cross-platform/run_cross_platform.py`](cross-platform/run_cross_platform.py) (Selenium 4.46 + Python 3.14). 16 ảnh của các case FAIL có overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL SUT tại [`cross-platform/screenshots/`](cross-platform/screenshots/). Ma trận đầy đủ: [`CrossPlatform_Matrix.csv`](cross-platform/CrossPlatform_Matrix.csv). Báo cáo: [`cross-platform/Report.md`](cross-platform/Report.md).
+> Thực thi bằng [`cross-platform/run_cross_platform.py`](cross-platform/run_cross_platform.py) (Selenium 4.46 + Python 3.14). 16 ảnh của các case FAIL có overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL SUT tại [`cross-platform/screenshots/`](cross-platform/screenshots/). Ma trận đầy đủ: [`CrossPlatform_Matrix.csv`](cross-platform/CrossPlatform_Matrix.csv). Báo cáo chi tiết nằm trong [`Main_Report.md`](Main_Report.md) §3.
 
 ### Chi tiết Task 1 theo khía cạnh giao diện (IA)
 
@@ -60,28 +60,33 @@
 | IA-04 — Feedback / State | 15 | 6 | 9 | 0 |
 | **Tổng cộng** | **69** | **36** | **32** | **1** |
 
-> Thực thi bằng bộ tự động hoá Selenium (Python) tại [`selenium/`](../selenium/) trên Chrome (single browser, headless, có bật `--include-lockout`), SUT chạy tại `localhost:5173` (frontend-web) + `localhost:3000` (backend). Toàn bộ 32 item Failed đều có ảnh chụp minh chứng tại [`screenshot/`](screenshot/).
+> Thực thi bằng bộ tự động hoá Selenium (Python) tại [`selenium/`](selenium/) trên Chrome (single browser, headless, có bật `--include-lockout`), SUT chạy tại `localhost:5173` (frontend-web) + `localhost:3000` (backend). Toàn bộ 32 item Failed đều có ảnh chụp minh chứng tại [`screenshot/`](screenshot/).
 
 ## Video Demo
 
-| Skill / Hoạt động | Link YouTube |
+**Screen recording 6 phiên usability** (Google Drive) — bảng link đầy đủ trong [`Main_Report.md`](Main_Report.md) §2.3:
+https://drive.google.com/drive/folders/19Ssxgb2v0uDsbjXkegTnivzDq4mUuWow?usp=sharing
+
+| Skill / Hoạt động | Link video |
 | --- | --- |
-| TODO | TODO |
+| Agent Skill — GUI checklist | ⬜ TODO |
+| Agent Skill — Usability evaluation | ⬜ TODO |
 
 ## Nội dung Gói nộp bài
 
 | Tệp / Thư mục | Nội dung | Trạng thái |
 | --- | --- | --- |
-| `Main_Report.md` (+ PDF) | Báo cáo chính: GUI checklist (Task 1) + đánh giá tính khả dụng (Task 2) + cross-platform (Task 3) | Task 1 ✅ · Task 3 ✅ · Task 2 TODO |
+| `Main_Report.md` (+ PDF) | Báo cáo chính: GUI checklist (Task 1) + đánh giá tính khả dụng (Task 2) + cross-platform (Task 3) | Task 1 ✅ · Task 3 ✅ · Task 2 🟡 6/7 phiên |
 | `bug_reports.md` | 30 bug Task 1, mỗi bug 1 khối Title + Description (repro, expected/actual, severity, ảnh) | ✅ |
 | `checklist/GUI_Checklist.csv` / `.xlsx` | Checklist 69 item (> 40) + kết quả thực thi + Test Summary | ✅ |
-| `screenshot/` | Ảnh chụp minh chứng cho toàn bộ 32 item Failed | ✅ |
-| `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` (+ PDF) | Phụ lục AI Audit Report bắt buộc | ✅ (cập nhật tiếp khi làm Task 2–3) |
-| `git_commit_log.txt` | Git commit log (định dạng text), 1 commit / mỗi bước kiểm thử | ✅ Task 1 |
-| `../selenium/` | Bộ tự động hoá thực thi checklist (Selenium + Python) + báo cáo HTML/Markdown | ✅ |
-| `AI_Critique.md` (+ PDF) | Phê bình AI (200–300 từ) | ⬜ TODO |
-| `usability/` | Kịch bản nhiệm vụ, danh sách 7 người tham gia, ghi chú phiên, điểm SUS/UEQ-S | ⬜ TODO |
-| `cross-platform/` | Bộ test 18 case × 3 nền tảng (`run_cross_platform.py`), `Report.md`, `CrossPlatform_Matrix.csv`, `results.json`, 16 ảnh có overlay `23127344@hcmus.edu.vn` | ✅ (còn lại: ảnh bug thủ công + GitHub Issues) |
+| `screenshot/` | Ảnh chụp minh chứng cho các item Failed (43 ảnh) | ✅ |
+| `github_issues/` | Ảnh chụp trang GitHub Issues (§14) + danh mục đối chiếu | ✅ |
+| `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` (+ PDF) | Phụ lục AI Audit Report bắt buộc — 9 artifact đã kiểm toán | ✅ |
+| `git_commit_log.txt` | Git commit log (định dạng text), 1 commit / mỗi bước kiểm thử — gồm **1 commit riêng cho mỗi phiên usability** theo §12 | ✅ |
+| `selenium/` | Bộ tự động hoá thực thi checklist (Selenium + Python) + báo cáo HTML/Markdown | ✅ |
+| `AI_Critique.md` (+ PDF) | Phê bình AI (≈300 từ) | ✅ |
+| `usability/` | Kịch bản nhiệm vụ, danh sách người tham gia, 7 file ghi chú phiên, điểm SUS/UEQ-S | 🟡 6/7 phiên · SUS chưa chấm |
+| `cross-platform/` | Bộ test 18 case × 3 nền tảng (`run_cross_platform.py`), `CrossPlatform_Matrix.csv`, `results.json`, 16 ảnh có overlay `23127344@hcmus.edu.vn` | ✅ (còn lại: tạo GitHub Issues cho BUG-CP-01…06) |
 | Agent Skills + video demo | Skill tái sử dụng + link YouTube minh hoạ | ⬜ TODO |
 
 ## Ghi chú
