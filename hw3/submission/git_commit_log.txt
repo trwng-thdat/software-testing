@@ -1,3 +1,16 @@
+1b88d38 | 2026-08-01 21:54 | docs(hw03): log Artifact #9 in AI Audit Report
+7e1e90e | 2026-08-01 21:51 | docs(hw03): add submission gap checklist against assignment spec
+eb89fa5 | 2026-08-01 21:51 | docs(hw03-task2): log session P06 observations
+b21e4db | 2026-08-01 21:51 | docs(hw03-task2): log session P05 observations (non-IT participant)
+4fb5a4a | 2026-08-01 21:51 | docs(hw03-task2): log session P04 observations
+fb61281 | 2026-08-01 21:51 | docs(hw03-task2): log session P03 observations
+0347b21 | 2026-08-01 21:51 | docs(hw03-task2): log session P02 observations
+eb37e53 | 2026-08-01 21:51 | docs(hw03-task2): log pilot session P01 observations
+3365f17 | 2026-08-01 21:51 | docs(hw03-task2): record 6 real participants (P01-P06)
+e2c2dd2 | 2026-08-01 21:50 | docs(hw03-task2): restructure session notes into per-participant files
+1f760c3 | 2026-08-01 21:50 | refactor(hw03): move deliverables into submission/ package folder
+c4a0c50 | 2026-08-01 21:50 | chore(hw03): exclude session recordings from git, add recordings index
+4c8f925 | 2026-07-30 21:53 | docs(hw03): refresh git commit log
 abb55f6 | 2026-07-30 21:53 | docs(hw03): log Task 2 check and Task 3 AI interactions in AI Audit Report
 f847a6a | 2026-07-30 21:47 | docs(hw03): refresh git commit log
 19c7fce | 2026-07-30 21:47 | docs(hw03-task3): write full cross-platform report inline in Main_Report.md
@@ -9,7 +22,38 @@ b9f66ab | 2026-07-30 21:33 | test(hw03-task3): design 18 cross-platform test cas
 414b55b | 2026-07-29 23:46 | docs(hw03): fill README self-assessment and Task 1 test summary
 c2f5f40 | 2026-07-29 23:45 | docs(hw03-task1): log 30 bugs and link GitHub Issues #125-#154
 0137846 | 2026-07-29 23:45 | docs(hw03-task1): add GUI checklist deliverable (CSV + Excel)
+b5c9bb6 | 2026-07-29 23:45 | test(hw03-task1): execute GUI checklist and record results + evidence
+029a563 | 2026-07-29 23:44 | test(hw03-task1): add Selenium automation for GUI checklist execution
 e3b87bc | 2026-07-29 23:01 | feat: add bug report
 bc7d6d9 | 2026-07-29 22:10 | feat: add checklist for task 1
 5a3b33d | 2026-07-29 21:27 | feat: initialize report template
+aa283fd | 2026-07-29 09:34 | feat: add selenium folder
+6a89481 | 2026-07-26 13:14 | docs: add testcases for all FR
+82d2a80 | 2026-07-26 12:34 | docs: update skill for selenium and delete unuse skill
+127abc7 | 2026-07-25 21:38 | docs: add skill for generate selenium script
+b0a17fa | 2026-07-25 12:05 | feat: initialize report file for homework
 e81375d | 2026-07-25 09:49 | feat: add inclass homework in week 3
+d297f9a | 2026-06-28 21:59 | Fix student ID in HW02 report and README to correct value
+1de2e5c | 2026-06-28 21:14 | Remove HW02_Tong_quan.md file as part of the course material update for Domain Testing on EShop.
+a09ed0a | 2026-06-28 13:50 | update git commit log and HW02 commit-count note
+e9edbef | 2026-06-28 13:49 | finalize HW02 report: AI audit table + verdicts, self-assessment, update issue links, compliance fixes (critique 281 words, declaration, instructor)
+4c7b193 | 2026-06-28 13:49 | add README: test summary, self-assessment, demo video link
+a986699 | 2026-06-28 12:54 | add github issue links and image
+9388704 | 2026-06-28 12:54 | upload images for feature c and d
+96dd102 | 2026-06-28 11:33 | add audit log in main report
+b215f9b | 2026-06-28 11:33 | add .rest file for testing feature d
+4526d2a | 2026-06-28 11:05 | generate testcases for feature C and D
+8b8c4b3 | 2026-06-28 11:04 | upload images for pool b
+eb535f4 | 2026-06-27 12:46 | test SUT on feature B
+759ec3e | 2026-06-27 10:43 | generate testcase for feature b
+e8ae90b | 2026-06-27 10:42 | add .rest file for testing
+15bab31 | 2026-06-27 10:42 | add github issue images of pool a
+c0c63fb | 2026-06-27 00:18 | create .rest for SUT
+fca4214 | 2026-06-26 23:57 | generate testcases for feature A using Boundary Value Analysis technique
+4e81b55 | 2026-06-26 22:20 | generate testcase for feature A base on domain testing technique
+851683b | 2026-06-08 00:07 | Add AI disclosure form, privacy checklist, and related resources for HW01 submission
+46ebc47 | 2026-06-07 19:28 | Add AI Audit Report, Disclosure Form, and Privacy Checklist; include GitHub issues image and hallucination rule
+26818cb | 2026-06-07 15:27 | chore: finnish requirement 3
+c6a800d | 2026-06-06 23:48 | feat: add AI Audit Report template for assignments
+4a69500 | 2026-06-04 13:54 | feat: add HW01 assignment document, prompt log, mindmap, and templates
+a9527b4 | 2026-06-04 13:53 | feat: add image resources
