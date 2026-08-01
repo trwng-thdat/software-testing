@@ -12,29 +12,48 @@ _Chuyển thể từ Med Kharbach, PhD (2026) — AI Use Policy Templates for Hi
 
 ## **1. Thông tin Sinh viên**
 
-| Trường thông tin                               | Giá trị                                                                                              |
-| :--------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| **Họ tên sinh viên (in hoa):**                 | TODO                                                                                                 |
-| **MSSV:**                                      | TODO                                                                                                 |
-| **Lớp / Khóa:**                                | TODO                                                                                                 |
-| **Mã bài tập (VD: HW#00, HW#02):**             | HW#03 — Kiểm thử Giao diện và Tính khả dụng                                                          |
-| **Ngày làm bài:**                              | 2026-07-29                                                                                           |
-| **(Các) công cụ AI đã sử dụng:**               | Claude (Claude Code / claude.ai) — TODO bổ sung công cụ khác nếu có (ChatGPT, Gemini, Copilot, v.v.) |
-| **Bạn có sử dụng AI trong bài tập này không?** | [x] Có [ ] Không                                                                                     |
+| Trường thông tin | Giá trị |
+| :---- | :---- |
+| **Họ tên sinh viên (in hoa):** | TRƯƠNG THÀNH ĐẠT |
+| **MSSV:** | 23127344 |
+| **Lớp / Khóa:** | 23KTPM3 |
+| **Mã bài tập (VD: HW#00, HW#02):** | HW#03 — Kiểm thử Giao diện và Tính khả dụng |
+| **Ngày làm bài:** | 2026-07-29 |
+| **(Các) công cụ AI đã sử dụng:** | Claude (Claude Code / claude.ai) |
+| **(Các) công cụ AI đã sử dụng:** | [x] Có  [ ] Không |
 
 ## **2. Hướng dẫn (đọc trước khi điền)**
 
-- Thêm một mục cho mỗi artifact do AI tạo ra (test case, script, checklist, đặc tả OpenAPI, kịch bản JMeter, v.v.).
-- Dán nguyên văn prompt — KHÔNG diễn giải lại.
-- Dán nguyên văn kết quả đầu ra của AI (hoặc đính kèm ảnh chụp màn hình có chú thích trong báo cáo).
-- Gắn nhãn kết luận (verdict): VALID / INVALID / INCOMPLETE.
-- Lý giải phải trích dẫn một slide môn học, một mục trong ISTQB, hoặc một RFC kỹ thuật.
-- Trình bày artifact đã được sửa với phần thay đổi được highlight.
-- Các mục mẫu được in nghiêng — phải thay thế trước khi nộp bài.
+* Thêm một dòng cho mỗi artifact do AI tạo ra (test case, script, checklist, đặc tả OpenAPI, kịch bản JMeter, v.v.).  
+* Dán nguyên văn prompt — KHÔNG diễn giải lại.  
+* Dán nguyên văn kết quả đầu ra của AI (hoặc đính kèm ảnh chụp màn hình có chú thích trong báo cáo).  
+* Gắn nhãn kết luận (verdict): VALID / INVALID / INCOMPLETE.  
+* Lý giải phải trích dẫn một slide môn học, một mục trong ISTQB, hoặc một RFC kỹ thuật.  
+* Trình bày artifact đã được sửa với phần thay đổi được highlight.  
+* Các mục mẫu được in nghiêng — phải thay thế trước khi nộp bài.
 
-> **Ghi chú định dạng:** Từ bản này, mỗi artifact được trình bày thành **một mục riêng** (không dùng bảng ngang 5 cột như mẫu gốc) vì nội dung prompt/output/lý giải của các artifact thực tế trong bài này khá dài — nhồi vào 1 dòng bảng Markdown làm vỡ layout khi render (Word/PDF/GitHub). Cấu trúc mỗi mục vẫn giữ đủ 5 phần bắt buộc: (1) Prompt + Công cụ, (2) Kết quả AI, (3) Kết luận, (4) Lý giải (ISTQB), (5) Sinh viên sửa.
+## **3. Bảng Kiểm toán — mỗi dòng là một Artifact**
 
-## **3. Nhật ký Kiểm toán — mỗi mục là một Artifact**
+| (1) Prompt \+ Công cụ | (2) Kết quả AI | (3) Kết luận | (4) Lý giải (ISTQB) | (5) Sinh viên sửa |
+| :---- | :---- | :---- | :---- | :---- |
+| **Mẫu (in nghiêng) — thay thế trước khi nộp:** |  |  |  |  |
+| **Công cụ: AI Tool (VD: ChatGPT, Claude, Gemini)Thời gian: 14:32 25/02/2026Prompt:"Generate test cases for parsePhoneNumberVN function…"** | TC01: parsePhoneNumberVN("0912345678")Expected: {prefix:84, number:912345678, valid:true}… | INCOMPLETE | AI bỏ qua định dạng quốc tế theo RFC 3966. ISTQB FL §4.3 Boundary Value Analysis yêu cầu kiểm thử các trường hợp biên định dạng. | Đã thêm TC: parsePhoneNumberVN("+84-91-234-5678")Expected: {prefix:84, number:912345678, valid:true} |
+| **Artifact \#1** — Claude Code (Sonnet 5), 2026-07-29. Prompt: *"Đọc hw3/2026.HW03.GUI Usability\_En.pdf và tạo report template để tôi điền câu trả lời. Cũng viết audit log giúp tôi trong hw3/\[AI-02\]... AI Audit Report\_En.docx.md"* | Tạo bộ khung báo cáo đầy đủ: `Main_Report.md`, `GUI_Checklist.csv` (49 item trải IA01–IA04), `usability/*`, `cross-platform/*`, `README.md`, `git_commit_log.txt`. | INCOMPLETE | ISTQB FL §1.4/§4.1 (cơ sở kiểm thử, tiêu chí bao phủ): bộ khung không thay thế được thiết kế và thực thi kiểm thử thật. AI không thể duyệt app thật, tuyển người tham gia thật, hay chạy phiên usability thật. | Thực thi checklist trên EShop đang chạy, thay placeholder bằng Pass/Fail thật; tuyển 7 người thật; chụp ảnh cross-platform có overlay; đối chiếu FR với source `eshop-sut` thay vì chỉ đặc tả. |
+| **Artifact \#2** — Claude Code (Sonnet 5), 2026-07-29. Prompt: *"Đóng vai chuyên gia kiểm thử GUI… sinh checklist cho (1) trang Danh sách sản phẩm, (2) trang Đăng nhập… nêu rõ Expected result."* Cố tình **không** cho AI xem source ở bước này. | AI sinh ~**32 item chung chung** ("kiểm tra logo hiển thị đúng", "ô tìm kiếm có placeholder"…). Không có item nào về accessibility, dark mode, RTL, hay đo lường định lượng. | INCOMPLETE | ISTQB FL §4.4 (checklist-based testing): checklist phải phản ánh đặc thù hệ thống thật. Bộ 32 item dừng ở mức "checklist giáo khoa" vì prompt không cấp ngữ cảnh định lượng và AI không được xem source — đúng như §6 Task 1 cảnh báo. | Bổ sung **7 nhóm item AI bỏ sót** → **69 item**: accessibility (FR-24), dark mode, RTL, nhất quán màu theo ngữ nghĩa (FR-21), đối chiếu định lượng khóa tài khoản, ngôn ngữ hỗn hợp Anh-Việt, breadcrumb đúng phạm vi FR-23. |
+| **Artifact \#3** — Claude Code (Sonnet 5), 2026-07-29. Prompt: *"Task 1. generate 40 check list that cover all IA. the source code frontend is in hw4/docs/ and write the checklist in hw3/Main\_Report.md"* | Đối chiếu source thật tại `hw4/docs/eshop-sut`, mở rộng checklist 49 → **69 item** trải 8 bảng con (HOME-U/F/N/S, LOGIN-U/F/N/S), mỗi item có Expected result + tham chiếu FR/dòng code. | INCOMPLETE | ISTQB FL §4.4: checklist phải hiệu chỉnh theo hệ thống thực tế. Các item mới (dark mode, RTL, a11y label-input, double-submit) là khía cạnh checklist "sinh từ không" thường bỏ sót. | 69 item vẫn ở trạng thái suy luận từ đọc code tĩnh, chưa chạy thật. Cần mở `localhost:5173` thực thi cả 69 item, đo thủ công các item cần bấm giờ/đo contrast → giải quyết ở Artifact \#4. |
+| **Artifact \#4** — Claude Code (Sonnet 5), 2026-07-29. Prompt: *"In root folder create a selenium that cover all the checklist in task 1… run only 1 browser… has command for run specific screen - IA"* | Viết `selenium/run_checklist.py` \+ `generate_report.py`, **chạy thật** trên Chrome headless. Tự phát hiện và sửa 3 lỗi kịch bản (payload XSS có nháy đơn; stale element LOGIN-S02; mật khẩu chứa `!` bị chính regex lỗi từ chối). Kết quả: **25 PASS / 22 FAIL / 21 MANUAL / 1 N/A**. | INCOMPLETE | ISTQB FL §4.1 (thực thi) \+ §1.4 (vấn đề oracle): script "chạy xong không lỗi" không đồng nghĩa kết quả đúng. Nếu không sửa 3 lỗi trên, HOME-F04 báo nhầm PASS dù XSS thật sự tồn tại. Đối chiếu HTTP status trực tiếp từ backend thay vì đọc text UI minh hoạ nguyên tắc chọn đúng oracle. | 21 item MANUAL cần người tự mở ảnh kết luận PASS/FAIL; BUG-GUI-07 cần tắt backend thủ công để xác nhận; LOGIN-S03 cần đo lặp nhiều lần; toàn bộ bug cần tạo GitHub Issue thật kèm ảnh. |
+| **Artifact \#5** — Claude Code (Opus 5), 2026-07-30. Prompt: *"Read @2026.HW03.GUI Usability\_En.pdf and find out am I finnish the task 2"* | AI đối chiếu PDF đề bài với `hw3/usability/`, kết luận **Task 2 CHƯA hoàn thành (\~20%)**: bảng 7 người tham gia toàn TODO; 7 phiên chưa chạy; `SUS_UEQS_Scores.csv` rỗng; chưa có phân tích Phase 3. | VALID | ISTQB FL §1.4 (test oracle) \+ §5.3 (theo dõi tiến độ): tác vụ **có oracle rõ ràng** — đề bài là oracle, file trong repo là đối tượng đo. Kiểm chứng độc lập được bằng `grep -c TODO`. Đúng loại việc AI làm đáng tin cậy. | Không cần sửa nội dung. AI nêu đúng ràng buộc §11: 80% còn lại là việc con người bắt buộc tự làm và không được AI tạo/giả lập. |
+| **Artifact \#6** — Claude Code (Opus 5), 2026-07-30. Prompt (4 lượt): *"what is task 3 ask I am doing for"* / *"But what testcase should I test. does it the checklist I create in task 1"* / *"Is in the file require the minimum testcase for task 3"* | AI tóm tắt 5 yêu cầu Task 3; trả lời đề bài **không quy định số test case tối thiểu**, chỉ quy định ≥3 nền tảng. Khuyến nghị **không** chạy lại 69 item Task 1 trên 3 nền tảng mà chọn tập con 12–20 item nhạy cảm với engine. | VALID | ISTQB FL §5.1 (chiến lược & phân tích rủi ro): đúng nguyên tắc **kiểm thử dựa trên rủi ro** — chỉ nhân số lượt ở vùng rủi ro thay đổi theo nền tảng (rendering, CSS, locale), loại bỏ vùng bất biến (logic nghiệp vụ, phân quyền). | Sinh viên bổ sung ràng buộc AI chưa tự đề xuất: test case Task 3 phải **khác biệt với Task 1 và Task 2** → chuyển hẳn sang 4 màn hình chưa chạm (Cart, Checkout, ProductDetail, Profile). |
+| **Artifact \#7** — Claude Code (Opus 5), 2026-07-30. Prompt: *"So now do the task 3 for me than run the testcase by yourself… I think the testcase must different from the task 1 and taks 2"* | Viết `run_cross_platform.py` (Selenium 4.46), **18 case CB-01…CB-18** trên 4 màn hình không trùng Task 1/2. **Chạy thật 3 nền tảng × 18 case \= 54 lượt**: P1 Chrome 141 (13P/5F), P2 Firefox 145 (12P/5F/1NA), P3 Android Chrome (12P/6F). Phát hiện **6 bug**, gồm 1 bug phân kỳ nền tảng thật (`@media` lồng không được biên dịch do thiếu `postcss-nesting`). | INCOMPLETE | ISTQB FL §4.1 \+ §1.4: AI tự phát hiện và sửa **3 lỗi trong chính kịch bản của mình** trước khi báo kết quả — `seed_cart()` ghi `localStorage` trong khi giỏ chỉ nằm trong React state; `driver.get()` remount `CartProvider` làm mất giỏ; `ProductDetail.jsx:22-25` cố tình bỏ qua click đầu. Nếu không sửa thì báo cáo sẽ sai. | (1) P3 là **device emulation**, không phải máy vật lý — nên chạy lại trên Android thật; (2) WebKit không chạy được trên Windows (thiếu DLL) — đã dùng quyền §6 thay bằng Android Chrome; (3) CB-15 đo 0px do headless; (4) CB-17 N/A là hạn chế công cụ; (5) ảnh bug \+ 6 GitHub Issues sinh viên tự làm. |
+| **Artifact \#8** — Claude Code (Opus 5), 2026-07-30. Prompt: *"the folder docs is for the src code to reference. I need you write in @Main\_Report.md"* | AI nhận ra Task 3 trong `Main_Report.md` chỉ là bảng tóm tắt trỏ sang file khác, đã viết lại thành **223 dòng, mục 3.1–3.9** kèm giá trị đo thật (`margin-right=-100px`, `resolvedLocale=vi` vs `en-US`, nút "Xóa" 27×24px). | VALID | ISTQB FL §5.3 (báo cáo kiểm thử): báo cáo phải **tự chứa đủ thông tin** để hiểu phạm vi, kết quả và **giới hạn** mà không cần truy nguồn phụ. AI tự kiểm chứng: so **54 verdict** với `results.json` → 0 sai lệch; kiểm **29 link nội bộ** → tất cả resolve. | AI tự sửa 1 lỗi chính tả do chính nó tạo ("Android Chuser" → "Android Chrome, người dùng"). Sinh viên cần đọc lại toàn bộ 3.1–3.9 xác nhận trước khi nộp (yêu cầu "Human review" §2) và hoàn tất ảnh bug \+ GitHub Issues. |
+| **Artifact \#9** |  |  |  |  |
+| **Artifact \#10** |  |  |  |  |
+
+---
+
+## **3b. Phụ lục Mục 3 — Chi tiết đầy đủ từng Artifact**
+
+> Phần này giữ nguyên văn prompt và kết quả AI ở dạng đầy đủ (theo yêu cầu "dán nguyên văn" của Mục 2), vì độ dài của chúng vượt quá sức chứa của một ô bảng. Bảng Mục 3 ở trên là bản tóm tắt theo đúng layout mẫu; mỗi mục dưới đây tương ứng một dòng của bảng đó.
 
 ### Artifact #0 (mẫu tham khảo — không tính vào kiểm toán thật, giữ lại để minh hoạ định dạng)
 
@@ -256,16 +275,18 @@ AI tự phát hiện và sửa 1 lỗi chính tả do chính nó tạo ra ("Andr
 
 Tổng hợp các kết luận (verdict) từ Mục 3 và hoàn thành bảng dưới đây.
 
-| Chỉ số                                            | Số lượng                                                             | Tỷ lệ %   |
-| :------------------------------------------------ | :------------------------------------------------------------------- | :-------- |
-| **Tổng số artifact do AI tạo đã được kiểm toán**  | 8 (Artifact #1–#8; thêm một mục cho mỗi tương tác AI tiếp theo)      | 100%      |
-| **VALID (đúng, chấp nhận nguyên trạng)**          | 3 (Artifact #5, #6, #8)                                              | 37,5%     |
-| **INVALID (sai; bị từ chối)**                     | 0                                                                    | 0%        |
-| **INCOMPLETE (chấp nhận được sau khi chỉnh sửa)** | 5 (Artifact #1, #2, #3, #4, #7)                                      | 62,5%     |
+| Chỉ số | Số lượng | Tỷ lệ % |
+| :---- | :---- | :---- |
+| **Tổng số artifact do AI tạo đã được kiểm toán** | 8 (Artifact \#1–\#8) | 100% |
+| **VALID (đúng, chấp nhận nguyên trạng)** | 3 (Artifact \#5, \#6, \#8) | 37,5 % |
+| **INVALID (sai; bị từ chối)** | 0 | 0 % |
+| **INCOMPLETE (chấp nhận được sau khi chỉnh sửa)** | 5 (Artifact \#1, \#2, \#3, \#4, \#7) | 62,5 % |
 
 **Nhận xét về phân bố verdict.** Ba artifact được xếp VALID đều thuộc loại **có oracle kiểm chứng độc lập**: đối chiếu trạng thái repo với đề bài (#5, kiểm lại được bằng `grep -c TODO`), đọc và diễn giải đúng văn bản đề bài (#6, kiểm lại được bằng chính PDF), và viết báo cáo có tự kiểm chứng bằng script (#8: so 54 verdict với `results.json` → 0 sai lệch, kiểm 29 link → tất cả resolve). Năm artifact INCOMPLETE đều thuộc loại **sinh nội dung mới** (bộ khung, checklist, script tự động hoá) — nơi AI luôn cần con người thực thi/kiểm chứng lại. Đây là quy luật rõ nhất rút ra từ bài này và được nêu lại ở Mục 5.
 
 ## **5. Kết luận — Khi nào nên (hoặc không nên) dùng AI?**
+
+Viết 80–150 từ mô tả các quy luật bạn quan sát được. AI toả sáng ở đâu? AI thất bại ở đâu? Khuyến nghị của bạn cho việc dùng AI trong loại công việc này trong tương lai là gì?
 
 > _Bản nháp dưới đây (~130 từ, trong khoảng 80–150 yêu cầu) soạn dựa trên dữ liệu kiểm toán thật ở Mục 3–4. Sinh viên đọc lại, sửa theo trải nghiệm cá nhân và tự chịu trách nhiệm trước khi nộp._
 
@@ -291,21 +312,21 @@ _Báo cáo AI Audit Report chi tiết được đính kèm trong Phụ lục A. 
 
 ## **Chữ ký**
 
-| Họ tên sinh viên (in hoa): | TODO                                 |
-| :------------------------- | :----------------------------------- |
-| **MSSV:**                  | TODO                                 |
-| **Lớp / Khóa:**            | TODO                                 |
-| **Môn học:**               | CS423 / CSC13003 – Kiểm thử Phần mềm |
-| **Giảng viên:**            | TODO                                 |
-| **Ngày:**                  | TODO                                 |
-| **Chữ ký:**                | TODO                                 |
+| Họ tên sinh viên (in hoa): | TRƯƠNG THÀNH ĐẠT |
+| :---- | :---- |
+| **MSSV:** | 23127344 |
+| **Lớp / Khóa:** | 23KTPM3 |
+| **Môn học:** | CS423 / CSC13003 – Kiểm thử Phần mềm |
+| **Giảng viên:** | TODO |
+| **Ngày:** | TODO |
+| **Chữ ký:** | TODO |
 
 ## **Tài liệu tham khảo**
 
-- Kharbach, M. (2026). AI Use Policy Templates for Higher Education. CC BY-NC-SA 4.0.
-- ISTQB Foundation Level Syllabus (phiên bản mới nhất).
-- Hardman, P. (2025). A Post-AI Learning Taxonomy.
-- Fuster Rabella, M. (2025). OECD Education Working Paper No. 338.
-- Perkins, M., Roe, J., & Furze, L. (2025). AI Assessment Scale.
-- Anthropic (2025). Building reliable AI test agents — engineering blog.
-- DeepEval & Promptfoo documentation — testing frameworks for LLM systems.
+* Kharbach, M. (2026). AI Use Policy Templates for Higher Education. CC BY-NC-SA 4.0.  
+* ISTQB Foundation Level Syllabus (phiên bản mới nhất).  
+* Hardman, P. (2025). A Post-AI Learning Taxonomy.  
+* Fuster Rabella, M. (2025). OECD Education Working Paper No. 338\.  
+* Perkins, M., Roe, J., & Furze, L. (2025). AI Assessment Scale.  
+* Anthropic (2025). Building reliable AI test agents — engineering blog.  
+* DeepEval & Promptfoo documentation — testing frameworks for LLM systems.
