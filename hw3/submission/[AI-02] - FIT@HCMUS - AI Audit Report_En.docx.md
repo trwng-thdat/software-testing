@@ -46,7 +46,7 @@ _Chuyển thể từ Med Kharbach, PhD (2026) — AI Use Policy Templates for Hi
 | **Artifact \#6** — Claude Code (Opus 5), 2026-07-30. Prompt (4 lượt): *"what is task 3 ask I am doing for"* / *"But what testcase should I test. does it the checklist I create in task 1"* / *"Is in the file require the minimum testcase for task 3"* | AI tóm tắt 5 yêu cầu Task 3; trả lời đề bài **không quy định số test case tối thiểu**, chỉ quy định ≥3 nền tảng. Khuyến nghị **không** chạy lại 69 item Task 1 trên 3 nền tảng mà chọn tập con 12–20 item nhạy cảm với engine. | VALID | ISTQB FL §5.1 (chiến lược & phân tích rủi ro): đúng nguyên tắc **kiểm thử dựa trên rủi ro** — chỉ nhân số lượt ở vùng rủi ro thay đổi theo nền tảng (rendering, CSS, locale), loại bỏ vùng bất biến (logic nghiệp vụ, phân quyền). | Sinh viên bổ sung ràng buộc AI chưa tự đề xuất: test case Task 3 phải **khác biệt với Task 1 và Task 2** → chuyển hẳn sang 4 màn hình chưa chạm (Cart, Checkout, ProductDetail, Profile). |
 | **Artifact \#7** — Claude Code (Opus 5), 2026-07-30. Prompt: *"So now do the task 3 for me than run the testcase by yourself… I think the testcase must different from the task 1 and taks 2"* | Viết `run_cross_platform.py` (Selenium 4.46), **18 case CB-01…CB-18** trên 4 màn hình không trùng Task 1/2. **Chạy thật 3 nền tảng × 18 case \= 54 lượt**: P1 Chrome 141 (13P/5F), P2 Firefox 145 (12P/5F/1NA), P3 Android Chrome (12P/6F). Phát hiện **6 bug**, gồm 1 bug phân kỳ nền tảng thật (`@media` lồng không được biên dịch do thiếu `postcss-nesting`). | INCOMPLETE | ISTQB FL §4.1 \+ §1.4: AI tự phát hiện và sửa **3 lỗi trong chính kịch bản của mình** trước khi báo kết quả — `seed_cart()` ghi `localStorage` trong khi giỏ chỉ nằm trong React state; `driver.get()` remount `CartProvider` làm mất giỏ; `ProductDetail.jsx:22-25` cố tình bỏ qua click đầu. Nếu không sửa thì báo cáo sẽ sai. | (1) P3 là **device emulation**, không phải máy vật lý — nên chạy lại trên Android thật; (2) WebKit không chạy được trên Windows (thiếu DLL) — đã dùng quyền §6 thay bằng Android Chrome; (3) CB-15 đo 0px do headless; (4) CB-17 N/A là hạn chế công cụ; (5) ảnh bug \+ 6 GitHub Issues sinh viên tự làm. |
 | **Artifact \#8** — Claude Code (Opus 5), 2026-07-30. Prompt: *"the folder docs is for the src code to reference. I need you write in @Main\_Report.md"* | AI nhận ra Task 3 trong `Main_Report.md` chỉ là bảng tóm tắt trỏ sang file khác, đã viết lại thành **223 dòng, mục 3.1–3.9** kèm giá trị đo thật (`margin-right=-100px`, `resolvedLocale=vi` vs `en-US`, nút "Xóa" 27×24px). | VALID | ISTQB FL §5.3 (báo cáo kiểm thử): báo cáo phải **tự chứa đủ thông tin** để hiểu phạm vi, kết quả và **giới hạn** mà không cần truy nguồn phụ. AI tự kiểm chứng: so **54 verdict** với `results.json` → 0 sai lệch; kiểm **29 link nội bộ** → tất cả resolve. | AI tự sửa 1 lỗi chính tả do chính nó tạo ("Android Chuser" → "Android Chrome, người dùng"). Sinh viên cần đọc lại toàn bộ 3.1–3.9 xác nhận trước khi nộp (yêu cầu "Human review" §2) và hoàn tất ảnh bug \+ GitHub Issues. |
-| **Artifact \#9** |  |  |  |  |
+| **Artifact \#9** — Claude Code (Opus 5), 2026-08-01. Prompt: *"ở folder hw3/submission. đọc đề bài ở @hw3/2026.HW03.GUI Usability\_En.pdf và xem coi trong submission còn thiếu cái gì và tạo cho tôi 1 file checklist để tôi hoàn thiện nốt ở bên ngoài root folder"* | AI đọc PDF đề bài, quét `hw3/submission/`, tạo `HW03_SUBMISSION_CHECKLIST.md` đối chiếu từng mục §6/§7/§14. Phát hiện: Task 2 mới có khung rỗng (7 dòng participant TODO, SUS rỗng), Agent Skills chưa có gì, và **4 tài liệu §14 bắt buộc bị thiếu** (README.md, AI\_Critique.md, 3 bản PDF) — trong đó README.md và bug\_reports.md đã bị xoá khỏi submission khi di chuyển thư mục. | VALID | ISTQB FL §1.4 (test oracle) \+ §5.3 (theo dõi tiến độ): giống Artifact \#5, đây là tác vụ **có oracle rõ ràng** — đề bài là oracle, cây thư mục là đối tượng đo, kiểm chứng độc lập được bằng `ls`/`grep -c TODO`. AI đối chiếu được hai nguồn không phụ thuộc lẫn nhau nên độ tin cậy cao. Việc phát hiện file bị xoá ngoài ý muốn là **hồi quy tài liệu** — đúng loại lỗi mà đối chiếu tự động bắt tốt hơn con người. | Không cần sửa nội dung checklist. Sinh viên **khôi phục** `README.md` \+ `bug_reports.md` vào `submission/` từ lịch sử git theo phát hiện này. Toàn bộ hạng mục còn thiếu (SUS, P07, Agent Skills, PDF) là việc con người phải tự làm — riêng dữ liệu participant/SUS bị §11 cấm AI tạo. |
 | **Artifact \#10** |  |  |  |  |
 
 ---
@@ -271,18 +271,55 @@ ISTQB FL §5.3 (báo cáo kiểm thử): báo cáo phải **tự chứa đủ th
 **(5) Sinh viên sửa:**
 AI tự phát hiện và sửa 1 lỗi chính tả do chính nó tạo ra ("Android Chuser" → "Android Chrome, người dùng"). Sinh viên cần: (1) đọc lại toàn bộ mục 3.1–3.9 để xác nhận các nhận định khớp hiểu biết của mình trước khi nộp (yêu cầu "Human review" của §2); (2) hoàn tất ảnh bug + GitHub Issues như nêu ở Artifact #7.
 
+### Artifact #9 — Đối chiếu bài nộp với đề bài và lập checklist hoàn thiện
+
+**(1) Prompt + Công cụ:**
+Công cụ: Claude (Claude Code, Opus 5). Thời gian: 2026-08-01.
+Prompt (nguyên văn): _"ở folder hw3/submission. đọc đề bài ở @hw3/2026.HW03.GUI Usability_En.pdf và xem coi trong submission còn thiếu cái gì và tạo cho tôi 1 file checklist để tôi hoàn thiện nốt ở bên ngoài root folder"_
+
+**(2) Kết quả AI:**
+AI đọc toàn văn 10 trang PDF đề bài, quét cây thư mục `hw3/submission/`, đếm số ô TODO trong từng file, rồi tạo `HW03_SUBMISSION_CHECKLIST.md` ở thư mục gốc repo. Checklist đối chiếu từng mục §6 (3 task), §7 (Agent Skills), §12 (git log) và §14 (13 hạng mục bắt buộc trong zip). Kết quả chính:
+
+- **Task 1 (30đ):** gần xong — 69 item, 43 ảnh FAIL, 30 bug có link Issue. Thiếu **ảnh chụp trang GitHub Issues** (§14 yêu cầu riêng, khác với việc đính ảnh *trong* issue ở §6).
+- **Task 2 (40đ):** mới ~20% — `Participants.md` 7 dòng TODO, 7 file phiên mỗi file 46–50 TODO, `SUS_UEQS_Scores.csv` rỗng hoàn toàn, bảng "phát hiện" trong Main_Report §2.4 vẫn là **dự đoán từ đọc code** chứ chưa phải quan sát người thật.
+- **Task 3 (20đ):** gần xong — 3 nền tảng, 54 lượt chạy. Thiếu xác minh overlay MSSV trên ảnh và GitHub Issue cho 6 bug BUG-CP.
+- **Agent Skills (10đ):** `.claude/skills/` trống hoàn toàn.
+- **§14 — 4 tài liệu bắt buộc bị thiếu:** `README.md`, `AI_Critique.md` (§10 bắt buộc 200–300 từ), và 3 bản PDF. Trong đó AI phát hiện `README.md` và `bug_reports.md` **từng tồn tại nhưng đã bị xoá** khỏi submission khi di chuyển thư mục — đối chiếu với `git status` cho thấy chúng nằm trong danh sách deleted mà không có bản thay thế.
+
+Ở các lượt sau, AI cập nhật lại checklist khi sinh viên bổ sung dữ liệu 6 participant thật và 6 screen recording, đồng thời cảnh báo thư mục `recordings/` nặng **1.1 GB** vượt giới hạn upload của Moodle và giới hạn 100 MB/file của GitHub.
+
+**(3) Kết luận:** VALID
+
+**(4) Lý giải (ISTQB):**
+ISTQB FL §1.4 (test oracle) và §5.3 (theo dõi tiến độ). Đây là cùng loại tác vụ với Artifact #5 và cho kết quả đáng tin cậy vì cùng lý do: **oracle nằm ngoài AI**. Đề bài là oracle cố định, cây thư mục và nội dung file là đối tượng đo, và cả hai đều kiểm chứng độc lập được bằng lệnh (`ls`, `grep -c TODO`, `git status`). AI không phải "sáng tạo" nội dung mà chỉ so khớp hai nguồn có sẵn — đúng vùng mà mô hình ngôn ngữ ít sai nhất.
+
+Điểm đáng chú ý về mặt kiểm thử: việc phát hiện `README.md`/`bug_reports.md` bị xoá là một ca **hồi quy tài liệu** (documentation regression) — thay đổi ở thao tác A (di chuyển thư mục) làm hỏng deliverable B mà không phát ra tín hiệu lỗi nào. Đây đúng là loại khiếm khuyết mà đối chiếu tự động bắt tốt hơn rà soát thủ công, vì con người có xu hướng chỉ kiểm tra thứ mình vừa đụng vào.
+
+Một hạn chế đã ghi nhận trong quá trình: ở một lượt cập nhật, AI **kết luận sai** rằng sinh viên đã điền thêm số liệu quan sát, chỉ vì thấy số ô TODO giảm từ 50 → 35. Thực tế số giảm là do chính AI viết lại file làm mất bớt dòng placeholder, không phải có dữ liệu mới. AI tự phát hiện khi kiểm tra lại bằng `grep` từng trường cụ thể và đã sửa. Bài học: **đếm TODO là proxy metric, không phải oracle** — phải kiểm tra đúng trường dữ liệu cần biết thay vì suy từ chỉ số tổng hợp.
+
+**(5) Sinh viên sửa:**
+Không cần sửa nội dung checklist — các phát hiện đối chiếu được với repo. Hành động đã thực hiện theo checklist:
+
+1. **Khôi phục `README.md` và `bug_reports.md`** vào `submission/` từ lịch sử git (`git show HEAD:hw3/README.md`), tránh mất 2 tài liệu §14 bắt buộc.
+2. **Thêm `*.mp4` vào `.gitignore`** và tạo `recordings/README.md` làm bảng index link YouTube, để 1.1 GB video không lọt vào repo.
+3. Ghi nhận các hạng mục còn lại là **việc con người bắt buộc tự làm**: điểm SUS (participant tự chấm), tuyển P07, Agent Skills, 3 bản PDF, ảnh trang GitHub Issues. Riêng dữ liệu participant và SUS bị §11 cấm AI tạo hoặc giả lập.
+
+Sinh viên cũng chủ động yêu cầu AI **không tự điền** các ô quan sát trong file phiên (thời lượng, hesitation, quote nguyên văn, điểm SUS) mà chỉ đánh dấu TODO kèm ghi chú "phải điền thủ công" — giữ đúng ranh giới §11.
+
 ## **4. Tổng hợp Độ chính xác của AI**
 
 Tổng hợp các kết luận (verdict) từ Mục 3 và hoàn thành bảng dưới đây.
 
 | Chỉ số | Số lượng | Tỷ lệ % |
 | :---- | :---- | :---- |
-| **Tổng số artifact do AI tạo đã được kiểm toán** | 8 (Artifact \#1–\#8) | 100% |
-| **VALID (đúng, chấp nhận nguyên trạng)** | 3 (Artifact \#5, \#6, \#8) | 37,5 % |
+| **Tổng số artifact do AI tạo đã được kiểm toán** | 9 (Artifact \#1–\#9) | 100% |
+| **VALID (đúng, chấp nhận nguyên trạng)** | 4 (Artifact \#5, \#6, \#8, \#9) | 44,4 % |
 | **INVALID (sai; bị từ chối)** | 0 | 0 % |
-| **INCOMPLETE (chấp nhận được sau khi chỉnh sửa)** | 5 (Artifact \#1, \#2, \#3, \#4, \#7) | 62,5 % |
+| **INCOMPLETE (chấp nhận được sau khi chỉnh sửa)** | 5 (Artifact \#1, \#2, \#3, \#4, \#7) | 55,6 % |
 
-**Nhận xét về phân bố verdict.** Ba artifact được xếp VALID đều thuộc loại **có oracle kiểm chứng độc lập**: đối chiếu trạng thái repo với đề bài (#5, kiểm lại được bằng `grep -c TODO`), đọc và diễn giải đúng văn bản đề bài (#6, kiểm lại được bằng chính PDF), và viết báo cáo có tự kiểm chứng bằng script (#8: so 54 verdict với `results.json` → 0 sai lệch, kiểm 29 link → tất cả resolve). Năm artifact INCOMPLETE đều thuộc loại **sinh nội dung mới** (bộ khung, checklist, script tự động hoá) — nơi AI luôn cần con người thực thi/kiểm chứng lại. Đây là quy luật rõ nhất rút ra từ bài này và được nêu lại ở Mục 5.
+**Nhận xét về phân bố verdict.** Bốn artifact được xếp VALID đều thuộc loại **có oracle kiểm chứng độc lập**: đối chiếu trạng thái repo với đề bài (#5 và #9, kiểm lại được bằng `grep -c TODO` / `git status`), đọc và diễn giải đúng văn bản đề bài (#6, kiểm lại được bằng chính PDF), và viết báo cáo có tự kiểm chứng bằng script (#8: so 54 verdict với `results.json` → 0 sai lệch, kiểm 29 link → tất cả resolve). Năm artifact INCOMPLETE đều thuộc loại **sinh nội dung mới** (bộ khung, checklist, script tự động hoá) — nơi AI luôn cần con người thực thi/kiểm chứng lại. Đây là quy luật rõ nhất rút ra từ bài này và được nêu lại ở Mục 5.
+
+**Một sắc thái quan trọng: VALID không có nghĩa là "không bao giờ sai".** Ngay trong Artifact #9 — artifact được xếp VALID — AI vẫn mắc một lỗi suy luận: kết luận sinh viên đã điền thêm dữ liệu chỉ vì thấy số ô TODO giảm, trong khi nguyên nhân thật là chính AI đã viết lại file làm mất dòng placeholder. Lỗi được phát hiện khi kiểm tra lại bằng `grep` từng trường cụ thể. Điều này cho thấy verdict VALID phản ánh **độ tin cậy của loại tác vụ**, chứ không phải bảo chứng cho từng câu chữ; và rằng ngay cả tác vụ có oracle tốt cũng hỏng nếu **chọn sai đại lượng để đo** (đếm TODO là proxy metric, không phải oracle của câu hỏi "dữ liệu đã được điền chưa").
 
 ## **5. Kết luận — Khi nào nên (hoặc không nên) dùng AI?**
 
