@@ -15,7 +15,7 @@
 | Task 2 — Usability Evaluation | 40 | 🟡 **6/7 phiên + 6 video** | Tuyển + chạy P07 · **điền SUS (vẫn rỗng)** · xử lý 1.1 GB video |
 | Task 3 — Cross-Platform | 20 | ✅ Gần xong | Kiểm tra overlay MSSV trên ảnh |
 | Agent Skills | 10 | ❌ **Chưa có gì** | Viết skill + quay video demo |
-| Hồ sơ nộp (README, PDF, zip) | — | ❌ **Thiếu nhiều** | README, các bản PDF, bug_reports.md |
+| Hồ sơ nộp (README, PDF, zip) | — | 🟡 | README ✅ · AI_Critique ✅ · **còn 3 bản PDF + đóng zip** |
 
 **Rủi ro cao nhất:** §17 ghi rõ *"Missing any required document results in 0 points"*. Các mục thiếu ở phần 5 bên dưới (README.md, bản PDF) là bắt buộc.
 
@@ -91,8 +91,9 @@
 - [ ] Tính trung bình + so sánh ngưỡng ngành **68**
 - [ ] **Điền bảng SUS trong Main_Report §2.4** (hiện 8 ô TODO)
 
-#### 2.4 Ghi hình — 🔴 CẦN XỬ LÝ GẤP
-- [x] **Screen recording 6/6 phiên đã chạy** — `usability/recordings/P01.mp4`…`P06.mp4` ✅
+#### 2.4 Ghi hình — ✅ ĐÃ XONG
+- [x] **Screen recording 6/6 phiên đã chạy** ✅
+- [x] **Đã upload Google Drive + nhúng link vào Main_Report §2.3** ✅ (giải quyết xong vấn đề 1.1 GB)
 - [ ] **Quay phiên P07** sau khi tuyển được người
 - [ ] 🔴 **Xử lý dung lượng 1.1 GB** — Moodle không nhận nổi. Chọn 1 trong 2:
   - **Khuyến nghị:** upload cả 6 video lên **YouTube unlisted** → xoá MP4 khỏi zip → thay bằng `recordings/README.md` chứa bảng link. Zip nhẹ, TA vẫn xem được.
@@ -175,13 +176,13 @@
 | 3 | Bug report + ảnh chụp GitHub Issues | ✅ | `bug_reports.md` đã khôi phục · `github_issues/issues_list_overview.png` đã có (nên chụp thêm ảnh issue chi tiết) |
 | 4 | AI Audit Report **Markdown** | ✅ | `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` (còn 12 TODO cần điền) |
 | 5 | AI Audit Report **PDF** | ❌ | **Chưa có** |
-| 6 | **AI Critique 200–300 từ** | ❌ | **Không tìm thấy** — §10 bắt buộc. File `AI_Critique.md` từng được nhắc trong audit log nhưng không tồn tại trong `submission/` |
+| 6 | **AI Critique 200–300 từ** | ✅ | `AI_Critique.md` (~300 từ) — đã viết |
 | 7 | AI Critique **PDF** | ❌ | Chưa có |
 | 8 | Git commit log (text) | ⚠️ | `git_commit_log.txt` có 14 dòng — **cần refresh** sau khi commit các bước Task 2 (§12 yêu cầu 1 commit/mỗi bước, gồm **từng phiên usability**) |
 | 9 | Excel checklist > 40 item + test summary | ✅ | `checklist/GUI_Checklist.xlsx` (69 item) |
 | 10 | Usability evidence (scenario, notes, SUS, findings, recordings) + bảng 7 participant | 🟡 | Scenario ✅ · notes 6/7 ✅ · **recordings 6/7 ✅ (1.1 GB — phải chuyển YouTube)** · SUS ❌ rỗng · findings ❌ chưa tổng hợp · participant 6/7 |
 | 11 | Cross-platform screenshots | ✅ | 16 ảnh (cần verify overlay) |
-| 12 | **README.md** (self-assessment table + test summary) | ❌ | **Đã bị xoá khỏi submission** — xem mẫu bên dưới |
+| 12 | **README.md** (self-assessment table + test summary) | ✅ | Đã khôi phục + cập nhật số liệu thật; còn 4 ô tự chấm điểm |
 | 13 | Zip đúng tên `23127344_HW03_AI_GUIUsability_<XXX>.zip` | ❌ | Chưa đóng gói; `<XXX>` = điểm tự chấm 3 chữ số |
 
 ### 5.1 README.md cần chứa

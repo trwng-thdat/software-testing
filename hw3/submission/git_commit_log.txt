@@ -1,3 +1,5 @@
+936f918 | 2026-08-01 23:15 | docs(hw03): update gap checklist - AI Critique and video links done
+25a5419 | 2026-08-01 23:15 | docs(hw03): refresh git commit log
 6adbaff | 2026-08-01 23:15 | docs(hw03): add AI Critique, embed session video links, consolidate reports
 0777c90 | 2026-08-01 22:43 | docs(hw03): refresh git commit log
 d27f68b | 2026-08-01 22:43 | docs(hw03-task1): add GitHub Issues page screenshot as bug-report evidence

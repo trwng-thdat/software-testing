@@ -6,16 +6,16 @@
 
 ## Bảng tra nhanh — ảnh nào cho issue nào
 
-| Bug | Severity | Ảnh cần đính kèm | Đường dẫn |
-| --- | --- | --- | --- |
-| BUG-CP-01 | High ⬇️ | `P3-CB-01.png` (+ nên bổ sung P1, P2 — xem ghi chú) | [`hw3/submission/cross-platform/screenshots/`](hw3/submission/cross-platform/screenshots/) |
-| BUG-CP-02 | High | `P1-CB-06.png`, `P2-CB-06.png`, `P3-CB-06.png` | 〃 |
-| BUG-CP-03 | Critical | `P1-CB-08.png` (hoặc cả 3) | 〃 |
-| BUG-CP-04 | Medium | `P1-CB-05.png` | 〃 |
-| BUG-CP-05 | Medium | `P3-CB-13.png` (rủi ro riêng mobile) | 〃 |
-| BUG-CP-06 | Medium | `P1-CB-18.png`, `P3-CB-18.png` | 〃 |
+| Bug       | Severity | Ảnh cần đính kèm                                    | Đường dẫn                                                                                  |
+| --------- | -------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| BUG-CP-01 | High ⬇️  | `P3-CB-01.png` (+ nên bổ sung P1, P2 — xem ghi chú) | [`hw3/submission/cross-platform/screenshots/`](hw3/submission/cross-platform/screenshots/) |
+| BUG-CP-02 | High     | `P1-CB-06.png`, `P2-CB-06.png`, `P3-CB-06.png`      | 〃                                                                                         |
+| BUG-CP-03 | Critical | `P1-CB-08.png` (hoặc cả 3)                          | 〃                                                                                         |
+| BUG-CP-04 | Medium   | `P1-CB-05.png`                                      | 〃                                                                                         |
+| BUG-CP-05 | Medium   | `P3-CB-13.png` (rủi ro riêng mobile)                | 〃                                                                                         |
+| BUG-CP-06 | Medium   | `P1-CB-18.png`, `P3-CB-18.png`                      | 〃                                                                                         |
 
-> ⚠️ **BUG-CP-01 — đọc trước khi tạo issue.** Ảnh `P3-CB-01.png` **không** cho thấy nút bị đẩy ra ngoài màn hình: nút "Thêm vào giỏ hàng" vẫn nằm gọn trong khung. Chính `results.json` cũng ghi CB-02 (P3) = **PASS** với ghi chú *"Button inside viewport (right=225 ≤ 412), margin-right=-100px"*.
+> ⚠️ **BUG-CP-01 — đọc trước khi tạo issue.** Ảnh `P3-CB-01.png` **không** cho thấy nút bị đẩy ra ngoài màn hình: nút "Thêm vào giỏ hàng" vẫn nằm gọn trong khung. Chính `results.json` cũng ghi CB-02 (P3) = **PASS** với ghi chú _"Button inside viewport (right=225 ≤ 412), margin-right=-100px"_.
 >
 > Vì vậy nội dung issue bên dưới đã được viết lại theo **đúng bằng chứng đo được** (margin âm được áp dụng, khác biệt giữa các engine) thay vì theo câu kết luận quá tay trong script ("pushed 100px off-canvas"), và **hạ severity Critical → High**. Nêu trung thực giới hạn bằng chứng an toàn hơn nhiều so với khẳng định quá tay rồi bị bắt lỗi lúc oral defense.
 >
@@ -35,7 +35,7 @@
 
 **Description:**
 
-```markdown
+````markdown
 **Mô tả:** `index.css` khai báo `@media` **lồng bên trong** một class CSS thường. Dự án dùng Tailwind 3 + PostCSS **không bật `postcss-nesting`**, nên khối `@media` lồng này không được biên dịch đúng và giá trị `margin-right: -100px` được áp dụng ngoài ý muốn ở viewport hẹp.
 
 **Nguồn:** `frontend-web/src/index.css:11-15` + `frontend-web/src/pages/ProductDetail.jsx:66`
@@ -47,14 +47,15 @@
   }
 }
 ```
+````
 
 **Kết quả đo được (18 case × 3 nền tảng, Selenium 4.46):**
 
-| Nền tảng | Viewport | `margin-right` đo được | Verdict |
-| --- | --- | --- | --- |
-| P1 — Chrome 141 / Windows 11 (Blink) | 1422px | `0px` (rule inert đúng) | PASS |
-| P2 — Firefox 145 / Windows 11 (**Gecko**) | 1440px | `0px` (rule inert đúng) | PASS |
-| P3 — Chrome mobile emulation (Pixel 7 profile) | 412px | **`-100px`** | **FAIL** |
+| Nền tảng                                       | Viewport | `margin-right` đo được  | Verdict  |
+| ---------------------------------------------- | -------- | ----------------------- | -------- |
+| P1 — Chrome 141 / Windows 11 (Blink)           | 1422px   | `0px` (rule inert đúng) | PASS     |
+| P2 — Firefox 145 / Windows 11 (**Gecko**)      | 1440px   | `0px` (rule inert đúng) | PASS     |
+| P3 — Chrome mobile emulation (Pixel 7 profile) | 412px    | **`-100px`**            | **FAIL** |
 
 `CSS.supports(selector(&)) = true` trên cả 3 nền tảng — trình duyệt hiểu cú pháp nesting, vấn đề nằm ở **bước biên dịch PostCSS**, không phải ở trình duyệt.
 
@@ -70,6 +71,7 @@ $ npx tailwindcss -i src/index.css -o out.css
 **Phạm vi ảnh hưởng thực tế (đã kiểm chứng, nêu rõ giới hạn):** ở viewport 412px, margin âm **được áp dụng** nhưng **chưa đủ đẩy nút ra khỏi màn hình** — case CB-02 xác nhận nút vẫn nằm trong viewport (`right=225 ≤ 412`). Đây là **lỗi tiềm ẩn**: giá trị `-100px` đang có hiệu lực ngoài ý muốn và có thể gây tràn ở viewport hẹp hơn hoặc khi bố cục thay đổi.
 
 **Cách tái hiện:**
+
 1. Mở `http://localhost:5173/product/1`
 2. Thu cửa sổ xuống dưới 640px (hoặc dùng Chrome DevTools device mode, profile Pixel 7 — 412×915)
 3. Inspect phần tử có class `bug-mobile-hidden` → xem `computed margin-right`
@@ -80,6 +82,7 @@ $ npx tailwindcss -i src/index.css -o out.css
 **Mức độ:** High — lỗi cấu hình build ảnh hưởng toàn bộ CSS nesting của dự án, không riêng class này.
 
 **Phát hiện qua:** Task 3 Cross-Platform, case CB-01
+
 ```
 
 ---
@@ -91,8 +94,10 @@ $ npx tailwindcss -i src/index.css -o out.css
 **Title:**
 
 ```
+
 [HW03][BUG][cross-platform] Định dạng tiền tệ đổi theo locale của browser/OS — Chrome hiện "30,000,000 ₫", Firefox hiện "30.000.000 ₫"
-```
+
+````
 
 **Description:**
 
@@ -123,7 +128,7 @@ $ npx tailwindcss -i src/index.css -o out.css
 **Mức độ:** High
 
 **Phát hiện qua:** Task 3 Cross-Platform, case CB-06
-```
+````
 
 ---
 
@@ -146,15 +151,16 @@ $ npx tailwindcss -i src/index.css -o out.css
 
 **Kết quả đo được (tái hiện trên cả 3 nền tảng):**
 
-| Nền tảng | `readOnly` | `disabled` | `min` | Kết quả |
-| --- | --- | --- | --- | --- |
-| P1 — Chrome 141 / Windows 11 | `False` | `False` | `None` | **FAIL** — set value = `1` thành công |
-| P2 — Firefox 145 / Windows 11 | `False` | `False` | `None` | **FAIL** — set value = `1` thành công |
-| P3 — Chrome mobile emulation (Pixel 7) | `False` | `False` | `None` | **FAIL** — set value = `1` thành công |
+| Nền tảng                               | `readOnly` | `disabled` | `min`  | Kết quả                               |
+| -------------------------------------- | ---------- | ---------- | ------ | ------------------------------------- |
+| P1 — Chrome 141 / Windows 11           | `False`    | `False`    | `None` | **FAIL** — set value = `1` thành công |
+| P2 — Firefox 145 / Windows 11          | `False`    | `False`    | `None` | **FAIL** — set value = `1` thành công |
+| P3 — Chrome mobile emulation (Pixel 7) | `False`    | `False`    | `None` | **FAIL** — set value = `1` thành công |
 
 **Systemic** — lỗi nằm ở tầng ứng dụng, không phụ thuộc engine, tái hiện y hệt trên cả 3 nền tảng.
 
 **Cách tái hiện:**
+
 1. Thêm sản phẩm bất kỳ vào giỏ, vào `http://localhost:5173/checkout`
 2. Mở DevTools, sửa value của ô tổng tiền thành `1`
 3. Submit đơn hàng
@@ -188,17 +194,18 @@ $ npx tailwindcss -i src/index.css -o out.css
 
 **Kết quả đo được (cả 3 nền tảng đều FAIL, giá trị đo giống hệt nhau):**
 
-| Nền tảng | `min` | `max` | `step` | Verdict |
-| --- | --- | --- | --- | --- |
-| P1 — Chrome 141 / Windows 11 | `None` | `None` | `None` | FAIL |
-| P2 — Firefox 145 / Windows 11 | `None` | `None` | `None` | FAIL |
-| P3 — Chrome mobile emulation (Pixel 7) | `None` | `None` | `None` | FAIL |
+| Nền tảng                               | `min`  | `max`  | `step` | Verdict |
+| -------------------------------------- | ------ | ------ | ------ | ------- |
+| P1 — Chrome 141 / Windows 11           | `None` | `None` | `None` | FAIL    |
+| P2 — Firefox 145 / Windows 11          | `None` | `None` | `None` | FAIL    |
+| P3 — Chrome mobile emulation (Pixel 7) | `None` | `None` | `None` | FAIL    |
 
 Số lượng âm và 0 đều được chấp nhận.
 
 **Vì sao là vấn đề cross-platform:** khi không có ràng buộc HTML, hành vi phụ thuộc hoàn toàn vào JS — mà cách mỗi engine xử lý input `type="number"` (spinner, nhập trực tiếp, paste) lại khác nhau. Khai báo `min`/`max`/`step` cho phép trình duyệt tự chặn ở tầng native, nhất quán trên mọi nền tảng.
 
 **Cách tái hiện:**
+
 1. Mở `http://localhost:5173/product/1`
 2. Nhập `-5` hoặc `0` vào ô "Số lượng"
 3. Bấm "Thêm vào giỏ hàng"
@@ -234,15 +241,16 @@ Thông báo đo được: `"Số điện thoại không hợp lệ. Vui lòng nh
 
 **Kết quả:** FAIL trên cả 3 nền tảng, nhưng **hậu quả nặng nhất ở mobile**:
 
-| Nền tảng | Biểu hiện |
-| --- | --- |
-| P1 — Chrome 141 / Windows 11 | Modal OS-chrome, chặn luồng, không style được |
-| P2 — Firefox 145 / Windows 11 | Modal OS-chrome, giao diện khác Chrome |
+| Nền tảng                               | Biểu hiện                                                  |
+| -------------------------------------- | ---------------------------------------------------------- |
+| P1 — Chrome 141 / Windows 11           | Modal OS-chrome, chặn luồng, không style được              |
+| P2 — Firefox 145 / Windows 11          | Modal OS-chrome, giao diện khác Chrome                     |
 | P3 — Chrome mobile emulation (Pixel 7) | Modal kèm checkbox **"Ngăn trang này tạo thêm hộp thoại"** |
 
 **Rủi ro riêng của Android Chrome:** nếu người dùng tick vào checkbox đó (rất dễ xảy ra khi bị lỗi lặp lại nhiều lần), **mọi `alert()` sau đó bị chặn im lặng** trong phiên làm việc. Kể từ đó form validate thất bại mà **không hiển thị bất kỳ thông báo nào** — người dùng không hiểu vì sao không lưu được thông tin.
 
 **Cách tái hiện:**
+
 1. Mở `http://localhost:5173/profile` trên Android Chrome (hoặc Chrome DevTools device mode)
 2. Nhập số điện thoại sai định dạng → submit → alert hiện ra
 3. Tick "Ngăn trang này tạo thêm hộp thoại", đóng alert
@@ -277,25 +285,26 @@ Thông báo đo được: `"Số điện thoại không hợp lệ. Vui lòng nh
 
 **Kết quả đo được:**
 
-| Nền tảng | Viewport | Số vùng bấm dưới chuẩn |
-| --- | --- | --- |
-| P1 — Chrome 141 / Windows 11 | 1422px | **9** |
-| P2 — Firefox 145 / Windows 11 | 1440px | **9** |
-| P3 — Chrome mobile emulation (Pixel 7) | 412px | **7** |
+| Nền tảng                               | Viewport | Số vùng bấm dưới chuẩn |
+| -------------------------------------- | -------- | ---------------------- |
+| P1 — Chrome 141 / Windows 11           | 1422px   | **9**                  |
+| P2 — Firefox 145 / Windows 11          | 1440px   | **9**                  |
+| P3 — Chrome mobile emulation (Pixel 7) | 412px    | **7**                  |
 
 Kích thước cụ thể (giống nhau trên cả 3 nền tảng):
 
-| Phần tử | Kích thước | Đạt 44×44? |
-| --- | --- | --- |
-| `EShop` (logo) | 70×32 | ❌ |
-| `Giỏ hàng` | 64×24 | ❌ |
-| `Chào, Test User` | 108×24 | ❌ |
-| `Thoát` | 64×32 | ❌ |
-| **`Xóa`** | **27×24** | ❌ **nhỏ nhất** |
+| Phần tử           | Kích thước | Đạt 44×44?      |
+| ----------------- | ---------- | --------------- |
+| `EShop` (logo)    | 70×32      | ❌              |
+| `Giỏ hàng`        | 64×24      | ❌              |
+| `Chào, Test User` | 108×24     | ❌              |
+| `Thoát`           | 64×32      | ❌              |
+| **`Xóa`**         | **27×24**  | ❌ **nhỏ nhất** |
 
 **Vì sao đây là vấn đề cross-platform:** trên thiết bị cảm ứng, vùng bấm nhỏ khiến người dùng bấm nhầm nút bên cạnh. Kết hợp với việc "Xóa" **không có xác nhận**, một cú chạm nhầm làm mất sản phẩm khỏi giỏ mà không hoàn tác được. Rủi ro này cao hơn hẳn trên mobile so với desktop dùng chuột.
 
 **Cách tái hiện:**
+
 1. Thêm vài sản phẩm vào giỏ, mở `http://localhost:5173/cart`
 2. Đo kích thước nút "Xóa" bằng DevTools → 27×24px
 3. Thử ở chế độ mobile (412px): bấm bằng ngón tay
