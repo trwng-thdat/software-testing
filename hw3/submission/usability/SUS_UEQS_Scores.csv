@@ -1,0 +1,9 @@
+participant_id,participant_name,session_date,it_background,q1_use_frequently,q2_unnecessarily_complex,q3_easy_to_use,q4_need_support,q5_functions_well_integrated,q6_too_much_inconsistency,q7_learn_quickly,q8_cumbersome_to_use,q9_felt_confident,q10_needed_to_learn_a_lot,sus_score
+P01,Nguyen Thanh Dang,2026-07-31,yes,,,,,,,,,,,
+P02,Le Nguyen Duy,2026-07-31,yes,,,,,,,,,,,
+P03,Le Quang Thanh,2026-07-31,yes,,,,,,,,,,,
+P04,Nguyen Le Thanh Phu,2026-07-31,yes,,,,,,,,,,,
+P05,Nguyen Duc Minh,2026-08-01,no,,,,,,,,,,,
+P06,TODO - dien ho ten,TODO - dien ngay,yes,,,,,,,,,,,
+P07,TODO - chua tuyen,,,,,,,,,,,,,
+average,,,,,,,,,,,,,
