@@ -31,7 +31,7 @@
 | Số bug phát hiện — Task 2 (usability) | **10** (BUG-UX-01…10) — trong đó 2 bug **chỉ phát hiện được qua người dùng thật**: nút hiện/ẩn mật khẩu hỏng (P01) và nhầm lẫn nhãn "Username" vs email (P05, non-IT) |
 | GitHub Issues đã tạo | **30** — [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) trên `DuyITLOR/group05_eshop`, mỗi issue có ảnh đính kèm |
 | Số người tham gia usability | **6/7 đã chạy** (P01–P06, có ghi hình đủ 6 phiên) · P07 chưa tuyển |
-| Điểm SUS / UEQ-S trung bình | TODO — người tham gia tự chấm, điền vào `usability/SUS_UEQS_Scores.csv` |
+| Điểm SUS / UEQ-S trung bình | **20.0 / 100** (6 người) — thấp hơn ngưỡng ngành 68 tới **48 điểm**, hạng **F**. Cá nhân: P04 5.0 (thấp nhất) → P05 50.0 (cao nhất, có dấu hiệu straight-lining) |
 | Phạm vi bao phủ cross-platform | **3 nền tảng** — P1 Chrome 141/Windows 11 (Blink), P2 Firefox 145/Windows 11 (Gecko), P3 Android Chrome/Pixel 7 Android 13 (Blink mobile, URL LAN thật) |
 | Số màn hình đã kiểm thử (Task 3) | **4** — Cart, Checkout, ProductDetail, Profile (không trùng Task 1) |
 | Số test case cross-platform đã thiết kế | **18** (CB-01…CB-18) |

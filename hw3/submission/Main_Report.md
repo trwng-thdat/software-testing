@@ -343,18 +343,42 @@ Quy trình mỗi phiên (áp dụng cho cả 7 người tham gia P01–P07):
 
 ## 2.4 Phase 3 — Analyse & Report
 
-### Tổng hợp điểm SUS (điền sau khi thu thập đủ 7 phiên)
+### Tổng hợp điểm SUS
 
-| Participant    | Điểm SUS | Ghi chú                                                   |
-| -------------- | -------- | --------------------------------------------------------- |
-| P01            | TODO     |                                                           |
-| P02            | TODO     |                                                           |
-| P03            | TODO     |                                                           |
-| P04            | TODO     |                                                           |
-| P05            | TODO     |                                                           |
-| P06            | TODO     |                                                           |
-| P07            | TODO     |                                                           |
-| **Trung bình** | **TODO** | So sánh với ngưỡng tham chiếu SUS = 68 (trung bình ngành) |
+**Công thức chuẩn (Brooke, 1996):** câu lẻ (tích cực) tính `điểm − 1`; câu chẵn (tiêu cực) tính `5 − điểm`; cộng tất cả rồi nhân `2.5` → thang 0–100.
+
+| Participant | Nền tảng | Điểm SUS | Xếp hạng<br>(Sauro & Lewis) | Ghi chú |
+| --- | --- | --- | --- | --- |
+| P01 — Nguyễn Thành Đăng | IT | **17.5** | F | Pilot; blocker mật khẩu + lỗi toggle hiện/ẩn |
+| P02 — Lê Nguyễn Duy | IT | **12.5** | F | Nêu nhiều vấn đề nhất (5 phát hiện) |
+| P03 — Lê Quang Thạnh | IT | **17.5** | F | |
+| P04 — Nguyễn Lê Thành Phú | IT | **5.0** | F | **Thấp nhất** — dù là người duy nhất tự chẩn đoán ra lỗi |
+| P05 — Nguyễn Đức Minh | **non-IT** | **50.0** | F | **Cao nhất** — xem cảnh báo về straight-lining bên dưới |
+| P06 | IT | **17.5** | F | Ca nặng nhất: không tạo được mật khẩu |
+| P07 | — | *chưa chạy* | — | Chưa tuyển được người tham gia |
+| **Trung bình (6 người)** | | **20.0** | **F** | **Thấp hơn ngưỡng ngành 68 tới 48 điểm** |
+
+Dữ liệu thô 10 câu × 6 người: [`usability/SUS_UEQS_Scores.csv`](usability/SUS_UEQS_Scores.csv).
+
+### Diễn giải điểm SUS
+
+**Mức 20.0/100 nằm ở khoảng percentile 0–1%** theo dữ liệu chuẩn hoá của Sauro & Lewis — tức tệ hơn khoảng 99% sản phẩm từng được đo bằng SUS. Cả 6 người đều rơi vào hạng **F** (dưới 51.7).
+
+Con số này **nhất quán với quan sát hành vi**, không phải một kết quả bất thường:
+
+- **6/6 người bị chặn ở bước đặt mật khẩu.** Ba người (P01–P03) chỉ qua được nhờ moderator hỗ trợ, P06 **không tạo được mật khẩu**. Một luồng đăng ký mà không ai tự hoàn thành trơn tru thì điểm SUS thấp là hệ quả tất yếu.
+- **Điểm thấp tập trung ở đúng các câu phản ánh trải nghiệm quan sát được:** Q4 "cần hỗ trợ kỹ thuật" trung bình **4.5/5**, Q8 "rườm rà/khó dùng" **4.7/5**, Q10 "phải học nhiều mới dùng được" **4.7/5** — đều là câu tiêu cực và đều gần kịch trần. Ngược lại Q9 "cảm thấy tự tin" chỉ **2.0/5**.
+- Điều này khớp với ghi chép phiên: người dùng làm **đúng theo dòng mô tả hiển thị trên form** nhưng vẫn bị hệ thống từ chối, và thông báo lỗi lặp lại chính nội dung mô tả sai nên không giúp họ phục hồi.
+
+### ⚠️ Hai giới hạn của bộ điểm SUS này (Human review)
+
+Để báo cáo tự chứa đủ thông tin đánh giá độ tin cậy, em nêu rõ hai điểm yếu của dữ liệu thay vì trình bày như một kết quả sạch:
+
+**1. P05 chấm đồng loạt điểm 3 cho cả 10 câu (*straight-lining*).** Thang SUS cố ý đảo chiều câu chẵn/lẻ chính là để phát hiện kiểu trả lời này. Chấm toàn `3` sẽ luôn cho đúng **50.0 điểm** bất kể nội dung sản phẩm, nên con số này **không phản ánh cảm nhận thật** mà nhiều khả năng là dấu hiệu người tham gia không phân biệt giữa các câu hỏi. Nghịch lý đáng chú ý: P05 là người **duy nhất** gặp lỗi nhầm lẫn nhãn "Username" với email, tức có trải nghiệm khó khăn riêng, nhưng lại là người chấm **cao nhất**. Nếu loại P05 khỏi mẫu, trung bình 5 người còn lại chỉ còn **14.0** — thấp hơn nữa.
+
+**2. Cỡ mẫu 6/7 và lệch về dân IT (5/6).** Đề yêu cầu 7 người; P07 chưa tuyển được. Ngoài ra, nhóm IT có xu hướng nhận diện lỗi kỹ thuật nhanh hơn và tự bù đắp khiếm khuyết giao diện bằng kinh nghiệm — nghĩa là **điểm số của họ có thể vẫn còn lạc quan hơn** so với người dùng phổ thông thật sự. Nên ưu tiên tuyển P07 là người non-IT để cân bằng mẫu.
+
+> **Kết luận về độ tin cậy:** điểm SUS trung bình 20.0 nên được đọc như **tín hiệu định hướng** ("giao diện có vấn đề nghiêm trọng ở luồng đăng ký"), chứ không phải một phép đo chính xác tuyệt đối. Bằng chứng mạnh hơn nằm ở dữ liệu hành vi — tỉ lệ hoàn thành task và số lần can thiệp của moderator — được trình bày ở phần dưới.
 
 ### Tổng hợp phát hiện, phân nhóm theo mức độ nghiêm trọng
 
