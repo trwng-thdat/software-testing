@@ -11,7 +11,7 @@
 
 | Hạng mục | Điểm | Trạng thái | Việc còn lại |
 | --- | --- | --- | --- |
-| Task 1 — GUI Checklist | 30 | ✅ Gần xong | Chỉ thiếu ảnh chụp GitHub Issues |
+| Task 1 — GUI Checklist | 30 | ✅ **Xong** | Nên chụp thêm ảnh issue chi tiết (thấy ảnh bug đính kèm) |
 | Task 2 — Usability Evaluation | 40 | 🟡 **6/7 phiên + 6 video** | Tuyển + chạy P07 · **điền SUS (vẫn rỗng)** · xử lý 1.1 GB video |
 | Task 3 — Cross-Platform | 20 | ✅ Gần xong | Kiểm tra overlay MSSV trên ảnh |
 | Agent Skills | 10 | ❌ **Chưa có gì** | Viết skill + quay video demo |
@@ -33,9 +33,10 @@
 - [x] Tự động hoá thực thi bằng Selenium — `submission/selenium/`
 
 ### Còn thiếu ❌
-- [ ] **Ảnh chụp trang GitHub Issues** — §14 yêu cầu *"Bug report, with screenshots of the bugs on the GitHub Issues page"*. Hiện chỉ có link text, chưa có ảnh chụp màn hình trang Issues.
-  → Tạo thư mục `submission/github_issues/` và chụp: (a) 1 ảnh tổng danh sách issues #125–#154, (b) vài ảnh issue chi tiết cho thấy đã đính kèm ảnh bug trong issue.
-- [ ] **Xác nhận mỗi GitHub Issue đã đính kèm ảnh bug** (§6 Task 1: *"Remember to attach bug screenshots to each GitHub issue"*) — mở lại 30 issue kiểm tra.
+- [x] **Ảnh chụp trang GitHub Issues** — `submission/github_issues/issues_list_overview.png` ✅ (thấy rõ #149–#154, tài khoản `trwng-thdat`, repo `DuyITLOR/group05_eshop`). Đã tạo `github_issues/README.md` làm danh mục và tham chiếu từ Main_Report §1.6.
+- [ ] **Chụp bổ sung 2–3 ảnh issue chi tiết** — ảnh danh sách hiện tại **chưa chứng minh được** yêu cầu §6 *"attach bug screenshots to each GitHub issue"*. Cần ảnh mở 1 issue ra thấy rõ ảnh bug nằm trong body.
+  → Gợi ý chọn bug nặng: [#128](https://github.com/DuyITLOR/group05_eshop/issues/128) (XSS Critical) · [#131](https://github.com/DuyITLOR/group05_eshop/issues/131) (SQL Injection Critical) · [#136](https://github.com/DuyITLOR/group05_eshop/issues/136) (mật khẩu không che, High)
+- [ ] **Xác nhận mỗi GitHub Issue đã đính kèm ảnh bug** (§6 Task 1) — mở lại 30 issue kiểm tra.
 - [ ] Kiểm tra lại 3 kết luận tự nhận là suy luận chứ chưa đo trực tiếp (Main_Report §1.5 đã tự ghi chú): LOGIN-S07 (rò rỉ token), LOGIN-S08 (double-submit), HOME-U13 (contrast WCAG). Đo lại bằng DevTools Network / công cụ tính contrast, hoặc giữ nguyên nhưng nêu rõ giới hạn.
 - [ ] Kiểm tra `[AI-02]...docx.md:84` còn ghi đường dẫn cũ (`hw3/report/Main_Report.md`, `AI_Critique.md`, `Cross_Platform_Report.md`) không khớp cấu trúc `submission/` hiện tại → sửa cho khớp.
 
@@ -171,7 +172,7 @@
 | --- | --- | --- | --- |
 | 1 | Main report **Markdown** | ✅ | `submission/Main_Report.md` |
 | 2 | Main report **PDF** | ❌ | **Chưa có** — cần export ra PDF |
-| 3 | Bug report + ảnh chụp GitHub Issues | ⚠️ | Bảng bug có trong Main_Report, nhưng **file `bug_reports.md` riêng đã bị xoá** khỏi submission và **thiếu ảnh trang Issues** |
+| 3 | Bug report + ảnh chụp GitHub Issues | ✅ | `bug_reports.md` đã khôi phục · `github_issues/issues_list_overview.png` đã có (nên chụp thêm ảnh issue chi tiết) |
 | 4 | AI Audit Report **Markdown** | ✅ | `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` (còn 12 TODO cần điền) |
 | 5 | AI Audit Report **PDF** | ❌ | **Chưa có** |
 | 6 | **AI Critique 200–300 từ** | ❌ | **Không tìm thấy** — §10 bắt buộc. File `AI_Critique.md` từng được nhắc trong audit log nhưng không tồn tại trong `submission/` |
