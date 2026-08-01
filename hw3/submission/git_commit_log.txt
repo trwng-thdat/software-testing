@@ -1,15 +1,17 @@
-1b88d38 | 2026-08-01 21:54 | docs(hw03): log Artifact #9 in AI Audit Report
-7e1e90e | 2026-08-01 21:51 | docs(hw03): add submission gap checklist against assignment spec
-eb89fa5 | 2026-08-01 21:51 | docs(hw03-task2): log session P06 observations
-b21e4db | 2026-08-01 21:51 | docs(hw03-task2): log session P05 observations (non-IT participant)
-4fb5a4a | 2026-08-01 21:51 | docs(hw03-task2): log session P04 observations
-fb61281 | 2026-08-01 21:51 | docs(hw03-task2): log session P03 observations
-0347b21 | 2026-08-01 21:51 | docs(hw03-task2): log session P02 observations
-eb37e53 | 2026-08-01 21:51 | docs(hw03-task2): log pilot session P01 observations
-3365f17 | 2026-08-01 21:51 | docs(hw03-task2): record 6 real participants (P01-P06)
-e2c2dd2 | 2026-08-01 21:50 | docs(hw03-task2): restructure session notes into per-participant files
-1f760c3 | 2026-08-01 21:50 | refactor(hw03): move deliverables into submission/ package folder
-c4a0c50 | 2026-08-01 21:50 | chore(hw03): exclude session recordings from git, add recordings index
+4db9a64 | 2026-08-01 21:54 | docs(hw03): refresh git commit log with final hashes
+c3d9bca | 2026-08-01 21:54 | docs(hw03): refresh git commit log
+e8644c1 | 2026-08-01 21:54 | docs(hw03): log Artifact #9 in AI Audit Report
+56590b3 | 2026-08-01 21:51 | docs(hw03): add submission gap checklist against assignment spec
+24f8539 | 2026-08-01 21:51 | docs(hw03-task2): log session P06 observations
+64ccb3e | 2026-08-01 21:51 | docs(hw03-task2): log session P05 observations (non-IT participant)
+4ce8a27 | 2026-08-01 21:51 | docs(hw03-task2): log session P04 observations
+825cac4 | 2026-08-01 21:51 | docs(hw03-task2): log session P03 observations
+572d836 | 2026-08-01 21:51 | docs(hw03-task2): log session P02 observations
+437800e | 2026-08-01 21:51 | docs(hw03-task2): log pilot session P01 observations
+a50b234 | 2026-08-01 21:51 | docs(hw03-task2): record 6 real participants (P01-P06)
+d50345c | 2026-08-01 21:50 | docs(hw03-task2): restructure session notes into per-participant files
+9bdb34e | 2026-08-01 21:50 | refactor(hw03): move deliverables into submission/ package folder
+28a790d | 2026-08-01 21:50 | chore(hw03): exclude session recordings from git, add recordings index
 4c8f925 | 2026-07-30 21:53 | docs(hw03): refresh git commit log
 abb55f6 | 2026-07-30 21:53 | docs(hw03): log Task 2 check and Task 3 AI interactions in AI Audit Report
 f847a6a | 2026-07-30 21:47 | docs(hw03): refresh git commit log
