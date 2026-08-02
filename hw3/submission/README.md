@@ -9,9 +9,9 @@
 | STT | Tiêu chí | Điểm | Tự đánh giá |
 | --- | --- | --- | --- |
 | 1 | Task 1 — GUI Checklist (thiết kế + thực thi + báo cáo bug) | 30 | TODO — tự chấm trước khi nộp |
-| 2 | Task 2 — Đánh giá Tính khả dụng (kịch bản + 7 phiên thử + phân tích) | 40 | TODO — điền sau khi hoàn tất P07 và chấm SUS |
+| 2 | Task 2 — Đánh giá Tính khả dụng (kịch bản + 7 phiên thử + phân tích) | 40 | TODO — tự chấm trước khi nộp |
 | 3 | Task 3 — Cross-Browser / Cross-Platform (≥ 3 nền tảng) | 20 | TODO — tự chấm trước khi nộp |
-| 4 | Agent Skills | 10 | TODO — tự chấm trước khi nộp |
+| 4 | Agent Skills | 10 | TODO — tự chấm trước khi nộp ([video demo](https://youtu.be/_e-uHOUETtM)) |
 | | **Tổng cộng** | **100** | TODO — tổng 4 dòng trên, ghi vào tên file .zip |
 
 ## Báo cáo Tóm tắt Kiểm thử
@@ -30,8 +30,8 @@
 | Số bug phát hiện — Task 1 (GUI) | **30** (BUG-GUI-01…30) — Critical 2, High 1, Medium 12, Low 15 |
 | Số bug phát hiện — Task 2 (usability) | **10** (BUG-UX-01…10) — trong đó 2 bug **chỉ phát hiện được qua người dùng thật**: nút hiện/ẩn mật khẩu hỏng (P01) và nhầm lẫn nhãn "Username" vs email (P05, non-IT) |
 | GitHub Issues đã tạo | **30** — [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) trên `DuyITLOR/group05_eshop`, mỗi issue có ảnh đính kèm |
-| Số người tham gia usability | **6/7 đã chạy** (P01–P06, có ghi hình đủ 6 phiên) · P07 chưa tuyển |
-| Điểm SUS / UEQ-S trung bình | **20.0 / 100** (6 người) — thấp hơn ngưỡng ngành 68 tới **48 điểm**, hạng **F**. Cá nhân: P04 5.0 (thấp nhất) → P05 50.0 (cao nhất, có dấu hiệu straight-lining) |
+| Số người tham gia usability | **7/7** (P01–P07) — đủ theo yêu cầu, **tất cả đều có bản ghi màn hình** |
+| Điểm SUS / UEQ-S trung bình | **19.3 / 100** (7 người) — thấp hơn ngưỡng ngành 68 tới **48.7 điểm**, cả 7 đều hạng **F**. Cá nhân: P04 5.0 (thấp nhất) → P05 50.0 (cao nhất, có dấu hiệu straight-lining) |
 | Phạm vi bao phủ cross-platform | **3 nền tảng** — P1 Chrome 141/Windows 11 (Blink), P2 Firefox 145/Windows 11 (Gecko), P3 Android Chrome/Pixel 7 Android 13 (Blink mobile, URL LAN thật) |
 | Số màn hình đã kiểm thử (Task 3) | **4** — Cart, Checkout, ProductDetail, Profile (không trùng Task 1) |
 | Số test case cross-platform đã thiết kế | **18** (CB-01…CB-18) |
@@ -69,14 +69,13 @@ https://drive.google.com/drive/folders/19Ssxgb2v0uDsbjXkegTnivzDq4mUuWow?usp=sha
 
 | Skill / Hoạt động | Link video |
 | --- | --- |
-| Agent Skill — GUI checklist | ⬜ TODO |
-| Agent Skill — Usability evaluation | ⬜ TODO |
+| **Agent Skill — demo sử dụng** | **https://youtu.be/_e-uHOUETtM** |
 
 ## Nội dung Gói nộp bài
 
 | Tệp / Thư mục | Nội dung | Trạng thái |
 | --- | --- | --- |
-| `Main_Report.md` (+ PDF) | Báo cáo chính: GUI checklist (Task 1) + đánh giá tính khả dụng (Task 2) + cross-platform (Task 3) | Task 1 ✅ · Task 3 ✅ · Task 2 🟡 6/7 phiên |
+| `Main_Report.md` (+ PDF) | Báo cáo chính: GUI checklist (Task 1) + đánh giá tính khả dụng (Task 2) + cross-platform (Task 3) | ✅ cả 3 task |
 | `bug_reports.md` | 30 bug Task 1, mỗi bug 1 khối Title + Description (repro, expected/actual, severity, ảnh) | ✅ |
 | `checklist/GUI_Checklist.csv` / `.xlsx` | Checklist 69 item (> 40) + kết quả thực thi + Test Summary | ✅ |
 | `screenshot/` | Ảnh chụp minh chứng cho các item Failed (43 ảnh) | ✅ |
@@ -85,9 +84,9 @@ https://drive.google.com/drive/folders/19Ssxgb2v0uDsbjXkegTnivzDq4mUuWow?usp=sha
 | `git_commit_log.txt` | Git commit log (định dạng text), 1 commit / mỗi bước kiểm thử — gồm **1 commit riêng cho mỗi phiên usability** theo §12 | ✅ |
 | `selenium/` | Bộ tự động hoá thực thi checklist (Selenium + Python) + báo cáo HTML/Markdown | ✅ |
 | `AI_Critique.md` (+ PDF) | Phê bình AI (≈300 từ) | ✅ |
-| `usability/` | Kịch bản nhiệm vụ, danh sách người tham gia, 7 file ghi chú phiên, điểm SUS/UEQ-S | 🟡 6/7 phiên · SUS chưa chấm |
+| `usability/` | Kịch bản nhiệm vụ, danh sách 7 người tham gia, 7 file ghi chú phiên, điểm SUS | ✅ 7/7 phiên · SUS đã chấm |
 | `cross-platform/` | Bộ test 18 case × 3 nền tảng (`run_cross_platform.py`), `CrossPlatform_Matrix.csv`, `results.json`, 16 ảnh có overlay `23127344@hcmus.edu.vn` | ✅ (còn lại: tạo GitHub Issues cho BUG-CP-01…06) |
-| Agent Skills + video demo | Skill tái sử dụng + link YouTube minh hoạ | ⬜ TODO |
+| Agent Skills + video demo | Skill tái sử dụng + [video demo](https://youtu.be/_e-uHOUETtM) | ✅ |
 
 ## Ghi chú
 

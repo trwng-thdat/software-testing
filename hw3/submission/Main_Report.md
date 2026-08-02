@@ -312,7 +312,7 @@ Quy trình mỗi phiên (áp dụng cho cả 7 người tham gia P01–P07):
 
 ### Bản ghi màn hình các phiên (screen recordings)
 
-Đã ghi hình **6/7 phiên** đã chạy. Video lưu trên Google Drive (dung lượng tổng ~1.1 GB, vượt giới hạn upload của Moodle nên không đóng gói trong file nộp — theo §14 *"screen recordings where available"*).
+Đã ghi hình **đủ 7/7 phiên**. Video lưu trên Google Drive (dung lượng tổng ~1.1 GB, vượt giới hạn upload của Moodle nên không đóng gói trong file nộp — theo §14 *"screen recordings where available"*).
 
 📁 **Thư mục chứa toàn bộ video:** https://drive.google.com/drive/folders/19Ssxgb2v0uDsbjXkegTnivzDq4mUuWow?usp=sharing
 
@@ -324,7 +324,7 @@ Quy trình mỗi phiên (áp dụng cho cả 7 người tham gia P01–P07):
 | P04 | Nguyễn Lê Thành Phú | 31/07/2026 | [`sessions/P04.md`](usability/sessions/P04.md) | [Xem video](https://drive.google.com/file/d/1rh6ItuSb1EuOoyFAvjQjsMnP7jSHjtLC/view?usp=sharing) |
 | P05 | Nguyễn Đức Minh | 01/08/2026 | [`sessions/P05.md`](usability/sessions/P05.md) — non-IT | [Xem video](https://drive.google.com/file/d/15Jamwx0fW2PdeMYtRb_pGfCi4kxBWWlh/view?usp=sharing) |
 | P06 | *(xem Participants.md)* | 01/08/2026 | [`sessions/P06.md`](usability/sessions/P06.md) | [Xem video](https://drive.google.com/file/d/1f6NoEE42pFugpA_9N1Jo8NjfXfSy-2ng/view?usp=sharing) |
-| P07 | *chưa tuyển* | — | [`sessions/P07.md`](usability/sessions/P07.md) | *chưa chạy phiên* |
+| P07 | Quốc | 02/08/2026 | [`sessions/P07.md`](usability/sessions/P07.md) | [Xem video](https://drive.google.com/file/d/1TqRKHKzFvRTeYIHzYwPgqCrAb1bDr_pi/view?usp=sharing) (4:24) |
 
 > ⚠️ **Quyền truy cập:** link đặt ở chế độ "Anyone with the link". Nếu người chấm không mở được, liên hệ MSSV 23127344 để cấp quyền.
 
@@ -354,43 +354,59 @@ Quy trình mỗi phiên (áp dụng cho cả 7 người tham gia P01–P07):
 | P03 — Lê Quang Thạnh | IT | **17.5** | F | |
 | P04 — Nguyễn Lê Thành Phú | IT | **5.0** | F | **Thấp nhất** — dù là người duy nhất tự chẩn đoán ra lỗi |
 | P05 — Nguyễn Đức Minh | **non-IT** | **50.0** | F | **Cao nhất** — xem cảnh báo về straight-lining bên dưới |
-| P06 | IT | **17.5** | F | Ca nặng nhất: không tạo được mật khẩu |
-| P07 | — | *chưa chạy* | — | Chưa tuyển được người tham gia |
-| **Trung bình (6 người)** | | **20.0** | **F** | **Thấp hơn ngưỡng ngành 68 tới 48 điểm** |
+| P06 | IT | **17.5** | F | Không tạo được mật khẩu |
+| P07 — Quốc | IT | **15.0** | F | Không tạo được mật khẩu; xác nhận độc lập lỗi username/email của P05 |
+| **Trung bình (7 người)** | | **19.3** | **F** | **Thấp hơn ngưỡng ngành 68 tới 48.7 điểm** |
 
-Dữ liệu thô 10 câu × 6 người: [`usability/SUS_UEQS_Scores.csv`](usability/SUS_UEQS_Scores.csv).
+Dữ liệu thô 10 câu × 7 người: [`usability/SUS_UEQS_Scores.csv`](usability/SUS_UEQS_Scores.csv).
 
 ### Diễn giải điểm SUS
 
-**Mức 20.0/100 nằm ở khoảng percentile 0–1%** theo dữ liệu chuẩn hoá của Sauro & Lewis — tức tệ hơn khoảng 99% sản phẩm từng được đo bằng SUS. Cả 6 người đều rơi vào hạng **F** (dưới 51.7).
+**Mức 19.3/100 nằm ở khoảng percentile 0–1%** theo dữ liệu chuẩn hoá của Sauro & Lewis — tức tệ hơn khoảng 99% sản phẩm từng được đo bằng SUS. Cả 7 người đều rơi vào hạng **F** (dưới 51.7).
 
 Con số này **nhất quán với quan sát hành vi**, không phải một kết quả bất thường:
 
-- **6/6 người bị chặn ở bước đặt mật khẩu.** Ba người (P01–P03) chỉ qua được nhờ moderator hỗ trợ, P06 **không tạo được mật khẩu**. Một luồng đăng ký mà không ai tự hoàn thành trơn tru thì điểm SUS thấp là hệ quả tất yếu.
-- **Điểm thấp tập trung ở đúng các câu phản ánh trải nghiệm quan sát được:** Q4 "cần hỗ trợ kỹ thuật" trung bình **4.5/5**, Q8 "rườm rà/khó dùng" **4.7/5**, Q10 "phải học nhiều mới dùng được" **4.7/5** — đều là câu tiêu cực và đều gần kịch trần. Ngược lại Q9 "cảm thấy tự tin" chỉ **2.0/5**.
+- **7/7 người bị chặn ở bước đặt mật khẩu — 100% mẫu.** Ba người (P01–P03) chỉ qua được nhờ moderator hỗ trợ; **P06 và P07 không tạo được mật khẩu**. Một luồng đăng ký mà không ai tự hoàn thành trơn tru thì điểm SUS thấp là hệ quả tất yếu.
+- **Điểm thấp tập trung ở đúng các câu phản ánh trải nghiệm quan sát được:** Q4 "cần hỗ trợ kỹ thuật" trung bình **4.6/5**, Q8 "rườm rà/khó dùng" **4.7/5**, Q10 "phải học nhiều mới dùng được" **4.7/5** — đều là câu tiêu cực và đều gần kịch trần. Ngược lại Q9 "cảm thấy tự tin" chỉ **2.0/5**.
 - Điều này khớp với ghi chép phiên: người dùng làm **đúng theo dòng mô tả hiển thị trên form** nhưng vẫn bị hệ thống từ chối, và thông báo lỗi lặp lại chính nội dung mô tả sai nên không giúp họ phục hồi.
 
 ### ⚠️ Hai giới hạn của bộ điểm SUS này (Human review)
 
 Để báo cáo tự chứa đủ thông tin đánh giá độ tin cậy, em nêu rõ hai điểm yếu của dữ liệu thay vì trình bày như một kết quả sạch:
 
-**1. P05 chấm đồng loạt điểm 3 cho cả 10 câu (*straight-lining*).** Thang SUS cố ý đảo chiều câu chẵn/lẻ chính là để phát hiện kiểu trả lời này. Chấm toàn `3` sẽ luôn cho đúng **50.0 điểm** bất kể nội dung sản phẩm, nên con số này **không phản ánh cảm nhận thật** mà nhiều khả năng là dấu hiệu người tham gia không phân biệt giữa các câu hỏi. Nghịch lý đáng chú ý: P05 là người **duy nhất** gặp lỗi nhầm lẫn nhãn "Username" với email, tức có trải nghiệm khó khăn riêng, nhưng lại là người chấm **cao nhất**. Nếu loại P05 khỏi mẫu, trung bình 5 người còn lại chỉ còn **14.0** — thấp hơn nữa.
+**1. P05 chấm đồng loạt điểm 3 cho cả 10 câu (*straight-lining*).** Thang SUS cố ý đảo chiều câu chẵn/lẻ chính là để phát hiện kiểu trả lời này. Chấm toàn `3` sẽ luôn cho đúng **50.0 điểm** bất kể nội dung sản phẩm, nên con số này **không phản ánh cảm nhận thật** mà nhiều khả năng là dấu hiệu người tham gia không phân biệt giữa các câu hỏi. Nghịch lý đáng chú ý: P05 là người **duy nhất** gặp lỗi nhầm lẫn nhãn "Username" với email, tức có trải nghiệm khó khăn riêng, nhưng lại là người chấm **cao nhất**. Nếu loại P05 khỏi mẫu, trung bình 6 người còn lại chỉ còn **14.2** — thấp hơn nữa.
 
-**2. Cỡ mẫu 6/7 và lệch về dân IT (5/6).** Đề yêu cầu 7 người; P07 chưa tuyển được. Ngoài ra, nhóm IT có xu hướng nhận diện lỗi kỹ thuật nhanh hơn và tự bù đắp khiếm khuyết giao diện bằng kinh nghiệm — nghĩa là **điểm số của họ có thể vẫn còn lạc quan hơn** so với người dùng phổ thông thật sự. Nên ưu tiên tuyển P07 là người non-IT để cân bằng mẫu.
+**2. Mẫu lệch về dân IT (6/7).** Đã thu đủ 7 người theo yêu cầu đề bài, nhưng chỉ có **1 người non-IT** (P05). Nhóm IT có xu hướng nhận diện lỗi kỹ thuật nhanh hơn và tự bù đắp khiếm khuyết giao diện bằng kinh nghiệm — nghĩa là **điểm số của họ có thể vẫn còn lạc quan hơn** so với người dùng phổ thông thật sự. Nếu lặp lại nghiên cứu, nên cân bằng tỉ lệ IT/non-IT ngay từ khâu tuyển người.
 
-> **Kết luận về độ tin cậy:** điểm SUS trung bình 20.0 nên được đọc như **tín hiệu định hướng** ("giao diện có vấn đề nghiêm trọng ở luồng đăng ký"), chứ không phải một phép đo chính xác tuyệt đối. Bằng chứng mạnh hơn nằm ở dữ liệu hành vi — tỉ lệ hoàn thành task và số lần can thiệp của moderator — được trình bày ở phần dưới.
+> **Kết luận về độ tin cậy:** điểm SUS trung bình 19.3 nên được đọc như **tín hiệu định hướng** ("giao diện có vấn đề nghiêm trọng ở luồng đăng ký"), chứ không phải một phép đo chính xác tuyệt đối. Bằng chứng mạnh hơn nằm ở dữ liệu hành vi — tỉ lệ hoàn thành task và số lần can thiệp của moderator — được trình bày ở phần dưới.
 
 ### Tổng hợp phát hiện, phân nhóm theo mức độ nghiêm trọng
 
-> Điền sau khi có dữ liệu thật từ 7 phiên. Các dự đoán bên dưới **đã được củng cố thêm bằng dữ liệu thực thi Selenium** (mục 2.1), nhưng thứ tự ưu tiên cuối cùng và số phiên gặp phải vẫn cần đến từ quan sát người dùng thật:
+Tổng hợp từ **7/7 phiên đã chạy**. Cột *Tần suất* là số phiên thực tế gặp phải — đây là căn cứ khách quan để xếp thứ tự ưu tiên, thay cho phán đoán chủ quan.
 
-| Mức độ  | Phát hiện dự kiến                                                                                                                                                                                                                                                               | Nguồn gốc (systemic design issue / isolated bug)                  |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Blocker | Người dùng nhập mật khẩu hợp lệ theo SRS (VD `Password123!`) nhưng bị từ chối vì thiếu khoảng trắng theo regex thực tế — **đã tái hiện bằng Selenium** (`Sel3nium Pass!` bị từ chối, `Sel3nium Pass` mới qua) — có thể khiến người dùng bỏ cuộc nếu không đoán ra quy luật thật | Systemic — lỗi logic ở `Register.jsx:15`                          |
-| Major   | Không có trường "Xác nhận mật khẩu" khiến người dùng gõ sai mật khẩu mà không tự biết cho tới khi đăng nhập thất bại ở bước sau                                                                                                                                                 | Systemic — thiếu tính năng so với FR-01                           |
-| Major   | Mật khẩu hiển thị rõ ràng (không che) ở trang Login gây cảm giác mất an toàn/tin tưởng (probe: Trust) — **xác nhận qua Selenium** (LOGIN-F02 FAIL: `type="text"`)                                                                                                               | Isolated (1 trang) nhưng ảnh hưởng cảm nhận bảo mật toàn hệ thống |
-| Minor   | Tiêu đề trang Login hiển thị nhầm "Đăng Ký" có thể khiến người dùng ngờ vực đã bấm nhầm liên kết — **xác nhận qua Selenium** (LOGIN-U01 FAIL)                                                                                                                                   | Isolated bug                                                      |
-| Minor   | Thông báo lỗi đăng ký ghi "ký tự đặc biệt" trong khi thực chất cần khoảng trắng — gây hiểu lầm                                                                                                                                                                                  | Systemic — sai lệch giữa message và logic                         |
+| Mức độ | Phát hiện | Tần suất | Nguồn gốc |
+| --- | --- | --- | --- |
+| **Blocker** | **Mật khẩu hợp lệ theo mô tả trên form vẫn bị từ chối** — regex thực tế yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`). P01–P03 chỉ qua được nhờ moderator hỗ trợ; **P06 và P07 không tạo được mật khẩu**; chỉ P04 tự dò ra quy luật. | **7/7** | Systemic — lỗi logic |
+| **Blocker** | **Thông báo lỗi lặp lại chính nội dung mô tả sai**, nên không ai tự phục hồi được. Đây là lý do blocker trên không thể tự thoát: người dùng không có manh mối nào để sửa. | **7/7** | Systemic — sai lệch giữa message và logic |
+| **Major** | **Mật khẩu không được che / không xem lại được khi gõ.** Biểu hiện khác nhau: P01 bấm toggle được lần đầu rồi hỏng; P07 không xem được; P02–P04, P06 thấy mật khẩu hiển thị rõ ở trang Login. | **6/7** | Systemic — `type="text"` + toggle lỗi |
+| **Major** | **Nhãn "Username" nhưng hệ thống xác thực bằng email** — người dùng không biết phải nhập gì. Phát hiện bởi P05 (non-IT) và **xác nhận độc lập bởi P07 (IT)**. | **2/7** | Systemic — nhãn không khớp dữ liệu |
+| **Minor** | **Trang Đăng nhập hiển thị tiêu đề "Đăng Ký"** — gây nghi ngờ đã vào nhầm trang. | **4/7** | Isolated bug |
+| **Minor** | **Ngôn ngữ giao diện lẫn lộn Việt/Anh** ("Username", "Sign In" giữa các nhãn tiếng Việt). | 1/7 | Systemic — thiếu i18n nhất quán |
+| **Minor** | **Không kiểm tra cú pháp email** — dữ liệu sai định dạng vẫn gửi đi không báo lỗi. | 1/7 | Systemic — thiếu validate |
+| **Minor** | **Thiếu trường "Xác nhận mật khẩu"** ở form Đăng ký, vi phạm FR-01. | 1/7 | Systemic — thiếu tính năng |
+
+### Tách bạch *isolated bug* và *systemic design issue*
+
+- **Systemic (7/8 phát hiện):** vấn đề nằm ở thiết kế/logic, ảnh hưởng mọi người dùng bất kể thao tác. Hai blocker mật khẩu là ví dụ rõ nhất — **100% mẫu gặp phải**, không phụ thuộc kỹ năng hay nền tảng người dùng.
+- **Isolated (1/8):** tiêu đề trang Login sai chỉ là lỗi copy-paste ở một component, sửa một dòng là xong, không phản ánh khiếm khuyết thiết kế.
+
+### Ba nhận định rút ra từ dữ liệu 7 phiên
+
+**1. Khả năng thoát khỏi blocker mật khẩu mang tính may rủi, không phải kỹ năng.** P04 và P06 cùng là dân IT nhưng kết quả trái ngược: P04 tự dò ra quy luật, P06 bó tay hoàn toàn. Điều này củng cố việc xếp lỗi này ở mức **Blocker** thay vì Major — không thể trông cậy vào việc người dùng "tự đoán ra".
+
+**2. Nền tảng IT không bảo vệ được người dùng khỏi lỗi nhãn Username/email.** Ban đầu chỉ P05 (non-IT) báo cáo, dẫn tới giả thuyết rằng đây là vấn đề riêng của người dùng phổ thông. **P07 — dân IT — gặp đúng lỗi này**, bác bỏ một phần giả thuyết đó và nâng mức nghiêm trọng thực tế của phát hiện lên.
+
+**3. Người tham gia IT có xu hướng báo cáo nhiều lỗi kỹ thuật hơn, nhưng không hoàn thành task tốt hơn.** P02 nêu 5 vấn đề (nhiều nhất), song vẫn cần hỗ trợ như mọi người khác. Nghĩa là **số lượng phát hiện phản ánh khả năng diễn đạt, không phản ánh mức độ dễ dùng** — một lý do nữa để dựa vào tần suất gặp phải thay vì số lời phàn nàn.
 
 ### Ưu tiên hóa (Prioritise by severity)
 
@@ -400,13 +416,22 @@ Con số này **nhất quán với quan sát hành vi**, không phải một k�
 
 ## 2.5 Bugs phát hiện (Task 2 — từ usability sessions)
 
-| Bug ID    | Found by (Participant/TC)                                                                            | Tiêu đề                                                                                                                          | Severity | GitHub Issue | Screenshot                                |
-| --------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------ | ----------------------------------------- |
-| BUG-UX-01 | TODO (điền participant thực tế); tái hiện kỹ thuật qua `selenium/run_checklist.py --include-lockout` | Mật khẩu hợp lệ theo spec (`@$!%*?&`) bị từ chối vì regex client yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`) | Critical | TODO         | TODO (chụp lại từ phiên usability thật)   |
-| BUG-UX-02 | TODO                                                                                                 | Thiếu trường "Xác nhận mật khẩu" ở form Đăng ký, vi phạm FR-01                                                                   | High     | TODO         | TODO                                      |
-| BUG-UX-03 | TODO                                                                                                 | Thông báo lỗi mật khẩu yêu cầu "ký tự đặc biệt" nhưng logic thực tế yêu cầu khoảng trắng — gây hiểu lầm                          | High     | TODO         | TODO                                      |
-| BUG-UX-04 | TODO; tái hiện kỹ thuật qua `selenium` (LOGIN-F02 FAIL)                                              | Mật khẩu hiển thị dạng chữ thường (không che) tại trang Đăng nhập, ảnh hưởng cảm nhận bảo mật (trust)                            | High     | TODO         | [LOGIN-F02.png](screenshot/LOGIN-F02.png) |
-| BUG-UX-05 | TODO                                                                                                 | Đăng ký trùng email không bị chặn (không có `UNIQUE` constraint), người dùng có thể vô tình tạo tài khoản trùng                  | Medium   | TODO         | TODO                                      |
+| Bug ID | Found by (Participant) | Tiêu đề | Severity | GitHub Issue | Bằng chứng |
+| --- | --- | --- | --- | --- | --- |
+| BUG-UX-01 | **P01–P07 (7/7)** | Mật khẩu hợp lệ theo mô tả trên form bị từ chối vì regex client yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`) — tái hiện kỹ thuật qua `selenium/run_checklist.py --include-lockout` | **Critical** | TODO | Bản ghi 7 phiên (§2.3) |
+| BUG-UX-02 | P06 | Thiếu trường "Xác nhận mật khẩu" ở form Đăng ký, vi phạm FR-01 | High | TODO | [P06](usability/sessions/P06.md) |
+| BUG-UX-03 | **P01–P07 (7/7)** | Thông báo lỗi ghi "ký tự đặc biệt" nhưng logic thực tế yêu cầu khoảng trắng — không ai tự phục hồi được | **Critical** | TODO | Bản ghi 7 phiên (§2.3) |
+| BUG-UX-04 | P02, P03, P04, P06 (4/7) | Mật khẩu hiển thị rõ (không che) tại trang Đăng nhập, ảnh hưởng cảm nhận bảo mật — xác nhận qua Selenium (LOGIN-F02 FAIL) | High | TODO | [LOGIN-F02.png](screenshot/LOGIN-F02.png) |
+| BUG-UX-05 | *(từ phân tích code)* | Đăng ký trùng email không bị chặn (không có ràng buộc `UNIQUE`) | Medium | TODO | `server.js` |
+| BUG-UX-06 | P01, P07 (2/7) | Nút hiện/ẩn mật khẩu hỏng: P01 bấm được lần đầu rồi không ẩn lại được; P07 không xem được mật khẩu khi gõ | High | TODO | [P01](usability/sessions/P01.md) · [P07](usability/sessions/P07.md) |
+| BUG-UX-07 | P02, P03, P04, P07 (4/7) | Trang Đăng nhập hiển thị tiêu đề "Đăng Ký" — gây nghi ngờ vào nhầm trang. Trùng `BUG-GUI-09`, nay có xác nhận từ 4 người dùng thật | Medium | TODO | [LOGIN-U01.png](screenshot/LOGIN-U01.png) |
+| BUG-UX-08 | P02 | Ngôn ngữ giao diện lẫn lộn Việt/Anh ("Username", "Sign In"). Trùng `BUG-GUI-10` | Low | TODO | [LOGIN-U02.png](screenshot/LOGIN-U02.png) |
+| BUG-UX-09 | P02 | Không kiểm tra cú pháp email — dữ liệu sai định dạng vẫn gửi đi không báo lỗi. Trùng `BUG-GUI-11`/`BUG-GUI-20` | Medium | TODO | [LOGIN-F08.png](screenshot/LOGIN-F08.png) |
+| BUG-UX-10 | **P05 (non-IT), P07 (IT)** | Nhãn "Username" nhưng hệ thống xác thực bằng email → người dùng không biết nhập gì. **Bug mới, chỉ phát hiện được qua người dùng thật** — không xuất hiện trong Task 1 | High | TODO | [P05](usability/sessions/P05.md) · [P07](usability/sessions/P07.md) |
+
+> **10 bug, trong đó 2 bug chỉ phát hiện được nhờ người dùng thật:** `BUG-UX-06` (toggle mật khẩu) và `BUG-UX-10` (nhãn Username vs email). Cả hai đều **không bị bộ checklist 69 item của Task 1 bắt được** — minh chứng cho giá trị bổ sung của usability testing so với kiểm thử theo checklist: checklist kiểm tra *thuộc tính kỹ thuật có đúng không*, còn người dùng thật phơi bày *thao tác có thực hiện được không*.
+>
+> ⬜ **Việc còn lại:** tạo GitHub Issue cho 10 bug này (Task 1 dùng #125–#154, Task 3 dùng #213–#218 — nên tạo tiếp từ số kế tiếp) và đính ảnh chụp từ bản ghi phiên.
 
 ---
 

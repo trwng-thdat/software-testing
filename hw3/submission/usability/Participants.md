@@ -15,13 +15,13 @@
 | P04 | Nguyễn Lê Thành Phú | nltphu23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 31/07/2026 |               |
 | P05 | Nguyễn Đức Minh | ducminhnguyen@gmail.com | Sinh viên | **Không** (non-IT) | 01/08/2026 |               |
 | P06 | **TODO — điền họ tên** | ntdat23@clc.fitus.edu.vn | Sinh viên | Có (IT) | TODO — điền ngày | Ca nặng nhất: không tạo được mật khẩu |
-| P07 | TODO — chưa tuyển | TODO | TODO | TODO | TODO | **Còn thiếu** |
+| P07 | Quốc *(bổ sung họ tên đầy đủ)* | htquoc23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 02/08/2026 | Không tạo được mật khẩu |
 
-> **Trạng thái:** đã hoàn thành **6/7** phiên. Còn **P07** cần tuyển và chạy trước khi nộp (§Task 2 yêu cầu đủ 7 participant).
+> **Trạng thái:** ✅ **đã hoàn thành đủ 7/7 phiên**, tất cả đều có bản ghi màn hình (link trong `Main_Report.md` §2.3).
 >
-> **Còn thiếu ở P06:** họ tên đầy đủ và ngày thực hiện phiên.
+> **Còn thiếu:** họ tên đầy đủ của **P06** và **P07** (hiện mới có email liên hệ), và ngày thực hiện phiên của P06.
 >
-> **Ghi chú về hồ sơ người tham gia:** 5/6 người hiện tại là sinh viên ngành IT. Đề bài §Phase 1 nêu *"Non-IT / non-tester participants are preferred ... though this is not strictly required"* — vì vậy nên ưu tiên tuyển **P07 là người không thuộc ngành IT** để cân bằng mẫu và tăng giá trị phản hồi. Toàn bộ người tham gia đều **không thuộc lớp đang học HW03**, hợp lệ theo §Phase 1.
+> **Ghi chú về hồ sơ người tham gia:** 6/7 là sinh viên ngành IT, 1 người non-IT (P05). Đề bài §Phase 1 nêu *"Non-IT / non-tester participants are preferred ... though this is not strictly required"* — mẫu này **lệch về nhóm IT**, đã được ghi nhận như một giới hạn của nghiên cứu trong phần phân tích (`Main_Report.md` §2.4). Toàn bộ 7 người đều **không thuộc lớp đang học HW03**, hợp lệ theo §Phase 1.
 >
 > Người tham gia được liên hệ qua email trường (`@clc.fitus.edu.vn`) và email cá nhân — đây là kênh liên lạc xác minh được, không cần che số như định dạng SĐT/Zalo.
 
