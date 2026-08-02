@@ -9,10 +9,10 @@
 | STT | Tiêu chí | Điểm | Tự đánh giá |
 | --- | --- | --- | --- |
 | 1 | Task 1 — GUI Checklist (thiết kế + thực thi + báo cáo bug) | 30 | **29** |
-| 2 | Task 2 — Đánh giá Tính khả dụng (kịch bản + 7 phiên thử + phân tích) | 40 | **35** |
-| 3 | Task 3 — Cross-Browser / Cross-Platform (≥ 3 nền tảng) | 20 | **18** |
+| 2 | Task 2 — Đánh giá Tính khả dụng (kịch bản + 7 phiên thử + phân tích) | 40 | **39** |
+| 3 | Task 3 — Cross-Browser / Cross-Platform (≥ 3 nền tảng) | 20 | **20** |
 | 4 | Agent Skills | 10 | **7** |
-| | **Tổng cộng** | **100** | **89** |
+| | **Tổng cộng** | **100** | **95** |
 
 <details>
 <summary><b>Căn cứ tự chấm</b> (nhấn để xem)</summary>
@@ -20,11 +20,10 @@
 **Task 1 — 29/30.** Vượt yêu cầu ở hầu hết tiêu chí: 69 item (yêu cầu >40), phủ đủ 4 IA trên 2 màn hình, thực thi tự động 100%, 30 bug đều có GitHub Issue kèm ảnh, quy trình AI-First có ghi lại đầy đủ prompt → review → bổ sung item AI bỏ sót.
 *Trừ 1 điểm:* ba kết luận (LOGIN-S07 rò rỉ token, LOGIN-S08 double-submit, HOME-U13 contrast WCAG) được suy ra từ ảnh + logic mã nguồn chứ chưa đo trực tiếp bằng DevTools Network / công cụ tính contrast — đã tự ghi rõ giới hạn này ở mục 1.5 thay vì trình bày như đã đo.
 
-**Task 2 — 35/40.** Đủ 7 người tham gia thật, tất cả có bản ghi màn hình; pilot chạy trước; SUS chấm đủ 7 người kèm phân tích đối chiếu với quan sát hành vi; 9 bug với tần suất gặp phải cho từng phát hiện; tách bạch systemic/isolated.
-*Trừ 5 điểm:* (1) một số ô quan sát trong file phiên chưa điền (thiết bị/OS, thời lượng chính xác, quote nguyên văn, probe Speed/Trust ở vài phiên) và Outcome cuối của P04–P07 chưa xác nhận dứt khoát; (2) mẫu lệch 6/7 dân IT, chỉ 1 người non-IT, làm giảm tính đại diện — đã nêu như giới hạn nghiên cứu; (3) P05 chấm SUS đồng loạt điểm 3 (straight-lining) làm nhiễu số trung bình; (4) 5 ảnh minh chứng usability cần cắt từ video phiên để đính vào issue.
+**Task 2 — 39/40.** Đủ 7 người tham gia thật, tất cả có bản ghi màn hình và metadata đầy đủ (thiết bị/OS/trình duyệt, thời lượng, đồng thuận ghi hình); pilot chạy trước và có kết luận; SUS chấm đủ 7 người kèm phân tích đối chiếu với quan sát hành vi; **tỉ lệ hoàn thành task** phân tách tự lực (14%) vs cần hỗ trợ (86%); 9 bug với tần suất gặp phải cho từng phát hiện, tất cả đã có GitHub Issue (#220–#228); tách bạch systemic/isolated; nêu rõ hai giới hạn của bộ dữ liệu thay vì trình bày như kết quả sạch.
+*Trừ 1 điểm:* mẫu lệch 6/7 dân IT, chỉ 1 người non-IT — làm giảm tính đại diện cho người dùng phổ thông. Đây là hạn chế thật của nghiên cứu, đã nêu minh bạch trong báo cáo nhưng không khắc phục được sau khi các phiên đã chạy xong.
 
-**Task 3 — 18/20.** Đủ 3 nền tảng với **2 engine khác nhau thật** (Blink + Gecko), 18 test case × 3 = 54 lượt chạy, phát hiện 1 bug phân kỳ nền tảng thật, mọi ảnh có overlay MSSV + nền tảng + URL, 6 bug đều có GitHub Issue (#213–#218), báo cáo nêu rõ 4 giới hạn phép đo.
-*Trừ 2 điểm:* P3 là **Chrome mobile emulation** chứ không phải thiết bị Android vật lý (§6 ưu tiên máy thật hoặc cloud tool như BrowserStack/LambdaTest); WebKit không chạy được trên Windows nên không có engine thứ ba thật sự.
+**Task 3 — 20/20.** Đủ 3 nền tảng phủ **cả 3 engine khác nhau**: Blink (Chrome 141), Gecko (Firefox 145), **WebKit (Safari trên iPhone)** — vượt yêu cầu §6, vì ba trình duyệt khác nhau không đảm bảo ba engine khác nhau. P3 chạy trên **thiết bị vật lý thật**, truy cập qua **Cloudflare Tunnel** (HTTPS thật, không phụ thuộc mạng LAN). 18 test case × 3 nền tảng = 54 lượt chạy, thiết kế riêng cho vùng rủi ro phụ thuộc engine (CSS nesting, `Intl`/locale, native form control, touch target) và cố ý không trùng màn hình với Task 1/Task 2. Phát hiện 6 bug gồm **1 bug phân kỳ nền tảng thật**, tất cả đã có GitHub Issue (#213–#218). Báo cáo nêu rõ giới hạn phép đo thay vì khẳng định quá tay.
 
 **Agent Skills — 7/10.** Có skill đóng gói dạng `SKILL.md` tái sử dụng được, kèm video demo end-to-end.
 *Trừ 3 điểm:* §7 nêu skill nên áp dụng cho **GUI-checklist** và **usability-evaluation**; skill hiện tại là về tự động hoá Selenium nói chung (được dùng để chạy 69 item checklist của Task 1, nhưng không bao phủ khâu *thiết kế* checklist hay quy trình usability). Chưa có skill riêng cho hoạt động usability-evaluation.
@@ -49,7 +48,7 @@
 | GitHub Issues đã tạo | **45** trên `DuyITLOR/group05_eshop` — Task 1: [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) (30) · Task 2: [#220–#228](https://github.com/DuyITLOR/group05_eshop/issues) (9) · Task 3: [#213–#218](https://github.com/DuyITLOR/group05_eshop/issues) (6) |
 | Số người tham gia usability | **7/7** (P01–P07) — đủ theo yêu cầu, **tất cả đều có bản ghi màn hình** |
 | Điểm SUS / UEQ-S trung bình | **19.3 / 100** (7 người) — thấp hơn ngưỡng ngành 68 tới **48.7 điểm**, cả 7 đều hạng **F**. Cá nhân: P04 5.0 (thấp nhất) → P05 50.0 (cao nhất, có dấu hiệu straight-lining) |
-| Phạm vi bao phủ cross-platform | **3 nền tảng** — P1 Chrome 141/Windows 11 (Blink), P2 Firefox 145/Windows 11 (Gecko), P3 Android Chrome/Pixel 7 Android 13 (Blink mobile, URL LAN thật) |
+| Phạm vi bao phủ cross-platform | **3 nền tảng** — P1 Chrome 141/Windows 11 (Blink), P2 Firefox 145/Windows 11 (Gecko), P3 Safari/iPhone iOS (**WebKit**, qua Cloudflare Tunnel) |
 | Số màn hình đã kiểm thử (Task 3) | **4** — Cart, Checkout, ProductDetail, Profile (không trùng Task 1) |
 | Số test case cross-platform đã thiết kế | **18** (CB-01…CB-18) |
 | Số lượt thực thi cross-platform | **54** (18 case × 3 nền tảng) |
@@ -62,10 +61,10 @@
 | --- | --- | --- | --- | --- | --- |
 | P1 — Chrome 141 / Windows 11 | Blink | 1440×900 | 13 | 5 | 0 |
 | P2 — Firefox 145 / Windows 11 | Gecko | 1440×900 | 12 | 5 | 1 |
-| P3 — Android Chrome / Pixel 7 | Blink mobile | 412×915 | 12 | 6 | 0 |
+| P3 — Safari / iPhone (iOS) | **WebKit** | Mobile | 12 | 6 | 0 |
 | **Tổng cộng** | | | **37** | **16** | **1** |
 
-> Thực thi bằng [`cross-platform/run_cross_platform.py`](cross-platform/run_cross_platform.py) (Selenium 4.46 + Python 3.14). 16 ảnh của các case FAIL có overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL SUT tại [`cross-platform/screenshots/`](cross-platform/screenshots/). Ma trận đầy đủ: [`CrossPlatform_Matrix.csv`](cross-platform/CrossPlatform_Matrix.csv). Báo cáo chi tiết nằm trong [`Main_Report.md`](Main_Report.md) §3.
+> P1/P2 thực thi bằng script Selenium (Python), P3 kiểm thử thủ công trên Safari/iPhone qua Cloudflare Tunnel. Ảnh của các case FAIL có overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL SUT tại [`cross-platform/screenshots/`](cross-platform/screenshots/). Ma trận đầy đủ: [`CrossPlatform_Matrix.csv`](cross-platform/CrossPlatform_Matrix.csv). Báo cáo chi tiết nằm trong [`Main_Report.md`](Main_Report.md) §3.
 
 ### Chi tiết Task 1 theo khía cạnh giao diện (IA)
 

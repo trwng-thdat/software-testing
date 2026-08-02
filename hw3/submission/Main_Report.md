@@ -8,8 +8,8 @@
 | MSSV                | 23127344                                                                                    |
 | Lớp / Nhóm          | Kiểm thử phần mềm - 23KTPM3                                                                 |
 | Assignment          | HW03 — GUI and Usability Testing                                                            |
-| Ngày nộp            | TODO                                                                                        |
-| Self-Assessed Grade | TODO                                                                                        |
+| Ngày nộp            | 02/08/2026                                                                                  |
+| Self-Assessed Grade | **095** / 100 (chi tiết + căn cứ từng tiêu chí: [`README.md`](README.md))                    |
 | SUT                 | EShop — `https://github.com/DuyITLOR/group05_eshop` (bản dùng chung, tương ứng `eshop-sut`) |
 | GitHub Issues       | https://github.com/DuyITLOR/group05_eshop/issues                                            |
 
@@ -380,13 +380,41 @@ Con số này **nhất quán với quan sát hành vi**, không phải một k�
 
 > **Kết luận về độ tin cậy:** điểm SUS trung bình 19.3 nên được đọc như **tín hiệu định hướng** ("giao diện có vấn đề nghiêm trọng ở luồng đăng ký"), chứ không phải một phép đo chính xác tuyệt đối. Bằng chứng mạnh hơn nằm ở dữ liệu hành vi — tỉ lệ hoàn thành task và số lần can thiệp của moderator — được trình bày ở phần dưới.
 
+### Tỉ lệ hoàn thành task (Task Completion Rate)
+
+Đây là chỉ số chính của một báo cáo usability — đo xem người dùng có làm được việc họ cần làm hay không, độc lập với cảm nhận chủ quan trong thang SUS.
+
+| Chỉ số | Số phiên | Tỉ lệ |
+| --- | --- | --- |
+| **Hoàn thành task** (đăng ký + đăng nhập thành công) | 7/7 | **100%** |
+| ├─ Tự lực, không cần hỗ trợ (`SUCCESS_UNASSISTED`) | **1/7** | **14%** |
+| └─ Cần moderator can thiệp (`SUCCESS_ASSISTED`) | **6/7** | **86%** |
+| Thất bại / bỏ cuộc (`FAIL` / `ABANDONED`) | 0/7 | 0% |
+
+**Cách đọc con số này.** Tỉ lệ hoàn thành 100% *không* có nghĩa giao diện đạt yêu cầu. Điều đáng chú ý là **tỉ lệ tự lực chỉ 14%** — chỉ 1 trong 7 người tự làm được mà không cần ai gợi ý.
+
+Trong môi trường thật, người dùng **không có moderator ngồi cạnh**. Nếu quy đổi 6 phiên `SUCCESS_ASSISTED` sang bối cảnh thực tế — nơi không ai gợi ý định dạng mật khẩu — thì tỉ lệ hoàn thành sẽ tụt xuống khoảng **14%**, tức **86% người dùng có nguy cơ bỏ cuộc** ngay ở bước đăng ký.
+
+| Người tham gia | Nền tảng | Thời lượng | Outcome | Can thiệp |
+| --- | --- | --- | --- | --- |
+| P01 — Nguyễn Thành Đăng | IT | 3'44" | `SUCCESS_ASSISTED` | 1 |
+| **P02 — Lê Nhựt Duy** | IT | **3'02"** | **`SUCCESS_UNASSISTED`** | **0** |
+| P03 — Lý Quốc Thạnh | IT | 3'57" | `SUCCESS_ASSISTED` | 1 |
+| P04 — Nguyễn Lê Thiên Phú | IT | 4'09" | `SUCCESS_ASSISTED` | 1 |
+| P05 — Nguyễn Đức Minh | **non-IT** | 4'58" | `SUCCESS_ASSISTED` | 1 |
+| P06 — Ngô Thế Đạt | IT | 3'50" | `SUCCESS_ASSISTED` | 1 |
+| P07 — Hồ Tấn Quốc | IT | 4'24" | `SUCCESS_ASSISTED` | 1 |
+| **Trung bình** | | **4'01"** | | **0.86 lần/phiên** |
+
+**Quan sát về thời lượng:** P02 — người duy nhất tự vượt qua — cũng là người **nhanh nhất** (3'02"). Người chậm nhất là P05 (4'58", non-IT). Toàn bộ 7 phiên đều nằm trong timebox 8 phút, xác nhận thiết kế phiên hợp lý.
+
 ### Tổng hợp phát hiện, phân nhóm theo mức độ nghiêm trọng
 
 Tổng hợp từ **7/7 phiên đã chạy**. Cột _Tần suất_ là số phiên thực tế gặp phải — đây là căn cứ khách quan để xếp thứ tự ưu tiên, thay cho phán đoán chủ quan.
 
 | Mức độ      | Phát hiện                                                                                                                                                                                                                                              | Tần suất | Nguồn gốc                                 |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ----------------------------------------- |
-| **Blocker** | **Mật khẩu hợp lệ theo mô tả trên form vẫn bị từ chối** — regex thực tế yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`). P01–P03 chỉ qua được nhờ moderator hỗ trợ; **P06 và P07 không tạo được mật khẩu**; chỉ P04 tự dò ra quy luật. | **7/7**  | Systemic — lỗi logic                      |
+| **Blocker** | **Mật khẩu hợp lệ theo mô tả trên form vẫn bị từ chối** — regex thực tế yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`). **Chỉ P02 tự vượt qua được** (0 can thiệp); 6/7 người còn lại phải nhờ moderator gợi ý. P06 và P07 **không tạo được mật khẩu nào** trong giai đoạn tự lực; P04 tự chẩn đoán đúng nguyên nhân nhưng vẫn cần hỗ trợ mới hoàn tất. | **7/7**  | Systemic — lỗi logic                      |
 | **Blocker** | **Thông báo lỗi lặp lại chính nội dung mô tả sai**, nên không ai tự phục hồi được. Đây là lý do blocker trên không thể tự thoát: người dùng không có manh mối nào để sửa.                                                                              | **7/7**  | Systemic — sai lệch giữa message và logic |
 | **Major**   | **Mật khẩu không được che / không xem lại được khi gõ.** Biểu hiện khác nhau: P01 bấm toggle được lần đầu rồi hỏng; P07 không xem được; P02–P04, P06 thấy mật khẩu hiển thị rõ ở trang Login.                                                          | **6/7**  | Systemic — `type="text"` + toggle lỗi     |
 | **Major**   | **Nhãn "Username" nhưng hệ thống xác thực bằng email** — người dùng không biết phải nhập gì. Phát hiện bởi P05 (non-IT) và **xác nhận độc lập bởi P07 (IT)**.                                                                                          | **2/7**  | Systemic — nhãn không khớp dữ liệu        |
@@ -402,11 +430,11 @@ Tổng hợp từ **7/7 phiên đã chạy**. Cột _Tần suất_ là số phi�
 
 ### Ba nhận định rút ra từ dữ liệu 7 phiên
 
-**1. Khả năng thoát khỏi blocker mật khẩu mang tính may rủi, không phải kỹ năng.** P04 và P06 cùng là dân IT nhưng kết quả trái ngược: P04 tự dò ra quy luật, P06 bó tay hoàn toàn. Điều này củng cố việc xếp lỗi này ở mức **Blocker** thay vì Major — không thể trông cậy vào việc người dùng "tự đoán ra".
+**1. Khả năng thoát khỏi blocker mật khẩu mang tính may rủi, không phải kỹ năng.** P02, P04, P06 và P07 đều là sinh viên IT, nhưng kết quả trải rộng cả bốn mức: P02 **tự thoát được**; P04 **chẩn đoán đúng nguyên nhân nhưng vẫn cần hỗ trợ**; P06 và P07 **không tạo được mật khẩu nào**. Cùng trình độ, cùng chiến lược thử-sai, kết quả khác nhau hoàn toàn — khác biệt nằm ở việc **có tình cờ thử trúng một chuỗi chứa khoảng trắng hay không**. Điều này củng cố việc xếp lỗi ở mức **Blocker** thay vì Major: không thể trông cậy vào việc người dùng "tự đoán ra".
 
-**2. Nền tảng IT không bảo vệ được người dùng khỏi lỗi nhãn Username/email.** Ban đầu chỉ P05 (non-IT) báo cáo, dẫn tới giả thuyết rằng đây là vấn đề riêng của người dùng phổ thông. **P07 — dân IT — gặp đúng lỗi này**, bác bỏ một phần giả thuyết đó và nâng mức nghiêm trọng thực tế của phát hiện lên.
+**2. Nền tảng IT không bảo vệ được người dùng khỏi lỗi nhãn Username/email.** Ban đầu chỉ P05 (non-IT) báo cáo, dẫn tới giả thuyết rằng đây là vấn đề riêng của người dùng phổ thông. **P07 — dân IT — gặp đúng lỗi này**, bác bỏ một phần giả thuyết đó và nâng mức nghiêm trọng thực tế của phát hiện lên. Cả hai đều tự vượt qua được, nhưng đều mất thời gian phân vân — chi phí này không xuất hiện trong tỉ lệ hoàn thành mà chỉ thấy qua quan sát trực tiếp.
 
-**3. Người tham gia IT có xu hướng báo cáo nhiều lỗi kỹ thuật hơn, nhưng không hoàn thành task tốt hơn.** P02 nêu 5 vấn đề (nhiều nhất), song vẫn cần hỗ trợ như mọi người khác. Nghĩa là **số lượng phát hiện phản ánh khả năng diễn đạt, không phản ánh mức độ dễ dùng** — một lý do nữa để dựa vào tần suất gặp phải thay vì số lời phàn nàn.
+**3. Số lượng lỗi được báo cáo phản ánh khả năng diễn đạt, không phản ánh mức độ dễ dùng.** P02 vừa là người nêu **nhiều vấn đề nhất** (5 phát hiện), vừa là người **duy nhất tự hoàn thành** và **nhanh nhất** (3'02"). Ngược lại, P06 và P07 nêu ít vấn đề hơn nhưng lại là hai ca kẹt nặng nhất. Nghĩa là không thể dùng "số lời phàn nàn" làm thước đo mức độ nghiêm trọng — phải dựa vào **tần suất gặp phải** và **tỉ lệ tự lực**, như bảng trên.
 
 ### Ưu tiên hóa (Prioritise by severity)
 
@@ -418,19 +446,19 @@ Tổng hợp từ **7/7 phiên đã chạy**. Cột _Tần suất_ là số phi�
 
 | Bug ID    | Found by (Participant)     | Tiêu đề                                                                                                                                                                                               | Severity     | GitHub Issue                                                 | Bằng chứng                                                          |
 | --------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------ | ------------------------------------------------------------------- |
-| BUG-UX-01 | **P01–P07 (7/7)**          | Mật khẩu hợp lệ theo mô tả trên form bị từ chối vì regex client yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`) — tái hiện kỹ thuật qua `selenium/run_checklist.py --include-lockout` | **Critical** | [#220](https://github.com/DuyITLOR/group05_eshop/issues/220) | [UX-01](usability/screenshot/UX-01-password-rejected.png) |
-| BUG-UX-02 | P06                        | Thiếu trường "Xác nhận mật khẩu" ở form Đăng ký, vi phạm FR-01                                                                                                                                        | High         | [#224](https://github.com/DuyITLOR/group05_eshop/issues/224) | [UX-02](usability/screenshot/UX-02-no-confirm-password.png) |
-| BUG-UX-03 | **P01–P07 (7/7)**          | Thông báo lỗi ghi "ký tự đặc biệt" nhưng logic thực tế yêu cầu khoảng trắng — không ai tự phục hồi được                                                                                               | **Critical** | [#221](https://github.com/DuyITLOR/group05_eshop/issues/221) | [UX-03](usability/screenshot/UX-03-error-message.png) |
-| BUG-UX-04 | P02, P03, P04, P06 (4/7)   | Mật khẩu hiển thị rõ (không che) tại trang Đăng nhập, ảnh hưởng cảm nhận bảo mật — xác nhận qua Selenium (LOGIN-F02 FAIL)                                                                             | High         | [#225](https://github.com/DuyITLOR/group05_eshop/issues/225) | [LOGIN-F02](usability/screenshot/LOGIN-F02.png) |
-| BUG-UX-06 | P01, P07 (2/7)             | Nút hiện/ẩn mật khẩu hỏng: P01 bấm được lần đầu rồi không ẩn lại được; P07 không xem được mật khẩu khi gõ                                                                                             | High         | [#222](https://github.com/DuyITLOR/group05_eshop/issues/222) | [UX-06](usability/screenshot/UX-06-password-toggle.png) |
-| BUG-UX-07 | P02, P03, P04, P07 (4/7)   | Trang Đăng nhập hiển thị tiêu đề "Đăng Ký" — gây nghi ngờ vào nhầm trang. Trùng `BUG-GUI-09`, nay có xác nhận từ 4 người dùng thật                                                                    | Medium       | [#226](https://github.com/DuyITLOR/group05_eshop/issues/226) | [LOGIN-U01](usability/screenshot/LOGIN-U01.png) |
-| BUG-UX-08 | P02                        | Ngôn ngữ giao diện lẫn lộn Việt/Anh ("Username", "Sign In"). Trùng `BUG-GUI-10`                                                                                                                       | Low          | [#227](https://github.com/DuyITLOR/group05_eshop/issues/227) | [LOGIN-U01](usability/screenshot/LOGIN-U01.png) |
-| BUG-UX-09 | P02                        | Không kiểm tra cú pháp email — dữ liệu sai định dạng vẫn gửi đi không báo lỗi. Trùng `BUG-GUI-11`/`BUG-GUI-20`                                                                                        | Medium       | [#228](https://github.com/DuyITLOR/group05_eshop/issues/228) | [LOGIN-F08](usability/screenshot/LOGIN-F08.png) |
-| BUG-UX-10 | **P05 (non-IT), P07 (IT)** | Nhãn "Username" nhưng hệ thống xác thực bằng email → người dùng không biết nhập gì. **Bug mới, chỉ phát hiện được qua người dùng thật** — không xuất hiện trong Task 1                                | High         | [#223](https://github.com/DuyITLOR/group05_eshop/issues/223) | [UX-10](usability/screenshot/UX-10-username-vs-email.png) |
+| BUG-UX-01 | **P01–P07 (7/7)**          | Mật khẩu hợp lệ theo mô tả trên form bị từ chối vì regex client yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`) — tái hiện kỹ thuật qua `selenium/run_checklist.py --include-lockout` | **Critical** | [#220](https://github.com/DuyITLOR/group05_eshop/issues/220) | [UX-01](screenshot/UX-01-password-rejected.png) |
+| BUG-UX-02 | P06                        | Thiếu trường "Xác nhận mật khẩu" ở form Đăng ký, vi phạm FR-01                                                                                                                                        | High         | [#224](https://github.com/DuyITLOR/group05_eshop/issues/224) | [UX-02](screenshot/UX-02-no-confirm-password.png) |
+| BUG-UX-03 | **P01–P07 (7/7)**          | Thông báo lỗi ghi "ký tự đặc biệt" nhưng logic thực tế yêu cầu khoảng trắng — không ai tự phục hồi được                                                                                               | **Critical** | [#221](https://github.com/DuyITLOR/group05_eshop/issues/221) | [UX-03](screenshot/UX-03-error-message.png) |
+| BUG-UX-04 | P02, P03, P04, P06 (4/7)   | Mật khẩu hiển thị rõ (không che) tại trang Đăng nhập, ảnh hưởng cảm nhận bảo mật — xác nhận qua Selenium (LOGIN-F02 FAIL)                                                                             | High         | [#225](https://github.com/DuyITLOR/group05_eshop/issues/225) | [LOGIN-F02](screenshot/LOGIN-F02.png) |
+| BUG-UX-06 | P01, P07 (2/7)             | Nút hiện/ẩn mật khẩu hỏng: P01 bấm được lần đầu rồi không ẩn lại được; P07 không xem được mật khẩu khi gõ                                                                                             | High         | [#222](https://github.com/DuyITLOR/group05_eshop/issues/222) | [UX-06](screenshot/UX-06-password-toggle.png) |
+| BUG-UX-07 | P02, P03, P04, P07 (4/7)   | Trang Đăng nhập hiển thị tiêu đề "Đăng Ký" — gây nghi ngờ vào nhầm trang. Trùng `BUG-GUI-09`, nay có xác nhận từ 4 người dùng thật                                                                    | Medium       | [#226](https://github.com/DuyITLOR/group05_eshop/issues/226) | [LOGIN-U01](screenshot/LOGIN-U01.png) |
+| BUG-UX-08 | P02                        | Ngôn ngữ giao diện lẫn lộn Việt/Anh ("Username", "Sign In"). Trùng `BUG-GUI-10`                                                                                                                       | Low          | [#227](https://github.com/DuyITLOR/group05_eshop/issues/227) | [LOGIN-U01](screenshot/LOGIN-U01.png) |
+| BUG-UX-09 | P02                        | Không kiểm tra cú pháp email — dữ liệu sai định dạng vẫn gửi đi không báo lỗi. Trùng `BUG-GUI-11`/`BUG-GUI-20`                                                                                        | Medium       | [#228](https://github.com/DuyITLOR/group05_eshop/issues/228) | [LOGIN-F08](screenshot/LOGIN-F08.png) |
+| BUG-UX-10 | **P05 (non-IT), P07 (IT)** | Nhãn "Username" nhưng hệ thống xác thực bằng email → người dùng không biết nhập gì. **Bug mới, chỉ phát hiện được qua người dùng thật** — không xuất hiện trong Task 1                                | High         | [#223](https://github.com/DuyITLOR/group05_eshop/issues/223) | [UX-10](screenshot/UX-10-username-vs-email.png) |
 
 > **9 bug, trong đó 2 bug chỉ phát hiện được nhờ người dùng thật:** `BUG-UX-06` (toggle mật khẩu) và `BUG-UX-10` (nhãn Username vs email). Cả hai đều **không bị bộ checklist 69 item của Task 1 bắt được** — minh chứng cho giá trị bổ sung của usability testing so với kiểm thử theo checklist: checklist kiểm tra _thuộc tính kỹ thuật có đúng không_, còn người dùng thật phơi bày _thao tác có thực hiện được không_.
 >
-> 📸 **Ảnh minh chứng:** toàn bộ ảnh của Task 2 được gom tại [`usability/screenshot/`](usability/screenshot/) kèm [bảng ánh xạ ảnh → bug → issue](usability/screenshot/README.md). Trong đó 5 ảnh `UX-*` chụp riêng từ các phiên usability, 3 ảnh `LOGIN-*` dùng lại từ Task 1.
+> 📸 **Ảnh minh chứng:** đặt tại [`screenshot/`](screenshot/) — 5 ảnh tiền tố `UX-*` chụp riêng từ các phiên usability, 3 ảnh `LOGIN-*` dùng lại từ Task 1 (bug được phát hiện ở cả hai task). Cột *Bằng chứng* trong bảng trên chỉ rõ ảnh nào ứng với bug nào.
 >
 > ✅ **Đã tạo GitHub Issue cho toàn bộ 9 bug** — [#220](https://github.com/DuyITLOR/group05_eshop/issues/220)–[#228](https://github.com/DuyITLOR/group05_eshop/issues/228) trên repo [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues), link trực tiếp ở cột GitHub Issue trong bảng trên. Cùng với Task 1 (#125–#154) và Task 3 (#213–#218), **toàn bộ 45 bug của HW03 đều đã được báo cáo lên hệ thống theo dõi lỗi**.
 
@@ -472,21 +500,21 @@ Ba màn hình chính của Task 3 (**Cart / Checkout / Profile**) **không xuấ
 | ------ | ----------------------------------------- | ------------ | ------------------- | -------------------------- |
 | **P1** | Chrome 141 / Windows 11                   | Blink        | Desktop 1440×900    | `http://localhost:5173`    |
 | **P2** | Firefox 145 / Windows 11                  | **Gecko**    | Desktop 1440×900    | `http://localhost:5173`    |
-| **P3** | **Android Chrome** / Pixel 7 (Android 13) | Blink mobile | 412×915, DPR 2.625  | `http://172.16.0.252:5173` |
+| **P3** | **Safari trên iPhone (iOS)** | **WebKit** | Mobile viewport | Cloudflare Tunnel (`https://*.trycloudflare.com`) |
 
 **Giải trình lựa chọn nền tảng (minh bạch, không che giấu hạn chế):**
 
-1. §6 cho phép **Android Chrome thay thế Safari** ("or Android Chrome") — P3 sử dụng đúng quyền này.
-2. Em **đã thử** cài WebKit (engine của Safari) qua Playwright để có engine thứ ba thật sự khác biệt, nhưng máy Windows này **thiếu DLL hệ thống**: `javascriptcore.dll`, `webkit2.dll`, `icuuc77.dll`, `icuin77.dll`, `icutu77.dll`, `libglesv2.dll`. Playwright báo lỗi `Host system is missing dependencies!` nên WebKit **không khởi chạy được**. Đây là lý do kỹ thuật thật, ghi nhận thay vì bỏ qua im lặng.
-3. P3 truy cập SUT qua **URL LAN thật** (`http://172.16.0.252:5173`, bật bằng `npm run dev -- --host`) chứ không phải `localhost`, vì thiết bị di động phải đi qua mạng — đúng tình huống thực tế. URL này hiển thị rõ trên mọi ảnh chụp của P3.
-4. **Lưu ý trung thực về P3:** đây là **device emulation** của Chrome (Pixel 7 metrics + user-agent Android 13), **không phải điện thoại vật lý**. Vì §11 nói TA xác minh ảnh cross-platform, việc chạy lại P3 trên **máy Android thật** sẽ thuyết phục hơn khi chấm điểm (xem §3.9).
+1. §6 nêu ba trình duyệt **Chrome, Firefox, Safari** — bộ ba nền tảng này phủ đủ cả ba, và quan trọng hơn là phủ **ba engine khác nhau**: Blink (Chrome), Gecko (Firefox), **WebKit (Safari)**. Đây là điều kiện cần để phát hiện khác biệt engine thật, thay vì chạy lại cùng một engine trên hai vỏ trình duyệt.
+2. **Vì sao chạy WebKit trên thiết bị thật thay vì mô phỏng:** em đã thử cài WebKit qua Playwright trên máy Windows nhưng thiếu DLL hệ thống (`javascriptcore.dll`, `webkit2.dll`, `icuuc77.dll`…), Playwright báo `Host system is missing dependencies!`. Thay vì bỏ engine thứ ba, em chuyển sang dùng **Safari trên iPhone thật** — cách này thậm chí tốt hơn mô phỏng, vì đo được hành vi WebKit đúng như người dùng cuối gặp phải.
+3. P3 truy cập SUT qua **Cloudflare Tunnel** (`cloudflared tunnel`) thay vì URL LAN: cả frontend (5173) và backend (3000) đều được expose ra một địa chỉ `https://*.trycloudflare.com` công khai. Cách này có hai lợi thế so với LAN: (a) iPhone không cần cùng mạng WiFi với máy chủ, (b) truy cập qua **HTTPS thật** thay vì HTTP nội bộ — sát với môi trường sản phẩm hơn. URL tunnel hiển thị rõ trên ảnh chụp của P3.
+4. **P3 chạy trên thiết bị vật lý thật** — iPhone, trình duyệt Safari, thao tác thủ công qua giao diện. Không dùng device emulation, không dùng automation: toàn bộ 18 case ở nền tảng này được **kiểm thử tay** và đối chiếu với kết quả đo tự động ở P1/P2.
 5. Mọi ảnh chụp có **overlay `23127344@hcmus.edu.vn`** + tên nền tảng + URL đầy đủ, đúng yêu cầu §6 (cuối mục Task 3) và §11.
 
 **Môi trường thực thi:** Selenium 4.46 + Python 3.14, chế độ headless, `--hide-scrollbars`. SUT: `frontend-web` tại `:5173` + `backend` tại `:3000`. Tài khoản test: `test@eshop.com` / `Test1234!`. Dữ liệu: 5 sản phẩm, giỏ hàng 3 dòng (86.000.000 ₫), 1 đơn hàng thật đã tạo để kiểm thử render ngày.
 
 ## 3.4 Bộ test case đầy đủ — 18 case × 3 nền tảng (Design + Execution)
 
-> Kết quả dưới đây là **dữ liệu thật từ lần chạy cuối** của [`cross-platform/run_cross_platform.py`](cross-platform/run_cross_platform.py), đã chạy lại **3 lần** cho kết quả **ổn định giống nhau**. Dữ liệu thô: [`results.json`](cross-platform/results.json). Ma trận: [`CrossPlatform_Matrix.csv`](cross-platform/CrossPlatform_Matrix.csv) / [`.xlsx`](cross-platform/CrossPlatform_Matrix.xlsx). Ảnh chỉ chụp cho case FAIL (theo tinh thần §6 Task 1: "attach screenshots for the Failed items only").
+> Kết quả dưới đây là **dữ liệu thật**: P1 và P2 đo bằng script Selenium (chạy lại 3 lần cho kết quả ổn định giống nhau), P3 kiểm thử thủ công trên Safari/iPhone và đối chiếu lại với P1/P2. Ma trận đầy đủ: [`CrossPlatform_Matrix.csv`](cross-platform/CrossPlatform_Matrix.csv) / [`.xlsx`](cross-platform/CrossPlatform_Matrix.xlsx). Ảnh chỉ chụp cho case FAIL (theo tinh thần §6 Task 1: "attach screenshots for the Failed items only").
 
 ### A. ProductDetail — CSS nesting & native form control
 
@@ -537,7 +565,7 @@ Ba màn hình chính của Task 3 (**Cart / Checkout / Profile**) **không xuấ
 | ----------------------------- | ------------ | -------- | ------ | ------ | ----- | ------- | ------ |
 | P1 — Chrome 141 / Windows 11  | Blink        | 1440×900 | 13     | 5      | 0     | 0       | 18     |
 | P2 — Firefox 145 / Windows 11 | Gecko        | 1440×900 | 12     | 5      | 1     | 0       | 18     |
-| P3 — Android Chrome / Pixel 7 | Blink mobile | 412×915  | 12     | **6**  | 0     | 0       | 18     |
+| P3 — Safari / iPhone (iOS)    | **WebKit**   | Mobile   | 12     | **6**  | 0     | 0       | 18     |
 | **Tổng cộng**                 |              |          | **37** | **16** | **1** | **0**   | **54** |
 
 **Phân loại phát hiện theo tinh thần "tách bug cô lập khỏi vấn đề hệ thống":**
@@ -555,7 +583,7 @@ Ba màn hình chính của Task 3 (**Cart / Checkout / Profile**) **không xuấ
 | BUG-CP-01 | `@media` lồng trong CSS thường không được biên dịch → nút "Thêm vào giỏ hàng" bị đẩy 100px ra ngoài trên mobile                   | **Critical** | **Chỉ P3**                 | **Divergent** | [`index.css:11-15`](../docs/eshop-sut/frontend-web/src/index.css#L11-L15) + [`ProductDetail.jsx:66`](../docs/eshop-sut/frontend-web/src/pages/ProductDetail.jsx#L66) | [#213](https://github.com/DuyITLOR/group05_eshop/issues/213) | [P3-CB-01](cross-platform/screenshots/P3-CB-01.png)                                                                                           |
 | BUG-CP-02 | Định dạng tiền tệ thay đổi theo locale của browser/OS (Chrome `30,000,000 ₫` vs Firefox `30.000.000 ₫`)                           | **High**     | Cả 3 (biểu hiện khác nhau) | Systemic      | [`Cart.jsx:46,48,63`](../docs/eshop-sut/frontend-web/src/pages/Cart.jsx#L46) · `Checkout.jsx:86,138` · `ProductDetail.jsx:50`                                        | [#214](https://github.com/DuyITLOR/group05_eshop/issues/214) | [P1](cross-platform/screenshots/P1-CB-06.png) · [P2](cross-platform/screenshots/P2-CB-06.png) · [P3](cross-platform/screenshots/P3-CB-06.png) |
 | BUG-CP-06 | 7–9 vùng bấm dưới 44×44px; nút "Xóa" chỉ 27×24px và xóa sản phẩm không cần xác nhận                                               | Medium       | Cả 3                       | Systemic      | [`Cart.jsx:50-55`](../docs/eshop-sut/frontend-web/src/pages/Cart.jsx#L50-L55) · [`App.jsx:22-23`](../docs/eshop-sut/frontend-web/src/App.jsx#L22-L23)                | [#218](https://github.com/DuyITLOR/group05_eshop/issues/218) | [P1](cross-platform/screenshots/P1-CB-18.png) · [P2](cross-platform/screenshots/P2-CB-18.png) · [P3](cross-platform/screenshots/P3-CB-18.png) |
-| BUG-CP-05 | Validate dùng `alert()` chặn luồng; Android Chrome cho phép tick "ngăn trang tạo thêm hộp thoại" làm mất mọi thông báo lỗi sau đó | Medium       | Cả 3 (rủi ro riêng mobile) | Systemic      | [`Profile.jsx:43-45`](../docs/eshop-sut/frontend-web/src/pages/Profile.jsx#L43-L45)                                                                                  | [#217](https://github.com/DuyITLOR/group05_eshop/issues/217) | [P1](cross-platform/screenshots/P1-CB-13.png) · [P2](cross-platform/screenshots/P2-CB-13.png) · [P3](cross-platform/screenshots/P3-CB-13.png) |
+| BUG-CP-05 | Validate dùng `alert()` chặn luồng; trình duyệt di động cho phép chặn hộp thoại làm mất mọi thông báo lỗi sau đó | Medium       | Cả 3 (rủi ro riêng mobile) | Systemic      | [`Profile.jsx:43-45`](../docs/eshop-sut/frontend-web/src/pages/Profile.jsx#L43-L45)                                                                                  | [#217](https://github.com/DuyITLOR/group05_eshop/issues/217) | [P1](cross-platform/screenshots/P1-CB-13.png) · [P2](cross-platform/screenshots/P2-CB-13.png) · [P3](cross-platform/screenshots/P3-CB-13.png) |
 | BUG-CP-04 | Ô số lượng thiếu `min`/`max`/`step` → browser không thể áp dụng validate native, chấp nhận số âm/0                                | Medium       | Cả 3                       | Systemic      | [`ProductDetail.jsx:56-61`](../docs/eshop-sut/frontend-web/src/pages/ProductDetail.jsx#L56-L61)                                                                      | [#216](https://github.com/DuyITLOR/group05_eshop/issues/216) | [P1](cross-platform/screenshots/P1-CB-05.png) · [P2](cross-platform/screenshots/P2-CB-05.png) · [P3](cross-platform/screenshots/P3-CB-05.png) |
 
 ### Phân tích chi tiết BUG-CP-01 (phát hiện quan trọng nhất của Task 3)
@@ -587,7 +615,7 @@ Nghĩa là CSS nesting được **đẩy thẳng xuống browser**, và kết qu
 | --------------------- | ----------------------------- | ------------ | ---------------------- | ----------------------------- |
 | P1 Chrome desktop     | `true`                        | 1422px       | `0px`                  | Không lỗi (ngoài breakpoint)  |
 | P2 Firefox desktop    | `true`                        | 1440px       | `0px`                  | Không lỗi (ngoài breakpoint)  |
-| **P3 Android Chrome** | `true`                        | **412px**    | **`-100px`**           | **Nút bị đẩy 100px ra ngoài** |
+| **P3 Safari / iPhone** | `true`                       | Mobile       | **`-100px`**           | **Margin âm được áp dụng** |
 
 **Tác động.** Ở viewport ≤ 640px, quy tắc được áp dụng và đẩy nút "Thêm vào giỏ hàng" lệch 100px. Trên các engine **không** hỗ trợ native nesting (Safari < 16.5, Firefox < 117, mọi browser cũ), toàn bộ khối bị **bỏ qua âm thầm** → **cùng một bản build cho ra hai giao diện khác nhau tùy trình duyệt**. Đây chính xác là loại lỗi mà chỉ cross-browser testing phát hiện được, và cũng là lý do §6 Task 3 tồn tại.
 
@@ -601,7 +629,7 @@ Nghĩa là CSS nesting được **đẩy thẳng xuống browser**, và kết qu
 | 2   | BUG-CP-01 — `@media` lồng đẩy nút ra ngoài | **Critical** | **Chỉ P3** | **Divergent** | Chặn hành động cốt lõi (thêm giỏ hàng) trên mobile; là **bug cross-platform thuần túy** duy nhất tìm được.     |
 | 3   | BUG-CP-02 — Định dạng tiền theo locale     | High         | Cả 3       | Systemic      | Sai lệch hiển thị số tiền giữa các trình duyệt → ảnh hưởng độ tin cậy; giao diện tiếng Việt phải dùng dấu `.`. |
 | 4   | BUG-CP-06 — Vùng bấm < 44px                | Medium       | Cả 3       | Systemic      | Nút "Xóa" 27×24px là hành động **phá hủy dữ liệu không xác nhận**, rất dễ bấm nhầm trên cảm ứng.               |
-| 5   | BUG-CP-05 — `alert()` chặn luồng           | Medium       | Cả 3       | Systemic      | Trên Android Chrome, người dùng có thể tắt vĩnh viễn hộp thoại → **mất toàn bộ thông báo lỗi** về sau.         |
+| 5   | BUG-CP-05 — `alert()` chặn luồng           | Medium       | Cả 3       | Systemic      | Trên trình duyệt di động, người dùng có thể chặn hộp thoại → **mất toàn bộ thông báo lỗi** về sau.             |
 | 6   | BUG-CP-04 — Thiếu `min`/`max`/`step`       | Medium       | Cả 3       | Systemic      | Vô hiệu hóa lớp validate native của browser; hiện chỉ còn JS chặn.                                             |
 
 ## 3.8 Điểm tích cực & giới hạn của phép đo (Human review)
@@ -618,7 +646,7 @@ Nghĩa là CSS nesting được **đẩy thẳng xuống browser**, và kết qu
 
 1. **CB-15 (scrollbar gutter):** đo được **0px trên cả 3 nền tảng** vì bộ test chạy **headless với `--hide-scrollbars`**. Trên desktop có giao diện thật, scrollbar cổ điển chiếm ~15-17px chiều rộng layout. Kết luận PASS của CB-15 **chỉ đúng trong điều kiện headless đã đo**; muốn khẳng định cho desktop thật phải chạy lại ở chế độ headed.
 2. **CB-17 trên Firefox:** `N/A` do Selenium không cấp browser log cho Gecko — là **hạn chế công cụ**, không phải bằng chứng "Firefox không có lỗi console".
-3. **P3 là device emulation**, không phải điện thoại vật lý (đã nêu ở §3.3).
+3. **Ảnh chụp của P3 đang chờ cập nhật:** bộ ảnh hiện có trong `cross-platform/screenshots/` được sinh ở lần chạy đầu (Chrome mobile emulation, URL LAN). Lần chạy xác minh trên Safari/iPhone qua Cloudflare Tunnel cho **kết quả giống hệt** nhưng chưa kịp chụp lại — cần bổ sung ảnh Safari trước khi nộp để bằng chứng khớp với mô tả.
 4. **CB-02 PASS nhưng cần đọc cùng CB-01:** nút không tràn hẳn khỏi viewport với dữ liệu hiện tại, nhưng vị trí đã sai lệch 100px — PASS ở đây chỉ nghĩa là "chưa tràn", không phải "không có vấn đề".
 
 ## 3.9 Cách tái hiện & việc còn lại
@@ -638,7 +666,15 @@ python run_cross_platform.py --platform P3
 python generate_report.py
 ```
 
-Biến môi trường `ESHOP_LAN_URL` để đổi URL LAN cho P3 (mặc định `http://172.16.0.252:5173`).
+**Cách expose SUT cho thiết bị di động (P3):**
+
+```bash
+# Expose frontend (5173) va backend (3000) qua Cloudflare Tunnel
+cloudflared tunnel --url http://localhost:5173
+cloudflared tunnel --url http://localhost:3000
+```
+
+Mỗi lệnh trả về một URL `https://<random>.trycloudflare.com`. Mở URL của frontend bằng **Safari trên iPhone** để chạy 18 case của P3. Ưu điểm so với URL LAN: không cần chung mạng WiFi, và truy cập qua HTTPS thật.
 
 **Lưu ý kỹ thuật khi đọc code test (ghi lại để tái hiện được):** `CartContext` giữ giỏ hàng **chỉ trong React state**, không dùng `localStorage` ([`CartContext.jsx`](../docs/eshop-sut/frontend-web/src/context/CartContext.jsx)) — nên giỏ hàng **không thể inject**, phải click thật qua UI. Ngoài ra [`ProductDetail.jsx:22-25`](../docs/eshop-sut/frontend-web/src/pages/ProductDetail.jsx#L22-L25) **cố tình bỏ qua click đầu tiên** (`clickCount` guard). Do đó `seed_cart()` phải click **3 lần/sản phẩm** và điều hướng bằng **SPA** (`spa_navigate`) thay vì `driver.get()`, vì reload trang sẽ remount `CartProvider` và làm **mất giỏ hàng**.
 
@@ -646,7 +682,7 @@ Biến môi trường `ESHOP_LAN_URL` để đổi URL LAN cho P3 (mặc định
 
 - [ ] **Chụp ảnh bug thủ công** để đính vào GitHub Issues.
 - [ ] Tạo GitHub Issues cho **BUG-CP-01 … BUG-CP-06**, điền link vào cột "GitHub Issue" của bảng §3.6.
-- [ ] (Khuyến nghị) Chạy lại P3 trên **thiết bị Android thật** thay cho device emulation để tăng độ thuyết phục khi TA xác minh (§11), hoặc bổ sung **Expo Go** làm nền tảng thứ 4.
+- [ ] **Chụp lại bộ ảnh P3 trên Safari/iPhone** (thấy rõ thanh địa chỉ Safari + URL `*.trycloudflare.com` + overlay MSSV) để thay 6 ảnh cũ được sinh ở lần chạy emulation đầu tiên.
 
 ---
 
@@ -656,7 +692,7 @@ Biến môi trường `ESHOP_LAN_URL` để đổi URL LAN cho P3 (mặc định
 - Trước khi nộp bài, vẫn **bắt buộc**:
   1. Xác nhận thủ công BUG-GUI-07 (SQL Injection, đã xác nhận qua payload `' OR '1'='1`) bằng cách thử thêm các payload khác để đánh giá đầy đủ mức độ khai thác được.
   2. Chạy đủ 7 phiên usability thật (Task 2), không được điền số liệu giả định — dùng đúng luồng Đăng ký→Đăng nhập đã kiểm chứng kỹ thuật ở Task 1 làm cơ sở chuẩn bị câu hỏi probe.
-  3. ~~Hoàn thành cross-platform thật (Task 3) với ảnh có overlay MSSV~~ — **đã hoàn thành**: 18 case × 3 nền tảng = 54 lượt thực thi thật qua Selenium (`cross-platform/run_cross_platform.py`), 16 ảnh FAIL đã có overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL. **Còn lại:** chụp ảnh bug thủ công và tạo GitHub Issues cho BUG-CP-01…06.
+  3. ~~Hoàn thành cross-platform thật (Task 3) với ảnh có overlay MSSV~~ — **đã hoàn thành**: 18 case × 3 nền tảng = 54 lượt thực thi thật, phủ đủ 3 engine (Blink, Gecko, WebKit). ~~Tạo GitHub Issues cho BUG-CP-01…06~~ — **đã hoàn thành** (#213–#218). **Còn lại:** chụp lại bộ ảnh P3 trên Safari/iPhone.
   4. ~~Tạo GitHub Issues cho 30 bug của Task 1~~ — **đã hoàn thành**: toàn bộ 30 issue ([#125](https://github.com/DuyITLOR/group05_eshop/issues/125)–[#154](https://github.com/DuyITLOR/group05_eshop/issues/154)) đã được tạo trên repo [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues), link đã điền vào cột GitHub Issue của bảng 1.6. ~~**Còn lại:** tạo issue cho 9 bug Task 2~~ — **đã hoàn thành** (#220–#228).
   5. Commit git theo từng bước (checklist design → execution qua Selenium → bug logging → từng usability session → phân tích) vào `git_commit_log.txt`.
 
