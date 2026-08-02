@@ -60,7 +60,7 @@
 | IA-04 — Feedback / State | 15 | 6 | 9 | 0 |
 | **Tổng cộng** | **69** | **36** | **32** | **1** |
 
-> Thực thi bằng bộ tự động hoá Selenium (Python) tại [`selenium/`](selenium/) trên Chrome (single browser, headless, có bật `--include-lockout`), SUT chạy tại `localhost:5173` (frontend-web) + `localhost:3000` (backend). Toàn bộ 32 item Failed đều có ảnh chụp minh chứng tại [`screenshot/`](screenshot/).
+> Thực thi bằng bộ tự động hoá Selenium (Python) trên Chrome (single browser, headless, có bật `--include-lockout`), SUT chạy tại `localhost:5173` (frontend-web) + `localhost:3000` (backend). Toàn bộ 32 item Failed đều có ảnh chụp minh chứng tại [`screenshot/`](screenshot/).
 
 ## Video Demo
 
@@ -76,13 +76,12 @@ https://drive.google.com/drive/folders/19Ssxgb2v0uDsbjXkegTnivzDq4mUuWow?usp=sha
 | Tệp / Thư mục | Nội dung | Trạng thái |
 | --- | --- | --- |
 | `Main_Report.md` (+ PDF) | Báo cáo chính: GUI checklist (Task 1) + đánh giá tính khả dụng (Task 2) + cross-platform (Task 3) | ✅ cả 3 task |
-| `bug_reports.md` | 30 bug Task 1, mỗi bug 1 khối Title + Description (repro, expected/actual, severity, ảnh) | ✅ |
 | `checklist/GUI_Checklist.csv` / `.xlsx` | Checklist 69 item (> 40) + kết quả thực thi + Test Summary | ✅ |
 | `screenshot/` | Ảnh chụp minh chứng cho các item Failed (43 ảnh) | ✅ |
 | `github_issues/` | Ảnh chụp trang GitHub Issues (§14) + danh mục đối chiếu | ✅ |
 | `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` (+ PDF) | Phụ lục AI Audit Report bắt buộc — 9 artifact đã kiểm toán | ✅ |
 | `git_commit_log.txt` | Git commit log (định dạng text), 1 commit / mỗi bước kiểm thử — gồm **1 commit riêng cho mỗi phiên usability** theo §12 | ✅ |
-| `selenium/` | Bộ tự động hoá thực thi checklist (Selenium + Python) + báo cáo HTML/Markdown | ✅ |
+| `skills/` | Agent Skill tái sử dụng cho tự động hoá Selenium + [video demo](https://youtu.be/_e-uHOUETtM) | ✅ |
 | `AI_Critique.md` (+ PDF) | Phê bình AI (≈300 từ) | ✅ |
 | `usability/` | Kịch bản nhiệm vụ, danh sách 7 người tham gia, 7 file ghi chú phiên, điểm SUS | ✅ 7/7 phiên · SUS đã chấm |
 | `cross-platform/` | Bộ test 18 case × 3 nền tảng (`run_cross_platform.py`), `CrossPlatform_Matrix.csv`, `results.json`, 16 ảnh có overlay `23127344@hcmus.edu.vn` | ✅ (còn lại: tạo GitHub Issues cho BUG-CP-01…06) |

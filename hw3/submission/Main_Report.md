@@ -66,7 +66,7 @@
 
 ## 1.4 GUI Checklist — Bảng đầy đủ (Design + Execution)
 
-> **Cập nhật:** Cột `Result`/`Notes` bên dưới đã được điền từ kết quả **thực thi tự động thật** bằng bộ Selenium (`selenium/run_checklist.py`, chạy trên Chrome, single browser), không còn là suy luận tĩnh từ code. Toàn bộ 69 item đã chạy qua script; các item không thể tự động hoá (cảm quan/chủ quan) được script đánh dấu `MANUAL` kèm ảnh chụp để tự đối chiếu — đúng tinh thần "Human review" của đề bài. Báo cáo thực thi đầy đủ: [`selenium/report/report.md`](selenium/report/report.md). Ảnh chụp toàn bộ 69 item (kể cả PASS): `selenium/screenshots/<ID>.png`. **Ảnh của riêng các item FAIL/MANUAL** (43 ảnh) đã được sao chép vào [`screenshot/`](screenshot/) và link trực tiếp trong từng dòng bảng bên dưới.
+> **Cập nhật:** Cột `Result`/`Notes` bên dưới đã được điền từ kết quả **thực thi tự động thật** bằng bộ Selenium (`selenium/run_checklist.py`, chạy trên Chrome, single browser), không còn là suy luận tĩnh từ code. Toàn bộ 69 item đã chạy qua script; các item không thể tự động hoá (cảm quan/chủ quan) được script đánh dấu `MANUAL` kèm ảnh chụp để tự đối chiếu — đúng tinh thần "Human review" của đề bài. **Ảnh chụp của các item FAIL/MANUAL** (43 ảnh) được tập hợp tại [`screenshot/`](screenshot/) và link trực tiếp trong từng dòng bảng bên dưới.
 >
 > Môi trường thực thi: Chrome (Selenium Manager, chế độ headless) / Windows 11, `http://localhost:5173` + backend `http://localhost:3000`. Tài khoản test: `test@eshop.com` / `Test1234!`. Dữ liệu sản phẩm tại thời điểm chạy: 5 sản phẩm trong DB.
 
@@ -191,7 +191,7 @@
 | N/A                                   | 1 (HOME-N06 — breadcrumb không áp dụng cho Home theo FR-23)                                                        |
 | Bug phát hiện (xác nhận qua thực thi) | 30 — xem bảng 1.6                                                                                                  |
 
-> Nguồn dữ liệu: `selenium/results/results.csv` + `selenium/report/report.md` (chạy lần cuối trên Chrome headless, có bật `--include-lockout`), kết hợp xem trực tiếp toàn bộ ảnh chụp tại [`screenshot/`](screenshot/) để đưa ra kết luận PASS/FAIL cuối cùng cho các item cảm quan/chủ quan. Mỗi dòng FAIL đều có giải thích cụ thể dựa trên nội dung ảnh (và đối chiếu code khi cần) trong cột Notes — không còn item nào ở trạng thái `TODO`/`MANUAL` treo.
+> Nguồn dữ liệu: kết quả thực thi Selenium (chạy lần cuối trên Chrome headless, có bật `--include-lockout`), kết hợp xem trực tiếp toàn bộ ảnh chụp tại [`screenshot/`](screenshot/) để đưa ra kết luận PASS/FAIL cuối cùng cho các item cảm quan/chủ quan. Mỗi dòng FAIL đều có giải thích cụ thể dựa trên nội dung ảnh (và đối chiếu code khi cần) trong cột Notes — không còn item nào ở trạng thái `TODO`/`MANUAL` treo.
 >
 > **Lưu ý về giới hạn của việc đánh giá qua ảnh tĩnh:** Một số kết luận (VD LOGIN-S07 về rò rỉ token, LOGIN-S08 về double-submit, HOME-U13 về contrast chính xác theo công thức WCAG) được suy luận từ ảnh chụp + logic mã nguồn chứ không phải đo đạc trực tiếp bằng công cụ chuyên dụng (DevTools Network tab, trình tính contrast). Đây là đánh giá hợp lý nhất có thể từ bằng chứng hiện có; nếu cần độ chắc chắn tuyệt đối cho báo cáo chính thức, nên xác minh lại bằng công cụ tương ứng trước khi nộp bài.
 
@@ -242,7 +242,7 @@
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Công cụ thực thi                    | Selenium (Python) + Chrome, single browser, headless                                                         |
 | Script                              | `selenium/run_checklist.py` (hỗ trợ `--ia`, `--screen`, `--id`, `--include-lockout`)                         |
-| Report sinh tự động                 | `selenium/generate_report.py` → [`selenium/report/report.md`](selenium/report/report.md) |
+| Report sinh tự động                 | Script `generate_report.py` sinh báo cáo Markdown + HTML từ `results.json` |
 | Tổng item                           | 69                                                                                                           |
 | PASS (sau khi xem toàn bộ ảnh chụp) | 36                                                                                                           |
 | FAIL (sau khi xem toàn bộ ảnh chụp) | 32                                                                                                           |
@@ -656,5 +656,5 @@ Biến môi trường `ESHOP_LAN_URL` để đổi URL LAN cho P3 (mặc định
   1. Xác nhận thủ công BUG-GUI-07 (SQL Injection, đã xác nhận qua payload `' OR '1'='1`) bằng cách thử thêm các payload khác để đánh giá đầy đủ mức độ khai thác được.
   2. Chạy đủ 7 phiên usability thật (Task 2), không được điền số liệu giả định — dùng đúng luồng Đăng ký→Đăng nhập đã kiểm chứng kỹ thuật ở Task 1 làm cơ sở chuẩn bị câu hỏi probe.
   3. ~~Hoàn thành cross-platform thật (Task 3) với ảnh có overlay MSSV~~ — **đã hoàn thành**: 18 case × 3 nền tảng = 54 lượt thực thi thật qua Selenium (`cross-platform/run_cross_platform.py`), 16 ảnh FAIL đã có overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL. **Còn lại:** chụp ảnh bug thủ công và tạo GitHub Issues cho BUG-CP-01…06.
-  4. ~~Tạo GitHub Issues cho 30 bug của Task 1~~ — **đã hoàn thành**: toàn bộ 30 issue ([#125](https://github.com/DuyITLOR/group05_eshop/issues/125)–[#154](https://github.com/DuyITLOR/group05_eshop/issues/154)) đã được tạo trên repo [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues), nội dung lấy từ [`hw3/bug_reports.md`](bug_reports.md), link đã điền vào cột GitHub Issue của bảng 1.6. **Còn lại:** tạo issue cho các bug Task 2 (mục 2.5, BUG-UX-01…05) sau khi chạy xong các phiên usability thật.
+  4. ~~Tạo GitHub Issues cho 30 bug của Task 1~~ — **đã hoàn thành**: toàn bộ 30 issue ([#125](https://github.com/DuyITLOR/group05_eshop/issues/125)–[#154](https://github.com/DuyITLOR/group05_eshop/issues/154)) đã được tạo trên repo [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues), link đã điền vào cột GitHub Issue của bảng 1.6. **Còn lại:** tạo issue cho 10 bug Task 2 (mục 2.5, BUG-UX-01…10).
   5. Commit git theo từng bước (checklist design → execution qua Selenium → bug logging → từng usability session → phân tích) vào `git_commit_log.txt`.
