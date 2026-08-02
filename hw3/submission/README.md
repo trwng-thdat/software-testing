@@ -96,6 +96,7 @@ https://drive.google.com/drive/folders/19Ssxgb2v0uDsbjXkegTnivzDq4mUuWow?usp=sha
 | `checklist/GUI_Checklist.csv` / `.xlsx` | Checklist 69 item (> 40) + kết quả thực thi + Test Summary | ✅ |
 | `screenshot/` | Ảnh chụp minh chứng cho các item Failed (43 ảnh) | ✅ |
 | `github_issues/` | Ảnh chụp trang GitHub Issues (§14) + danh mục đối chiếu | ✅ |
+| `usability/screenshot/` | 8 ảnh minh chứng cho 9 bug Task 2 + bảng ánh xạ ảnh → bug → issue | ✅ |
 | `audit_log.md` (+ PDF) | Phụ lục AI Audit Report bắt buộc (§9) — 11 artifact đã kiểm toán | ✅ |
 | `git_commit_log.txt` | Git commit log (định dạng text), 1 commit / mỗi bước kiểm thử — gồm **1 commit riêng cho mỗi phiên usability** theo §12 | ✅ |
 | `skills/` | Agent Skill tái sử dụng cho tự động hoá Selenium + [video demo](https://youtu.be/_e-uHOUETtM) | ✅ |
