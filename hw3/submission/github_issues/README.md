@@ -19,7 +19,7 @@
 | Task | Bug | GitHub Issue | Trạng thái |
 | --- | --- | --- | --- |
 | Task 1 — GUI Checklist | BUG-GUI-01…30 | [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) | ✅ Đã tạo — xem `Main_Report.md` §1.6 |
-| Task 2 — Usability | BUG-UX-01…10 (9 bug) | [#220–#228](https://github.com/DuyITLOR/group05_eshop/issues) | ✅ Đã tạo — xem `Main_Report.md` §2.5 |
+| Task 2 — Usability | BUG-UX-01…09 (9 bug) | [#220–#228](https://github.com/DuyITLOR/group05_eshop/issues) | ✅ Đã tạo — xem `Main_Report.md` §2.5 |
 | Task 3 — Cross-Platform | BUG-CP-01…06 | [#213–#218](https://github.com/DuyITLOR/group05_eshop/issues) | ✅ Đã tạo — xem `Main_Report.md` §3.6 |
 
 ### Ánh xạ chi tiết — Task 2 (BUG-UX)
@@ -30,15 +30,15 @@
 | --- | --- | --- | --- |
 | BUG-UX-01 — Mật khẩu đúng mô tả vẫn bị từ chối | [#220](https://github.com/DuyITLOR/group05_eshop/issues/220) | **Critical** | 7/7 |
 | BUG-UX-03 — Thông báo lỗi lặp lại mô tả sai | [#221](https://github.com/DuyITLOR/group05_eshop/issues/221) | **Critical** | 7/7 |
-| BUG-UX-06 — Toggle hiện/ẩn mật khẩu hỏng | [#222](https://github.com/DuyITLOR/group05_eshop/issues/222) | High | 2/7 |
-| BUG-UX-10 — Nhãn "Username" vs xác thực bằng email | [#223](https://github.com/DuyITLOR/group05_eshop/issues/223) | High | 2/7 |
+| BUG-UX-05 — Toggle hiện/ẩn mật khẩu hỏng | [#222](https://github.com/DuyITLOR/group05_eshop/issues/222) | High | 2/7 |
+| BUG-UX-09 — Nhãn "Username" vs xác thực bằng email | [#223](https://github.com/DuyITLOR/group05_eshop/issues/223) | High | 2/7 |
 | BUG-UX-02 — Thiếu trường Xác nhận mật khẩu | [#224](https://github.com/DuyITLOR/group05_eshop/issues/224) | High | 1/7 |
 | BUG-UX-04 — Mật khẩu không che ở trang Đăng nhập | [#225](https://github.com/DuyITLOR/group05_eshop/issues/225) | High | 4/7 |
-| BUG-UX-07 — Trang Login hiển thị tiêu đề "Đăng Ký" | [#226](https://github.com/DuyITLOR/group05_eshop/issues/226) | Medium | 4/7 |
-| BUG-UX-08 — Ngôn ngữ lẫn lộn Việt/Anh | [#227](https://github.com/DuyITLOR/group05_eshop/issues/227) | Low | 1/7 |
-| BUG-UX-09 — Không kiểm tra cú pháp email | [#228](https://github.com/DuyITLOR/group05_eshop/issues/228) | Medium | 1/7 |
+| BUG-UX-06 — Trang Login hiển thị tiêu đề "Đăng Ký" | [#226](https://github.com/DuyITLOR/group05_eshop/issues/226) | Medium | 4/7 |
+| BUG-UX-07 — Ngôn ngữ lẫn lộn Việt/Anh | [#227](https://github.com/DuyITLOR/group05_eshop/issues/227) | Low | 1/7 |
+| BUG-UX-08 — Không kiểm tra cú pháp email | [#228](https://github.com/DuyITLOR/group05_eshop/issues/228) | Medium | 1/7 |
 
-**BUG-UX-06** và **BUG-UX-10** là hai bug **chỉ phát hiện được qua người dùng thật** — bộ checklist 69 item của Task 1 không bắt được.
+**BUG-UX-05** và **BUG-UX-09** là hai bug **chỉ phát hiện được qua người dùng thật** — bộ checklist 69 item của Task 1 không bắt được.
 
 ### Ánh xạ chi tiết — Task 3 (BUG-CP)
 

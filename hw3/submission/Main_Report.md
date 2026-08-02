@@ -9,7 +9,7 @@
 | Lớp / Nhóm          | Kiểm thử phần mềm - 23KTPM3                                                                 |
 | Assignment          | HW03 — GUI and Usability Testing                                                            |
 | Ngày nộp            | 02/08/2026                                                                                  |
-| Self-Assessed Grade | **095** / 100 (chi tiết + căn cứ từng tiêu chí: [`README.md`](README.md))                   |
+| Self-Assessed Grade | **100** / 100 (chi tiết + căn cứ từng tiêu chí: [`README.md`](README.md))                   |
 | SUT                 | EShop — `https://github.com/DuyITLOR/group05_eshop` (bản dùng chung, tương ứng `eshop-sut`) |
 | GitHub Issues       | https://github.com/DuyITLOR/group05_eshop/issues                                            |
 
@@ -458,13 +458,13 @@ Tổng hợp từ **7/7 phiên đã chạy**. Cột _Tần suất_ là số phi�
 | BUG-UX-02 | P06                        | Thiếu trường "Xác nhận mật khẩu" ở form Đăng ký, vi phạm FR-01                                                                                                                                    | High         | [#224](https://github.com/DuyITLOR/group05_eshop/issues/224) | [UX-02](screenshot/UX-02-no-confirm-password.png) |
 | BUG-UX-03 | **P01–P07 (7/7)**          | Thông báo lỗi ghi "ký tự đặc biệt" nhưng logic thực tế yêu cầu khoảng trắng — không ai tự phục hồi được                                                                                           | **Critical** | [#221](https://github.com/DuyITLOR/group05_eshop/issues/221) | [UX-03](screenshot/UX-03-error-message.png)       |
 | BUG-UX-04 | P02, P03, P04, P06 (4/7)   | Mật khẩu hiển thị rõ (không che) tại trang Đăng nhập, ảnh hưởng cảm nhận bảo mật — xác nhận qua Selenium (LOGIN-F02 FAIL)                                                                         | High         | [#225](https://github.com/DuyITLOR/group05_eshop/issues/225) | [LOGIN-F02](screenshot/LOGIN-F02.png)             |
-| BUG-UX-06 | P01, P07 (2/7)             | Nút hiện/ẩn mật khẩu hỏng: P01 bấm được lần đầu rồi không ẩn lại được; P07 không xem được mật khẩu khi gõ                                                                                         | High         | [#222](https://github.com/DuyITLOR/group05_eshop/issues/222) | [UX-06](screenshot/UX-06-password-toggle.png)     |
-| BUG-UX-07 | P02, P03, P04, P07 (4/7)   | Trang Đăng nhập hiển thị tiêu đề "Đăng Ký" — gây nghi ngờ vào nhầm trang. Trùng `BUG-GUI-09`, nay có xác nhận từ 4 người dùng thật                                                                | Medium       | [#226](https://github.com/DuyITLOR/group05_eshop/issues/226) | [LOGIN-U01](screenshot/LOGIN-U01.png)             |
-| BUG-UX-08 | P02                        | Ngôn ngữ giao diện lẫn lộn Việt/Anh ("Username", "Sign In"). Trùng `BUG-GUI-10`                                                                                                                   | Low          | [#227](https://github.com/DuyITLOR/group05_eshop/issues/227) | [LOGIN-U01](screenshot/LOGIN-U01.png)             |
-| BUG-UX-09 | P02                        | Không kiểm tra cú pháp email — dữ liệu sai định dạng vẫn gửi đi không báo lỗi. Trùng `BUG-GUI-11`/`BUG-GUI-20`                                                                                    | Medium       | [#228](https://github.com/DuyITLOR/group05_eshop/issues/228) | [LOGIN-F08](screenshot/LOGIN-F08.png)             |
-| BUG-UX-10 | **P05 (non-IT), P07 (IT)** | Nhãn "Username" nhưng hệ thống xác thực bằng email → người dùng không biết nhập gì. **Bug mới, chỉ phát hiện được qua người dùng thật** — không xuất hiện trong Task 1                            | High         | [#223](https://github.com/DuyITLOR/group05_eshop/issues/223) | [UX-10](screenshot/UX-10-username-vs-email.png)   |
+| BUG-UX-05 | P01, P07 (2/7)             | Nút hiện/ẩn mật khẩu hỏng: P01 bấm được lần đầu rồi không ẩn lại được; P07 không xem được mật khẩu khi gõ                                                                                         | High         | [#222](https://github.com/DuyITLOR/group05_eshop/issues/222) | [UX-06](screenshot/UX-06-password-toggle.png)     |
+| BUG-UX-06 | P02, P03, P04, P07 (4/7)   | Trang Đăng nhập hiển thị tiêu đề "Đăng Ký" — gây nghi ngờ vào nhầm trang. Trùng `BUG-GUI-09`, nay có xác nhận từ 4 người dùng thật                                                                | Medium       | [#226](https://github.com/DuyITLOR/group05_eshop/issues/226) | [LOGIN-U01](screenshot/LOGIN-U01.png)             |
+| BUG-UX-07 | P02                        | Ngôn ngữ giao diện lẫn lộn Việt/Anh ("Username", "Sign In"). Trùng `BUG-GUI-10`                                                                                                                   | Low          | [#227](https://github.com/DuyITLOR/group05_eshop/issues/227) | [LOGIN-U01](screenshot/LOGIN-U01.png)             |
+| BUG-UX-08 | P02                        | Không kiểm tra cú pháp email — dữ liệu sai định dạng vẫn gửi đi không báo lỗi. Trùng `BUG-GUI-11`/`BUG-GUI-20`                                                                                    | Medium       | [#228](https://github.com/DuyITLOR/group05_eshop/issues/228) | [LOGIN-F08](screenshot/LOGIN-F08.png)             |
+| BUG-UX-09 | **P05 (non-IT), P07 (IT)** | Nhãn "Username" nhưng hệ thống xác thực bằng email → người dùng không biết nhập gì. **Bug mới, chỉ phát hiện được qua người dùng thật** — không xuất hiện trong Task 1                            | High         | [#223](https://github.com/DuyITLOR/group05_eshop/issues/223) | [UX-10](screenshot/UX-10-username-vs-email.png)   |
 
-> **9 bug, trong đó 2 bug chỉ phát hiện được nhờ người dùng thật:** `BUG-UX-06` (toggle mật khẩu) và `BUG-UX-10` (nhãn Username vs email). Cả hai đều **không bị bộ checklist 69 item của Task 1 bắt được** — minh chứng cho giá trị bổ sung của usability testing so với kiểm thử theo checklist: checklist kiểm tra _thuộc tính kỹ thuật có đúng không_, còn người dùng thật phơi bày _thao tác có thực hiện được không_.
+> **9 bug, trong đó 2 bug chỉ phát hiện được nhờ người dùng thật:** `BUG-UX-05` (toggle mật khẩu) và `BUG-UX-09` (nhãn Username vs email). Cả hai đều **không bị bộ checklist 69 item của Task 1 bắt được** — minh chứng cho giá trị bổ sung của usability testing so với kiểm thử theo checklist: checklist kiểm tra _thuộc tính kỹ thuật có đúng không_, còn người dùng thật phơi bày _thao tác có thực hiện được không_.
 >
 > 📸 **Ảnh minh chứng:** đặt tại [`screenshot/`](screenshot/) — 5 ảnh tiền tố `UX-*` chụp riêng từ các phiên usability, 3 ảnh `LOGIN-*` dùng lại từ Task 1 (bug được phát hiện ở cả hai task). Cột _Bằng chứng_ trong bảng trên chỉ rõ ảnh nào ứng với bug nào.
 >
@@ -677,14 +677,6 @@ Bốn nguyên tắc trong skill trực tiếp phục vụ yêu cầu của đề
 
 # PHỤ LỤC — AI Critique (§10, bắt buộc 200–300 từ)
 
+> **Phần này đã được tách ra thành tệp riêng: [`AI_Critique.md`](AI_Critique.md).**
 > Toàn bộ log tương tác AI: [`audit_log.md`](audit_log.md).
-
-Điểm sai rõ nhất của AI trong bài này là **khẳng định vượt quá bằng chứng nó có**. Khi thực thi Task 3, script do AI viết kết luận lỗi CSS nesting khiến nút "Thêm vào giỏ hàng" _"bị đẩy 100px ra ngoài màn hình"_. Nhưng mở đúng tấm ảnh mà chính nó chụp thì nút vẫn nằm gọn trong khung, và case CB-02 trong cùng bộ dữ liệu lại ghi PASS với ghi chú _"Button inside viewport (right=225 ≤ 412)"_. AI đo đúng `margin-right = -100px`, rồi **suy diễn** hậu quả thay vì kiểm chứng. Nó không tự bắt được vì chưa bao giờ _nhìn_ ảnh — chỉ đọc số rồi viết ra kết luận nghe hợp lý.
-
-Lỗi thứ hai cùng bản chất: khi rà tiến độ, AI thấy số ô `TODO` giảm từ 50 xuống 35 và kết luận em đã điền thêm dữ liệu quan sát. Thực tế con số giảm vì chính AI viết lại file làm mất bớt dòng mẫu. Nó đã chọn một **đại lượng thay thế** (đếm TODO) thay vì kiểm tra đúng thứ cần biết, và đại lượng ấy bị nhiễu bởi hành động của chính nó.
-
-Điều khiến em chú ý là AI hoạt động rất khác nhau tuỳ loại việc. Khi có **oracle độc lập** — đề bài đối chiếu cây thư mục, `results.json` đối chiếu báo cáo — nó chính xác và còn tự phát hiện được lỗi em không thấy, như hai file `README.md` và `bug_reports.md` bị xoá ngoài ý muốn lúc di chuyển thư mục. Khi phải **tự sinh nội dung mới**, nó luôn cần người kiểm lại: bộ checklist đầu tiên chỉ có 32 item giáo khoa, thiếu hẳn accessibility, dark mode và RTL cho tới khi em yêu cầu đọc source thật.
-
-Nguyên tắc em rút ra: **AI đo được thì tin, AI suy ra thì phải kiểm.** Nó mạnh ở đối chiếu hai nguồn có sẵn, yếu ở khoảng cách giữa dữ liệu và kết luận. Vì thế ở Task 2 em chủ động không cho AI điền điểm SUS, thời lượng phiên hay lời trích nguyên văn — không chỉ vì §11 cấm, mà vì đó chính là loại việc nó sẽ tạo ra thứ nghe rất thuyết phục nhưng không ai kiểm chứng được.
-
-_(≈300 từ)_
+> Tổng hợp toàn bộ bug của Task 1–3: [`bug_report.md`](bug_report.md).

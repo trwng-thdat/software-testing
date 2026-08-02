@@ -14,6 +14,7 @@ _Chuyển thể từ Med Kharbach, PhD (2026) — AI Use Policy Templates for Hi
 
 ## **1. Thông tin Sinh viên**
 
+
 | Trường thông tin | Giá trị |
 | :---- | :---- |
 | **Họ tên sinh viên (in hoa):** | TRƯƠNG THÀNH ĐẠT |

@@ -2,7 +2,7 @@
 
 - **MSSV:** 23127344 — Trương Thành Đạt
 - **Luồng test:** Đăng ký (FR-01) → Đăng nhập (FR-02) trên EShop
-- **Số phiên:** 7/7 · **Bản ghi:** 7/7 · **Bug phát hiện:** 9 (BUG-UX-01…10, trừ 05)
+- **Số phiên:** 7/7 · **Bản ghi:** 7/7 · **Bug phát hiện:** 9 (BUG-UX-01…09)
 
 > File này gom mọi liên kết của Task 2 vào một chỗ để tra cứu nhanh. Phân tích đầy đủ nằm ở [`../Main_Report.md`](../Main_Report.md) §2.
 
@@ -49,14 +49,14 @@
 | BUG-UX-01 — Mật khẩu đúng mô tả vẫn bị từ chối | [#220](https://github.com/DuyITLOR/group05_eshop/issues/220) | **Critical** | P01–P07 | **7/7** | [UX-01](../screenshot/UX-01-password-rejected.png) |
 | BUG-UX-03 — Thông báo lỗi lặp lại mô tả sai | [#221](https://github.com/DuyITLOR/group05_eshop/issues/221) | **Critical** | P01–P07 | **7/7** | [UX-03](../screenshot/UX-03-error-message.png) |
 | BUG-UX-04 — Mật khẩu không che ở trang Đăng nhập | [#225](https://github.com/DuyITLOR/group05_eshop/issues/225) | High | P02, P03, P04, P06 | 4/7 | [LOGIN-F02](../screenshot/LOGIN-F02.png) |
-| BUG-UX-07 — Trang Login hiển thị tiêu đề "Đăng Ký" | [#226](https://github.com/DuyITLOR/group05_eshop/issues/226) | Medium | P02, P03, P04, P07 | 4/7 | [LOGIN-U01](../screenshot/LOGIN-U01.png) |
-| **BUG-UX-06** — Toggle hiện/ẩn mật khẩu hỏng | [#222](https://github.com/DuyITLOR/group05_eshop/issues/222) | High | P01, P07 | 2/7 | [UX-06](../screenshot/UX-06-password-toggle.png) |
-| **BUG-UX-10** — Nhãn "Username" vs xác thực bằng email | [#223](https://github.com/DuyITLOR/group05_eshop/issues/223) | High | P05, P07 | 2/7 | [UX-10](../screenshot/UX-10-username-vs-email.png) |
+| BUG-UX-06 — Trang Login hiển thị tiêu đề "Đăng Ký" | [#226](https://github.com/DuyITLOR/group05_eshop/issues/226) | Medium | P02, P03, P04, P07 | 4/7 | [LOGIN-U01](../screenshot/LOGIN-U01.png) |
+| **BUG-UX-05** — Toggle hiện/ẩn mật khẩu hỏng | [#222](https://github.com/DuyITLOR/group05_eshop/issues/222) | High | P01, P07 | 2/7 | [UX-06](../screenshot/UX-06-password-toggle.png) |
+| **BUG-UX-09** — Nhãn "Username" vs xác thực bằng email | [#223](https://github.com/DuyITLOR/group05_eshop/issues/223) | High | P05, P07 | 2/7 | [UX-10](../screenshot/UX-10-username-vs-email.png) |
 | BUG-UX-02 — Thiếu trường Xác nhận mật khẩu | [#224](https://github.com/DuyITLOR/group05_eshop/issues/224) | High | P06 | 1/7 | [UX-02](../screenshot/UX-02-no-confirm-password.png) |
-| BUG-UX-08 — Ngôn ngữ lẫn lộn Việt/Anh | [#227](https://github.com/DuyITLOR/group05_eshop/issues/227) | Low | P02 | 1/7 | [LOGIN-U01](../screenshot/LOGIN-U01.png) |
-| BUG-UX-09 — Không kiểm tra cú pháp email | [#228](https://github.com/DuyITLOR/group05_eshop/issues/228) | Medium | P02 | 1/7 | [LOGIN-F08](../screenshot/LOGIN-F08.png) |
+| BUG-UX-07 — Ngôn ngữ lẫn lộn Việt/Anh | [#227](https://github.com/DuyITLOR/group05_eshop/issues/227) | Low | P02 | 1/7 | [LOGIN-U01](../screenshot/LOGIN-U01.png) |
+| BUG-UX-08 — Không kiểm tra cú pháp email | [#228](https://github.com/DuyITLOR/group05_eshop/issues/228) | Medium | P02 | 1/7 | [LOGIN-F08](../screenshot/LOGIN-F08.png) |
 
-> **BUG-UX-06** và **BUG-UX-10** (in đậm) là hai bug **chỉ phát hiện được qua người dùng thật** — bộ checklist 69 item của Task 1 không bắt được, vì chúng chỉ lộ ra khi có người thao tác thật (bấm toggle hai lần, đi trọn luồng đăng ký → đăng nhập).
+> **BUG-UX-05** và **BUG-UX-09** (in đậm) là hai bug **chỉ phát hiện được qua người dùng thật** — bộ checklist 69 item của Task 1 không bắt được, vì chúng chỉ lộ ra khi có người thao tác thật (bấm toggle hai lần, đi trọn luồng đăng ký → đăng nhập).
 
 ---
 
