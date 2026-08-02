@@ -662,7 +662,7 @@ Biến môi trường `ESHOP_LAN_URL` để đổi URL LAN cho P3 (mặc định
 
 # PHỤ LỤC — AI Critique (§10, bắt buộc 200–300 từ)
 
-> Bản đầy đủ: [`AI_Critique.md`](AI_Critique.md). Toàn bộ log tương tác: [`audit_log.md`](audit_log.md).
+> Toàn bộ log tương tác AI: [`audit_log.md`](audit_log.md).
 
 Điểm sai rõ nhất của AI trong bài này là **khẳng định vượt quá bằng chứng nó có**. Khi thực thi Task 3, script do AI viết kết luận lỗi CSS nesting khiến nút "Thêm vào giỏ hàng" *"bị đẩy 100px ra ngoài màn hình"*. Nhưng mở đúng tấm ảnh mà chính nó chụp thì nút vẫn nằm gọn trong khung, và case CB-02 trong cùng bộ dữ liệu lại ghi PASS với ghi chú *"Button inside viewport (right=225 ≤ 412)"*. AI đo đúng `margin-right = -100px`, rồi **suy diễn** hậu quả thay vì kiểm chứng. Nó không tự bắt được vì chưa bao giờ *nhìn* ảnh — chỉ đọc số rồi viết ra kết luận nghe hợp lý.
 

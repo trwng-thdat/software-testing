@@ -1,4 +1,5 @@
-9ba6f46 | 2026-08-02 12:35 | docs(hw03-task2): remove BUG-UX-05 from submission entirely
+5d3fca2 | 2026-08-02 12:35 | docs(hw03): fix references after AI_Critique.md merged into Main_Report
+1d29fbf | 2026-08-02 12:35 | docs(hw03-task2): remove BUG-UX-05 from submission entirely
 0e1379b | 2026-08-02 12:01 | docs(hw03): rename AI audit report to audit_log.md
 746ec17 | 2026-08-02 11:58 | docs(hw03): embed AI Critique in Main_Report, finalise audit conclusion
 c86b89d | 2026-08-02 11:04 | docs(hw03): correct participant names, fill self-assessment, log 2 artifacts

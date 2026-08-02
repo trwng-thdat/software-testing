@@ -99,7 +99,7 @@ https://drive.google.com/drive/folders/19Ssxgb2v0uDsbjXkegTnivzDq4mUuWow?usp=sha
 | `audit_log.md` (+ PDF) | Phụ lục AI Audit Report bắt buộc (§9) — 11 artifact đã kiểm toán | ✅ |
 | `git_commit_log.txt` | Git commit log (định dạng text), 1 commit / mỗi bước kiểm thử — gồm **1 commit riêng cho mỗi phiên usability** theo §12 | ✅ |
 | `skills/` | Agent Skill tái sử dụng cho tự động hoá Selenium + [video demo](https://youtu.be/_e-uHOUETtM) | ✅ |
-| `AI_Critique.md` (+ PDF) | Phê bình AI (≈300 từ) | ✅ |
+| AI Critique (§10) | Phê bình AI ≈300 từ — đặt ở phần **Phụ lục cuối `Main_Report.md`** | ✅ |
 | `usability/` | Kịch bản nhiệm vụ, danh sách 7 người tham gia, 7 file ghi chú phiên, điểm SUS | ✅ 7/7 phiên · SUS đã chấm |
 | `cross-platform/` | Bộ test 18 case × 3 nền tảng (`run_cross_platform.py`), `CrossPlatform_Matrix.csv`, `results.json`, 16 ảnh có overlay `23127344@hcmus.edu.vn` | ✅ (còn lại: tạo GitHub Issues cho BUG-CP-01…06) |
 | Agent Skills + video demo | Skill tái sử dụng + [video demo](https://youtu.be/_e-uHOUETtM) | ✅ |

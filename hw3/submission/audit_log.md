@@ -10,7 +10,7 @@ _Phụ lục bắt buộc cho mọi bài tập có sử dụng AI (HW#01–HW#06
 
 _Chuyển thể từ Med Kharbach, PhD (2026) — AI Use Policy Templates for Higher Education. CC BY-NC-SA 4.0. Bản chuyển thể này được chuẩn bị cho môn Kiểm thử Phần mềm CS423 / CSC15003 tại FIT@HCMUS._
 
-> **AI Critique (§10)** — bài phê bình AI 200–300 từ nằm tại [`AI_Critique.md`](AI_Critique.md), và được nhắc lại ở phần Phụ lục cuối [`Main_Report.md`](Main_Report.md). Nội dung đó dựa trực tiếp trên các artifact được kiểm toán trong Mục 3 dưới đây.
+> **AI Critique (§10)** — bài phê bình AI 200–300 từ nằm ở phần Phụ lục cuối [`Main_Report.md`](Main_Report.md). Nội dung đó dựa trực tiếp trên các artifact được kiểm toán trong Mục 3 dưới đây.
 
 ## **1. Thông tin Sinh viên**
 
