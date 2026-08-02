@@ -10,6 +10,8 @@ _Phụ lục bắt buộc cho mọi bài tập có sử dụng AI (HW#01–HW#06
 
 _Chuyển thể từ Med Kharbach, PhD (2026) — AI Use Policy Templates for Higher Education. CC BY-NC-SA 4.0. Bản chuyển thể này được chuẩn bị cho môn Kiểm thử Phần mềm CS423 / CSC15003 tại FIT@HCMUS._
 
+> **AI Critique (§10)** — bài phê bình AI 200–300 từ nằm tại [`AI_Critique.md`](AI_Critique.md), và được nhắc lại ở phần Phụ lục cuối [`Main_Report.md`](Main_Report.md). Nội dung đó dựa trực tiếp trên các artifact được kiểm toán trong Mục 3 dưới đây.
+
 ## **1. Thông tin Sinh viên**
 
 | Trường thông tin | Giá trị |
@@ -381,15 +383,13 @@ Tổng hợp các kết luận (verdict) từ Mục 3 và hoàn thành bảng d�
 
 ## **5. Kết luận — Khi nào nên (hoặc không nên) dùng AI?**
 
-Viết 80–150 từ mô tả các quy luật bạn quan sát được. AI toả sáng ở đâu? AI thất bại ở đâu? Khuyến nghị của bạn cho việc dùng AI trong loại công việc này trong tương lai là gì?
+Qua **11 artifact** được kiểm toán, quy luật rõ nhất là **verdict phụ thuộc vào việc tác vụ có oracle kiểm chứng độc lập hay không**. AI đáng tin khi câu trả lời đối chiếu được với một nguồn cố định nằm ngoài nó: đọc đề bài (#6), đối chiếu cây thư mục với yêu cầu (#5, #9), so 54 verdict với `results.json` (#8). Cả 5 artifact VALID đều thuộc nhóm này. AI thất bại khi **sinh nội dung mới mà chưa thấy hệ thống thật** — checklist 32 item ban đầu (#2) bỏ sót toàn bộ accessibility, dark mode và RTL.
 
-> _Bản nháp dưới đây (~130 từ, trong khoảng 80–150 yêu cầu) soạn dựa trên dữ liệu kiểm toán thật ở Mục 3–4. Sinh viên đọc lại, sửa theo trải nghiệm cá nhân và tự chịu trách nhiệm trước khi nộp._
+Nguy hiểm nhất không phải AI trả lời sai, mà là **công cụ chạy "thành công" nhưng kết luận sai**. Hai ca trong bài này: `seed_cart()` ghi `localStorage` trong khi giỏ hàng chỉ nằm trong React state, khiến case báo `N/A` giả mà không báo lỗi (#7); và `run_cross_platform.py` ghi đè `results.json` thành 54 case BLOCKED khi driver không tải được, xoá sạch kết quả thật mà không cảnh báo (#11). Cả hai đều là khiếm khuyết của **công cụ kiểm thử**, không phải của SUT — và chỉ phát hiện được nhờ đối chiếu với dữ liệu tham chiếu đã commit vào git.
 
-Qua 8 artifact, quy luật rõ nhất là **verdict phụ thuộc vào việc tác vụ có oracle kiểm chứng độc lập hay không**. AI đáng tin khi câu trả lời đối chiếu được với nguồn cố định: đọc đề bài, đếm `TODO`, so kết quả với `results.json`. Cả 3 artifact VALID đều thuộc nhóm này. AI thất bại khi **sinh nội dung mới mà không thấy hệ thống thật**: checklist 32 item ban đầu bỏ sót toàn bộ accessibility, dark mode, RTL.
+Một quy luật thứ ba, ít gặp hơn nhưng đáng ghi: AI đáng tin nhất khi **nhận ra ranh giới của chính nó** (#10 — từ chối sinh điểm SUS vì đó là dữ liệu không có oracle). Dữ liệu thật thu được sau đó chứa những bất thường có giá trị chẩn đoán (P05 straight-lining, P04 chấm thấp dù tự giải được lỗi) mà một bộ số do AI sinh sẽ làm mất — chính **độ nhiễu** là thứ chứng minh dữ liệu là thật.
 
-Nguy hiểm nhất không phải AI trả lời sai, mà là **script chạy "thành công" nhưng kết luận sai**: ở Task 3, `seed_cart()` ghi vào `localStorage` trong khi giỏ hàng chỉ nằm trong React state, khiến 2 case báo `N/A` giả mà không báo lỗi.
-
-Khuyến nghị: dùng AI để tự động hoá, nhưng luôn tự kiểm chứng oracle và bắt AI nêu rõ giới hạn phép đo.
+**Khuyến nghị:** dùng AI để tự động hoá và đối chiếu, nhưng (1) luôn xác định oracle trước khi tin kết quả; (2) commit dữ liệu tham chiếu vào quản lý cấu hình trước khi chạy công cụ tự động; (3) bắt AI nêu rõ giới hạn phép đo thay vì để nó viết kết luận nghe trơn tru.
 
 ## **6. Công bố Bắt buộc (dán nguyên văn)**
 
