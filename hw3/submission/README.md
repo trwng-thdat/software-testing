@@ -8,11 +8,28 @@
 
 | STT | Tiêu chí | Điểm | Tự đánh giá |
 | --- | --- | --- | --- |
-| 1 | Task 1 — GUI Checklist (thiết kế + thực thi + báo cáo bug) | 30 | TODO — tự chấm trước khi nộp |
-| 2 | Task 2 — Đánh giá Tính khả dụng (kịch bản + 7 phiên thử + phân tích) | 40 | TODO — tự chấm trước khi nộp |
-| 3 | Task 3 — Cross-Browser / Cross-Platform (≥ 3 nền tảng) | 20 | TODO — tự chấm trước khi nộp |
-| 4 | Agent Skills | 10 | TODO — tự chấm trước khi nộp ([video demo](https://youtu.be/_e-uHOUETtM)) |
-| | **Tổng cộng** | **100** | TODO — tổng 4 dòng trên, ghi vào tên file .zip |
+| 1 | Task 1 — GUI Checklist (thiết kế + thực thi + báo cáo bug) | 30 | **29** |
+| 2 | Task 2 — Đánh giá Tính khả dụng (kịch bản + 7 phiên thử + phân tích) | 40 | **35** |
+| 3 | Task 3 — Cross-Browser / Cross-Platform (≥ 3 nền tảng) | 20 | **18** |
+| 4 | Agent Skills | 10 | **7** |
+| | **Tổng cộng** | **100** | **89** |
+
+<details>
+<summary><b>Căn cứ tự chấm</b> (nhấn để xem)</summary>
+
+**Task 1 — 29/30.** Vượt yêu cầu ở hầu hết tiêu chí: 69 item (yêu cầu >40), phủ đủ 4 IA trên 2 màn hình, thực thi tự động 100%, 30 bug đều có GitHub Issue kèm ảnh, quy trình AI-First có ghi lại đầy đủ prompt → review → bổ sung item AI bỏ sót.
+*Trừ 1 điểm:* ba kết luận (LOGIN-S07 rò rỉ token, LOGIN-S08 double-submit, HOME-U13 contrast WCAG) được suy ra từ ảnh + logic mã nguồn chứ chưa đo trực tiếp bằng DevTools Network / công cụ tính contrast — đã tự ghi rõ giới hạn này ở mục 1.5 thay vì trình bày như đã đo.
+
+**Task 2 — 35/40.** Đủ 7 người tham gia thật, tất cả có bản ghi màn hình; pilot chạy trước; SUS chấm đủ 7 người kèm phân tích đối chiếu với quan sát hành vi; 10 bug với tần suất gặp phải cho từng phát hiện; tách bạch systemic/isolated.
+*Trừ 5 điểm:* (1) một số ô quan sát trong file phiên chưa điền (thiết bị/OS, thời lượng chính xác, quote nguyên văn, probe Speed/Trust ở vài phiên) và Outcome cuối của P04–P07 chưa xác nhận dứt khoát; (2) mẫu lệch 6/7 dân IT, chỉ 1 người non-IT, làm giảm tính đại diện — đã nêu như giới hạn nghiên cứu; (3) P05 chấm SUS đồng loạt điểm 3 (straight-lining) làm nhiễu số trung bình; (4) chưa tạo GitHub Issue cho 10 bug BUG-UX.
+
+**Task 3 — 18/20.** Đủ 3 nền tảng với **2 engine khác nhau thật** (Blink + Gecko), 18 test case × 3 = 54 lượt chạy, phát hiện 1 bug phân kỳ nền tảng thật, mọi ảnh có overlay MSSV + nền tảng + URL, 6 bug đều có GitHub Issue (#213–#218), báo cáo nêu rõ 4 giới hạn phép đo.
+*Trừ 2 điểm:* P3 là **Chrome mobile emulation** chứ không phải thiết bị Android vật lý (§6 ưu tiên máy thật hoặc cloud tool như BrowserStack/LambdaTest); WebKit không chạy được trên Windows nên không có engine thứ ba thật sự.
+
+**Agent Skills — 7/10.** Có skill đóng gói dạng `SKILL.md` tái sử dụng được, kèm video demo end-to-end.
+*Trừ 3 điểm:* §7 nêu skill nên áp dụng cho **GUI-checklist** và **usability-evaluation**; skill hiện tại là về tự động hoá Selenium nói chung (được dùng để chạy 69 item checklist của Task 1, nhưng không bao phủ khâu *thiết kế* checklist hay quy trình usability). Chưa có skill riêng cho hoạt động usability-evaluation.
+
+</details>
 
 ## Báo cáo Tóm tắt Kiểm thử
 

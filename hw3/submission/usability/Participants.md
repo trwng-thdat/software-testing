@@ -10,12 +10,12 @@
 | Mã  | Họ tên | Liên hệ (Zalo/SĐT/Email, che 4 số giữa) | Nghề nghiệp / Vai trò | Có phải dân IT/tester? | Ngày thực hiện | Ghi chú       |
 | --- | ------ | --------------------------------------- | --------------------- | ---------------------- | -------------- | ------------- |
 | P01 | Nguyễn Thành Đăng | ntdang23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 31/07/2026 | Pilot session |
-| P02 | Lê Nguyễn Duy | lnduy223@clc.fitus.edu.vn | Sinh viên | Có (IT) | 31/07/2026 |               |
-| P03 | Lê Quang Thạnh | lqthanh23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 31/07/2026 |               |
-| P04 | Nguyễn Lê Thành Phú | nltphu23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 31/07/2026 |               |
+| P02 | Lê Nhựt Duy | lnduy223@clc.fitus.edu.vn | Sinh viên | Có (IT) | 31/07/2026 |               |
+| P03 | Lý Quốc Thạnh | lqthanh23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 31/07/2026 |               |
+| P04 | Nguyễn Lê Thiên Phú | nltphu23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 31/07/2026 |               |
 | P05 | Nguyễn Đức Minh | ducminhnguyen@gmail.com | Sinh viên | **Không** (non-IT) | 01/08/2026 |               |
-| P06 | **TODO — điền họ tên** | ntdat23@clc.fitus.edu.vn | Sinh viên | Có (IT) | TODO — điền ngày | Ca nặng nhất: không tạo được mật khẩu |
-| P07 | Quốc *(bổ sung họ tên đầy đủ)* | htquoc23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 02/08/2026 | Không tạo được mật khẩu |
+| P06 | Ngô Thế Đạt | ntdat23@clc.fitus.edu.vn | Sinh viên | Có (IT) | TODO — điền ngày | Ca nặng nhất: không tạo được mật khẩu |
+| P07 | Hồ Tấn Quốc | htquoc23@clc.fitus.edu.vn | Sinh viên | Có (IT) | 02/08/2026 | Không tạo được mật khẩu |
 
 > **Trạng thái:** ✅ **đã hoàn thành đủ 7/7 phiên**, tất cả đều có bản ghi màn hình (link trong `Main_Report.md` §2.3).
 >

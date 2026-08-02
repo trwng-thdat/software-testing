@@ -319,12 +319,12 @@ Quy trình mỗi phiên (áp dụng cho cả 7 người tham gia P01–P07):
 | Phiên | Người tham gia | Ngày | Ghi chú phiên | Link video |
 | --- | --- | --- | --- | --- |
 | P01 | Nguyễn Thành Đăng | 31/07/2026 | [`sessions/P01.md`](usability/sessions/P01.md) — pilot | [Xem video](https://drive.google.com/file/d/1b-tYo9dVvlvD2rj1qvwOJ08nIV90g7K9/view?usp=sharing) |
-| P02 | Lê Nguyễn Duy | 31/07/2026 | [`sessions/P02.md`](usability/sessions/P02.md) | [Xem video](https://drive.google.com/file/d/1m_6ZgYLYON5THJ5wcRnexa6zoKqCLyGR/view?usp=sharing) |
-| P03 | Lê Quang Thạnh | 31/07/2026 | [`sessions/P03.md`](usability/sessions/P03.md) | [Xem video](https://drive.google.com/file/d/12Uq3veewS9r13gOnfJCDldpAYowDVFqL/view?usp=sharing) |
-| P04 | Nguyễn Lê Thành Phú | 31/07/2026 | [`sessions/P04.md`](usability/sessions/P04.md) | [Xem video](https://drive.google.com/file/d/1rh6ItuSb1EuOoyFAvjQjsMnP7jSHjtLC/view?usp=sharing) |
+| P02 | Lê Nhựt Duy | 31/07/2026 | [`sessions/P02.md`](usability/sessions/P02.md) | [Xem video](https://drive.google.com/file/d/1m_6ZgYLYON5THJ5wcRnexa6zoKqCLyGR/view?usp=sharing) |
+| P03 | Lý Quốc Thạnh | 31/07/2026 | [`sessions/P03.md`](usability/sessions/P03.md) | [Xem video](https://drive.google.com/file/d/12Uq3veewS9r13gOnfJCDldpAYowDVFqL/view?usp=sharing) |
+| P04 | Nguyễn Lê Thiên Phú | 31/07/2026 | [`sessions/P04.md`](usability/sessions/P04.md) | [Xem video](https://drive.google.com/file/d/1rh6ItuSb1EuOoyFAvjQjsMnP7jSHjtLC/view?usp=sharing) |
 | P05 | Nguyễn Đức Minh | 01/08/2026 | [`sessions/P05.md`](usability/sessions/P05.md) — non-IT | [Xem video](https://drive.google.com/file/d/15Jamwx0fW2PdeMYtRb_pGfCi4kxBWWlh/view?usp=sharing) |
-| P06 | *(xem Participants.md)* | 01/08/2026 | [`sessions/P06.md`](usability/sessions/P06.md) | [Xem video](https://drive.google.com/file/d/1f6NoEE42pFugpA_9N1Jo8NjfXfSy-2ng/view?usp=sharing) |
-| P07 | Quốc | 02/08/2026 | [`sessions/P07.md`](usability/sessions/P07.md) | [Xem video](https://drive.google.com/file/d/1TqRKHKzFvRTeYIHzYwPgqCrAb1bDr_pi/view?usp=sharing) (4:24) |
+| P06 | Ngô Thế Đạt | 01/08/2026 | [`sessions/P06.md`](usability/sessions/P06.md) | [Xem video](https://drive.google.com/file/d/1f6NoEE42pFugpA_9N1Jo8NjfXfSy-2ng/view?usp=sharing) |
+| P07 | Hồ Tấn Quốc | 02/08/2026 | [`sessions/P07.md`](usability/sessions/P07.md) | [Xem video](https://drive.google.com/file/d/1TqRKHKzFvRTeYIHzYwPgqCrAb1bDr_pi/view?usp=sharing) (4:24) |
 
 > ⚠️ **Quyền truy cập:** link đặt ở chế độ "Anyone with the link". Nếu người chấm không mở được, liên hệ MSSV 23127344 để cấp quyền.
 
@@ -350,12 +350,12 @@ Quy trình mỗi phiên (áp dụng cho cả 7 người tham gia P01–P07):
 | Participant | Nền tảng | Điểm SUS | Xếp hạng<br>(Sauro & Lewis) | Ghi chú |
 | --- | --- | --- | --- | --- |
 | P01 — Nguyễn Thành Đăng | IT | **17.5** | F | Pilot; blocker mật khẩu + lỗi toggle hiện/ẩn |
-| P02 — Lê Nguyễn Duy | IT | **12.5** | F | Nêu nhiều vấn đề nhất (5 phát hiện) |
-| P03 — Lê Quang Thạnh | IT | **17.5** | F | |
-| P04 — Nguyễn Lê Thành Phú | IT | **5.0** | F | **Thấp nhất** — dù là người duy nhất tự chẩn đoán ra lỗi |
+| P02 — Lê Nhựt Duy | IT | **12.5** | F | Nêu nhiều vấn đề nhất (5 phát hiện) |
+| P03 — Lý Quốc Thạnh | IT | **17.5** | F | |
+| P04 — Nguyễn Lê Thiên Phú | IT | **5.0** | F | **Thấp nhất** — dù là người duy nhất tự chẩn đoán ra lỗi |
 | P05 — Nguyễn Đức Minh | **non-IT** | **50.0** | F | **Cao nhất** — xem cảnh báo về straight-lining bên dưới |
 | P06 | IT | **17.5** | F | Không tạo được mật khẩu |
-| P07 — Quốc | IT | **15.0** | F | Không tạo được mật khẩu; xác nhận độc lập lỗi username/email của P05 |
+| P07 — Hồ Tấn Quốc | IT | **15.0** | F | Không tạo được mật khẩu; xác nhận độc lập lỗi username/email của P05 |
 | **Trung bình (7 người)** | | **19.3** | **F** | **Thấp hơn ngưỡng ngành 68 tới 48.7 điểm** |
 
 Dữ liệu thô 10 câu × 7 người: [`usability/SUS_UEQS_Scores.csv`](usability/SUS_UEQS_Scores.csv).
