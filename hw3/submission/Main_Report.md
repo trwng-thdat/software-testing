@@ -280,7 +280,7 @@
 > **Kịch bản:** "Bạn vừa nghe bạn bè giới thiệu một trang mua sắm trực tuyến tên là **EShop**. Hãy tạo cho mình một tài khoản mới trên trang này bằng thông tin cá nhân bất kỳ (không cần dùng email thật), sau đó đăng nhập vào tài khoản vừa tạo để bắt đầu mua sắm."
 
 - Đây là mục tiêu (goal), **không phải hướng dẫn từng bước** — không nói cho người tham gia biết yêu cầu mật khẩu cụ thể hay vị trí nút bấm.
-- Ghi chú cho điều phối viên (không đọc cho người tham gia): chuẩn bị sẵn 1 email chưa từng đăng ký trong hệ thống (VD `participant0X@test.local`) để tránh việc trùng email làm nhiễu kết quả không mong muốn ở lần thử đầu; nếu người tham gia tự chọn trùng `test@eshop.com`/`admin@eshop.com`, đó cũng là một tình huống quan sát hợp lệ (hệ thống không có `UNIQUE constraint` cho email — xem BUG-A-0x tương tự đã ghi ở HW02).
+- Ghi chú cho điều phối viên (không đọc cho người tham gia): chuẩn bị sẵn 1 email chưa từng đăng ký trong hệ thống (VD `participant0X@test.local`) để tránh việc trùng email làm nhiễu kết quả không mong muốn ở lần thử đầu; nếu người tham gia tự chọn trùng `test@eshop.com`/`admin@eshop.com`, đó cũng là một tình huống quan sát hợp lệ — ghi nhận lại phản ứng của người dùng.
 
 ### Công cụ đo lường (Instruments)
 
@@ -422,16 +422,15 @@ Tổng hợp từ **7/7 phiên đã chạy**. Cột *Tần suất* là số phi�
 | BUG-UX-02 | P06 | Thiếu trường "Xác nhận mật khẩu" ở form Đăng ký, vi phạm FR-01 | High | TODO | [P06](usability/sessions/P06.md) |
 | BUG-UX-03 | **P01–P07 (7/7)** | Thông báo lỗi ghi "ký tự đặc biệt" nhưng logic thực tế yêu cầu khoảng trắng — không ai tự phục hồi được | **Critical** | TODO | Bản ghi 7 phiên (§2.3) |
 | BUG-UX-04 | P02, P03, P04, P06 (4/7) | Mật khẩu hiển thị rõ (không che) tại trang Đăng nhập, ảnh hưởng cảm nhận bảo mật — xác nhận qua Selenium (LOGIN-F02 FAIL) | High | TODO | [LOGIN-F02.png](screenshot/LOGIN-F02.png) |
-| BUG-UX-05 | *(từ phân tích code)* | Đăng ký trùng email không bị chặn (không có ràng buộc `UNIQUE`) | Medium | TODO | `server.js` |
 | BUG-UX-06 | P01, P07 (2/7) | Nút hiện/ẩn mật khẩu hỏng: P01 bấm được lần đầu rồi không ẩn lại được; P07 không xem được mật khẩu khi gõ | High | TODO | [P01](usability/sessions/P01.md) · [P07](usability/sessions/P07.md) |
 | BUG-UX-07 | P02, P03, P04, P07 (4/7) | Trang Đăng nhập hiển thị tiêu đề "Đăng Ký" — gây nghi ngờ vào nhầm trang. Trùng `BUG-GUI-09`, nay có xác nhận từ 4 người dùng thật | Medium | TODO | [LOGIN-U01.png](screenshot/LOGIN-U01.png) |
 | BUG-UX-08 | P02 | Ngôn ngữ giao diện lẫn lộn Việt/Anh ("Username", "Sign In"). Trùng `BUG-GUI-10` | Low | TODO | [LOGIN-U02.png](screenshot/LOGIN-U02.png) |
 | BUG-UX-09 | P02 | Không kiểm tra cú pháp email — dữ liệu sai định dạng vẫn gửi đi không báo lỗi. Trùng `BUG-GUI-11`/`BUG-GUI-20` | Medium | TODO | [LOGIN-F08.png](screenshot/LOGIN-F08.png) |
 | BUG-UX-10 | **P05 (non-IT), P07 (IT)** | Nhãn "Username" nhưng hệ thống xác thực bằng email → người dùng không biết nhập gì. **Bug mới, chỉ phát hiện được qua người dùng thật** — không xuất hiện trong Task 1 | High | TODO | [P05](usability/sessions/P05.md) · [P07](usability/sessions/P07.md) |
 
-> **10 bug, trong đó 2 bug chỉ phát hiện được nhờ người dùng thật:** `BUG-UX-06` (toggle mật khẩu) và `BUG-UX-10` (nhãn Username vs email). Cả hai đều **không bị bộ checklist 69 item của Task 1 bắt được** — minh chứng cho giá trị bổ sung của usability testing so với kiểm thử theo checklist: checklist kiểm tra *thuộc tính kỹ thuật có đúng không*, còn người dùng thật phơi bày *thao tác có thực hiện được không*.
+> **9 bug, trong đó 2 bug chỉ phát hiện được nhờ người dùng thật:** `BUG-UX-06` (toggle mật khẩu) và `BUG-UX-10` (nhãn Username vs email). Cả hai đều **không bị bộ checklist 69 item của Task 1 bắt được** — minh chứng cho giá trị bổ sung của usability testing so với kiểm thử theo checklist: checklist kiểm tra *thuộc tính kỹ thuật có đúng không*, còn người dùng thật phơi bày *thao tác có thực hiện được không*.
 >
-> ⬜ **Việc còn lại:** tạo GitHub Issue cho 10 bug này (Task 1 dùng #125–#154, Task 3 dùng #213–#218 — nên tạo tiếp từ số kế tiếp) và đính ảnh chụp từ bản ghi phiên.
+> ⬜ **Việc còn lại:** tạo GitHub Issue cho 9 bug này (Task 1 dùng #125–#154, Task 3 dùng #213–#218 — nên tạo tiếp từ số kế tiếp) và đính ảnh chụp từ bản ghi phiên.
 
 ---
 
@@ -656,7 +655,7 @@ Biến môi trường `ESHOP_LAN_URL` để đổi URL LAN cho P3 (mặc định
   1. Xác nhận thủ công BUG-GUI-07 (SQL Injection, đã xác nhận qua payload `' OR '1'='1`) bằng cách thử thêm các payload khác để đánh giá đầy đủ mức độ khai thác được.
   2. Chạy đủ 7 phiên usability thật (Task 2), không được điền số liệu giả định — dùng đúng luồng Đăng ký→Đăng nhập đã kiểm chứng kỹ thuật ở Task 1 làm cơ sở chuẩn bị câu hỏi probe.
   3. ~~Hoàn thành cross-platform thật (Task 3) với ảnh có overlay MSSV~~ — **đã hoàn thành**: 18 case × 3 nền tảng = 54 lượt thực thi thật qua Selenium (`cross-platform/run_cross_platform.py`), 16 ảnh FAIL đã có overlay `23127344@hcmus.edu.vn` + tên nền tảng + URL. **Còn lại:** chụp ảnh bug thủ công và tạo GitHub Issues cho BUG-CP-01…06.
-  4. ~~Tạo GitHub Issues cho 30 bug của Task 1~~ — **đã hoàn thành**: toàn bộ 30 issue ([#125](https://github.com/DuyITLOR/group05_eshop/issues/125)–[#154](https://github.com/DuyITLOR/group05_eshop/issues/154)) đã được tạo trên repo [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues), link đã điền vào cột GitHub Issue của bảng 1.6. **Còn lại:** tạo issue cho 10 bug Task 2 (mục 2.5, BUG-UX-01…10).
+  4. ~~Tạo GitHub Issues cho 30 bug của Task 1~~ — **đã hoàn thành**: toàn bộ 30 issue ([#125](https://github.com/DuyITLOR/group05_eshop/issues/125)–[#154](https://github.com/DuyITLOR/group05_eshop/issues/154)) đã được tạo trên repo [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues), link đã điền vào cột GitHub Issue của bảng 1.6. **Còn lại:** tạo issue cho 9 bug Task 2 (mục 2.5).
   5. Commit git theo từng bước (checklist design → execution qua Selenium → bug logging → từng usability session → phân tích) vào `git_commit_log.txt`.
 
 ---

@@ -20,8 +20,7 @@
 
 ## Ghi chú cho điều phối viên (KHÔNG đọc cho người tham gia)
 
-- Chuẩn bị sẵn 1 email chưa từng đăng ký trong hệ thống cho mỗi người (gợi ý: `participantP0X@test.local`) để tránh nhiễu do trùng email ở lần thử đầu.
-- Nếu người tham gia tự chọn trùng email đã tồn tại (VD `test@eshop.com`), đây cũng là quan sát hợp lệ — hệ thống không có ràng buộc `UNIQUE` cho email, ghi nhận lại phản ứng của người dùng khi không thấy lỗi báo trùng.
+- Chuẩn bị sẵn 1 email chưa từng đăng ký trong hệ thống cho mỗi người (gợi ý: `participantP0X@test.local`) để mọi phiên bắt đầu từ cùng một trạng thái.
 - Không gợi ý về quy tắc mật khẩu; chỉ quan sát người dùng tự đọc dòng chú thích "Yêu cầu: Tối thiểu 8 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt." và phản ứng ra sao khi bị từ chối dù nhập đúng theo chú thích đó.
 
 ## Điều kiện
@@ -53,7 +52,6 @@
 | C2.3 | Lỗi không chỉ rõ **trường nào** sai — chỉ có 1 khung đỏ chung ở đầu form, không highlight ô mật khẩu | `Register.jsx:33` — `{error && <div>}` đặt ngoài các field | Người dùng sửa nhầm ô Email hoặc Họ Tên thay vì ô Mật khẩu |
 | C2.4 | **Thiếu ô "Xác nhận mật khẩu"** (FR-01 yêu cầu) — gõ sai không có gì phát hiện, chỉ vỡ lở ở bước đăng nhập | `Register.jsx` chỉ có 3 state: `name`, `email`, `password` | Người dùng tìm ô thứ 4, cuộn lên xuống; hoặc đăng nhập fail ở GĐ4 dù tin là gõ đúng |
 | C2.5 | Ô Email dùng `type="text"` chứ không phải `type="email"` — gõ `abc` (không có `@`) vẫn submit được, không có validation trình duyệt | `Register.jsx:47` | Người dùng nhập email sai định dạng mà không hề bị cảnh báo |
-| C2.6 | **Email trùng không bị chặn** — bảng `users` không có ràng buộc `UNIQUE`, đăng ký lại cùng email vẫn báo thành công | `database.js:53` — `email TEXT` không có `UNIQUE`; `server.js:22` `INSERT` thẳng | Nếu người dùng tự chọn email đã tồn tại: không thấy lỗi, nhưng đăng nhập sau đó có thể vào nhầm tài khoản cũ |
 | C2.7 | Nút "Đăng Ký" **màu đỏ** (`bg-red-500`) — đỏ theo quy ước là hành động nguy hiểm/xóa, gây do dự khi bấm | `Register.jsx:69` | Rê chuột lên nút rồi ngần ngừ, hỏi lại "bấm cái đỏ này đúng không?" |
 
 ### Giai đoạn 3 — Chuyển sang trang Đăng nhập

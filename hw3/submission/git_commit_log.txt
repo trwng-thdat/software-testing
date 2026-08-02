@@ -1,4 +1,5 @@
-45d82f9 | 2026-08-02 12:01 | docs(hw03): rename AI audit report to audit_log.md
+9ba6f46 | 2026-08-02 12:35 | docs(hw03-task2): remove BUG-UX-05 from submission entirely
+0e1379b | 2026-08-02 12:01 | docs(hw03): rename AI audit report to audit_log.md
 746ec17 | 2026-08-02 11:58 | docs(hw03): embed AI Critique in Main_Report, finalise audit conclusion
 c86b89d | 2026-08-02 11:04 | docs(hw03): correct participant names, fill self-assessment, log 2 artifacts
 8d38d13 | 2026-08-02 10:39 | docs(hw03): add Agent Skill, fix references after folder cleanup
