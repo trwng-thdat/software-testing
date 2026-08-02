@@ -562,7 +562,7 @@ Ba màn hình chính của Task 3 (**Cart / Checkout / Profile**) **không xuấ
 
 | Case  | Nội dung kiểm tra                                    | Expected                    | P1 Chrome | P2 Firefox | P3 Android | Ghi chú                                                                                                                                                                                                                         |
 | ----- | ---------------------------------------------------- | --------------------------- | --------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CB-15 | Scrollbar gutter không làm lệch breakpoint hiệu dụng | `innerWidth == clientWidth` | PASS      | PASS       | PASS       | Đo 0px trên cả 3 — **nhưng do chạy headless với `--hide-scrollbars`** (xem giới hạn ở §3.8).                                                                                                                                    |
+| CB-15 | Scrollbar gutter không làm lệch breakpoint hiệu dụng | `innerWidth == clientWidth` | PASS      | PASS       | PASS       | Đo 0px trên cả 3 — **nhưng do chạy headless với `--hide-scrollbars`**, nên kết luận PASS chỉ đúng trong điều kiện đã đo; desktop có giao diện thật thì scrollbar chiếm ~15–17px.                                                                                                                                    |
 | CB-16 | Viewport meta cho phép pinch-zoom                    | Không có `user-scalable=no` | PASS      | PASS       | PASS       | `width=device-width, initial-scale=1.0` — cho phép zoom. **Ghi nhận riêng:** `<html lang="en">` dù giao diện tiếng Việt 100% → ảnh hưởng phát âm screen-reader trên mọi nền tảng (lỗi nhỏ, không thuộc phạm vi cross-platform). |
 
 ## 3.5 Tổng kết Execution
@@ -638,62 +638,6 @@ Nghĩa là CSS nesting được **đẩy thẳng xuống browser**, và kết qu
 | 5   | BUG-CP-05 — `alert()` chặn luồng           | Medium       | Cả 3       | Systemic      | Trên trình duyệt di động, người dùng có thể chặn hộp thoại → **mất toàn bộ thông báo lỗi** về sau.             |
 | 6   | BUG-CP-04 — Thiếu `min`/`max`/`step`       | Medium       | Cả 3       | Systemic      | Vô hiệu hóa lớp validate native của browser; hiện chỉ còn JS chặn.                                             |
 
-## 3.8 Điểm tích cực & giới hạn của phép đo (Human review)
-
-**Không phải mọi kết quả đều là lỗi — 37/54 lượt PASS.** Những điểm đáng ghi nhận:
-
-- **CB-10 / CB-11 — Parse ngày:** `created_at` từ SQLite có dạng `"2026-07-30 14:05:23"` (**space thay vì `T`, không phải ISO-8601**), nên theo spec ECMAScript việc parse là _implementation-defined_. Em **đã dự đoán** Gecko sẽ trả `Invalid Date`, nhưng kết quả thực đo cho thấy **cả 3 engine đều parse thành công** và Profile hiển thị ngày đúng. Đây là **may mắn, không phải thiết kế đúng** — vẫn nên chuẩn hóa sang ISO-8601 để không phụ thuộc vào lòng khoan dung của engine.
-- **CB-04:** cả 3 engine đều lọc đúng ký tự chữ trong `type="number"` — phần native hoạt động tốt, lỗi CB-05 nằm ở việc code không khai báo ràng buộc.
-- **CB-07:** bảng 5 cột không gây scroll ngang kể cả ở 412px.
-- **CB-14:** cả 3 engine giữ focus ring mặc định.
-- **CB-09:** `text-transform:uppercase` chỉ là thị giác, nhưng code đã `.toUpperCase()` trước khi gửi → không phát sinh lỗi.
-
-**Giới hạn phép đo cần nêu rõ (không tự nhận kết quả mạnh hơn thực tế):**
-
-1. **CB-15 (scrollbar gutter):** đo được **0px trên cả 3 nền tảng** vì bộ test chạy **headless với `--hide-scrollbars`**. Trên desktop có giao diện thật, scrollbar cổ điển chiếm ~15-17px chiều rộng layout. Kết luận PASS của CB-15 **chỉ đúng trong điều kiện headless đã đo**; muốn khẳng định cho desktop thật phải chạy lại ở chế độ headed.
-2. **CB-17 trên Firefox:** `N/A` do Selenium không cấp browser log cho Gecko — là **hạn chế công cụ**, không phải bằng chứng "Firefox không có lỗi console".
-3. **Ảnh của P3 là ảnh chụp tay, không phải ảnh sinh tự động.** Sáu ảnh `P3-CB-*.jpg` được chụp trực tiếp từ màn hình iPhone khi thao tác trên Safari, nên overlay định danh (MSSV, nền tảng, URL) được **dán vào sau** bằng `cross-platform/add_overlay.py` thay vì chèn lúc chạy như P1/P2. Overlay là một dải riêng phía trên, không đè lên nội dung chụp — ảnh gốc chưa chỉnh lưu tại `screenshots/_original/` để đối chiếu khi cần.
-4. **CB-02 PASS nhưng cần đọc cùng CB-01:** nút không tràn hẳn khỏi viewport với dữ liệu hiện tại, nhưng vị trí đã sai lệch 100px — PASS ở đây chỉ nghĩa là "chưa tràn", không phải "không có vấn đề".
-
-## 3.9 Cách tái hiện & việc còn lại
-
-```bash
-# 1. Khởi chạy SUT (source code tham chiếu trong docs/eshop-sut/)
-cd docs/eshop-sut/backend      && npm install && node database.js && node server.js
-cd docs/eshop-sut/frontend-web && npm install && npm run dev -- --host
-
-# 2. Chạy toàn bộ 3 nền tảng (18 case × 3 = 54 lượt)
-cd cross-platform && python run_cross_platform.py
-
-# 3. Chạy 1 nền tảng
-python run_cross_platform.py --platform P3
-
-# 4. Sinh lại ma trận CSV từ results.json
-python generate_report.py
-```
-
-**Cách expose SUT cho thiết bị di động (P3):**
-
-```bash
-# Expose frontend (5173) va backend (3000) qua Cloudflare Tunnel
-cloudflared tunnel --url http://localhost:5173
-cloudflared tunnel --url http://localhost:3000
-```
-
-Mỗi lệnh trả về một URL `https://<random>.trycloudflare.com`. Mở URL của frontend bằng **Safari trên iPhone** để chạy 18 case của P3. Ưu điểm so với URL LAN: không cần chung mạng WiFi, và truy cập qua HTTPS thật.
-
-**Lưu ý kỹ thuật khi đọc code test (ghi lại để tái hiện được):** `CartContext` giữ giỏ hàng **chỉ trong React state**, không dùng `localStorage` ([`CartContext.jsx`](../docs/eshop-sut/frontend-web/src/context/CartContext.jsx)) — nên giỏ hàng **không thể inject**, phải click thật qua UI. Ngoài ra [`ProductDetail.jsx:22-25`](../docs/eshop-sut/frontend-web/src/pages/ProductDetail.jsx#L22-L25) **cố tình bỏ qua click đầu tiên** (`clickCount` guard). Do đó `seed_cart()` phải click **3 lần/sản phẩm** và điều hướng bằng **SPA** (`spa_navigate`) thay vì `driver.get()`, vì reload trang sẽ remount `CartProvider` và làm **mất giỏ hàng**.
-
-**Việc còn lại (sinh viên tự làm):**
-
-- [ ] **Chụp ảnh bug thủ công** để đính vào GitHub Issues.
-- [ ] Tạo GitHub Issues cho **BUG-CP-01 … BUG-CP-06**, điền link vào cột "GitHub Issue" của bảng §3.6.
-- [x] ~~Chụp lại bộ ảnh P3 trên Safari/iPhone~~ — **đã hoàn thành**: 6 ảnh `P3-CB-*.jpg` chụp từ iPhone, thấy rõ thanh địa chỉ Safari với URL `note-life.trycloudflare.com`, đã dán overlay MSSV bằng `add_overlay.py`.
-
----
-
----
-
 # TASK 4 — Agent Skill (§7)
 
 ## 4.1 Skill đã xây dựng
@@ -728,18 +672,6 @@ Bốn nguyên tắc trong skill trực tiếp phục vụ yêu cầu của đề
 **Điểm mạnh:** skill đóng gói được một quy trình thực thi có thể tái sử dụng, và ràng buộc "không bịa kết quả" là thứ trực tiếp bảo vệ tính trung thực của báo cáo.
 
 **Hạn chế cần nêu rõ:** §7 khuyến nghị xây skill cho **hai hoạt động cụ thể** — *GUI-checklist* và *usability-evaluation*. Skill hiện tại bao phủ **khâu thực thi tự động**, tức chỉ một phần của hoạt động đầu; nó **không** bao phủ khâu *thiết kế* checklist (nghĩ ra item, phân bổ theo IA-01…IA-04) và **không** bao phủ hoạt động usability-evaluation (viết task scenario, thiết kế probe question, tính điểm SUS). Đây là lý do em tự chấm **7/10** cho tiêu chí này thay vì điểm tuyệt đối — chi tiết ở bảng tự đánh giá trong [`README.md`](README.md).
-
-## Ghi chú chung
-
-- **Task 1 đã được thực thi tự động hoàn toàn** bằng bộ Selenium tại `selenium/` (`run_checklist.py` + `generate_report.py`), chạy trên Chrome (single browser), có chụp ảnh cho toàn bộ 69 item và hỗ trợ chạy theo từng IA/màn hình riêng lẻ (`--ia`, `--screen`). Kết quả PASS/FAIL ở mục 1.4 là **dữ liệu thật từ lần chạy cuối**, không còn là suy luận tĩnh. Ảnh của 43 item FAIL/MANUAL đã được tập hợp riêng tại [`screenshot/`](screenshot/) và link trực tiếp trong bảng. **Toàn bộ 21 item ban đầu đánh dấu `MANUAL` đã được xem ảnh thủ công và kết luận PASS/FAIL cuối cùng** (mục 1.4) — không còn item nào ở trạng thái treo.
-- Trước khi nộp bài, vẫn **bắt buộc**:
-  1. Xác nhận thủ công BUG-GUI-07 (SQL Injection, đã xác nhận qua payload `' OR '1'='1`) bằng cách thử thêm các payload khác để đánh giá đầy đủ mức độ khai thác được.
-  2. Chạy đủ 7 phiên usability thật (Task 2), không được điền số liệu giả định — dùng đúng luồng Đăng ký→Đăng nhập đã kiểm chứng kỹ thuật ở Task 1 làm cơ sở chuẩn bị câu hỏi probe.
-  3. ~~Hoàn thành cross-platform thật (Task 3) với ảnh có overlay MSSV~~ — **đã hoàn thành**: 18 case × 3 nền tảng = 54 lượt thực thi thật, phủ đủ 3 engine (Blink, Gecko, WebKit). ~~Tạo GitHub Issues cho BUG-CP-01…06~~ — **đã hoàn thành** (#213–#218). **Còn lại:** chụp lại bộ ảnh P3 trên Safari/iPhone.
-  4. ~~Tạo GitHub Issues cho 30 bug của Task 1~~ — **đã hoàn thành**: toàn bộ 30 issue ([#125](https://github.com/DuyITLOR/group05_eshop/issues/125)–[#154](https://github.com/DuyITLOR/group05_eshop/issues/154)) đã được tạo trên repo [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues), link đã điền vào cột GitHub Issue của bảng 1.6. ~~**Còn lại:** tạo issue cho 9 bug Task 2~~ — **đã hoàn thành** (#220–#228).
-  5. Commit git theo từng bước (checklist design → execution qua Selenium → bug logging → từng usability session → phân tích) vào `git_commit_log.txt`.
-
----
 
 # PHỤ LỤC — AI Critique (§10, bắt buộc 200–300 từ)
 
