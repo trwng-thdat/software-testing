@@ -72,7 +72,7 @@
 
 ## 1.4 GUI Checklist — Bảng đầy đủ (Design + Execution)
 
-> **Cập nhật:** Cột `Result`/`Notes` bên dưới đã được điền từ kết quả **thực thi tự động thật** bằng bộ Selenium (`selenium/run_checklist.py`, chạy trên Chrome, single browser), không còn là suy luận tĩnh từ code. Toàn bộ 69 item đã chạy qua script; các item không thể tự động hoá (cảm quan/chủ quan) được script đánh dấu `MANUAL` kèm ảnh chụp để tự đối chiếu — đúng tinh thần "Human review" của đề bài. **Ảnh chụp của các item FAIL/MANUAL** (43 ảnh) được tập hợp tại [`screenshot/`](screenshot/) và link trực tiếp trong từng dòng bảng bên dưới.
+> **Cập nhật:** Cột `Result`/`Notes` bên dưới đã được điền từ kết quả **thực thi tự động thật** bằng bộ tự động hoá Selenium (Python, chạy trên Chrome, single browser), không còn là suy luận tĩnh từ code. Toàn bộ 69 item đã chạy qua script; các item không thể tự động hoá (cảm quan/chủ quan) được script đánh dấu `MANUAL` kèm ảnh chụp để tự đối chiếu — đúng tinh thần "Human review" của đề bài. **Ảnh chụp của các item FAIL/MANUAL** (43 ảnh) được tập hợp tại [`screenshot/`](screenshot/) và link trực tiếp trong từng dòng bảng bên dưới.
 >
 > Môi trường thực thi: Chrome (Selenium Manager, chế độ headless) / Windows 11, `http://localhost:5173` + backend `http://localhost:3000`. Tài khoản test: `test@eshop.com` / `Test1234!`. Dữ liệu sản phẩm tại thời điểm chạy: 5 sản phẩm trong DB.
 
@@ -190,7 +190,7 @@
 | Chỉ số                                | Số lượng                                                                                                           |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | Tổng số item checklist                | 69 (14 HOME-U + 9 HOME-F + 9 HOME-N + 7 HOME-S + 7 LOGIN-U + 8 LOGIN-F + 7 LOGIN-N + 8 LOGIN-S)                    |
-| Đã execute                            | 69 / 69 (100%) — tự động qua `selenium/run_checklist.py`, bao gồm cả kịch bản khóa tài khoản (`--include-lockout`) |
+| Đã execute                            | 69 / 69 (100%) — tự động qua script Selenium, bao gồm cả kịch bản khóa tài khoản                                  |
 | PASS                                  | 36                                                                                                                 |
 | FAIL                                  | 32                                                                                                                 |
 | MANUAL                                | 0 (toàn bộ 21 item đã được xem ảnh chụp và kết luận cuối cùng — xem cột Notes từng dòng)                           |
@@ -247,8 +247,8 @@
 | Chỉ số                              | Giá trị                                                                                                     |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | Công cụ thực thi                    | Selenium (Python) + Chrome, single browser, headless                                                        |
-| Script                              | `selenium/run_checklist.py` (hỗ trợ `--ia`, `--screen`, `--id`, `--include-lockout`)                        |
-| Report sinh tự động                 | Script `generate_report.py` sinh báo cáo Markdown + HTML từ `results.json`                                  |
+| Script                              | Script Selenium tự viết, hỗ trợ chạy lọc theo IA / màn hình / ID item, và bật riêng kịch bản khóa tài khoản  |
+| Report sinh tự động                 | Script sinh báo cáo Markdown + HTML từ file kết quả thô, dán ngược vào bảng §1.4                            |
 | Tổng item                           | 69                                                                                                          |
 | PASS (sau khi xem toàn bộ ảnh chụp) | 36                                                                                                          |
 | FAIL (sau khi xem toàn bộ ảnh chụp) | 32                                                                                                          |
@@ -269,7 +269,7 @@
   ```js
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\s)[A-Za-z\d\s]{8,}$/;
   ```
-  Yêu cầu bắt buộc có khoảng trắng (`\s`), và **không cho phép** các ký tự đặc biệt `@ $ ! % * ? &` mà SRS FR-01 yêu cầu — trái ngược với thông báo lỗi hiển thị cho người dùng ("...và KÝ TỰ ĐẶC BIỆT"). **Đã xác nhận lại bằng thực thi Selenium** (`selenium/run_checklist.py`, kịch bản khóa tài khoản): mật khẩu `Sel3nium Pass!` (có `!`) bị regex client từ chối đúng như dự đoán; chỉ khi đổi sang `Sel3nium Pass` (không ký tự đặc biệt, có khoảng trắng) mới đăng ký thành công — xác nhận trực tiếp hành vi lỗi của regex bằng dữ liệu thật, không chỉ suy luận từ đọc code.
+  Yêu cầu bắt buộc có khoảng trắng (`\s`), và **không cho phép** các ký tự đặc biệt `@ $ ! % * ? &` mà SRS FR-01 yêu cầu — trái ngược với thông báo lỗi hiển thị cho người dùng ("...và KÝ TỰ ĐẶC BIỆT"). **Đã xác nhận lại bằng thực thi Selenium** (kịch bản khóa tài khoản): mật khẩu `Sel3nium Pass!` (có `!`) bị regex client từ chối đúng như dự đoán; chỉ khi đổi sang `Sel3nium Pass` (không ký tự đặc biệt, có khoảng trắng) mới đăng ký thành công — xác nhận trực tiếp hành vi lỗi của regex bằng dữ liệu thật, không chỉ suy luận từ đọc code.
 - Trường "Xác nhận mật khẩu" theo FR-01 **không tồn tại** trong `Register.jsx` (chỉ có `name`, `email`, `password`).
 
 ## 2.2 Phase 1 — Plan & Prepare
@@ -299,13 +299,15 @@
 
 ### Người tham gia (Recruitment)
 
-- 7 người tham gia thật, ngoài lớp học, ưu tiên người không chuyên IT/không phải tester.
-- Danh sách chi tiết (họ tên + Zalo/SĐT che 4 số giữa) đặt tại [`usability/Participants.md`](usability/Participants.md) — **không được AI tạo/giả lập**, TA có thể gọi ngẫu nhiên 2 người để xác minh.
+- **Đã tuyển và chạy đủ 7/7 người tham gia thật**, tất cả đều ngoài lớp học (hợp lệ theo §Phase 1) và đều đồng ý ghi hình.
+- Cơ cấu mẫu: **6 sinh viên ngành IT + 1 người non-IT** (P05). Đề bài ưu tiên người non-IT nhưng không bắt buộc; mẫu lệch về nhóm IT là **hạn chế đã được ghi nhận** trong phần phân tích ở §2.4.
+- Danh sách chi tiết (họ tên + email liên hệ) đặt tại [`usability/Participants.md`](usability/Participants.md) — **không được AI tạo/giả lập**, TA có thể gọi ngẫu nhiên 2 người để xác minh. Bảng tra cứu nhanh liên kết từng người tới bản ghi phiên và các GitHub Issue họ phát hiện: [`usability/Session_Links.md`](usability/Session_Links.md).
 
 ### Pilot session
 
-- Chạy thử 1 phiên pilot trước, dùng để kiểm tra: kịch bản có gây hiểu lầm không, flow đăng ký/đăng nhập có bug chặn cứng (blocker) nào khiến không thể hoàn thành task hay không, thời lượng phiên có hợp lý (đề xuất timebox 8 phút) không.
-- Kết quả pilot và kết luận "có cần điều chỉnh kịch bản hay không" được ghi tại [`usability/sessions/P01.md`](usability/sessions/P01.md) (mục _Kết luận pilot_).
+- **P01 được chạy làm phiên pilot** trước 6 phiên chính thức, để kiểm tra: kịch bản có gây hiểu lầm không, flow có bug chặn cứng nào không, và timebox 8 phút có hợp lý không.
+- **Kết luận pilot: không điều chỉnh kịch bản.** Người tham gia hiểu đúng mục tiêu mà không cần giải thích thêm; blocker gặp phải (lỗi regex mật khẩu) là **khiếm khuyết của sản phẩm**, cần để các phiên sau tiếp tục gặp một cách tự nhiên nhằm đo mức phổ biến. Timebox 8 phút đủ — pilot hoàn tất trong 3'44", cả 7 phiên sau đó nằm trong khoảng 3'02"–4'58".
+- Điều chỉnh duy nhất là **quy ước ghi chép**: moderator ghi rõ thời điểm can thiệp và các mật khẩu đã thử, để so sánh được giữa các phiên. Chi tiết: [`usability/sessions/P01.md`](usability/sessions/P01.md) (mục _Kết luận pilot_).
 
 ## 2.3 Phase 2 — Conduct Sessions
 
@@ -452,7 +454,7 @@ Tổng hợp từ **7/7 phiên đã chạy**. Cột _Tần suất_ là số phi�
 
 | Bug ID    | Found by (Participant)     | Tiêu đề                                                                                                                                                                                               | Severity     | GitHub Issue                                                 | Bằng chứng                                                          |
 | --------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------ | ------------------------------------------------------------------- |
-| BUG-UX-01 | **P01–P07 (7/7)**          | Mật khẩu hợp lệ theo mô tả trên form bị từ chối vì regex client yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`) — tái hiện kỹ thuật qua `selenium/run_checklist.py --include-lockout` | **Critical** | [#220](https://github.com/DuyITLOR/group05_eshop/issues/220) | [UX-01](screenshot/UX-01-password-rejected.png) |
+| BUG-UX-01 | **P01–P07 (7/7)**          | Mật khẩu hợp lệ theo mô tả trên form bị từ chối vì regex client yêu cầu khoảng trắng thay vì ký tự đặc biệt (`Register.jsx:15`) — tái hiện kỹ thuật qua script Selenium (kịch bản khóa tài khoản) | **Critical** | [#220](https://github.com/DuyITLOR/group05_eshop/issues/220) | [UX-01](screenshot/UX-01-password-rejected.png) |
 | BUG-UX-02 | P06                        | Thiếu trường "Xác nhận mật khẩu" ở form Đăng ký, vi phạm FR-01                                                                                                                                        | High         | [#224](https://github.com/DuyITLOR/group05_eshop/issues/224) | [UX-02](screenshot/UX-02-no-confirm-password.png) |
 | BUG-UX-03 | **P01–P07 (7/7)**          | Thông báo lỗi ghi "ký tự đặc biệt" nhưng logic thực tế yêu cầu khoảng trắng — không ai tự phục hồi được                                                                                               | **Critical** | [#221](https://github.com/DuyITLOR/group05_eshop/issues/221) | [UX-03](screenshot/UX-03-error-message.png) |
 | BUG-UX-04 | P02, P03, P04, P06 (4/7)   | Mật khẩu hiển thị rõ (không che) tại trang Đăng nhập, ảnh hưởng cảm nhận bảo mật — xác nhận qua Selenium (LOGIN-F02 FAIL)                                                                             | High         | [#225](https://github.com/DuyITLOR/group05_eshop/issues/225) | [LOGIN-F02](screenshot/LOGIN-F02.png) |

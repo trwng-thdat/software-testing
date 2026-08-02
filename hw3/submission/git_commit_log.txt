@@ -1,4 +1,5 @@
-a72fe1d | 2026-08-02 15:24 | docs(hw03): remove sections 3.8, 3.9 and "Ghi chu chung" from Main_Report
+1c99f03 | 2026-08-02 15:31 | docs(hw03-task2): add Session_Links.md, refresh stale text in Main_Report
+fe3e836 | 2026-08-02 15:24 | docs(hw03): remove sections 3.8, 3.9 and "Ghi chu chung" from Main_Report
 1c38320 | 2026-08-02 15:20 | docs(hw03): add Task 4 Agent Skill section with demo video link
 90d48a2 | 2026-08-02 15:17 | feat(hw03-task3): add overlay script, replace P3 screenshots with real Safari captures
 f101f5e | 2026-08-02 14:54 | docs(hw03): fill session metadata, add task completion rate, switch P3 to Safari
