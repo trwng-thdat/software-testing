@@ -1,4 +1,5 @@
-2b0e643 | 2026-08-02 14:54 | docs(hw03): fill session metadata, add task completion rate, switch P3 to Safari
+f1bb45a | 2026-08-02 15:17 | feat(hw03-task3): add overlay script, replace P3 screenshots with real Safari captures
+f101f5e | 2026-08-02 14:54 | docs(hw03): fill session metadata, add task completion rate, switch P3 to Safari
 3e84223 | 2026-08-02 13:32 | docs(hw03-task2): gather usability bug evidence into usability/screenshot/
 3ea72fd | 2026-08-02 12:39 | docs(hw03-task2): link 9 usability bugs to GitHub Issues #220-#228
 29171c4 | 2026-08-02 12:35 | docs(hw03): fix references after AI_Critique.md merged into Main_Report
