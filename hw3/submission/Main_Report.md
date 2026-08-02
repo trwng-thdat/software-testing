@@ -22,7 +22,13 @@
 | **Task 1 — GUI Checklist**        | **(a) Product List / Home (FR-05)** — `frontend-web/src/pages/Home.jsx` + **(b) Login (FR-02)** — `frontend-web/src/pages/Login.jsx` | Hai màn hình liền mạch (khách vào trang chủ rồi đăng nhập), đủ đa dạng thành phần UI (grid + search + form + navbar) để phủ cả 4 khía cạnh IA01–IA04 với >40 item không lặp lại.                                                                                          |
 | **Task 2 — Usability Evaluation** | **Luồng: Đăng ký (Sign up) → Đăng nhập (Sign in)** — `Register.jsx` → `Login.jsx`                                                    | FR-01 + FR-02. Đây là luồng onboarding đầu tiên mọi người dùng mới phải vượt qua; nhiều ràng buộc ẩn (regex mật khẩu, thiếu xác nhận mật khẩu, quy tắc khóa tài khoản) khiến đây là điểm rẽ nhánh nhiều khả năng gây bối rối/thất bại — phù hợp để đo tính khả dụng thật. |
 
-**Môi trường kiểm thử chính:** Chrome / Windows 11, `frontend-web` tại `http://localhost:5173`, `backend` tại `http://localhost:3000`.
+| **Task 3 — Cross-Platform** | **Cart · Checkout · ProductDetail · Profile** trên 3 nền tảng phủ 3 engine: Chrome/Blink · Firefox/Gecko · **Safari iPhone/WebKit** | Cố ý **không trùng** màn hình của Task 1 và luồng của Task 2, và chỉ chọn case thuộc vùng rủi ro phụ thuộc engine (CSS nesting, `Intl`/locale, native form control, touch target) — chạy lại case bất biến trên 3 nền tảng không tạo thêm thông tin. |
+| **Task 4 — Agent Skill** | Skill `selenium-automation` — [video demo](https://youtu.be/_e-uHOUETtM) | Đóng gói khâu thực thi tự động dùng chung cho Task 1 và Task 3, tái sử dụng được cho các bài kiểm thử sau (§7). Chi tiết ở mục Task 4 cuối báo cáo. |
+
+**Môi trường kiểm thử chính:** Chrome / Windows 11, `frontend-web` tại `http://localhost:5173`, `backend` tại `http://localhost:3000`. Riêng Task 3 mở rộng sang Firefox và Safari trên iPhone (qua Cloudflare Tunnel).
+
+**📹 Video demo Agent Skill:** https://youtu.be/_e-uHOUETtM
+**📹 Bản ghi 7 phiên usability:** https://drive.google.com/drive/folders/19Ssxgb2v0uDsbjXkegTnivzDq4mUuWow?usp=sharing
 
 ---
 
@@ -685,6 +691,43 @@ Mỗi lệnh trả về một URL `https://<random>.trycloudflare.com`. Mở URL
 - [x] ~~Chụp lại bộ ảnh P3 trên Safari/iPhone~~ — **đã hoàn thành**: 6 ảnh `P3-CB-*.jpg` chụp từ iPhone, thấy rõ thanh địa chỉ Safari với URL `note-life.trycloudflare.com`, đã dán overlay MSSV bằng `add_overlay.py`.
 
 ---
+
+---
+
+# TASK 4 — Agent Skill (§7)
+
+## 4.1 Skill đã xây dựng
+
+| Mục | Nội dung |
+| --- | --- |
+| **Tên skill** | `selenium-automation` |
+| **Vị trí** | [`skills/selenium-automation/SKILL.md`](skills/selenium-automation/SKILL.md) |
+| **📹 Video demo** | **https://youtu.be/_e-uHOUETtM** |
+| **Mục đích** | Sinh, tái cấu trúc và kiểm chứng bộ tự động hoá Selenium theo một quy trình cố định — dữ liệu tách khỏi mã kiểm thử, cấu hình qua `.env`, chạy đa trình duyệt, báo cáo HTML có định danh sinh viên |
+
+## 4.2 Skill này phục vụ gì trong HW03
+
+Skill được đóng gói dạng `SKILL.md` với phần mô tả kích hoạt (`description`) để có thể gọi lại ở các bài kiểm thử sau — đúng tinh thần §7: *"so that they can be reused on additional screens and flows in future testing tasks"*.
+
+Trong phạm vi HW03, skill này là cơ sở cho **khâu thực thi** của Task 1 và Task 3:
+
+| Hoạt động | Cách skill được áp dụng |
+| --- | --- |
+| Task 1 — thực thi 69 item checklist | Sinh script chạy từng item trên Chrome, chụp ảnh theo ID, xuất kết quả PASS/FAIL ra file để dán ngược vào bảng §1.4 |
+| Task 3 — chạy 18 case × 3 nền tảng | Cùng khuôn mẫu, thêm phần cấu hình nhiều trình duyệt và overlay định danh trên ảnh chụp |
+
+Bốn nguyên tắc trong skill trực tiếp phục vụ yêu cầu của đề:
+
+1. **Tách dữ liệu khỏi mã kiểm thử** — thêm/sửa case không phải đụng vào logic, giúp mở rộng checklist từ 32 lên 69 item mà không viết lại script.
+2. **Cấu hình qua `.env`** — không hardcode MSSV, URL hay danh sách trình duyệt vào mã.
+3. **Chạy nhiều trình duyệt, báo cáo không ghi đè nhau** — điều kiện cần cho cross-platform testing ở Task 3.
+4. **Cấm bịa kết quả thực thi** — skill quy định rõ: nếu SUT/driver/cấu hình không khả dụng thì **báo blocker**, không được sinh kết quả giả. Đây chính là ràng buộc đã giúp phát hiện sự cố ghi đè `results.json` mô tả ở Artifact #11 của [`audit_log.md`](audit_log.md).
+
+## 4.3 Tự đánh giá về skill (Human review)
+
+**Điểm mạnh:** skill đóng gói được một quy trình thực thi có thể tái sử dụng, và ràng buộc "không bịa kết quả" là thứ trực tiếp bảo vệ tính trung thực của báo cáo.
+
+**Hạn chế cần nêu rõ:** §7 khuyến nghị xây skill cho **hai hoạt động cụ thể** — *GUI-checklist* và *usability-evaluation*. Skill hiện tại bao phủ **khâu thực thi tự động**, tức chỉ một phần của hoạt động đầu; nó **không** bao phủ khâu *thiết kế* checklist (nghĩ ra item, phân bổ theo IA-01…IA-04) và **không** bao phủ hoạt động usability-evaluation (viết task scenario, thiết kế probe question, tính điểm SUS). Đây là lý do em tự chấm **7/10** cho tiêu chí này thay vì điểm tuyệt đối — chi tiết ở bảng tự đánh giá trong [`README.md`](README.md).
 
 ## Ghi chú chung
 
