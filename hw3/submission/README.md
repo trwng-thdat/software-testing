@@ -21,7 +21,7 @@
 *Trừ 1 điểm:* ba kết luận (LOGIN-S07 rò rỉ token, LOGIN-S08 double-submit, HOME-U13 contrast WCAG) được suy ra từ ảnh + logic mã nguồn chứ chưa đo trực tiếp bằng DevTools Network / công cụ tính contrast — đã tự ghi rõ giới hạn này ở mục 1.5 thay vì trình bày như đã đo.
 
 **Task 2 — 35/40.** Đủ 7 người tham gia thật, tất cả có bản ghi màn hình; pilot chạy trước; SUS chấm đủ 7 người kèm phân tích đối chiếu với quan sát hành vi; 9 bug với tần suất gặp phải cho từng phát hiện; tách bạch systemic/isolated.
-*Trừ 5 điểm:* (1) một số ô quan sát trong file phiên chưa điền (thiết bị/OS, thời lượng chính xác, quote nguyên văn, probe Speed/Trust ở vài phiên) và Outcome cuối của P04–P07 chưa xác nhận dứt khoát; (2) mẫu lệch 6/7 dân IT, chỉ 1 người non-IT, làm giảm tính đại diện — đã nêu như giới hạn nghiên cứu; (3) P05 chấm SUS đồng loạt điểm 3 (straight-lining) làm nhiễu số trung bình; (4) chưa tạo GitHub Issue cho 9 bug BUG-UX.
+*Trừ 5 điểm:* (1) một số ô quan sát trong file phiên chưa điền (thiết bị/OS, thời lượng chính xác, quote nguyên văn, probe Speed/Trust ở vài phiên) và Outcome cuối của P04–P07 chưa xác nhận dứt khoát; (2) mẫu lệch 6/7 dân IT, chỉ 1 người non-IT, làm giảm tính đại diện — đã nêu như giới hạn nghiên cứu; (3) P05 chấm SUS đồng loạt điểm 3 (straight-lining) làm nhiễu số trung bình; (4) 5 ảnh minh chứng usability cần cắt từ video phiên để đính vào issue.
 
 **Task 3 — 18/20.** Đủ 3 nền tảng với **2 engine khác nhau thật** (Blink + Gecko), 18 test case × 3 = 54 lượt chạy, phát hiện 1 bug phân kỳ nền tảng thật, mọi ảnh có overlay MSSV + nền tảng + URL, 6 bug đều có GitHub Issue (#213–#218), báo cáo nêu rõ 4 giới hạn phép đo.
 *Trừ 2 điểm:* P3 là **Chrome mobile emulation** chứ không phải thiết bị Android vật lý (§6 ưu tiên máy thật hoặc cloud tool như BrowserStack/LambdaTest); WebKit không chạy được trên Windows nên không có engine thứ ba thật sự.
@@ -46,7 +46,7 @@
 | Lỗi thực thi (execution error) | 0 |
 | Số bug phát hiện — Task 1 (GUI) | **30** (BUG-GUI-01…30) — Critical 2, High 1, Medium 12, Low 15 |
 | Số bug phát hiện — Task 2 (usability) | **9** (BUG-UX-01…10) — trong đó 2 bug **chỉ phát hiện được qua người dùng thật**: nút hiện/ẩn mật khẩu hỏng (P01) và nhầm lẫn nhãn "Username" vs email (P05, non-IT) |
-| GitHub Issues đã tạo | **30** — [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) trên `DuyITLOR/group05_eshop`, mỗi issue có ảnh đính kèm |
+| GitHub Issues đã tạo | **45** trên `DuyITLOR/group05_eshop` — Task 1: [#125–#154](https://github.com/DuyITLOR/group05_eshop/issues) (30) · Task 2: [#220–#228](https://github.com/DuyITLOR/group05_eshop/issues) (9) · Task 3: [#213–#218](https://github.com/DuyITLOR/group05_eshop/issues) (6) |
 | Số người tham gia usability | **7/7** (P01–P07) — đủ theo yêu cầu, **tất cả đều có bản ghi màn hình** |
 | Điểm SUS / UEQ-S trung bình | **19.3 / 100** (7 người) — thấp hơn ngưỡng ngành 68 tới **48.7 điểm**, cả 7 đều hạng **F**. Cá nhân: P04 5.0 (thấp nhất) → P05 50.0 (cao nhất, có dấu hiệu straight-lining) |
 | Phạm vi bao phủ cross-platform | **3 nền tảng** — P1 Chrome 141/Windows 11 (Blink), P2 Firefox 145/Windows 11 (Gecko), P3 Android Chrome/Pixel 7 Android 13 (Blink mobile, URL LAN thật) |
