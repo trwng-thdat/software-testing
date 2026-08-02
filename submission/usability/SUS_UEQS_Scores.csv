@@ -1,0 +1,9 @@
+participant_id,participant_name,session_date,it_background,q1_use_frequently,q2_unnecessarily_complex,q3_easy_to_use,q4_need_support,q5_functions_well_integrated,q6_too_much_inconsistency,q7_learn_quickly,q8_cumbersome_to_use,q9_felt_confident,q10_needed_to_learn_a_lot,sus_score
+P01,Nguyen Thanh Dang,2026-07-31,yes,2,4,2,5,2,4,2,5,2,5,17.5
+P02,Le Nhut Duy,2026-07-31,yes,2,5,2,5,2,5,2,5,2,5,12.5
+P03,Ly Quoc Thanh,2026-07-31,yes,2,4,2,5,2,4,2,5,2,5,17.5
+P04,Nguyen Le Thien Phu,2026-07-31,yes,1,5,1,4,1,5,2,5,1,5,5.0
+P05,Nguyen Duc Minh,2026-08-01,no,3,3,3,3,3,3,3,3,3,3,50.0
+P06,Ngo The Dat,2026-08-01,yes,2,4,2,5,2,4,2,5,2,5,17.5
+P07,Ho Tan Quoc,2026-08-02,yes,2,5,2,5,2,4,2,5,2,5,15.0
+average,,,,2.0,4.3,2.0,4.6,2.0,4.1,2.1,4.7,2.0,4.7,19.3
