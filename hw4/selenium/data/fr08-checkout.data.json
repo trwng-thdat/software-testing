@@ -1,0 +1,244 @@
+[
+  {
+    "tcId": "TC-CHECKOUT-01",
+    "title": "Thanh toán thành công giỏ 1 sản phẩm",
+    "type": "positive",
+    "srs": "FR-08: user đã đăng nhập thanh toán được; hệ thống tạo đơn hàng trạng thái 'pending'",
+    "input": {
+      "cart": [{ "productId": 4, "quantity": 1 }]
+    },
+    "expected": {
+      "successHeading": "Thanh toán thành công!",
+      "orderStatus": "pending",
+      "orderTotal": 6000000
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-02",
+    "title": "Thanh toán giỏ nhiều sản phẩm",
+    "type": "positive",
+    "srs": "FR-08: đơn hàng phải phản ánh đầy đủ các sản phẩm trong giỏ",
+    "input": {
+      "cart": [
+        { "productId": 4, "quantity": 1 },
+        { "productId": 5, "quantity": 2 },
+        { "productId": 2, "quantity": 1 }
+      ]
+    },
+    "expected": {
+      "successHeading": "Thanh toán thành công!",
+      "lineItemCount": 3,
+      "orderStatus": "pending",
+      "orderTotal": 42000000
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-03",
+    "title": "Giỏ hàng được xóa sau khi thanh toán",
+    "type": "positive",
+    "srs": "FR-08: sau khi thanh toán thành công, giỏ hàng của user phải được xóa",
+    "input": {
+      "cart": [{ "productId": 4, "quantity": 1 }]
+    },
+    "expected": {
+      "successHeading": "Thanh toán thành công!",
+      "emptyCartHeading": "Giỏ hàng của bạn đang trống"
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-04",
+    "title": "Áp mã SAVE10 (percent) cho đơn đủ ngưỡng",
+    "type": "positive",
+    "srs": "FR-09: coupon percent giảm discount_value% trên tổng đơn; SAVE10 = 10%, min_order_amount = 300.000₫",
+    "input": {
+      "cart": [{ "productId": 5, "quantity": 1 }],
+      "coupon": "SAVE10",
+      "subtotal": 4000000
+    },
+    "expected": {
+      "discountAmount": 400000,
+      "finalAmount": 3600000
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-05",
+    "title": "Áp mã BIGBUY (fixed) cho đơn đủ ngưỡng",
+    "type": "positive",
+    "srs": "FR-09: coupon fixed giảm đúng discount_value; BIGBUY = 50.000₫, min_order_amount = 500.000₫",
+    "input": {
+      "cart": [{ "productId": 5, "quantity": 1 }],
+      "coupon": "BIGBUY",
+      "subtotal": 4000000
+    },
+    "expected": {
+      "discountAmount": 50000,
+      "finalAmount": 3950000
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-06",
+    "title": "Mã nhập chữ thường vẫn được chuẩn hóa và chấp nhận",
+    "type": "positive",
+    "srs": "FR-09: mã giảm giá không phân biệt hoa/thường — 'bigbuy' phải được chuẩn hóa thành 'BIGBUY'",
+    "input": {
+      "cart": [{ "productId": 5, "quantity": 1 }],
+      "coupon": "bigbuy",
+      "subtotal": 4000000
+    },
+    "expected": {
+      "discountAmount": 50000,
+      "finalAmount": 3950000
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-07",
+    "title": "Tổng tiền không được sửa trực tiếp — backend phải tự tính lại",
+    "type": "negative",
+    "srs": "FR-08: người dùng KHÔNG được sửa tổng tiền; backend phải tự tính lại tổng từ giỏ hàng",
+    "input": {
+      "cart": [{ "productId": 4, "quantity": 1 }],
+      "tamperedTotal": 1
+    },
+    "expected": {
+      "totalFieldEditable": false,
+      "orderTotal": 6000000
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-08",
+    "title": "Mã giảm giá không tồn tại bị từ chối",
+    "type": "negative",
+    "srs": "FR-09 C1: mã phải tồn tại và đang active, ngược lại từ chối",
+    "input": {
+      "cart": [{ "productId": 5, "quantity": 1 }],
+      "coupon": "NOTEXIST",
+      "subtotal": 4000000
+    },
+    "expected": {
+      "errorContains": "không tồn tại",
+      "discountApplied": false
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-09",
+    "title": "Mã hết hạn bị từ chối (C2)",
+    "type": "negative",
+    "srs": "FR-09 C2: từ chối nếu thời điểm hiện tại vượt quá expired_at; EXPIRED hết hạn 2020-01-01",
+    "input": {
+      "cart": [{ "productId": 5, "quantity": 1 }],
+      "coupon": "EXPIRED",
+      "subtotal": 4000000
+    },
+    "expected": {
+      "errorContains": "hết hạn",
+      "discountApplied": false
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-10",
+    "title": "Đơn chưa đủ ngưỡng tối thiểu bị từ chối (C3)",
+    "type": "negative",
+    "srs": "FR-09 C3: từ chối nếu total_amount < min_order_amount; SAVE10 yêu cầu >= 300.000₫",
+    "input": {
+      "cart": [{ "productId": 4, "quantity": 1 }],
+      "coupon": "SAVE10",
+      "subtotal": 299000
+    },
+    "expected": {
+      "errorContains": "giá trị tối thiểu",
+      "discountApplied": false
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-11",
+    "title": "Chưa đăng nhập thì không thanh toán được (C4)",
+    "type": "negative",
+    "srs": "FR-08: chỉ user đã đăng nhập mới được thanh toán; guest phải bị chặn",
+    "input": {
+      "cart": [{ "productId": 4, "quantity": 1 }]
+    },
+    "expected": {
+      "httpStatus": 401,
+      "orderCreated": false
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-12",
+    "title": "Dùng mã quá số lượt cho phép bị từ chối (C5)",
+    "type": "negative",
+    "srs": "FR-09 C5: từ chối nếu user đã dùng mã đủ max_uses_per_user lần",
+    "input": {
+      "cart": [{ "productId": 5, "quantity": 1 }],
+      "subtotal": 4000000,
+      "disposableCoupon": {
+        "code": "HW04LIMIT",
+        "type": "fixed",
+        "discount_value": 50000,
+        "min_order_amount": 300000,
+        "expired_at": "2099-12-31",
+        "max_uses_per_user": 1
+      }
+    },
+    "expected": {
+      "errorContains": "giới hạn",
+      "discountApplied": false
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-13",
+    "title": "Ngưỡng biên đúng bằng min_order_amount phải được chấp nhận",
+    "type": "edge",
+    "srs": "FR-09 C3: điều kiện là total_amount >= min_order_amount, nên đúng bằng ngưỡng vẫn hợp lệ",
+    "input": {
+      "cart": [{ "productId": 4, "quantity": 1 }],
+      "coupon": "SAVE10",
+      "subtotal": 300000
+    },
+    "expected": {
+      "accepted": true,
+      "discountAmount": 30000,
+      "finalAmount": 270000
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-14",
+    "title": "Ngưỡng biên thiếu 1₫ bị từ chối",
+    "type": "edge",
+    "srs": "FR-09 C3: total_amount = min_order_amount - 1 nằm dưới ngưỡng nên phải bị từ chối",
+    "input": {
+      "cart": [{ "productId": 4, "quantity": 1 }],
+      "coupon": "SAVE10",
+      "subtotal": 299999
+    },
+    "expected": {
+      "errorContains": "giá trị tối thiểu",
+      "discountApplied": false
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-15",
+    "title": "Giảm giá không được vượt quá tổng đơn (final_amount >= 0)",
+    "type": "edge",
+    "srs": "FR-08/FR-09: số tiền phải thanh toán không bao giờ được âm",
+    "input": {
+      "cart": [{ "productId": 4, "quantity": 1 }],
+      "coupon": "VIP100",
+      "subtotal": 310000
+    },
+    "expected": {
+      "finalAmountAtLeast": 0
+    }
+  },
+  {
+    "tcId": "TC-CHECKOUT-16",
+    "title": "Thanh toán khi giỏ rỗng không tạo được đơn",
+    "type": "edge",
+    "srs": "FR-08: không được tạo đơn hàng rỗng — phải có thông báo và không sinh bản ghi",
+    "input": {
+      "cart": []
+    },
+    "expected": {
+      "orderCreated": false
+    }
+  }
+]

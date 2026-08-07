@@ -9,7 +9,11 @@
     "test:fr04:edge": "cross-env BROWSER=edge mocha --spec tests/fr04-profile.spec.ts --reporter-option reportDir=reports/fr04-profile,reportFilename=edge,overwrite=true,html=true,json=true,charts=true",
     "test:fr04:firefox": "cross-env BROWSER=firefox mocha --spec tests/fr04-profile.spec.ts --reporter-option reportDir=reports/fr04-profile,reportFilename=firefox,overwrite=true,html=true,json=true,charts=true",
     "test:fr04": "ts-node utils/runMatrix.ts fr04-profile",
-    "verify:reports": "ts-node utils/verifyReports.ts fr04-profile"
+    "test:fr08:chrome": "cross-env BROWSER=chrome mocha --spec tests/fr08-checkout.spec.ts --reporter-option reportDir=reports/fr08-checkout,reportFilename=chrome,overwrite=true,html=true,json=true,charts=true",
+    "test:fr08:edge": "cross-env BROWSER=edge mocha --spec tests/fr08-checkout.spec.ts --reporter-option reportDir=reports/fr08-checkout,reportFilename=edge,overwrite=true,html=true,json=true,charts=true",
+    "test:fr08:firefox": "cross-env BROWSER=firefox mocha --spec tests/fr08-checkout.spec.ts --reporter-option reportDir=reports/fr08-checkout,reportFilename=firefox,overwrite=true,html=true,json=true,charts=true",
+    "test:fr08": "ts-node utils/runMatrix.ts fr08-checkout",
+    "verify:reports": "ts-node utils/verifyReports.ts fr04-profile fr08-checkout"
   },
   "devDependencies": {
     "@types/chai": "^4.3.16",
