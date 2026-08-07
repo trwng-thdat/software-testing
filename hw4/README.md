@@ -6,7 +6,7 @@
 - **MSSV:** 23127344
 - **Họ tên:** TRƯƠNG THÀNH ĐẠT
 - **Lớp/Khóa:** Kiểm thử phần mềm - 23KTPM3
-- **Tên file nộp:** `[MSSV]_HW04_AI_Automation_[000-100].zip`
+- **Tên file nộp:** `23127344_HW04_AI_Automation_[000-100].zip`
 
 ## Bảng Tự Đánh giá (Self-Assessment)
 
@@ -31,7 +31,7 @@ _Trừ điểm:_ **chưa tạo GitHub Issue**. 4 case (TC-12/13/14/15) kiểm �
 **Feature C (FR-18) — [n]/25.** 16 TC (≥12 ✅), dữ liệu tách file. 5 assertion pattern, phủ **cả chuyển đổi hợp lệ lẫn không hợp lệ** của state machine FR-10. 12 PASS / 4 FAIL giống hệt trên 3 engine. 4 defect thật, gồm **BUG-11 (Critical)** — thiếu kiểm `role` ở middleware nên mọi API admin mở toang.
 _Trừ điểm:_ **chưa tạo GitHub Issue**. BUG-11 **không** dự đoán được từ đọc source (chỉ lộ khi chạy thật) — cho thấy khâu review tĩnh còn sót; đã ghi thẳng ở §1.7 dòng 18. Mật khẩu admin sai trong `.env` làm suite chết ở lần chạy đầu (§1.7 dòng 17).
 
-**Task 2 — Demo video — [n]/15.** _Chưa quay._ Cần: ≥5 phút, thuyết minh tiếng Việt, bằng chứng tác giả (`whoami`/`hostname` hoặc face-cam), và giải thích ≥1 lỗi đã sửa từ script AI sinh.
+**Task 2 — Demo video — [n]/15.** Đã quay: https://youtu.be/kbkZxUZHS_M — thuyết minh tiếng Việt. Tự kiểm trước khi nộp: thời lượng ≥5 phút, có bằng chứng tác giả (`whoami`/`hostname` hoặc face-cam), và đã giải thích ≥1 lỗi sửa từ script AI sinh (chọn từ bảng §1.7 `Main_Report.md`).
 
 **Agent Skill — [n]/10.** Skill `selenium-automation` (SKILL.md + 3 file references) đã **tái sử dụng cho cả 3 feature** — khung dùng chung viết một lần ở FR-04, mỗi feature sau chỉ thêm 3 file. Video demo: https://youtu.be/1FvnyriJITQ. Skill còn được **sửa ngược** khi phát hiện lỗi (mật khẩu admin, `resetBugLog`, cách chèn banner), xem §1.7 dòng 16/17/19.
 
@@ -57,10 +57,10 @@ _Trừ điểm:_ **chưa tạo GitHub Issue**. BUG-11 **không** dự đoán đ�
 | Số báo cáo HTML                     | **9** — mochawesome, đều hiển thị `Run by: 23127344` + ISO timestamp ✅ |
 | Số assertion pattern khác biệt      | 5 tổng — FR-04 dùng 4 · FR-08 dùng 5 · FR-18 dùng 5 (yêu cầu ≥3) |
 | Số bug phát hiện                    | **13** — Critical 3 · High 5 · Medium 5 · Low 0                |
-| GitHub Issues đã tạo                | [n] — [link]                                                   |
+| GitHub Issues đã tạo                | 0 / 13 — **cần tạo trước khi nộp**, nội dung soạn sẵn ở [`bug_report.md`](bug_report.md) |
 | Bug chỉ xảy ra trên 1 trình duyệt   | 0 — không có; cả 13 bug tái hiện giống hệt trên cả 3 engine    |
-| Số commit đụng file test            | [n ≥ 8] trải [n ≥ 4] ngày                                      |
-| 📹 Video demo (Task 2)              | [YouTube unlisted link]                                        |
+| Số commit đụng file test            | **5** trải **2** ngày ❌ (yêu cầu ≥8 / ≥4 ngày — xem §5 `Main_Report.md`) |
+| 📹 Video demo (Task 2)              | https://youtu.be/kbkZxUZHS_M                                   |
 | 📹 Video demo Agent Skill           | https://youtu.be/1FvnyriJITQ                                   |
 | GitHub repo (public)                | [link]                                                         |
 
@@ -94,9 +94,9 @@ npm run typecheck
 npm run test:all-browsers     # 3 feature × 3 browser = 9 lượt chạy
 ```
 
-Yêu cầu môi trường: Node.js [ver], đã cài Chrome / Edge / Firefox, SUT chạy sẵn (backend `:3000`, web `:5173`, admin `:5174`).
+Yêu cầu môi trường: Node.js v22.22.1, đã cài Chrome 151 / Edge 151 / Firefox 153, SUT chạy sẵn (backend `:3000`, web `:5173`, admin `:5174`).
 
-Mở báo cáo: `selenium/reports/<feature>/<browser>.html` — mỗi file hiển thị `Run by: [MSSV]` ngay đầu trang.
+Mở báo cáo: `selenium/reports/<feature>/<browser>.html` — mỗi file hiển thị `Run by: 23127344` ngay đầu trang.
 
 ## Tài liệu liên quan
 

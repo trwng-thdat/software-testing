@@ -16,7 +16,7 @@
 | SUT                       | EShop — `https://github.com/ttbhanh/eshop-sut` (bản dùng chung, tương ứng `eshop-sut`) |
 | GitHub repo (public)      | [link repo chứa scripts + data + HTML reports]                                         |
 | GitHub Issues             | [link trang Issues]                                                                    |
-| 📹 Video demo (Task 2)    | [YouTube unlisted link — ≥5 phút, thuyết minh tiếng Việt]                              |
+| 📹 Video demo (Task 2)    | https://youtu.be/kbkZxUZHS_M                                                            |
 | 📹 Video demo Agent Skill | https://youtu.be/1FvnyriJITQ                                                            |
 
 **Công cụ đã dùng:** **Claude Opus 5** (Claude Code, VSCode extension) · **Selenium 4+** (TypeScript + Mocha + Chai) · **mochawesome** (HTML reporter).
@@ -496,7 +496,7 @@ Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapsho
 
 | Hạng mục                | Giá trị                                             |
 | ----------------------- | --------------------------------------------------- |
-| Link YouTube (unlisted) | [link]                                              |
+| Link YouTube (unlisted) | https://youtu.be/kbkZxUZHS_M                      |
 | Thời lượng              | [mm:ss] (yêu cầu **≥ 5 phút**)                      |
 | Ngôn ngữ thuyết minh    | Tiếng Việt (giọng thật của sinh viên)               |
 | Feature được demo       | [FR-..]                                             |
@@ -577,9 +577,9 @@ Giá trị thực tế đo được qua 3 lần dùng — skill không chỉ ti�
 | Số lượt chạy trình duyệt     | **9 / ≥9** ✅                                     |
 | Số báo cáo HTML              | **9 / 9** ✅ (tồn tại đồng thời, đã qua cổng kiểm) |
 | Số bug phát hiện             | 13 (3 Critical · 5 High · 5 Medium)               |
-| Số GitHub Issue đã tạo       | 0 — **cần tạo trước khi nộp**                     |
+| Số GitHub Issue đã tạo       | 0 / 13 — **cần tạo trước khi nộp**; nội dung 13 issue đã soạn sẵn ở [`bug_report.md`](bug_report.md) |
 | Số TC không tự động hóa được | 0 / 47                                            |
-| Link video demo              | [link]                                            |
+| Link video demo              | https://youtu.be/kbkZxUZHS_M                    |
 
 > ✅ Đã đạt toàn bộ mốc định lượng của đề bài: 3 feature Pool A/B/C, ≥12 TC mỗi feature, ≥3 assertion pattern mỗi feature, 9 báo cáo HTML có `Run by:` \+ ISO timestamp. Còn thiếu: GitHub Issues, video demo, `AI_Critique.md`.
 
@@ -633,7 +633,8 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso -- "*.spec.ts" > git_co
 | [`AI_Critique.md`](AI_Critique.md)                                                | **Bắt buộc** — 200–300 từ phê bình AI           |
 | [`README.md`](README.md)                                                          | Bảng tự đánh giá + test summary                 |
 | [`git_commit_log.txt`](git_commit_log.txt)                                        | Log commit                                      |
-| [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md)                | Bug report chi tiết                             |
+| [`bug_report.md`](bug_report.md)                                                  | **13 issue soạn sẵn** — title, description, ảnh cần chèn |
+| [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md)                | Bug report chi tiết sinh tự động khi chạy test  |
 | [`skills/selenium-automation/`](skills/selenium-automation/)                      | Agent Skill                                     |
 
 ## 7.1 Checklist trước khi nộp
