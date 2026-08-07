@@ -17,7 +17,7 @@
 | GitHub repo (public)      | [link repo chứa scripts + data + HTML reports]                                         |
 | GitHub Issues             | [link trang Issues]                                                                    |
 | 📹 Video demo (Task 2)    | [YouTube unlisted link — ≥5 phút, thuyết minh tiếng Việt]                              |
-| 📹 Video demo Agent Skill | [YouTube link]                                                                         |
+| 📹 Video demo Agent Skill | https://youtu.be/1FvnyriJITQ                                                            |
 
 **Công cụ đã dùng:** [AI tool: Claude / ChatGPT / Copilot / ...] · **Selenium 4+** (TypeScript + Mocha + Chai) · **mochawesome** (HTML reporter).
 
@@ -516,8 +516,8 @@ Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapsho
 | -------------------- | ------------------------------------------------------------ |
 | Tên skill            | `selenium-automation`                                        |
 | Vị trí               | [`skills/selenium-automation/`](skills/selenium-automation/) |
-| Video demo           | [YouTube link]                                               |
-| Feature dùng để demo | [FR-..]                                                      |
+| Video demo           | https://youtu.be/1FvnyriJITQ                                 |
+| Feature dùng để demo | [FR-.. — điền feature đã demo trong video]                   |
 
 **Cấu trúc skill:**
 
@@ -528,9 +528,25 @@ Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapsho
 | `references/review-checklist.md` | Checklist review thủ công output của AI (10 nhóm)                                          |
 | `references/eshop-notes.md`      | Ghi chú selector/hành vi thật của EShop theo từng feature                                  |
 
-**Skill tự động hóa những gì:** [liệt kê — VD: dựng khung dự án, ép ≥12 case/feature ngay ở tầng loader, chuẩn hóa tên file báo cáo theo browser, chèn banner `Run by:`, thu thập ảnh chụp bug.]
+**Skill tự động hóa những gì:**
 
-**Đã dùng lại được ở đâu:** [VD: áp dụng cho cả 3 feature; ước lượng thời gian tiết kiệm].
+| Cơ chế                            | Ràng buộc HW04 được ép tự động                                                                                                                                       |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dataLoader.loadCases()`          | **Ném lỗi ngay** nếu file dữ liệu < 12 case hoặc có `tcId` trùng — không thể "quên" mốc ≥12 rồi phát hiện lúc nộp                                                    |
+| `runMatrix.ts`                    | Tên file báo cáo **suy ra từ browser đang chạy** (`chrome.html`/`edge.html`/`firefox.html`), chặn lỗi kinh điển 3 lượt đè lên 1 file                                 |
+| `reportMetadata.injectMetadata()` | Chèn banner `Run by:` \+ ISO timestamp vào **từng** file HTML sau mỗi lượt, đáp ứng §11 chống gian lận                                                               |
+| `verifyReports.ts`                | Cổng kiểm cuối: đếm case, kiểm đủ 9 file HTML tồn tại **đồng thời**, và **trích đúng thẻ banner** rồi kiểm `Run by:` / ISO / đúng tên browser                        |
+| `bugReporter.ts`                  | Tự chụp màn hình \+ ghi `BUGS.md` mỗi khi có test FAIL; xóa bằng chứng cũ theo **từng feature** để ảnh luôn khớp lần chạy hiện tại                                   |
+| `alerts.ts`                       | Bọc mọi thao tác sinh `alert()` — SUT này dùng alert làm kênh phản hồi chính, để rò một alert là hỏng toàn bộ test phía sau                                          |
+| Quy trình trong `SKILL.md`        | Bắt buộc **đọc source thật trước khi viết selector**, và **phân loại FAIL** thành lỗi script vs defect SUT thay vì nới assertion cho test xanh                       |
+
+**Đã dùng lại được ở đâu:** áp dụng cho **cả 3 feature** (FR-04 · FR-08 · FR-18). Phần khung dùng chung (`config`, `driver`, `dataLoader`, `alerts`, `reportMetadata`, `bugReporter`, `runMatrix`, `verifyReports`) viết **một lần** ở FR-04 rồi dùng lại nguyên vẹn cho FR-08 và FR-18 — mỗi feature sau chỉ cần thêm đúng 3 file: 1 data file, 1 spec, 1 page object.
+
+Giá trị thực tế đo được qua 3 lần dùng — skill không chỉ tiết kiệm thời gian mà **chặn được lỗi thật**:
+
+- **Ràng buộc ≥12 case** được kiểm ở tầng loader nên cả 3 feature đều đạt (15/16/16) mà không phải đếm tay.
+- **Cổng kiểm bắt lỗi thật:** chính `verifyReports.ts` phát hiện 3 báo cáo FR-04 chưa được đóng dấu dù mocha báo chạy thành công (§1.7 dòng 5).
+- **Điểm yếu cũng lộ ra khi tái sử dụng:** `resetBugLog()` đúng cho 1 feature nhưng xóa nhầm bằng chứng khi có 2 (§1.7 dòng 16), và mật khẩu admin sai trong `SKILL.md` lan sang tận FR-18 (§1.7 dòng 17). Cả hai đã được **sửa ngược lại vào skill**, không chỉ sửa ở nơi phát sinh lỗi — đây mới là điểm khiến skill dùng lại được lâu dài.
 
 ---
 
