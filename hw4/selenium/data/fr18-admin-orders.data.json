@@ -1,0 +1,133 @@
+[
+  {
+    "tcId": "TC-ADMIN-01",
+    "title": "Admin xem được đơn của mọi user",
+    "type": "positive",
+    "srs": "SRS §6 FR-18: admin xem được toàn bộ đơn hàng của mọi người dùng",
+    "input": { "seedOrdersForUsers": 2 },
+    "expected": { "minDistinctUsers": 2 }
+  },
+  {
+    "tcId": "TC-ADMIN-02",
+    "title": "Chuyển pending → confirmed",
+    "type": "positive",
+    "srs": "SRS §5 FR-10: pending → confirmed là chuyển đổi hợp lệ",
+    "input": { "seedStatus": "pending", "buttonLabel": "Xác nhận" },
+    "expected": { "statusLabel": "Đã xác nhận", "storedStatus": "confirmed" }
+  },
+  {
+    "tcId": "TC-ADMIN-03",
+    "title": "Chuyển confirmed → shipping",
+    "type": "positive",
+    "srs": "SRS §5 FR-10: confirmed → shipping là chuyển đổi hợp lệ",
+    "input": { "seedStatus": "confirmed", "buttonLabel": "Giao hàng" },
+    "expected": { "statusLabel": "Đang giao", "storedStatus": "shipping" }
+  },
+  {
+    "tcId": "TC-ADMIN-04",
+    "title": "Chuyển shipping → delivered",
+    "type": "positive",
+    "srs": "SRS §5 FR-10: shipping → delivered là chuyển đổi hợp lệ",
+    "input": { "seedStatus": "shipping", "buttonLabel": "Hoàn thành" },
+    "expected": { "statusLabel": "Đã giao", "storedStatus": "delivered" }
+  },
+  {
+    "tcId": "TC-ADMIN-05",
+    "title": "Hủy đơn từ pending",
+    "type": "positive",
+    "srs": "SRS §5 FR-10: pending → canceled là chuyển đổi hợp lệ",
+    "input": { "seedStatus": "pending", "buttonLabel": "Hủy" },
+    "expected": { "statusLabel": "Đã hủy", "storedStatus": "canceled" }
+  },
+  {
+    "tcId": "TC-ADMIN-06",
+    "title": "Hủy đơn từ confirmed",
+    "type": "positive",
+    "srs": "SRS §5 FR-10: confirmed → canceled là chuyển đổi hợp lệ",
+    "input": { "seedStatus": "confirmed", "buttonLabel": "Hủy" },
+    "expected": { "statusLabel": "Đã hủy", "storedStatus": "canceled" }
+  },
+  {
+    "tcId": "TC-ADMIN-07",
+    "title": "canceled là trạng thái kết thúc — không được chuyển sang delivered",
+    "type": "negative",
+    "srs": "SRS §5 FR-10: canceled là trạng thái kết thúc, không được chuyển tiếp",
+    "input": { "seedStatus": "canceled", "targetStatus": "delivered" },
+    "expected": { "rejected": true, "storedStatus": "canceled" }
+  },
+  {
+    "tcId": "TC-ADMIN-08",
+    "title": "delivered là trạng thái kết thúc — không được lùi về shipping",
+    "type": "negative",
+    "srs": "SRS §5 FR-10: delivered là trạng thái kết thúc, không được chuyển tiếp",
+    "input": { "seedStatus": "delivered", "targetStatus": "shipping" },
+    "expected": { "rejected": true, "storedStatus": "delivered" }
+  },
+  {
+    "tcId": "TC-ADMIN-09",
+    "title": "Không được nhảy cóc pending → shipping",
+    "type": "negative",
+    "srs": "SRS §5 FR-10: từ pending chỉ được sang confirmed hoặc canceled",
+    "input": { "seedStatus": "pending", "targetStatus": "shipping" },
+    "expected": { "rejected": true, "storedStatus": "pending" }
+  },
+  {
+    "tcId": "TC-ADMIN-10",
+    "title": "Không được lùi shipping → pending",
+    "type": "negative",
+    "srs": "SRS §5 FR-10: không có chuyển đổi lùi trạng thái",
+    "input": { "seedStatus": "shipping", "targetStatus": "pending" },
+    "expected": { "rejected": true, "storedStatus": "shipping" }
+  },
+  {
+    "tcId": "TC-ADMIN-11",
+    "title": "Trạng thái không tồn tại bị từ chối",
+    "type": "negative",
+    "srs": "SRS §5 FR-10: chỉ chấp nhận 5 trạng thái đã định nghĩa",
+    "input": { "seedStatus": "pending", "targetStatus": "abc" },
+    "expected": { "rejected": true, "storedStatus": "pending" }
+  },
+  {
+    "tcId": "TC-ADMIN-12",
+    "title": "Token của user thường bị chặn khỏi API admin",
+    "type": "negative",
+    "srs": "SRS §6 FR-12: mọi API /api/admin/* yêu cầu JWT hợp lệ VÀ role = 'admin'",
+    "input": { "useNonAdminToken": true, "path": "/api/admin/orders" },
+    "expected": { "httpStatusOneOf": [401, 403] }
+  },
+  {
+    "tcId": "TC-ADMIN-13",
+    "title": "Không có token bị chặn khỏi API admin",
+    "type": "negative",
+    "srs": "SRS §6 FR-12: mọi API /api/admin/* yêu cầu JWT hợp lệ",
+    "input": { "useNoToken": true, "path": "/api/admin/orders" },
+    "expected": { "httpStatus": 401 }
+  },
+  {
+    "tcId": "TC-ADMIN-14",
+    "title": "Địa chỉ giao hàng hiển thị an toàn, không render HTML",
+    "type": "edge",
+    "srs": "SRS §6 FR-18: địa chỉ giao hàng phải hiển thị an toàn (dạng text thuần)",
+    "input": {
+      "seedStatus": "pending",
+      "shippingAddress": "<b>xss</b>"
+    },
+    "expected": { "renderedAsText": "<b>xss</b>", "boldElementsAdded": 0 }
+  },
+  {
+    "tcId": "TC-ADMIN-15",
+    "title": "Cập nhật đơn không tồn tại trả về 404",
+    "type": "edge",
+    "srs": "SRS §6 FR-18: thao tác trên đơn không tồn tại phải báo lỗi 404",
+    "input": { "orderId": 999999, "targetStatus": "confirmed" },
+    "expected": { "httpStatus": 404 }
+  },
+  {
+    "tcId": "TC-ADMIN-16",
+    "title": "Đơn ở trạng thái kết thúc không hiện nút chuyển trạng thái",
+    "type": "edge",
+    "srs": "SRS §5 FR-10 + §6 FR-18: delivered/canceled là trạng thái kết thúc nên UI không được mời chuyển tiếp",
+    "input": { "seedStatuses": ["delivered", "canceled"] },
+    "expected": { "actionButtonCount": 0 }
+  }
+]

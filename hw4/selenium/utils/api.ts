@@ -219,3 +219,90 @@ export async function deleteCouponsByCode(token: string, code: string): Promise<
     await deleteCoupon(token, c.id);
   }
 }
+
+// ---------------------------------------------------------------------------
+// FR-18 Admin order management helpers
+// ---------------------------------------------------------------------------
+
+/** Admin view of every order, including the buyer's name. */
+export async function getAdminOrders(token: string): Promise<OrderRecord[]> {
+  const res = await request('GET', '/api/admin/orders', { token });
+  if (res.status !== 200) throw new Error(`GET /api/admin/orders failed: HTTP ${res.status}`);
+  return (res.body as OrderRecord[]) ?? [];
+}
+
+/** Raw variant — security cases must assert on the status code itself. */
+export async function getAdminOrdersRaw(token?: string): Promise<RawResponse> {
+  return request('GET', '/api/admin/orders', { token });
+}
+
+export async function updateOrderStatusRaw(
+  token: string,
+  orderId: number,
+  status: string,
+): Promise<RawResponse> {
+  return request('PUT', `/api/admin/orders/${orderId}/status`, { token, body: { status } });
+}
+
+export async function getOrder(orderId: number): Promise<OrderRecord | null> {
+  const res = await request('GET', `/api/orders/${orderId}`, {});
+  return res.status === 200 ? (res.body as OrderRecord) : null;
+}
+
+/**
+ * Create an order owned by `token`'s user and walk it to `status`.
+ *
+ * FR-18 cases need an order sitting in a specific state before the test acts.
+ * Building that through the customer UI would take a full add-to-cart and
+ * checkout run per case; the checkout endpoint creates the row directly, and the
+ * admin status endpoint walks it along the legal path.
+ *
+ * The walk uses ONLY transitions the SRS declares valid, so the fixture never
+ * depends on the very defects under test. Reaching `delivered` therefore goes
+ * pending -> confirmed -> shipping -> delivered, not the seeded
+ * `canceled -> delivered` shortcut that TC-ADMIN-07 exists to catch.
+ */
+export async function seedOrder(
+  userToken: string,
+  adminToken: string,
+  opts: { status?: string; totalAmount?: number; shippingAddress?: string } = {},
+): Promise<OrderRecord> {
+  const target = opts.status ?? 'pending';
+  const created = await checkoutRaw(
+    {
+      items: [],
+      total_amount: opts.totalAmount ?? 500000,
+      shipping_address: opts.shippingAddress ?? 'HW04 seeded address',
+      coupon_id: null,
+    },
+    userToken,
+  );
+  if (created.status !== 200 || !created.body?.orderId) {
+    throw new Error(`Failed to seed an order: HTTP ${created.status} ${JSON.stringify(created.body)}`);
+  }
+  const orderId = created.body.orderId as number;
+
+  const PATHS: Record<string, string[]> = {
+    pending: [],
+    confirmed: ['confirmed'],
+    shipping: ['confirmed', 'shipping'],
+    delivered: ['confirmed', 'shipping', 'delivered'],
+    canceled: ['canceled'],
+  };
+  const path = PATHS[target];
+  if (!path) throw new Error(`Cannot seed unknown status "${target}"`);
+
+  for (const step of path) {
+    const res = await updateOrderStatusRaw(adminToken, orderId, step);
+    if (res.status !== 200) {
+      throw new Error(
+        `Seeding ${target} failed at step "${step}" for order ${orderId}: ` +
+          `HTTP ${res.status} ${JSON.stringify(res.body)}`,
+      );
+    }
+  }
+
+  const order = await getOrder(orderId);
+  if (!order) throw new Error(`Seeded order ${orderId} could not be read back`);
+  return order;
+}
