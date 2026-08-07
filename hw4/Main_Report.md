@@ -277,9 +277,9 @@ Mỗi feature dùng ít nhất 4 pattern khác nhau (FR-04: 1·2·3·5 — FR-08
 
 | #   | Feature  | Browser | Tổng TC | Pass    | Fail    | Skip    | Thời lượng | ISO timestamp | Báo cáo HTML                                                                              |
 | --- | -------- | ------- | ------- | ------- | ------- | ------- | ---------- | ------------- | ----------------------------------------------------------------------------------------- |
-| 1   | FR-04    | Chrome  | 15      | 11      | 4       | 0       | 9s         | 2026-08-07T07:56:28.908Z | [`reports/fr04-profile/chrome.html`](selenium/reports/fr04-profile/chrome.html)           |
-| 2   | FR-04    | Edge    | 15      | 11      | 4       | 0       | 10s        | 2026-08-07T07:56:28.908Z | [`.../edge.html`](selenium/reports/fr04-profile/edge.html)                                |
-| 3   | FR-04    | Firefox | 15      | 11      | 4       | 0       | 20s        | 2026-08-07T07:56:28.908Z | [`.../firefox.html`](selenium/reports/fr04-profile/firefox.html)                          |
+| 1   | FR-04    | Chrome  | 15      | 11      | 4       | 0       | 27s        | 2026-08-07T12:20:41.665Z | [`reports/fr04-profile/chrome.html`](selenium/reports/fr04-profile/chrome.html)           |
+| 2   | FR-04    | Edge    | 15      | 11      | 4       | 0       | 15s        | 2026-08-07T12:20:41.665Z | [`.../edge.html`](selenium/reports/fr04-profile/edge.html)                                |
+| 3   | FR-04    | Firefox | 15      | 11      | 4       | 0       | 29s        | 2026-08-07T12:20:41.665Z | [`.../firefox.html`](selenium/reports/fr04-profile/firefox.html)                          |
 | 4   | FR-08    | Chrome  | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`reports/fr08-checkout/chrome.html`](selenium/reports/fr08-checkout/chrome.html)         |
 | 5   | FR-08    | Edge    | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`.../edge.html`](selenium/reports/fr08-checkout/edge.html)                               |
 | 6   | FR-08    | Firefox | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`.../firefox.html`](selenium/reports/fr08-checkout/firefox.html)                         |
