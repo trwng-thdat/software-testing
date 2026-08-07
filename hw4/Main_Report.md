@@ -107,15 +107,16 @@ selenium/
   data/
     fr04-profile.data.json      # 15 test case  ✅
     fr08-checkout.data.json     # 16 test case  ✅
-    fr18-admin-orders.data.json # chưa làm
+    fr18-admin-orders.data.json # 16 test case  ✅
   tests/
     fr04-profile.spec.ts        # ✅
     fr08-checkout.spec.ts       # ✅
-    fr18-admin-orders.spec.ts   # chưa làm
+    fr18-admin-orders.spec.ts   # ✅
   utils/
     config.ts  driver.ts  dataLoader.ts  alerts.ts  reportMetadata.ts  bugReporter.ts  api.ts
     profilePage.ts              # page object FR-04
     checkoutPage.ts             # page object FR-08 (/product/:id, /cart, /checkout)
+    adminOrdersPage.ts          # page object FR-18 (SPA dạng tab, port 5174)
     runMatrix.ts  verifyReports.ts
   reports/
     fr04-profile/{chrome,edge,firefox}.html
@@ -132,10 +133,15 @@ cd selenium
 npm install
 cp .env.example .env          # điền STUDENT_ID, STUDENT_NAME, URL, tài khoản
 npm run typecheck
-npm run test:fr04             # FR-04 × 3 browser, tự đóng dấu báo cáo
+npm run test:all-browsers     # 3 feature × 3 browser = 9 lượt, tự đóng dấu báo cáo
+# hoặc chạy riêng từng feature:
+npm run test:fr04             # FR-04 × 3 browser
 npm run test:fr08             # FR-08 × 3 browser
-npm run verify:reports        # cổng kiểm: đếm case, kiểm 6 file HTML + banner Run by:
+npm run test:fr18             # FR-18 × 3 browser
+npm run verify:reports        # cổng kiểm: đếm case, kiểm 9 file HTML + banner Run by:
 ```
+
+> ⚠️ **Tài khoản admin:** mật khẩu seed thật là `Admin123!` (`backend/database.js:92`), **không** phải `admin123`. Nhập sai bị cộng `login_attempts` \+2 mỗi lần và **khóa tài khoản ở lần thứ 3** (`server.js:55-60`).
 
 > ⚠️ **Điều kiện chạy FR-08:** SUT phải ở trạng thái seed sạch hoặc ít nhất còn lượt dùng coupon. Bộ test tự phục hồi hạn mức coupon (`ensureCouponAllowance`), nhưng dữ liệu `orders` sẽ tăng dần qua mỗi lần chạy — điều này **không** ảnh hưởng assertion vì mọi case đều so sánh theo `id` đơn hàng tương đối, không theo số tuyệt đối.
 
@@ -251,10 +257,13 @@ Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết c
 | TC-ADMIN-15 | edge     | Đơn không tồn tại                        | `PUT /api/admin/orders/999999/status`          | HTTP 404                                           | 3 Rejection               |
 | TC-ADMIN-16 | edge     | Nút hành động khớp trạng thái hiện tại   | Đơn `delivered`                                | **Không** hiện nút chuyển trạng thái nào           | 1 UI                      |
 
-> ⚠️ **Nghi vấn defect (đối chiếu source):**
-> — `App.jsx:862-869`: đơn ở trạng thái `canceled` vẫn hiện nút **"Đánh dấu Đã giao"**, và `server.js:549-550` có nhánh `if (currentStatus === "canceled" && status === "delivered") isValidTransition = true;` → **cho phép `canceled → delivered`**, vi phạm ràng buộc trạng thái kết thúc của FR-10. TC-ADMIN-07 nhiều khả năng FAIL (nghiêm trọng).
-> — `App.jsx:799-804`: cột Địa chỉ dùng `dangerouslySetInnerHTML` → TC-ADMIN-14 nhiều khả năng FAIL (XSS), vi phạm FR-18.
-> — Ngoài phạm vi 3 feature nhưng ghi nhận: `App.jsx:217-218` tính doanh thu `total_amount * 2` — sai FR-13.
+> ✅ **Defect đã XÁC NHẬN bằng chạy thật** (3/3 trình duyệt, xem §1.9) — **12 PASS / 4 FAIL**:
+> — `App.jsx:862-869`: đơn ở trạng thái `canceled` vẫn hiện nút **"Đánh dấu Đã giao"**, và `server.js:549-550` có nhánh `if (currentStatus === "canceled" && status === "delivered") isValidTransition = true;` → **cho phép `canceled → delivered`**. **Kết quả thật: TC-ADMIN-07 FAIL** (BUG-10, High — API trả HTTP 200 `{"message":"Order status updated"}`) **và TC-ADMIN-16 FAIL** (BUG-13, Medium — UI mời chuyển tiếp từ trạng thái kết thúc).
+> — `App.jsx:799-804`: cột Địa chỉ dùng `dangerouslySetInnerHTML`. **Kết quả thật: TC-ADMIN-14 FAIL** (BUG-12, High) — địa chỉ `<b>xss</b>` bị **render thành thẻ HTML thật**, đọc lại chỉ còn `xss`.
+> — **Phát hiện mới khi chạy thật, không có trong dự đoán ban đầu:** `server.js:100-110` — middleware `authenticateToken` chỉ verify chữ ký JWT mà **không hề kiểm `role`**, trong khi **mọi** endpoint `/api/admin/*` chỉ dùng đúng middleware này. **Kết quả thật: TC-ADMIN-12 FAIL** (BUG-11, **Critical**) — token của user thường gọi `GET /api/admin/orders` trả **HTTP 200 kèm toàn bộ đơn hàng của mọi người dùng**, vi phạm trực tiếp FR-12.
+> — TC-ADMIN-08 **PASS**: `delivered` được xử lý đúng là trạng thái kết thúc. Chỉ `canceled` bị thủng — cho thấy lỗi là một nhánh cài cắm có chủ đích chứ không phải state machine sai toàn diện.
+> — Ngoài phạm vi 3 feature nhưng ghi nhận: `App.jsx:217-218` tính doanh thu `total_amount * 2` — sai FR-13. **Không** được tính vào bug report vì nằm ngoài FR-18.
+> Expected giữ **theo SRS**, không sửa theo hành vi hiện tại của code.
 
 ### 1.4.4 Tổng hợp phân bố test case
 
@@ -295,12 +304,12 @@ Mỗi feature dùng ít nhất 4 pattern khác nhau (FR-04: 1·2·3·5 — FR-08
 | 4   | FR-08    | Chrome  | 16      | 11      | 5       | 0       | 60s        | 2026-08-07T14:28:35.350Z | [`reports/fr08-checkout/chrome.html`](selenium/reports/fr08-checkout/chrome.html)         |
 | 5   | FR-08    | Edge    | 16      | 11      | 5       | 0       | 60s        | 2026-08-07T14:28:35.350Z | [`.../edge.html`](selenium/reports/fr08-checkout/edge.html)                               |
 | 6   | FR-08    | Firefox | 16      | 11      | 5       | 0       | 60s        | 2026-08-07T14:28:35.350Z | [`.../firefox.html`](selenium/reports/fr08-checkout/firefox.html)                         |
-| 7   | FR-18    | Chrome  | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`reports/fr18-admin-orders/chrome.html`](selenium/reports/fr18-admin-orders/chrome.html) |
-| 8   | FR-18    | Edge    | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`.../edge.html`](selenium/reports/fr18-admin-orders/edge.html)                           |
-| 9   | FR-18    | Firefox | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`.../firefox.html`](selenium/reports/fr18-admin-orders/firefox.html)                     |
-|     | **Tổng** |         | **93**  | **66**  | **27**  | **0**   |            |               | **6 / 9 báo cáo**                                                                         |
+| 7   | FR-18    | Chrome  | 16      | 12      | 4       | 0       | 6s         | 2026-08-07T14:57:00.622Z | [`reports/fr18-admin-orders/chrome.html`](selenium/reports/fr18-admin-orders/chrome.html) |
+| 8   | FR-18    | Edge    | 16      | 12      | 4       | 0       | 6s         | 2026-08-07T14:57:00.622Z | [`.../edge.html`](selenium/reports/fr18-admin-orders/edge.html)                           |
+| 9   | FR-18    | Firefox | 16      | 12      | 4       | 0       | 31s        | 2026-08-07T14:57:00.622Z | [`.../firefox.html`](selenium/reports/fr18-admin-orders/firefox.html)                     |
+|     | **Tổng** |         | **141** | **102** | **39**  | **0**   |            |               | **9 / 9 báo cáo** ✅                                                                      |
 
-> ⚠️ Dòng 7–9 (FR-18) **chưa chạy** — chưa tự động hóa. Tổng ở trên chỉ cộng 6 lượt đã thực thi thật.
+> ✅ **Đủ 9 báo cáo HTML tồn tại đồng thời**, đã qua cổng kiểm `npm run verify:reports` (đếm case ≥12/feature, kiểm banner `Run by:` \+ ISO timestamp \+ đúng tên browser trong từng file).
 
 **Bằng chứng metadata:** mỗi file HTML chứa banner hiển thị trực tiếp khi mở bằng trình duyệt:
 
@@ -327,8 +336,14 @@ Timestamp: [ISO 8601]
 | TC-CHECKOUT-07 | F     | F    | F       | Defect SUT — tổng tiền sửa được trên cả 3 engine                |
 | TC-CHECKOUT-13 | F     | F    | F       | Defect SUT — so sánh `>` thay vì `>=`, tầng API                 |
 | TC-CHECKOUT-16 | F     | F    | F       | Defect SUT — đơn rỗng vẫn được tạo                              |
+| TC-ADMIN-07   | F      | F    | F       | Defect SUT — `canceled → delivered` được chấp nhận, tầng API    |
+| TC-ADMIN-12   | F      | F    | F       | Defect SUT — thiếu kiểm `role`, tầng API nên độc lập browser    |
+| TC-ADMIN-14   | F      | F    | F       | Defect SUT — XSS qua `dangerouslySetInnerHTML` trên cả 3 engine |
+| TC-ADMIN-16   | F      | F    | F       | Defect SUT — UI hiện nút chuyển tiếp ở trạng thái kết thúc      |
 
-**Kết luận: không có khác biệt giữa các trình duyệt** — cả 3 lượt FR-04 đều cho 11 PASS / 4 FAIL và cả 3 lượt FR-08 đều cho 11 PASS / 5 FAIL, với đúng cùng một tập TC fail. Điều này củng cố kết luận rằng 9 TC FAIL là defect thật của SUT chứ không phải lỗi timing hay lỗi riêng của một engine.
+**Kết luận: không có khác biệt giữa các trình duyệt** — FR-04 cho 11 PASS / 4 FAIL, FR-08 cho 11 PASS / 5 FAIL, FR-18 cho 12 PASS / 4 FAIL, và cả 3 lượt của mỗi feature đều fail đúng cùng một tập TC. Điều này củng cố kết luận rằng 13 TC FAIL là defect thật của SUT chứ không phải lỗi timing hay lỗi riêng của một engine.
+
+Riêng FR-18 chạy nhanh hơn hẳn (6s trên Chrome/Edge) vì phần lớn tiền điều kiện được dựng qua API thay vì click qua UI; Firefox chậm hơn (31s) do chi phí khởi tạo `geckodriver`, **không** phải do khác biệt hành vi — kết quả pass/fail giống hệt.
 
 ## 1.7 Human review — AI sai/thiếu ở đâu và vì sao
 
@@ -354,6 +369,8 @@ Timestamp: [ISO 8601]
 | 14  | **(FR-08)** TC-12 (giới hạn lượt dùng) tiêu luôn lượt của mã seed `BIGBUY`        | `coupon_usage` chỉ ghi thêm và **không có API xóa** → sau lần chạy đầu, `BIGBUY` cạn vĩnh viễn với tài khoản fixture, khiến TC-05/06 FAIL ở **mọi lần chạy sau** — nhìn hệt như defect | TC-12 tự tạo mã dùng-một-lần `HW04LIMIT` rồi xóa trong `finally`; thêm `ensureCouponAllowance()` re-mint mã seed khi phát hiện đã cạn | Chất lượng prompt — chưa yêu cầu test phải idempotent qua nhiều lần chạy  |
 | 15  | **(FR-08)** Tin rằng cờ `--spec` sẽ **thay thế** `spec` trong `.mocharc.json`     | Mocha **gộp** hai nguồn → mỗi lượt chạy FR-08 kéo theo cả suite FR-04, báo cáo `fr08-checkout/chrome.html` chứa 31 test của 2 feature. Vẫn "chạy xanh" nên rất dễ bỏ lọt | Bỏ hẳn khóa `spec` khỏi `.mocharc.json`, để mỗi lượt tự khai báo spec; ghi chú lý do ngay trong file config để không ai thêm lại | Giới hạn mô hình — nhầm ngữ nghĩa merge/override của config Mocha          |
 | 16  | **(FR-08)** `resetBugLog()` xóa **toàn bộ** `*.png` trước mỗi lượt matrix         | Đúng khi chỉ có 1 feature, nhưng khi có 2 thì feature chạy **sau** xóa sạch bằng chứng của feature chạy **trước** — chạy FR-08 làm mất cả 4 ảnh `TC-PROFILE-*.png` mà §1.9 đang trỏ link tới, và `BUGS.md` chỉ còn bug của 1 feature | Đổi `resetBugLog(feature, prefixes)` chỉ xóa ảnh thuộc tiền tố TC của chính feature đó; `BUGS.md` được ghép lại từ các file mảnh theo từng feature trong `.sections/` | Đặc thù feature — giải pháp đúng cho 1 feature nhưng sai khi mở rộng ra nhiều feature |
+| 17  | **(FR-18)** Mật khẩu admin `admin123` — chép từ chính `SKILL.md` và `.env.example` | Mật khẩu seed thật là **`Admin123!`** (`database.js:92`). Toàn bộ suite FR-18 **chết ngay ở `before` hook** với HTTP 401. Nguy hiểm hơn: `/api/login` cộng `login_attempts` \+2 mỗi lần sai và **khóa ở 3** (`server.js:55-60`) — retry vài lần là tự khóa tài khoản admin của chính mình | Đọc `database.js` lấy giá trị thật, sửa `.env` \+ `.env.example`; **sửa luôn gốc** ở `SKILL.md:49,102` và `references/eshop-notes.md:15` kèm cảnh báo về cơ chế khóa, để lần sau skill không truyền tiếp giá trị sai | Giới hạn mô hình — đoán mật khẩu theo dạng thường gặp thay vì đọc file seed; sai lan sang cả skill và tồn tại qua 2 feature trước mà không lộ vì FR-04/FR-08 không dùng tài khoản admin |
+| 18  | **(FR-18)** Dự đoán defect FR-18 chỉ từ đọc source: 2 lỗi (`canceled → delivered`, XSS địa chỉ) | Bỏ sót defect **nghiêm trọng nhất** của cả bài: `authenticateToken` (`server.js:100-110`) chỉ verify chữ ký JWT mà **không kiểm `role`**, nên mọi endpoint `/api/admin/*` mở toang cho user thường. Đọc riêng route handler thì không thấy — phải đọc **middleware** mới lộ | Chạy thật mới phát hiện (TC-ADMIN-12 trả HTTP 200 thay vì 401/403) → ghi nhận BUG-11 Critical. Bài học: đọc source giúp **định hướng** ca kiểm thử, nhưng không thay được chạy thật | Giới hạn mô hình — đọc theo từng route mà không truy ngược chuỗi middleware dùng chung |
 
 > **Nhận xét tổng hợp:** Nhóm sai nặng nhất không nằm ở logic test mà ở **hạ tầng báo cáo** (#3, #4, #5, #6) — đều là loại lỗi "chạy không báo lỗi nhưng không sinh ra bằng chứng", nguy hiểm vì rất dễ tưởng đã xong. Nhóm thứ hai là **giả định về DOM và trạng thái** (#1, #2, #7, #8, #9): AI suy từ mẫu e-commerce phổ biến thay vì đọc source thật, và mặc định mỗi test chạy trên môi trường sạch. Bài học khi prompt lần sau: (1) bắt buộc đọc JSX/handler thật trước khi sinh selector; (2) luôn kiểm chứng *bằng chứng đầu ra* chứ không chỉ kiểm test pass/fail — chính `verifyReports.ts` lỏng lẻo đã suýt cho qua 3 báo cáo chưa đóng dấu; (3) yêu cầu rõ mỗi test phải tự khôi phục trạng thái, đặc biệt trên SUT có defect cho phép thay đổi không hoàn nguyên.
 
@@ -365,6 +382,7 @@ Timestamp: [ISO 8601]
 | ------- | ------- | -------- | ---------------------------- | ------------------ |
 | —       | FR-04   | —        | —                            | —                  |
 | —       | FR-08   | —        | —                            | —                  |
+| —       | FR-18   | —        | —                            | —                  |
 
 **FR-04: không có TC nào phải bỏ** — cả 15/15 test case đều tự động hóa được và đã thực thi trên cả 3 trình duyệt.
 
@@ -382,7 +400,17 @@ Ghi chú về **điểm tác động** của 4 case FR-08 kiểm ở tầng API 
 
 TC-CHECKOUT-11 kiểm ở **cả hai** tầng: gọi `POST /api/checkout` không token (phải 401) **và** thao tác UI thật với người dùng đã đăng xuất (phải bị chặn trước khi vào `/checkout`).
 
-> 💡 Mục này sẽ cập nhật tiếp khi làm FR-18.
+**FR-18: không có TC nào phải bỏ** — cả 16/16 test case đều tự động hóa được và đã thực thi trên cả 3 trình duyệt.
+
+Ghi chú về **điểm tác động** của các case FR-18 kiểm ở tầng API:
+
+| TC | Vì sao kiểm ở tầng API |
+| -- | ---------------------- |
+| TC-ADMIN-07 … 11 | Kiểm **chuyển đổi trạng thái không hợp lệ**, mà UI **cố tình không render nút** cho hầu hết các chuyển đổi này (không có nút `pending → shipping`, không có nút lùi trạng thái). Nếu chỉ kiểm qua UI thì test sẽ "pass" vì không tìm thấy nút — **pass giả**, không hề chứng minh được server có chặn hay không. Endpoint mới là nơi đặt luật state machine. |
+| TC-ADMIN-12 / 13 | Kiểm **access control**. Bề mặt tấn công là request gọi thẳng API kèm token sai quyền — kiểm qua UI vô nghĩa vì `App.jsx:65-68` chỉ chặn phía client. |
+| TC-ADMIN-15 | Đơn không tồn tại thì không có dòng nào trên bảng để bấm. |
+
+Ngược lại TC-ADMIN-01…06, 14, 16 đều kiểm **thật trên UI** (click tab, click nút hành động, đọc nhãn trạng thái, đọc ô địa chỉ), và TC-ADMIN-02…06 còn đối chiếu chéo xuống API để chắc chắn nhãn hiển thị khớp dữ liệu đã lưu.
 
 ## 1.9 Bug report
 
@@ -390,10 +418,11 @@ TC-CHECKOUT-11 kiểm ở **cả hai** tầng: gọi `POST /api/checkout` không
 
 ### Phân loại kết quả FAIL
 
-| Loại                                    | FR-04 | FR-08 | Xử lý                                            |
-| --------------------------------------- | ----- | ----- | ------------------------------------------------ |
-| Lỗi script (selector/wait/expected sai) | 6     | 3     | Đã sửa script, chạy lại → PASS                   |
-| **Defect thật của SUT**                 | 4     | 5     | **Giữ nguyên test FAIL** làm bằng chứng, log bug |
+| Loại                                    | FR-04 | FR-08 | FR-18 | Xử lý                                            |
+| --------------------------------------- | ----- | ----- | ----- | ------------------------------------------------ |
+| Lỗi script (selector/wait/expected sai) | 6     | 3     | 0     | Đã sửa script, chạy lại → PASS                   |
+| Lỗi cấu hình môi trường                 | 0     | 0     | 1     | Sai mật khẩu admin → sửa `.env` \+ gốc ở skill   |
+| **Defect thật của SUT**                 | 4     | 5     | 4     | **Giữ nguyên test FAIL** làm bằng chứng, log bug |
 
 **Chi tiết 6 FAIL do lỗi script ở FR-04 (lượt chạy đầu tiên → đã sửa):** TC-PROFILE-01/02/03/13/14/15 ban đầu fail vì `BASELINE.phone = "0900000000"` (đúng SRS) lại bị chính regex lỗi của SUT chặn, khiến các case *không* kiểm SĐT cũng không submit được. Đã đổi baseline sang `912345678` — giá trị build hiện tại chấp nhận — để mỗi case kiểm đúng thứ nó cần kiểm. Quy tắc SĐT theo SRS vẫn được assert **nguyên vẹn** ở TC-PROFILE-04…09.
 
@@ -420,6 +449,10 @@ TC-CHECKOUT-11 kiểm ở **cả hai** tầng: gọi `POST /api/checkout` không
 | BUG-07 | TC-CHECKOUT-07 | FR-08  | **Critical** | **Khách tự sửa được tổng tiền** và server lưu thẳng giá trị đó — trả 1₫ cho đơn 6 triệu | SRS §4 FR-08: tổng tiền **không cho sửa trực tiếp**; backend tự tính lại | Ô tổng tiền là `<input type="number">` sửa được; đơn được tạo với `total_amount = 1` | All (3/3)            | [`TC-CHECKOUT-07.png`](selenium/bug-snapshots/TC-CHECKOUT-07.png)                   | TBD          |
 | BUG-08 | TC-CHECKOUT-13 | FR-08  | Medium       | Đơn **đúng bằng** ngưỡng tối thiểu bị từ chối (lỗi biên `>` thay vì `>=`)               | SRS §4 FR-09 C3: điều kiện là `total_amount >= min_order_amount`    | HTTP 400 "Đơn hàng chưa đủ giá trị tối thiểu 300,000 ₫" với đơn đúng 300.000₫ | All (tầng API)       | [`TC-CHECKOUT-13.png`](selenium/bug-snapshots/TC-CHECKOUT-13.png)                   | TBD          |
 | BUG-09 | TC-CHECKOUT-16 | FR-08  | **High**     | **Giỏ rỗng vẫn tạo được đơn hàng**                                                     | SRS §4 FR-08: không được tạo đơn khi giỏ rỗng                      | Hiện "Thanh toán thành công!" và sinh thêm 1 bản ghi trong `orders` | All (3/3)            | [`TC-CHECKOUT-16.png`](selenium/bug-snapshots/TC-CHECKOUT-16.png)                   | TBD          |
+| BUG-10 | TC-ADMIN-07   | FR-18   | **High**     | **`canceled → delivered` được chấp nhận** — đơn đã hủy biến thành đã giao               | SRS §5 FR-10: `canceled` là trạng thái kết thúc, không chuyển tiếp | HTTP 200 `{"message":"Order status updated"}`, `status` đổi thành `delivered` | All (tầng API)       | [`TC-ADMIN-07.png`](selenium/bug-snapshots/TC-ADMIN-07.png)                         | TBD          |
+| BUG-11 | TC-ADMIN-12   | FR-18   | **Critical** | **Thiếu kiểm soát quyền** — token user thường đọc được **mọi** API `/api/admin/*`       | SRS §6 FR-12: mọi API `/api/admin/*` yêu cầu JWT hợp lệ **và** `role = 'admin'` | `GET /api/admin/orders` bằng token user thường trả **HTTP 200 kèm toàn bộ đơn hàng của mọi user** | All (tầng API)       | [`TC-ADMIN-12.png`](selenium/bug-snapshots/TC-ADMIN-12.png)                         | TBD          |
+| BUG-12 | TC-ADMIN-14   | FR-18   | **High**     | **XSS lưu trữ** — địa chỉ giao hàng được render thành HTML thật                         | SRS §6 FR-18: địa chỉ giao hàng phải hiển thị an toàn (text thuần) | Địa chỉ `<b>xss</b>` bị render thành thẻ `<b>`, đọc lại chỉ còn `xss` | All (3/3)            | [`TC-ADMIN-14.png`](selenium/bug-snapshots/TC-ADMIN-14.png)                         | TBD          |
+| BUG-13 | TC-ADMIN-16   | FR-18   | Medium       | UI mời chuyển tiếp từ trạng thái kết thúc — đơn `canceled` vẫn hiện nút "Đánh dấu Đã giao" | SRS §5 FR-10: `delivered`/`canceled` là trạng thái kết thúc         | Đơn `canceled` hiện nút "Đánh dấu Đã giao"; đơn `delivered` thì đúng (không có nút) | All (3/3)            | [`TC-ADMIN-16.png`](selenium/bug-snapshots/TC-ADMIN-16.png)                         | TBD          |
 
 **Nguyên nhân gốc (đối chiếu source, đã xác nhận bằng chạy thật):**
 
@@ -431,7 +464,13 @@ TC-CHECKOUT-11 kiểm ở **cả hai** tầng: gọi `POST /api/checkout` không
 - BUG-08: `server.js` kiểm `if (total_amount > coupon.min_order_amount)` — dùng `>` nên loại trừ đúng điểm biên mà FR-09 C3 quy định là hợp lệ.
 - BUG-09: cùng gốc với BUG-07 — `POST /api/checkout` **bỏ qua hoàn toàn mảng `items`**, không kiểm rỗng, nên một request với giỏ rỗng vẫn `INSERT` thành công.
 
+- BUG-10 và BUG-13 chung một gốc: `backend/server.js:549-550` có nhánh `if (currentStatus === "canceled" && status === "delivered") isValidTransition = true;` — một ngoại lệ cài cắm có chủ đích, và `frontend-admin/src/App.jsx:862-869` render đúng cái nút để khai thác nó. Tách 2 bug vì một cái ở tầng API (dữ liệu bị hỏng dù không qua UI) còn một cái ở tầng UI (mời người dùng thực hiện thao tác sai).
+- BUG-11: `backend/server.js:100-110` — middleware `authenticateToken` chỉ gọi `jwt.verify` rồi gán `req.user = user` và `next()`, **không hề đọc `user.role`**. Trong khi đó **toàn bộ 6 endpoint** `/api/admin/*` (`import-products`, `coupons` POST/DELETE, `users` GET/DELETE, `orders` GET, `orders/:id/status` PUT) chỉ dùng đúng middleware này. Frontend admin có kiểm `role !== "admin"` ở `App.jsx:65-68` nhưng đó chỉ là kiểm **phía client**, vô nghĩa trước một request gọi thẳng API.
+- BUG-12: `frontend-admin/src/App.jsx:799-804` render cột Địa chỉ bằng `dangerouslySetInnerHTML={{ __html: o.shipping_address }}`, trong khi giá trị này do **người mua tự nhập** và không hề được escape ở bất kỳ tầng nào.
+
 > BUG-07 và BUG-09 chung một nguyên nhân gốc (`/api/checkout` tin tuyệt đối vào client, không tự tính lại từ `items`) nhưng được tách thành 2 bug vì biểu hiện, mức độ và cách kiểm khác nhau.
+
+> 🔗 **Chuỗi khai thác nguy hiểm nhất** ghép từ 3 bug ở 2 feature: BUG-04 cho user tự nâng `role` thành `admin` qua `PUT /api/users/me`; nhưng thực ra **không cần** vì BUG-11 đã cho token user thường gọi thẳng mọi API admin; và BUG-12 cho phép chèn script qua địa chỉ giao hàng — script đó chạy **trong phiên của admin** khi admin mở tab Đơn hàng. Ba lỗi riêng lẻ, ghép lại thành đường chiếm quyền hoàn chỉnh.
 
 Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md).
 
@@ -501,20 +540,20 @@ Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapsho
 
 | Chỉ số                       | Giá trị                                |
 | ---------------------------- | -------------------------------------- |
-| Số feature tự động hóa       | 2 / 3 (FR-04, FR-08 xong; FR-18 chưa làm)         |
+| Số feature tự động hóa       | **3 / 3** ✅ (FR-04 · FR-08 · FR-18)              |
 | Số test case đã **thiết kế** | 47 (FR-04: 15 · FR-08: 16 · FR-18: 16)            |
-| Số test case tự động hóa     | 31 (FR-04: 15 · FR-08: 16)                        |
-| Số test case đã thực thi     | 93 lượt (31 TC × 3 trình duyệt)                   |
-| Số test case PASS            | 66 lượt (22 TC × 3)                               |
-| Số test case FAIL            | 27 lượt (9 TC × 3) — đều là defect thật của SUT   |
-| Số lượt chạy trình duyệt     | 6 / ≥9                                            |
-| Số báo cáo HTML              | 6 / 9                                             |
-| Số bug phát hiện             | 9 (2 Critical · 3 High · 4 Medium)                |
+| Số test case tự động hóa     | **47 / 47** ✅ (≥36 theo yêu cầu)                 |
+| Số test case đã thực thi     | 141 lượt (47 TC × 3 trình duyệt)                  |
+| Số test case PASS            | 102 lượt (34 TC × 3)                              |
+| Số test case FAIL            | 39 lượt (13 TC × 3) — đều là defect thật của SUT  |
+| Số lượt chạy trình duyệt     | **9 / ≥9** ✅                                     |
+| Số báo cáo HTML              | **9 / 9** ✅ (tồn tại đồng thời, đã qua cổng kiểm) |
+| Số bug phát hiện             | 13 (3 Critical · 5 High · 5 Medium)               |
 | Số GitHub Issue đã tạo       | 0 — **cần tạo trước khi nộp**                     |
-| Số TC không tự động hóa được | 0 (trong phạm vi FR-04 \+ FR-08)                  |
+| Số TC không tự động hóa được | 0 / 47                                            |
 | Link video demo              | [link]                                            |
 
-> ⚠️ Các con số trên phản ánh **FR-04 và FR-08**. Phải hoàn tất FR-18 để đạt mốc 9 báo cáo / ≥36 TC của đề bài.
+> ✅ Đã đạt toàn bộ mốc định lượng của đề bài: 3 feature Pool A/B/C, ≥12 TC mỗi feature, ≥3 assertion pattern mỗi feature, 9 báo cáo HTML có `Run by:` \+ ISO timestamp. Còn thiếu: GitHub Issues, video demo, `AI_Critique.md`.
 
 ---
 
