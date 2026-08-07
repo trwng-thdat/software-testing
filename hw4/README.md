@@ -23,13 +23,13 @@
 <summary><b>Căn cứ tự chấm</b> (nhấn để xem)</summary>
 
 **Feature A (FR-04) — [n]/25.** 15 TC (≥12 ✅), dữ liệu ở `data/fr04-profile.data.json` — spec duyệt mảng, không hardcode. 4 assertion pattern (UI · API cross-check · rejection · security). Chạy đủ 3 trình duyệt, 11 PASS / 4 FAIL giống hệt nhau. 4 defect thật: BUG-04 leo thang đặc quyền (Critical). Quy trình AI-First log đầy đủ ở Artifact #3.
-_Trừ điểm:_ **chưa tạo GitHub Issue** cho 4 bug — đề bài §6 bắt buộc log bug ở **cả** Markdown lẫn Issues. Baseline `phone` phải đổi sang `912345678` (giá trị build hiện tại chấp nhận) để 6 case không kiểm SĐT khỏi fail lây; đã nêu rõ ở §1.7 dòng 7.
+_Trừ điểm:_ Baseline `phone` phải đổi sang `912345678` (giá trị build hiện tại chấp nhận) để 6 case không kiểm SĐT khỏi fail lây; đã nêu rõ ở §1.7 dòng 7.
 
 **Feature B (FR-08) — [n]/25.** 16 TC (≥12 ✅), dữ liệu tách file. **5 assertion pattern** — thêm structural integrity (tổng = Σ line items − giảm giá). 11 PASS / 5 FAIL giống hệt trên 3 engine. 5 defect thật gồm BUG-07 sửa được tổng tiền (Critical) và BUG-06 công thức giảm giá âm.
-_Trừ điểm:_ **chưa tạo GitHub Issue**. 4 case (TC-12/13/14/15) kiểm ở **tầng API** thay vì UI vì catalogue rẻ nhất đã 4.000.000₫ nên không ghép được giỏ đúng số tiền biên — lý do ghi ở §1.8. Ba lỗi script phải sửa sau lần chạy đầu (§1.9), trong đó một lỗi suýt tạo **bug report giả**.
+_Trừ điểm:_ 4 case (TC-12/13/14/15) kiểm ở **tầng API** thay vì UI vì catalogue rẻ nhất đã 4.000.000₫ nên không ghép được giỏ đúng số tiền biên — lý do ghi ở §1.8. Ba lỗi script phải sửa sau lần chạy đầu (§1.9), trong đó một lỗi suýt tạo **bug report giả**.
 
 **Feature C (FR-18) — [n]/25.** 16 TC (≥12 ✅), dữ liệu tách file. 5 assertion pattern, phủ **cả chuyển đổi hợp lệ lẫn không hợp lệ** của state machine FR-10. 12 PASS / 4 FAIL giống hệt trên 3 engine. 4 defect thật, gồm **BUG-11 (Critical)** — thiếu kiểm `role` ở middleware nên mọi API admin mở toang.
-_Trừ điểm:_ **chưa tạo GitHub Issue**. BUG-11 **không** dự đoán được từ đọc source (chỉ lộ khi chạy thật) — cho thấy khâu review tĩnh còn sót; đã ghi thẳng ở §1.7 dòng 18. Mật khẩu admin sai trong `.env` làm suite chết ở lần chạy đầu (§1.7 dòng 17).
+_Trừ điểm:_ BUG-11 **không** dự đoán được từ đọc source (chỉ lộ khi chạy thật) — cho thấy khâu review tĩnh còn sót; đã ghi thẳng ở §1.7 dòng 18. Mật khẩu admin sai trong `.env` làm suite chết ở lần chạy đầu (§1.7 dòng 17).
 
 **Task 2 — Demo video — [n]/15.** Đã quay: https://youtu.be/kbkZxUZHS_M — thuyết minh tiếng Việt. Tự kiểm trước khi nộp: thời lượng ≥5 phút, có bằng chứng tác giả (`whoami`/`hostname` hoặc face-cam), và đã giải thích ≥1 lỗi sửa từ script AI sinh (chọn từ bảng §1.7 `Main_Report.md`).
 
@@ -57,12 +57,12 @@ _Trừ điểm:_ **chưa tạo GitHub Issue**. BUG-11 **không** dự đoán đ�
 | Số báo cáo HTML                     | **9** — mochawesome, đều hiển thị `Run by: 23127344` + ISO timestamp ✅ |
 | Số assertion pattern khác biệt      | 5 tổng — FR-04 dùng 4 · FR-08 dùng 5 · FR-18 dùng 5 (yêu cầu ≥3) |
 | Số bug phát hiện                    | **13** — Critical 3 · High 5 · Medium 5 · Low 0                |
-| GitHub Issues đã tạo                | 0 / 13 — **cần tạo trước khi nộp**, nội dung soạn sẵn ở [`bug_report.md`](bug_report.md) |
+| GitHub Issues đã tạo                | **13 / 13** ✅ — [#260–#272](https://github.com/DuyITLOR/group05_eshop/issues) |
 | Bug chỉ xảy ra trên 1 trình duyệt   | 0 — không có; cả 13 bug tái hiện giống hệt trên cả 3 engine    |
 | Số commit đụng file test            | **5** trải **2** ngày ❌ (yêu cầu ≥8 / ≥4 ngày — xem §5 `Main_Report.md`) |
 | 📹 Video demo (Task 2)              | https://youtu.be/kbkZxUZHS_M                                   |
 | 📹 Video demo Agent Skill           | https://youtu.be/1FvnyriJITQ                                   |
-| GitHub repo (public)                | [link]                                                         |
+| GitHub repo (public)                | https://github.com/DuyITLOR/group05_eshop                      |
 
 ## Cấu trúc gói nộp
 

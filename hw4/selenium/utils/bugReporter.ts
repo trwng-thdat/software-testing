@@ -57,6 +57,37 @@ function rebuildBugsMd(): void {
   fs.writeFileSync(BUGS_MD, header + body, 'utf8');
 }
 
+/**
+ * Confirmed SUT defects that already have a filed GitHub Issue.
+ *
+ * BUGS.md is regenerated on every matrix run, so hand-editing the issue links
+ * into it would be wiped by the next run. Keeping the mapping here means the
+ * links (and the triaged severity) are re-emitted automatically instead.
+ *
+ * A TC ID absent from this table is either a new failure or one not yet
+ * triaged, and is written out as `TBD` so it stands out as needing attention.
+ */
+const FILED: Record<string, { issue: number; severity: string }> = {
+  // FR-04
+  'TC-PROFILE-04': { issue: 263, severity: 'High' },
+  'TC-PROFILE-05': { issue: 264, severity: 'High' },
+  'TC-PROFILE-08': { issue: 269, severity: 'Medium' },
+  'TC-PROFILE-12': { issue: 260, severity: 'Critical' },
+  // FR-08
+  'TC-CHECKOUT-03': { issue: 270, severity: 'Medium' },
+  'TC-CHECKOUT-04': { issue: 265, severity: 'High' },
+  'TC-CHECKOUT-07': { issue: 261, severity: 'Critical' },
+  'TC-CHECKOUT-13': { issue: 271, severity: 'Medium' },
+  'TC-CHECKOUT-16': { issue: 266, severity: 'High' },
+  // FR-18
+  'TC-ADMIN-07': { issue: 267, severity: 'High' },
+  'TC-ADMIN-12': { issue: 262, severity: 'Critical' },
+  'TC-ADMIN-14': { issue: 268, severity: 'High' },
+  'TC-ADMIN-16': { issue: 272, severity: 'Medium' },
+};
+
+const ISSUE_BASE = 'https://github.com/DuyITLOR/group05_eshop/issues/';
+
 export async function captureBug(
   driver: WebDriver,
   info: { tcId: string; feature: string; expected: string; actual: string; severity?: string },
@@ -74,17 +105,20 @@ export async function captureBug(
     note = `> Screenshot for ${info.tcId} unavailable: ${(e as Error).message}\n\n`;
   }
 
+  const filed = FILED[info.tcId];
+  const issueLink = filed ? `[#${filed.issue}](${ISSUE_BASE}${filed.issue})` : 'TBD';
+
   fs.appendFileSync(
     section,
     note +
       `## ${info.tcId} - ${info.feature}\n\n` +
       `- Browser: ${config.browser}\n` +
-      `- Severity: ${info.severity ?? 'TBD'}\n` +
+      `- Severity: ${info.severity ?? filed?.severity ?? 'TBD'}\n` +
       `- Expected: ${info.expected}\n` +
       `- Actual: ${info.actual}\n` +
       // Forward slashes: a Windows backslash path breaks the Markdown link.
       `- Screenshot: ${path.relative(path.resolve(__dirname, '..'), shot).split(path.sep).join('/')}\n` +
-      `- GitHub Issue: TBD\n\n`,
+      `- GitHub Issue: ${issueLink}\n\n`,
     'utf8',
   );
   rebuildBugsMd();
