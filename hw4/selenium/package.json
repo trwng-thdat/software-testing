@@ -1,0 +1,28 @@
+{
+  "name": "hw04-eshop-selenium",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HW04 automation suite for the EShop SUT (Selenium 4 + Mocha + Chai + mochawesome)",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test:fr04:chrome": "cross-env BROWSER=chrome mocha --spec tests/fr04-profile.spec.ts --reporter-option reportDir=reports/fr04-profile,reportFilename=chrome,overwrite=true,html=true,json=true,charts=true",
+    "test:fr04:edge": "cross-env BROWSER=edge mocha --spec tests/fr04-profile.spec.ts --reporter-option reportDir=reports/fr04-profile,reportFilename=edge,overwrite=true,html=true,json=true,charts=true",
+    "test:fr04:firefox": "cross-env BROWSER=firefox mocha --spec tests/fr04-profile.spec.ts --reporter-option reportDir=reports/fr04-profile,reportFilename=firefox,overwrite=true,html=true,json=true,charts=true",
+    "test:fr04": "ts-node utils/runMatrix.ts fr04-profile",
+    "verify:reports": "ts-node utils/verifyReports.ts fr04-profile"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.16",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "^20.14.0",
+    "@types/selenium-webdriver": "^4.1.24",
+    "chai": "^4.4.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "mocha": "^10.6.0",
+    "mochawesome": "^7.1.3",
+    "selenium-webdriver": "^4.23.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}

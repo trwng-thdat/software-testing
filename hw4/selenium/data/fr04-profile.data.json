@@ -1,0 +1,192 @@
+[
+  {
+    "tcId": "TC-PROFILE-01",
+    "title": "Cập nhật đủ 3 trường hợp lệ",
+    "type": "positive",
+    "input": {
+      "name": "Nguyễn Văn A",
+      "phone": "912345678",
+      "address": "12 Lê Lợi, Q1"
+    },
+    "expected": {
+      "accepted": true,
+      "alert": "Cập nhật thành công!",
+      "persisted": { "name": "Nguyễn Văn A", "phone": "912345678", "shipping_address": "12 Lê Lợi, Q1" }
+    },
+    "phoneNote": "Phone is build-accepted (not SRS-valid) on purpose: this case verifies the 3-field update path, not the phone rule. TC-PROFILE-04..09 own the SRS phone boundaries.",
+    "srs": "SRS §2 FR-04: người dùng đã đăng nhập cập nhật được Họ Tên, SĐT, Địa chỉ giao hàng."
+  },
+  {
+    "tcId": "TC-PROFILE-02",
+    "title": "Chỉ đổi họ tên, giữ nguyên phone/address",
+    "type": "positive",
+    "input": { "name": "Trần Thị B" },
+    "expected": {
+      "accepted": true,
+      "alert": "Cập nhật thành công!",
+      "persisted": { "name": "Trần Thị B" },
+      "unchangedFields": ["phone", "shipping_address"]
+    },
+    "srs": "SRS §2 FR-04: chỉ những trường được nhập mới thay đổi."
+  },
+  {
+    "tcId": "TC-PROFILE-03",
+    "title": "Dữ liệu vẫn còn sau khi tải lại trang",
+    "type": "positive",
+    "input": {
+      "name": "Lê Văn C",
+      "phone": "987654321",
+      "address": "45 Nguyễn Huệ, Q1",
+      "reloadAfterSave": true
+    },
+    "expected": {
+      "accepted": true,
+      "alert": "Cập nhật thành công!",
+      "formAfterReload": { "name": "Lê Văn C", "phone": "987654321", "address": "45 Nguyễn Huệ, Q1" }
+    },
+    "phoneNote": "Build-accepted phone on purpose: this case verifies persistence across reload, not the phone rule.",
+    "srs": "SRS §2 FR-04: hồ sơ được lưu bền vững, hiển thị lại sau khi tải trang."
+  },
+  {
+    "tcId": "TC-PROFILE-04",
+    "title": "SĐT biên dưới 10 chữ số",
+    "type": "positive",
+    "input": { "phone": "0123456789" },
+    "expected": {
+      "accepted": true,
+      "alert": "Cập nhật thành công!",
+      "persisted": { "phone": "0123456789" }
+    },
+    "srs": "SRS §2 FR-04: SĐT hợp lệ bắt đầu bằng 0, dài 10–11 chữ số → 10 chữ số là biên dưới hợp lệ."
+  },
+  {
+    "tcId": "TC-PROFILE-05",
+    "title": "SĐT biên trên 11 chữ số",
+    "type": "positive",
+    "input": { "phone": "01234567890" },
+    "expected": {
+      "accepted": true,
+      "alert": "Cập nhật thành công!",
+      "persisted": { "phone": "01234567890" }
+    },
+    "srs": "SRS §2 FR-04: 11 chữ số bắt đầu bằng 0 là biên trên hợp lệ."
+  },
+  {
+    "tcId": "TC-PROFILE-06",
+    "title": "SĐT 9 chữ số (dưới biên)",
+    "type": "negative",
+    "input": { "phone": "091234567" },
+    "expected": {
+      "accepted": false,
+      "alert": "Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.",
+      "persistedUnchanged": true
+    },
+    "srs": "SRS §2 FR-04: dưới 10 chữ số phải bị từ chối."
+  },
+  {
+    "tcId": "TC-PROFILE-07",
+    "title": "SĐT 12 chữ số (trên biên)",
+    "type": "negative",
+    "input": { "phone": "012345678901" },
+    "expected": {
+      "accepted": false,
+      "alert": "Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.",
+      "persistedUnchanged": true
+    },
+    "srs": "SRS §2 FR-04: quá 11 chữ số phải bị từ chối."
+  },
+  {
+    "tcId": "TC-PROFILE-08",
+    "title": "SĐT không bắt đầu bằng 0",
+    "type": "negative",
+    "input": { "phone": "912345678" },
+    "expected": {
+      "accepted": false,
+      "alert": "Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.",
+      "persistedUnchanged": true
+    },
+    "srs": "SRS §2 FR-04: SĐT hợp lệ phải bắt đầu bằng số 0."
+  },
+  {
+    "tcId": "TC-PROFILE-09",
+    "title": "SĐT chứa chữ cái",
+    "type": "negative",
+    "input": { "phone": "09abc45678" },
+    "expected": {
+      "accepted": false,
+      "alert": "Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 chữ số.",
+      "persistedUnchanged": true
+    },
+    "srs": "SRS §2 FR-04: SĐT chỉ gồm chữ số."
+  },
+  {
+    "tcId": "TC-PROFILE-10",
+    "title": "Bỏ trống họ tên",
+    "type": "negative",
+    "input": { "name": "" },
+    "expected": {
+      "accepted": false,
+      "blockedByRequired": true,
+      "persistedUnchanged": true
+    },
+    "srs": "SRS §2 FR-04: Họ Tên là trường bắt buộc (input required) — không cho submit."
+  },
+  {
+    "tcId": "TC-PROFILE-11",
+    "title": "Email không sửa được qua UI",
+    "type": "negative",
+    "input": { "attemptEmail": "hacker@evil.com" },
+    "expected": {
+      "emailDisabled": true,
+      "emailUnchanged": true
+    },
+    "srs": "SRS §2 FR-04: Email không được phép thay đổi qua giao diện."
+  },
+  {
+    "tcId": "TC-PROFILE-12",
+    "title": "Không được tự nâng quyền role",
+    "type": "negative",
+    "input": { "apiBody": { "name": "Privilege Escalation Probe", "role": "admin" } },
+    "expected": {
+      "roleAfter": "user",
+      "roleIgnored": true
+    },
+    "srs": "SRS §2 FR-04: người dùng không thể tự thay đổi thuộc tính role."
+  },
+  {
+    "tcId": "TC-PROFILE-13",
+    "title": "Họ tên chứa ký tự Unicode tiếng Việt có dấu",
+    "type": "edge",
+    "input": { "name": "Đặng Thị Ngọc Hoà", "phone": "901234567" },
+    "expected": {
+      "accepted": true,
+      "alert": "Cập nhật thành công!",
+      "persisted": { "name": "Đặng Thị Ngọc Hoà" }
+    },
+    "srs": "SRS §2 FR-04: Họ Tên là chuỗi tự do — phải lưu đúng Unicode, không lỗi encoding."
+  },
+  {
+    "tcId": "TC-PROFILE-14",
+    "title": "Địa chỉ rất dài (500 ký tự)",
+    "type": "edge",
+    "input": { "addressLength": 500, "addressFill": "a", "phone": "901234567" },
+    "expected": {
+      "accepted": true,
+      "alert": "Cập nhật thành công!",
+      "persistedLength": 500
+    },
+    "srs": "SRS §2 FR-04: địa chỉ giao hàng không quy định giới hạn — không được cắt chuỗi."
+  },
+  {
+    "tcId": "TC-PROFILE-15",
+    "title": "Địa chỉ chứa payload HTML",
+    "type": "edge",
+    "input": { "address": "<b>x</b>", "phone": "901234567" },
+    "expected": {
+      "accepted": true,
+      "renderedAsText": true,
+      "noBoldElement": true
+    },
+    "srs": "SRS §2 FR-04 + FR-18: dữ liệu người dùng phải hiển thị dạng text thuần, không render HTML."
+  }
+]
