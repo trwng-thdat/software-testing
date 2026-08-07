@@ -12,7 +12,7 @@ Verified against the repository source. Re-check against your local checkout bef
 
 Start order: backend, then the frontends. `run_servers.sh` exists at the repo root.
 
-Default admin: `admin@eshop.com` / `admin123`.
+Default admin: `admin@eshop.com` / `Admin123!` (seeded at `backend/database.js:92`). Default user: `test@eshop.com` / `Test1234!` (line 93). Verify these against your checkout rather than trusting them — a wrong guess costs 2 `login_attempts` and 3 locks the account.
 
 ## Global characteristics
 

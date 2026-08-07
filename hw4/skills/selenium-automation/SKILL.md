@@ -46,7 +46,7 @@ These are verified properties of this SUT. Ignoring them produces scripts that c
 - **Feedback comes through native `alert()`**, heavily in admin and in Profile/Cart/Checkout/ForgotPassword. A browser alert **blocks WebDriver** - unhandled it throws `UnexpectedAlertOpenError` mid-test. Handle alerts explicitly (see Alert Handling).
 - **The SUT is intentionally buggy** - validation, authorization, and XSS/SQLi defects are seeded deliberately. A failing assertion is often a real finding, not a broken script. Triage before "fixing".
 - Customer routes: `/`, `/login`, `/register`, `/forgot-password`, `/profile`, `/product/:id`, `/cart`, `/checkout`.
-- Default admin login: `admin@eshop.com` / `admin123`.
+- Default admin login: `admin@eshop.com` / `Admin123!` — read from `backend/database.js`, not from memory. A seeded default user also exists: `test@eshop.com` / `Test1234!`. Guessing a lowercase `admin123` fails with HTTP 401 and, worse, `/api/login` adds 2 to `login_attempts` per failure and locks the account at 3 (`server.js:55-60`), so a retry loop locks you out of the SUT.
 
 ## Project structure
 
@@ -99,7 +99,7 @@ REPORT_BASE_DIR=reports
 RUN_TIMESTAMP=
 DEFAULT_TIMEOUT_MS=10000
 ADMIN_EMAIL=admin@eshop.com
-ADMIN_PASSWORD=admin123
+ADMIN_PASSWORD=Admin123!
 USER_EMAIL=
 USER_PASSWORD=
 ```
