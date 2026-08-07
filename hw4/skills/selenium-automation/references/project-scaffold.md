@@ -163,24 +163,64 @@ export async function dismissAnyAlert(driver: WebDriver): Promise<void> {
 import fs from 'fs';
 import { config, RUN_BY, RUN_TIMESTAMP } from './config';
 
-/** Inject a visible metadata banner into the generated mochawesome HTML. */
+/**
+ * Inject a VISIBLE metadata banner into the generated mochawesome HTML.
+ *
+ * Three traps, all of which produce a report that looks stamped but is not:
+ *
+ * 1. Position. The banner must go INSIDE <body>. Anchoring on `</head>` puts it
+ *    between </head> and <body>, which is not a legal position for flow
+ *    content, so the parser hoists it out and it never renders - while every
+ *    byte-level check still passes.
+ * 2. The <body> tag cannot be matched with `<body([^>]*)>`: mochawesome puts the
+ *    whole run into a `data-raw` JSON attribute full of escaped '>' characters,
+ *    so the regex closes on the wrong bracket and corrupts the markup. Scan for
+ *    a '>' outside quotes instead.
+ * 3. Idempotency must key on a private marker. `html.includes(RUN_BY)` matches
+ *    on the very first pass, because the suite title inside `data-raw` already
+ *    contains "Run by: <id>" - so the banner is never written at all.
+ */
+const MARKER = 'data-hw04-metadata-banner';
+
 export function injectMetadata(htmlPath: string, feature: string): void {
   if (!fs.existsSync(htmlPath)) throw new Error(`Report not found: ${htmlPath}`);
-  const banner = `
-<div style="padding:12px 16px;background:#1f2937;color:#f9fafb;font-family:system-ui,sans-serif;font-size:14px;line-height:1.6">
-  <strong>${RUN_BY}</strong><br/>
-  Student: ${config.studentName}<br/>
-  Feature: ${feature}<br/>
-  Browser: ${config.browser}<br/>
-  Timestamp: ${RUN_TIMESTAMP}
-</div>`;
   const html = fs.readFileSync(htmlPath, 'utf8');
-  if (html.includes(RUN_BY)) return;                       // idempotent
-  fs.writeFileSync(htmlPath, html.replace(/<body([^>]*)>/i, `<body$1>${banner}`), 'utf8');
+  if (html.includes(MARKER)) return;                       // idempotent
+
+  // position:sticky keeps it on screen while the grader scrolls the report.
+  const banner = `
+<div ${MARKER}="1" style="position:sticky;top:0;z-index:99999;padding:14px 20px;background:#1f2937;color:#f9fafb;font-family:system-ui,sans-serif;font-size:14px;line-height:1.7;border-bottom:3px solid #10b981">
+  <div style="font-size:18px;font-weight:700">${RUN_BY}</div>
+  <div>Student: ${config.studentName}</div>
+  <div>Feature: ${feature}</div>
+  <div>Browser: ${config.browser}</div>
+  <div>Timestamp: ${RUN_TIMESTAMP}</div>
+</div>`;
+
+  const start = html.toLowerCase().indexOf('<body');
+  if (start === -1) throw new Error(`No <body> in ${htmlPath}`);
+  let quote: string | null = null;
+  let end = -1;
+  for (let i = start; i < html.length; i++) {
+    const ch = html[i];
+    if (quote) { if (ch === quote) quote = null; }
+    else if (ch === '"' || ch === "'") quote = ch;
+    else if (ch === '>') { end = i; break; }
+  }
+  if (end === -1) throw new Error(`Unterminated <body> in ${htmlPath}`);
+
+  fs.writeFileSync(htmlPath, html.slice(0, end + 1) + banner + html.slice(end + 1), 'utf8');
+
+  const verify = fs.readFileSync(htmlPath, 'utf8');
+  if (!verify.includes(MARKER) || !verify.includes(RUN_BY) || !verify.includes(RUN_TIMESTAMP)) {
+    throw new Error(`Metadata verification failed for ${htmlPath}`);
+  }
 }
 ```
 
-Assert afterwards that the file really contains `RUN_BY` - a silently failed `replace` leaves an unstamped report, which fails the anti-cheat check.
+Assert afterwards that the file really contains `RUN_BY` - a silently failed write leaves an unstamped report, which fails the anti-cheat check.
+
+**Text presence is not the requirement - visibility is.** A gate that greps the HTML will pass a banner the browser never paints. Add a second gate that opens each report in a real browser and asserts `isDisplayed()`, a non-zero bounding box, and `visibility: visible` before screenshotting it as evidence. This is the only check that catches trap 1.
 
 ## `utils/bugReporter.ts`
 

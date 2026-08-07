@@ -1,7 +1,7 @@
 # Bug log
 
 Run by: 23127344
-Timestamp: 2026-08-07T14:57:00.622Z
+Timestamp: 2026-08-07T15:45:07.016Z
 
 ## TC-PROFILE-04 - fr04-profile
 
@@ -152,7 +152,7 @@ Timestamp: 2026-08-07T14:57:00.622Z
 - Browser: chrome
 - Severity: TBD
 - Expected: FR-08: không được tạo đơn hàng rỗng — phải có thông báo và không sinh bản ghi
-- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 64 to equal 63
+- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 138 to equal 137
 - Screenshot: bug-snapshots/TC-CHECKOUT-16.png
 - GitHub Issue: TBD
 
@@ -197,7 +197,7 @@ Timestamp: 2026-08-07T14:57:00.622Z
 - Browser: edge
 - Severity: TBD
 - Expected: FR-08: không được tạo đơn hàng rỗng — phải có thông báo và không sinh bản ghi
-- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 68 to equal 67
+- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 142 to equal 141
 - Screenshot: bug-snapshots/TC-CHECKOUT-16.png
 - GitHub Issue: TBD
 
@@ -242,7 +242,7 @@ Timestamp: 2026-08-07T14:57:00.622Z
 - Browser: firefox
 - Severity: TBD
 - Expected: FR-08: không được tạo đơn hàng rỗng — phải có thông báo và không sinh bản ghi
-- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 72 to equal 71
+- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 146 to equal 145
 - Screenshot: bug-snapshots/TC-CHECKOUT-16.png
 - GitHub Issue: TBD
 
@@ -278,7 +278,7 @@ Timestamp: 2026-08-07T14:57:00.622Z
 - Browser: chrome
 - Severity: TBD
 - Expected: SRS §5 FR-10 + §6 FR-18: delivered/canceled là trạng thái kết thúc nên UI không được mời chuyển tiếp
-- Actual: SRS FR-10: delivered and canceled are terminal, so no status button may be offered. #104 (canceled) offers: Đánh dấu Đã giao: expected [ Array(1) ] to deeply equal []
+- Actual: SRS FR-10: delivered and canceled are terminal, so no status button may be offered. #161 (canceled) offers: Đánh dấu Đã giao: expected [ Array(1) ] to deeply equal []
 - Screenshot: bug-snapshots/TC-ADMIN-16.png
 - GitHub Issue: TBD
 
@@ -314,7 +314,7 @@ Timestamp: 2026-08-07T14:57:00.622Z
 - Browser: edge
 - Severity: TBD
 - Expected: SRS §5 FR-10 + §6 FR-18: delivered/canceled là trạng thái kết thúc nên UI không được mời chuyển tiếp
-- Actual: SRS FR-10: delivered and canceled are terminal, so no status button may be offered. #119 (canceled) offers: Đánh dấu Đã giao: expected [ Array(1) ] to deeply equal []
+- Actual: SRS FR-10: delivered and canceled are terminal, so no status button may be offered. #176 (canceled) offers: Đánh dấu Đã giao: expected [ Array(1) ] to deeply equal []
 - Screenshot: bug-snapshots/TC-ADMIN-16.png
 - GitHub Issue: TBD
 
@@ -350,7 +350,7 @@ Timestamp: 2026-08-07T14:57:00.622Z
 - Browser: firefox
 - Severity: TBD
 - Expected: SRS §5 FR-10 + §6 FR-18: delivered/canceled là trạng thái kết thúc nên UI không được mời chuyển tiếp
-- Actual: SRS FR-10: delivered and canceled are terminal, so no status button may be offered. #134 (canceled) offers: Đánh dấu Đã giao: expected [ Array(1) ] to deeply equal []
+- Actual: SRS FR-10: delivered and canceled are terminal, so no status button may be offered. #191 (canceled) offers: Đánh dấu Đã giao: expected [ Array(1) ] to deeply equal []
 - Screenshot: bug-snapshots/TC-ADMIN-16.png
 - GitHub Issue: TBD
 

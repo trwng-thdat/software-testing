@@ -18,7 +18,8 @@
     "test:fr18:firefox": "cross-env BROWSER=firefox mocha --spec tests/fr18-admin-orders.spec.ts --reporter-option reportDir=reports/fr18-admin-orders,reportFilename=firefox,overwrite=true,html=true,json=true,charts=true",
     "test:fr18": "ts-node utils/runMatrix.ts fr18-admin-orders",
     "test:all-browsers": "npm run test:fr04 && npm run test:fr08 && npm run test:fr18",
-    "verify:reports": "ts-node utils/verifyReports.ts fr04-profile fr08-checkout fr18-admin-orders"
+    "verify:reports": "ts-node utils/verifyReports.ts fr04-profile fr08-checkout fr18-admin-orders",
+    "verify:banner": "ts-node utils/captureBanner.ts"
   },
   "devDependencies": {
     "@types/chai": "^4.3.16",

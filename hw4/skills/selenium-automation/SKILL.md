@@ -285,7 +285,7 @@ Do not report completion until all of these pass:
 3. No spec contains inline test-data literals; every case comes from the data loader.
 4. Each feature uses **>= 3** distinct assertion patterns and you can name them.
 5. `reports/<feature>/{chrome,edge,firefox}.html` all exist **simultaneously** for all three features - **9 files**. One file where three belong is a `reportFilename` bug: fix and rerun.
-6. Every report contains the literal `Run by: <StudentID>` and a parseable ISO timestamp.
+6. Every report contains the literal `Run by: <StudentID>` and a parseable ISO timestamp - and the banner **renders**. Grepping the HTML is not sufficient: a banner emitted outside `<body>` is present in the file, passes a text check, and never paints. Open at least one report per feature in a real browser and assert `isDisplayed()` plus a non-zero bounding box, then keep the screenshot as evidence.
 7. Failing tests are triaged, and every SUT defect has a screenshot, a `BUGS.md` entry, and a GitHub Issue link.
 8. The AI-gap table, the non-automatable list, and the audit log are written.
 9. `git log` shows >= 8 test-file commits across >= 4 days.

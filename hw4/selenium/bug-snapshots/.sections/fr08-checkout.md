@@ -39,7 +39,7 @@
 - Browser: chrome
 - Severity: TBD
 - Expected: FR-08: không được tạo đơn hàng rỗng — phải có thông báo và không sinh bản ghi
-- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 64 to equal 63
+- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 138 to equal 137
 - Screenshot: bug-snapshots/TC-CHECKOUT-16.png
 - GitHub Issue: TBD
 
@@ -84,7 +84,7 @@
 - Browser: edge
 - Severity: TBD
 - Expected: FR-08: không được tạo đơn hàng rỗng — phải có thông báo và không sinh bản ghi
-- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 68 to equal 67
+- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 142 to equal 141
 - Screenshot: bug-snapshots/TC-CHECKOUT-16.png
 - GitHub Issue: TBD
 
@@ -129,7 +129,7 @@
 - Browser: firefox
 - Severity: TBD
 - Expected: FR-08: không được tạo đơn hàng rỗng — phải có thông báo và không sinh bản ghi
-- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 72 to equal 71
+- Actual: SRS FR-08: an empty cart must not create an order (success shown: true): expected 146 to equal 145
 - Screenshot: bug-snapshots/TC-CHECKOUT-16.png
 - GitHub Issue: TBD
 
