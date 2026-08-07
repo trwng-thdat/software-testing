@@ -14,10 +14,19 @@
 | Ngày nộp                  | [dd/mm/2026]                                                                           |
 | Self-Assessed Grade       | **[000–100]** / 100 (chi tiết từng tiêu chí: [`README.md`](README.md))                 |
 | SUT                       | EShop — `https://github.com/ttbhanh/eshop-sut` (bản dùng chung, tương ứng `eshop-sut`) |
-| GitHub repo (public)      | https://github.com/DuyITLOR/group05_eshop                                               |
-| GitHub Issues             | https://github.com/DuyITLOR/group05_eshop/issues (13 issue: #260–#272)                 |
+| GitHub repo (public)      | https://github.com/trwng-thdat/software-testing (scripts · data · HTML reports)                |
+| GitHub Issues             | https://github.com/DuyITLOR/group05_eshop/issues — 13 issue #260–#272 (repo của SUT)   |
 | 📹 Video demo (Task 2)    | https://youtu.be/kbkZxUZHS_M                                                            |
 | 📹 Video demo Agent Skill | https://youtu.be/1FvnyriJITQ                                                            |
+
+> 📌 **Hai repo tách biệt — đúng theo bản chất bài làm:**
+>
+> | Repo | Vai trò |
+> | ---- | ------- |
+> | [`trwng-thdat/software-testing`](https://github.com/trwng-thdat/software-testing) | **Repo bài làm của em** — script Selenium, file dữ liệu, 9 báo cáo HTML, ảnh chụp bug, Agent Skill. **Toàn bộ commit ở §5 nằm ở đây.** |
+> | [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop) | **Repo của SUT** (EShop) — nơi tạo **13 bug issue #260–#272**, vì bug thuộc về mã nguồn SUT chứ không thuộc về mã kiểm thử. |
+>
+> Bug được báo trên repo chứa lỗi là cách làm đúng trong thực tế: issue phải nằm ở nơi lập trình viên sửa được, không phải ở repo của người kiểm thử.
 
 **Công cụ đã dùng:** **Claude Opus 5** (Claude Code, VSCode extension) · **Selenium 4+** (TypeScript + Mocha + Chai) · **mochawesome** (HTML reporter).
 
@@ -591,7 +600,7 @@ Giá trị thực tế đo được qua 3 lần dùng — skill không chỉ ti�
 
 | Chỉ số                           | Giá trị                                    |
 | -------------------------------- | ------------------------------------------ |
-| Repo public                      | https://github.com/DuyITLOR/group05_eshop  |
+| Repo public (chứa scripts)       | https://github.com/trwng-thdat/software-testing |
 | Tổng số commit liên quan HW04    | **27** (thư mục `hw4/`)                    |
 | Số commit **có đụng file test**  | **8** ✅ (yêu cầu ≥ 8)                     |
 | Số ngày khác nhau có commit HW04 | **5** ✅ (yêu cầu ≥ 4)                     |

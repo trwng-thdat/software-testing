@@ -1,10 +1,13 @@
 ===================================================================
- HW04 - GIT COMMIT LOG - MSSV 23127344
- Repo: https://github.com/DuyITLOR/group05_eshop
+ HW04 - GIT COMMIT LOG - MSSV 23127344 - TRUONG THANH DAT
+===================================================================
+ Repo CODE (scripts/data/reports): https://github.com/trwng-thdat/software-testing
+ Repo SUT  (noi tao 13 bug issues): https://github.com/DuyITLOR/group05_eshop
+   -> Log duoi day lay tu repo CODE.
 ===================================================================
 
 [A] COMMIT DUNG FILE TEST SCRIPT (.spec.ts + data/ + utils/)
-    Yeu cau de bai §12: >= 8 commit
+    De bai §12: >= 8 commit
 -------------------------------------------------------------------
 6df4291 | 2026-08-07 23:42:05 +0700 | trwng-thdat | docs(hw04): link the 13 filed GitHub Issues across all reports
 91d4bbe | 2026-08-07 22:51:45 +0700 | trwng-thdat | fix(hw04): make the Run by banner actually render in the report
@@ -16,8 +19,9 @@ d75c8e6 | 2026-08-07 21:44:45 +0700 | trwng-thdat | test(hw04): automate FR-08 c
 aa283fd | 2026-07-29 09:34:47 +0700 | trwng-thdat | feat: add selenium folder
 
 [B] TOAN BO COMMIT LIEN QUAN HW04 (thu muc hw4/)
-    Yeu cau de bai §12: trai >= 4 ngay khac nhau
+    De bai §12: trai >= 4 ngay khac nhau
 -------------------------------------------------------------------
+0040894 | 2026-08-08 00:07:29 +0700 | trwng-thdat | docs(hw04): correct the commit-history assessment against the real log
 f276b24 | 2026-08-08 00:02:12 +0700 | trwng-thdat | docs(hw04): write the AI Critique paragraph
 6df4291 | 2026-08-07 23:42:05 +0700 | trwng-thdat | docs(hw04): link the 13 filed GitHub Issues across all reports
 f12840a | 2026-08-07 23:13:31 +0700 | trwng-thdat | docs(hw04): add ready-to-file bug reports and Task 2 video link

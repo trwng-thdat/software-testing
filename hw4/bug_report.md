@@ -685,7 +685,9 @@ SRS §5 FR-10: `delivered` và `canceled` là **trạng thái kết thúc** → 
 
 ## ✅ Đã tạo xong 13 issue — #260 đến #272
 
-Repo: https://github.com/DuyITLOR/group05_eshop/issues
+Repo SUT (nơi chứa lỗi): https://github.com/DuyITLOR/group05_eshop/issues
+
+> Bug được báo trên repo của **SUT**, không phải repo bài làm ([`trwng-thdat/software-testing`](https://github.com/trwng-thdat/software-testing)) — vì defect thuộc mã nguồn EShop, phải nằm ở nơi lập trình viên sửa được.
 
 - [x] Điền URL issue vào cột `GitHub Issue` ở §1.9 [`Main_Report.md`](Main_Report.md)
 - [x] Điền URL issue vào [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md) — link được **sinh tự động** từ bảng `FILED` trong `utils/bugReporter.ts`, nên không bị mất khi chạy lại test

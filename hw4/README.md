@@ -62,7 +62,7 @@ _Trừ điểm:_ BUG-11 **không** dự đoán được từ đọc source (ch�
 | Số commit đụng file test            | **8** ✅ trải **5** ngày ✅ (25/07–08/08) — chi tiết §5 [`Main_Report.md`](Main_Report.md) |
 | 📹 Video demo (Task 2)              | https://youtu.be/kbkZxUZHS_M                                   |
 | 📹 Video demo Agent Skill           | https://youtu.be/1FvnyriJITQ                                   |
-| GitHub repo (public)                | https://github.com/DuyITLOR/group05_eshop                      |
+| GitHub repo (public)                | https://github.com/trwng-thdat/software-testing |
 
 ## Cấu trúc gói nộp
 
