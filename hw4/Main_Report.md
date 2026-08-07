@@ -7,9 +7,9 @@
 
 | Trường                    | Giá trị                                                                                |
 | ------------------------- | -------------------------------------------------------------------------------------- |
-| Họ tên                    | [Họ tên]                                                                               |
-| MSSV                      | [MSSV]                                                                                 |
-| Lớp / Nhóm                | [Lớp]                                                                                  |
+| Họ tên                    | TRƯƠNG THÀNH ĐẠT                                                                               |
+| MSSV                      | 23127344                                                                                 |
+| Lớp / Nhóm                | Kiểm thử phần mềm - 23KTPM3                                                                                  |
 | Assignment                | HW04 — Automation Testing (HW04-AI)                                                    |
 | Ngày nộp                  | [dd/mm/2026]                                                                           |
 | Self-Assessed Grade       | **[000–100]** / 100 (chi tiết từng tiêu chí: [`README.md`](README.md))                 |
@@ -19,7 +19,7 @@
 | 📹 Video demo (Task 2)    | [YouTube unlisted link — ≥5 phút, thuyết minh tiếng Việt]                              |
 | 📹 Video demo Agent Skill | https://youtu.be/1FvnyriJITQ                                                            |
 
-**Công cụ đã dùng:** [AI tool: Claude / ChatGPT / Copilot / ...] · **Selenium 4+** (TypeScript + Mocha + Chai) · **mochawesome** (HTML reporter).
+**Công cụ đã dùng:** **Claude Opus 5** (Claude Code, VSCode extension) · **Selenium 4+** (TypeScript + Mocha + Chai) · **mochawesome** (HTML reporter).
 
 > 💡 Đề bài cho phép Playwright (khuyến khích) **hoặc** Selenium 4+; và Allure **hoặc** Playwright HTML reporter. Template này viết theo hướng **Selenium + mochawesome** (khớp Agent Skill `selenium-automation` ở §Task 3). Nếu đổi công cụ, sửa lại toàn bộ các mục liên quan.
 
@@ -43,14 +43,14 @@
 
 | Thành phần     | Giá trị                                   |
 | -------------- | ----------------------------------------- |
-| OS             | [Windows 11 / macOS / Linux]              |
+| OS             | Windows 11 Home Single Language           |
 | Backend API    | `http://localhost:3000`                   |
 | Customer web   | `http://localhost:5173`                   |
 | Admin web      | `http://localhost:5174`                   |
-| Trình duyệt    | Chrome [ver] · Edge [ver] · Firefox [ver] |
-| Node.js        | [ver]                                     |
-| Selenium       | [ver]                                     |
-| Tài khoản test | user `[email]` · admin `admin@eshop.com`  |
+| Trình duyệt    | Chrome 151.0.7922.76 · Edge 151.0.4129.59 · Firefox 153.0.3 |
+| Node.js        | v22.22.1                                  |
+| Selenium       | selenium-webdriver 4.46.0 · Mocha 10.8.2  |
+| Tài khoản test | user `hw04.fixture@eshop.test` · admin `admin@eshop.com` |
 
 > 💡 Selenium không chạy được WebKit (đó là engine của Playwright). Đề bài chấp nhận bộ **Chrome / Edge / Firefox** — nêu rõ điều này thay vì thay thầm.
 
@@ -314,8 +314,8 @@ Mỗi feature dùng ít nhất 4 pattern khác nhau (FR-04: 1·2·3·5 — FR-08
 **Bằng chứng metadata:** mỗi file HTML chứa banner hiển thị trực tiếp khi mở bằng trình duyệt:
 
 ```text
-Run by: [MSSV]
-Student: [Họ tên]
+Run by: 23127344
+Student: TRUONG THANH DAT
 Feature: [feature]
 Browser: [chrome|edge|firefox]
 Timestamp: [ISO 8601]
@@ -591,12 +591,18 @@ Giá trị thực tế đo được qua 3 lần dùng — skill không chỉ ti�
 
 | Chỉ số                           | Giá trị                                    |
 | -------------------------------- | ------------------------------------------ |
-| Repo public                      | [link]                                     |
-| Tổng số commit                   | [n]                                        |
-| Số commit **có đụng file test**  | [n ≥ 8]                                    |
-| Số ngày khác nhau có commit test | [n ≥ 4]                                    |
-| Khoảng thời gian                 | [dd/mm] – [dd/mm]                          |
+| Repo public                      | [link — cần điền]                          |
+| Tổng số commit (thư mục `hw4`)   | 24                                         |
+| Số commit **có đụng file test**  | **5** ❌ (yêu cầu ≥ 8)                     |
+| Số ngày khác nhau có commit test | **2** ❌ (yêu cầu ≥ 4) — 29/07 và 07/08     |
+| Khoảng thời gian                 | 29/07/2026 – 07/08/2026                    |
 | File log                         | [`git_commit_log.txt`](git_commit_log.txt) |
+
+> ❌ **Chưa đạt yêu cầu §12.** Log thật cho thấy chỉ **5 commit đụng file test, trải 2 ngày** (29/07 và 07/08), trong khi đề bài yêu cầu **≥8 commit trong ≥4 ngày khác nhau**. Nguyên nhân: phần lớn công việc automation dồn vào một ngày (07/08), mỗi feature commit đúng một lần thay vì commit tăng dần theo từng nhóm test case.
+>
+> Đây là **hạn chế không thể khắc phục hồi tố** một cách trung thực — sửa ngày commit (`--date`/rebase) để "đủ 4 ngày" là làm sai lệch lịch sử, vi phạm chính tinh thần chống gian lận của §11. Ghi nhận thẳng và chịu mất điểm mục này.
+>
+> Rút kinh nghiệm cho các bài sau: commit **ngay khi xong mỗi nhóm test case** (positive → negative → edge → sửa sau khi chạy thật), rải đều theo ngày, thay vì commit một lần cho cả feature.
 
 Lệnh sinh log:
 

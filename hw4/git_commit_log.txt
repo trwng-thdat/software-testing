@@ -1,0 +1,5 @@
+f08f335 | 2026-08-07 22:03:46 +0700 | trwng-thdat | test(hw04): automate FR-18 admin order management with Selenium
+d75c8e6 | 2026-08-07 21:44:45 +0700 | trwng-thdat | test(hw04): automate FR-08 checkout with Selenium
+056dcaf | 2026-08-07 15:01:27 +0700 | trwng-thdat | test(hw04): automate FR-04 profile management with Selenium
+253de6c | 2026-08-07 09:04:47 +0700 | trwng-thdat | chores: cleaning repo
+aa283fd | 2026-07-29 09:34:47 +0700 | trwng-thdat | feat: add selenium folder
