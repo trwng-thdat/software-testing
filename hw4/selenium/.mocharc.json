@@ -1,7 +1,7 @@
 {
   "require": ["ts-node/register", "dotenv/config"],
   "extension": ["ts"],
-  "spec": "tests/**/*.spec.ts",
+  "_comment_spec": "No `spec` key on purpose. Mocha MERGES a config-file `spec` with the --spec flag instead of letting the flag override it, so a glob here would silently pull every feature's suite into whichever per-feature report is being generated. Each run names its own spec explicitly (see utils/runMatrix.ts and the test:* scripts).",
   "timeout": 60000,
   "reporter": "mochawesome"
 }

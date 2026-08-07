@@ -32,7 +32,22 @@ const reportDir = path.join(config.reportBase, feature);
 // One shared timestamp across the whole matrix, so all three reports agree.
 process.env.RUN_TIMESTAMP = RUN_TIMESTAMP;
 
-resetBugLog();
+// Clear only THIS feature's evidence. A global wipe would delete the other
+// features' screenshots, which the main report links to by filename.
+resetBugLog(feature, tcPrefixesOf(feature));
+
+/** TC ID prefixes owned by a feature, read from its own data file. */
+function tcPrefixesOf(f: string): string[] {
+  try {
+    const data = JSON.parse(
+      fs.readFileSync(path.join(root, 'data', `${f}.data.json`), 'utf8'),
+    ) as { tcId: string }[];
+    // "TC-CHECKOUT-04" -> "TC-CHECKOUT-"
+    return [...new Set(data.map((c) => c.tcId.replace(/\d+$/, '')))];
+  } catch {
+    return [];
+  }
+}
 
 const results: { browser: string; code: number }[] = [];
 
