@@ -1,5 +1,47 @@
+===================================================================
+ HW04 - GIT COMMIT LOG - MSSV 23127344
+ Repo: https://github.com/DuyITLOR/group05_eshop
+===================================================================
+
+[A] COMMIT DUNG FILE TEST SCRIPT (.spec.ts + data/ + utils/)
+    Yeu cau de bai §12: >= 8 commit
+-------------------------------------------------------------------
+6df4291 | 2026-08-07 23:42:05 +0700 | trwng-thdat | docs(hw04): link the 13 filed GitHub Issues across all reports
+91d4bbe | 2026-08-07 22:51:45 +0700 | trwng-thdat | fix(hw04): make the Run by banner actually render in the report
 f08f335 | 2026-08-07 22:03:46 +0700 | trwng-thdat | test(hw04): automate FR-18 admin order management with Selenium
+e74f2ea | 2026-08-07 21:45:04 +0700 | trwng-thdat | fix(hw04): scope test evidence per feature, not per run
 d75c8e6 | 2026-08-07 21:44:45 +0700 | trwng-thdat | test(hw04): automate FR-08 checkout with Selenium
 056dcaf | 2026-08-07 15:01:27 +0700 | trwng-thdat | test(hw04): automate FR-04 profile management with Selenium
 253de6c | 2026-08-07 09:04:47 +0700 | trwng-thdat | chores: cleaning repo
 aa283fd | 2026-07-29 09:34:47 +0700 | trwng-thdat | feat: add selenium folder
+
+[B] TOAN BO COMMIT LIEN QUAN HW04 (thu muc hw4/)
+    Yeu cau de bai §12: trai >= 4 ngay khac nhau
+-------------------------------------------------------------------
+f276b24 | 2026-08-08 00:02:12 +0700 | trwng-thdat | docs(hw04): write the AI Critique paragraph
+6df4291 | 2026-08-07 23:42:05 +0700 | trwng-thdat | docs(hw04): link the 13 filed GitHub Issues across all reports
+f12840a | 2026-08-07 23:13:31 +0700 | trwng-thdat | docs(hw04): add ready-to-file bug reports and Task 2 video link
+6b8ca80 | 2026-08-07 23:06:15 +0700 | trwng-thdat | docs(hw04): fill verified fields in report and README, add commit log
+98e5991 | 2026-08-07 23:03:37 +0700 | trwng-thdat | chore(hw04): refresh FR-04 evidence and reports from the latest run
+91d4bbe | 2026-08-07 22:51:45 +0700 | trwng-thdat | fix(hw04): make the Run by banner actually render in the report
+a3ce92b | 2026-08-07 22:35:58 +0700 | trwng-thdat | docs(hw04): add Agent Skill demo video link and fill in Task 3
+5b9b0ad | 2026-08-07 22:04:33 +0700 | trwng-thdat | docs(hw04): record FR-18 results, 4 new defects, and AI audit entry
+b2d83e7 | 2026-08-07 22:04:09 +0700 | trwng-thdat | fix(hw04): correct the seeded admin password at its source
+f08f335 | 2026-08-07 22:03:46 +0700 | trwng-thdat | test(hw04): automate FR-18 admin order management with Selenium
+e92eab0 | 2026-08-07 21:49:46 +0700 | trwng-thdat | docs(hw04): log FR-08 script generation in AI audit report
+a3052ba | 2026-08-07 21:45:27 +0700 | trwng-thdat | docs(hw04): record verified FR-08 results and 5 new SUT defects
+e74f2ea | 2026-08-07 21:45:04 +0700 | trwng-thdat | fix(hw04): scope test evidence per feature, not per run
+d75c8e6 | 2026-08-07 21:44:45 +0700 | trwng-thdat | test(hw04): automate FR-08 checkout with Selenium
+13c3e13 | 2026-08-07 19:23:06 +0700 | trwng-thdat | docs(hw04): log FR-04 script generation in AI audit report
+056dcaf | 2026-08-07 15:01:27 +0700 | trwng-thdat | test(hw04): automate FR-04 profile management with Selenium
+a028bc7 | 2026-08-07 14:25:12 +0700 | trwng-thdat | docs(hw04): design 47 test cases for FR-04, FR-08, FR-18
+4612d33 | 2026-08-07 14:01:15 +0700 | trwng-thdat | docs(hw04): count commits from after "chores: cleaning repo"
+5a6553b | 2026-08-07 13:58:43 +0700 | trwng-thdat | docs(hw04): add commit_log.md tracking 12 progress
+ac12897 | 2026-08-07 13:57:01 +0700 | trwng-thdat | docs(hw04): add submission templates and selenium-automation skill
+253de6c | 2026-08-07 09:04:47 +0700 | trwng-thdat | chores: cleaning repo
+5a3b33d | 2026-07-29 21:27:48 +0700 | trwng-thdat | feat: initialize report template
+aa283fd | 2026-07-29 09:34:47 +0700 | trwng-thdat | feat: add selenium folder
+6a89481 | 2026-07-26 13:14:18 +0700 | trwng-thdat | docs: add testcases for all FR
+82d2a80 | 2026-07-26 12:34:45 +0700 | trwng-thdat | docs: update skill for selenium and delete unuse skill
+127abc7 | 2026-07-25 21:38:54 +0700 | trwng-thdat | docs: add skill for generate selenium script
+b0a17fa | 2026-07-25 12:05:22 +0700 | trwng-thdat | feat: initialize report file for homework

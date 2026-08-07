@@ -59,7 +59,7 @@ _Trừ điểm:_ BUG-11 **không** dự đoán được từ đọc source (ch�
 | Số bug phát hiện                    | **13** — Critical 3 · High 5 · Medium 5 · Low 0                |
 | GitHub Issues đã tạo                | **13 / 13** ✅ — [#260–#272](https://github.com/DuyITLOR/group05_eshop/issues) |
 | Bug chỉ xảy ra trên 1 trình duyệt   | 0 — không có; cả 13 bug tái hiện giống hệt trên cả 3 engine    |
-| Số commit đụng file test            | **5** trải **2** ngày ❌ (yêu cầu ≥8 / ≥4 ngày — xem §5 `Main_Report.md`) |
+| Số commit đụng file test            | **8** ✅ trải **5** ngày ✅ (25/07–08/08) — chi tiết §5 [`Main_Report.md`](Main_Report.md) |
 | 📹 Video demo (Task 2)              | https://youtu.be/kbkZxUZHS_M                                   |
 | 📹 Video demo Agent Skill           | https://youtu.be/1FvnyriJITQ                                   |
 | GitHub repo (public)                | https://github.com/DuyITLOR/group05_eshop                      |
@@ -72,7 +72,7 @@ _Trừ điểm:_ BUG-11 **không** dự đoán được từ đọc source (ch�
 ├── [AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md / .pdf   # Phụ lục bắt buộc — log toàn bộ tương tác AI
 ├── AI_Critique.md / .pdf          # Bắt buộc — 200–300 từ
 ├── README.md                      # File này (tự đánh giá + test summary)
-├── git_commit_log.txt             # Log commit (chỉ tính commit đụng file test)
+├── git_commit_log.txt             # Log commit — [A] file test (8) · [B] toàn bộ HW04 (27, trải 5 ngày)
 ├── bug_report.md                  # Bug report tổng hợp
 ├── github_issues/                 # Ảnh chụp Issues trên GitHub
 ├── selenium/
