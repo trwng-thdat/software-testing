@@ -31,9 +31,9 @@
 
 | Feature   | Pool | FR ID | Tên feature                 | Màn hình / route                              | Số TC tự động hóa |
 | --------- | ---- | ----- | --------------------------- | --------------------------------------------- | ----------------- |
-| Feature A | A    | FR-04 | Personal profile management | `frontend-web` `/profile`                     | [n ≥ 12]          |
-| Feature B | B    | FR-08 | Checkout                    | `frontend-web` `/checkout`                    | [n ≥ 12]          |
-| Feature C | C    | FR-18 | Order management (admin)    | `frontend-admin` (tab **Đơn hàng**, port 5174) | [n ≥ 12]          |
+| Feature A | A    | FR-04 | Personal profile management | `frontend-web` `/profile`                     | 15 (§1.4.1)       |
+| Feature B | B    | FR-08 | Checkout                    | `frontend-web` `/checkout`                    | 16 (§1.4.2)       |
+| Feature C | C    | FR-18 | Order management (admin)    | `frontend-admin` (tab **Đơn hàng**, port 5174) | 16 (§1.4.3)       |
 
 **Nguồn lựa chọn:** kế thừa từ HW02 ([`../hw2/README.md`](../hw2/README.md)) — không trùng với thành viên khác trong nhóm.
 
@@ -66,10 +66,13 @@
 
 | Nguồn                                     | Nội dung liên quan                                         |
 | ----------------------------------------- | ---------------------------------------------------------- |
-| `eshop-sut/README.md` (SRS) §[..] FR-04   | [Quy tắc nghiệp vụ hồ sơ cá nhân: định dạng SĐT, ...]      |
-| `eshop-sut/README.md` (SRS) §[..] FR-08   | [Quy tắc checkout: tính tổng, coupon, ...]                 |
-| `eshop-sut/README.md` (SRS) §[..] FR-18   | [Quy tắc quản lý đơn hàng admin + FR-10 state machine]     |
-| `eshop-sut/api_specification.md`          | [Endpoint dùng cho seed dữ liệu và assertion đối chiếu API] |
+| `eshop-sut/README.md` (SRS) §2 FR-04, dòng 62–68   | SĐT hợp lệ: bắt đầu bằng `0`, dài 10–11 chữ số; email không đổi được; không tự đổi `role` |
+| `eshop-sut/README.md` (SRS) §4 FR-08, dòng 102–108 | Chỉ user đã đăng nhập; tổng tiền **không cho sửa trực tiếp**; backend tự tính lại; xóa giỏ sau thanh toán |
+| `eshop-sut/README.md` (SRS) §4 FR-09, dòng 110–139 | 5 điều kiện coupon C1–C5, công thức percent/fixed, bảng 4 mã mẫu |
+| `eshop-sut/README.md` (SRS) §5 FR-10, dòng 141–162 | State machine 5 trạng thái; `delivered`/`canceled` là trạng thái kết thúc |
+| `eshop-sut/README.md` (SRS) §6 FR-12, dòng 174–180 | Mọi API `/api/admin/*` yêu cầu JWT hợp lệ \+ `role = 'admin'` |
+| `eshop-sut/README.md` (SRS) §6 FR-18, dòng 218–222 | Admin xem mọi đơn; chuyển trạng thái theo FR-10; địa chỉ hiển thị an toàn |
+| `eshop-sut/backend/server.js` dòng 112–135, 297–330, 525–555 | Hành vi backend thật của `PUT /api/users/me`, `POST /api/checkout`, `PUT /api/admin/orders/:id/status` — dùng làm đối chiếu, **không** dùng làm oracle |
 | `eshop-sut/setup_guide.md`                | Cổng dịch vụ, tài khoản admin mặc định                     |
 | `frontend-web/src/pages/Profile.jsx`      | DOM thật của màn hình hồ sơ                                |
 | `frontend-web/src/pages/Checkout.jsx`     | DOM thật của màn hình thanh toán                           |
@@ -135,10 +138,12 @@ npm run test:all-browsers     # chạy 3 feature × 3 browser = 9 lượt
 
 | Feature | File dữ liệu                       | Định dạng | Số case | Positive | Negative | Edge |
 | ------- | ---------------------------------- | --------- | ------- | -------- | -------- | ---- |
-| FR-04   | `data/fr04-profile.data.json`      | JSON      | [n]     | [n]      | [n]      | [n]  |
-| FR-08   | `data/fr08-checkout.data.json`     | JSON      | [n]     | [n]      | [n]      | [n]  |
-| FR-18   | `data/fr18-admin-orders.data.json` | JSON      | [n]     | [n]      | [n]      | [n]  |
-| **Tổng** |                                   |           | **[≥36]** | **[n]** | **[n]** | **[n]** |
+| FR-04   | `data/fr04-profile.data.json`      | JSON      | 15      | 5        | 6        | 3    |
+| FR-08   | `data/fr08-checkout.data.json`     | JSON      | 16      | 6        | 6        | 4    |
+| FR-18   | `data/fr18-admin-orders.data.json` | JSON      | 16      | 6        | 7        | 3    |
+| **Tổng** |                                   |           | **47** | **17** | **19** | **10** |
+
+> Chi tiết từng test case: §1.4.1 (FR-04), §1.4.2 (FR-08), §1.4.3 (FR-18).
 
 **Ví dụ một case trong file dữ liệu:**
 
@@ -154,17 +159,115 @@ npm run test:all-browsers     # chạy 3 feature × 3 browser = 9 lượt
 
 Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết cứng từng `it()` với dữ liệu literal.
 
+### 1.4.1 Bộ test case — Feature A · Pool A · FR-04 Quản lý hồ sơ cá nhân
+
+> Đặc tả tham chiếu: SRS §2 FR-04 (dòng 62–68). Màn hình `frontend-web/src/pages/Profile.jsx`, API `PUT /api/users/me`.
+> Quy tắc oracle: **SĐT hợp lệ = bắt đầu bằng `0`, dài 10–11 chữ số**; email không đổi được; user chỉ sửa hồ sơ của chính mình và **không được tự đổi `role`**.
+
+| TC ID | Loại | Tiêu đề | Input | Expected (theo SRS) | Assertion pattern |
+| ----- | ---- | ------- | ----- | ------------------- | ----------------- |
+| TC-PROFILE-01 | positive | Cập nhật đủ 3 trường hợp lệ | name `Nguyễn Văn A`, phone `0912345678`, address `12 Lê Lợi, Q1` | Thông báo "Cập nhật thành công!"; dữ liệu được lưu | 1 UI · 2 API |
+| TC-PROFILE-02 | positive | Chỉ đổi họ tên, giữ nguyên phone/address | name `Trần Thị B` | Cập nhật thành công; phone và address không đổi | 2 API |
+| TC-PROFILE-03 | positive | Dữ liệu vẫn còn sau khi tải lại trang | Cập nhật rồi F5 | Form hiển thị đúng giá trị vừa lưu | 1 UI |
+| TC-PROFILE-04 | positive | SĐT biên dưới 10 chữ số | phone `0123456789` | Chấp nhận (đúng 10 chữ số, bắt đầu bằng `0`) | 1 UI · 2 API |
+| TC-PROFILE-05 | positive | SĐT biên trên 11 chữ số | phone `01234567890` | Chấp nhận (đúng 11 chữ số) | 1 UI · 2 API |
+| TC-PROFILE-06 | negative | SĐT 9 chữ số (dưới biên) | phone `091234567` | Bị từ chối, hiện thông báo lỗi, không lưu | 3 Rejection |
+| TC-PROFILE-07 | negative | SĐT 12 chữ số (trên biên) | phone `012345678901` | Bị từ chối, không lưu | 3 Rejection |
+| TC-PROFILE-08 | negative | SĐT không bắt đầu bằng `0` | phone `912345678` | Bị từ chối theo SRS §FR-04 | 3 Rejection |
+| TC-PROFILE-09 | negative | SĐT chứa chữ cái | phone `09abc45678` | Bị từ chối, không lưu | 3 Rejection |
+| TC-PROFILE-10 | negative | Bỏ trống họ tên | name `` (rỗng) | Không cho submit (trường `required`) | 3 Rejection |
+| TC-PROFILE-11 | negative | Email không sửa được qua UI | Thử nhập vào ô Email | Ô Email `disabled`, giá trị không đổi | 1 UI |
+| TC-PROFILE-12 | negative | **Không được tự nâng quyền `role`** | `PUT /api/users/me` kèm `{"role":"admin"}` | API **phải bỏ qua/từ chối** trường `role`; user vẫn là `user` | 2 API · 5 Security |
+| TC-PROFILE-13 | edge | Họ tên chứa ký tự Unicode tiếng Việt có dấu | name `Đặng Thị Ngọc Hoà` | Lưu và hiển thị đúng, không lỗi encoding | 1 UI · 2 API |
+| TC-PROFILE-14 | edge | Địa chỉ rất dài (500 ký tự) | address 500 ký tự | Lưu đủ, không cắt chuỗi, không vỡ layout | 2 API |
+| TC-PROFILE-15 | edge | Địa chỉ chứa payload HTML | address `<b>x</b>` | Hiển thị dạng **text thuần**, không render thẻ HTML | 5 Security |
+
+> ⚠️ **Nghi vấn defect (đối chiếu source, cần xác nhận bằng chạy thật):**
+> — `Profile.jsx:43` dùng regex `/^[1-9][0-9]{8,9}$/` → yêu cầu SĐT **bắt đầu bằng 1–9 và dài 9–10 số**, **trái ngược** đặc tả (`0`, 10–11 số). TC-PROFILE-04/05/06/08 nhiều khả năng FAIL.
+> — `server.js:118-128` (`PUT /api/users/me`) **nhận cả trường `role`** từ body → TC-PROFILE-12 nhiều khả năng FAIL (leo thang đặc quyền).
+> Giữ expected **theo SRS**, không sửa theo hành vi hiện tại của code.
+
+### 1.4.2 Bộ test case — Feature B · Pool B · FR-08 Thanh toán (Checkout)
+
+> Đặc tả tham chiếu: SRS §4 FR-08 (dòng 102–108) và FR-09 Coupon (dòng 110–139). Màn hình `frontend-web/src/pages/Checkout.jsx`, API `POST /api/checkout`, `POST /api/apply-coupon`.
+> Coupon mẫu trong hệ thống: `SAVE10` (percent 10%, ngưỡng 300.000₫), `BIGBUY` (fixed 50.000₫, ngưỡng 500.000₫), `VIP100` (fixed 100.000₫, ngưỡng 300.000₫, 2 lượt), `EXPIRED` (hết hạn 2020-01-01).
+
+| TC ID | Loại | Tiêu đề | Input | Expected (theo SRS) | Assertion pattern |
+| ----- | ---- | ------- | ----- | ------------------- | ----------------- |
+| TC-CHECKOUT-01 | positive | Thanh toán thành công giỏ 1 sản phẩm | 1 sản phẩm, đã đăng nhập | Hiện "Thanh toán thành công!"; tạo đơn `pending` | 1 UI · 2 API |
+| TC-CHECKOUT-02 | positive | Thanh toán giỏ nhiều sản phẩm | 3 sản phẩm khác nhau | Đơn tạo đúng, liệt kê đủ sản phẩm | 1 UI · 4 Integrity |
+| TC-CHECKOUT-03 | positive | Giỏ hàng được xóa sau khi thanh toán | Thanh toán xong, mở lại `/cart` | Giỏ hàng rỗng (SRS FR-08) | 1 UI |
+| TC-CHECKOUT-04 | positive | Áp mã `SAVE10` cho đơn đủ ngưỡng | total 400.000₫ \+ `SAVE10` | discount \= 40.000₫; final \= 360.000₫ | 4 Integrity |
+| TC-CHECKOUT-05 | positive | Áp mã `BIGBUY` (fixed) | total 600.000₫ \+ `BIGBUY` | discount \= 50.000₫; final \= 550.000₫ | 4 Integrity |
+| TC-CHECKOUT-06 | positive | Mã nhập chữ thường vẫn nhận | `save10` | Chuẩn hóa thành `SAVE10`, áp dụng được | 1 UI |
+| TC-CHECKOUT-07 | negative | **Tổng tiền không được sửa trực tiếp** | Sửa ô tổng tiền còn `1` | UI **không cho sửa**; backend tự tính lại (SRS FR-08) | 3 Rejection · 5 Security |
+| TC-CHECKOUT-08 | negative | Mã không tồn tại | `NOTEXIST` | Báo lỗi, không giảm giá | 3 Rejection |
+| TC-CHECKOUT-09 | negative | Mã hết hạn (C2) | `EXPIRED` | Từ chối vì quá `expired_at` | 3 Rejection |
+| TC-CHECKOUT-10 | negative | Chưa đủ ngưỡng đơn hàng (C3) | total 299.000₫ \+ `SAVE10` | Từ chối vì `total < min_order_amount` | 3 Rejection |
+| TC-CHECKOUT-11 | negative | Chưa đăng nhập không thanh toán được (C4) | Guest bấm thanh toán | Bị chặn / yêu cầu đăng nhập | 3 Rejection · 5 Security |
+| TC-CHECKOUT-12 | negative | Dùng quá số lượt cho phép (C5) | `SAVE10` lần thứ 2 cùng 1 user | Từ chối vì `max_uses_per_user = 1` | 3 Rejection |
+| TC-CHECKOUT-13 | edge | Ngưỡng biên đúng bằng `min_order_amount` | total 300.000₫ \+ `SAVE10` | **Chấp nhận** (điều kiện C3 là `>=`) | 4 Integrity |
+| TC-CHECKOUT-14 | edge | Ngưỡng biên thiếu 1₫ | total 299.999₫ \+ `SAVE10` | Từ chối | 3 Rejection |
+| TC-CHECKOUT-15 | edge | Giảm giá không vượt quá tổng đơn | total 100.000₫ \+ `VIP100` (100.000₫) | `final_amount` \>= 0, không âm | 4 Integrity |
+| TC-CHECKOUT-16 | edge | Thanh toán khi giỏ rỗng | Giỏ rỗng | Không tạo được đơn, có thông báo | 3 Rejection |
+
+> ⚠️ **Nghi vấn defect (đối chiếu source):**
+> — `Checkout.jsx:93-102` render tổng tiền bằng `<input type="number">` **cho phép người dùng sửa trực tiếp**, và `handleCheckout` gửi chính giá trị đó lên server. `server.js:297-307` (`POST /api/checkout`) **lưu thẳng `total_amount` từ client, không tính lại**. Vi phạm trực tiếp 2 gạch đầu dòng của FR-08 → TC-CHECKOUT-07 nhiều khả năng FAIL (nghiêm trọng).
+> — `VIP100` giảm 100.000₫ nhưng ngưỡng chỉ 300.000₫ nên TC-CHECKOUT-15 cần dựng đơn sát ngưỡng để kiểm; nếu hệ thống cho `final_amount` âm thì đó là defect.
+
+### 1.4.3 Bộ test case — Feature C · Pool C · FR-18 Quản lý đơn hàng (Admin)
+
+> Đặc tả tham chiếu: SRS §6 FR-18 (dòng 218–222), state machine FR-10 (dòng 141–162), access control FR-12 (dòng 174–180). Màn hình `frontend-admin/src/App.jsx` tab **Đơn hàng** (port 5174), API `PUT /api/admin/orders/:id/status`.
+> State machine hợp lệ: `pending → confirmed|canceled`; `confirmed → shipping|canceled`; `shipping → delivered`. **`delivered` và `canceled` là trạng thái kết thúc — không được chuyển tiếp.**
+
+| TC ID | Loại | Tiêu đề | Input | Expected (theo SRS) | Assertion pattern |
+| ----- | ---- | ------- | ----- | ------------------- | ----------------- |
+| TC-ADMIN-01 | positive | Admin xem được đơn của mọi user | Đăng nhập admin, mở tab Đơn hàng | Bảng liệt kê đơn của nhiều user khác nhau | 1 UI |
+| TC-ADMIN-02 | positive | Chuyển `pending → confirmed` | Bấm "Xác nhận" | Trạng thái thành "Đã xác nhận" | 1 UI · 2 API |
+| TC-ADMIN-03 | positive | Chuyển `confirmed → shipping` | Bấm "Giao hàng" | Trạng thái thành "Đang giao" | 1 UI · 2 API |
+| TC-ADMIN-04 | positive | Chuyển `shipping → delivered` | Bấm "Hoàn thành" | Trạng thái thành "Đã giao" | 1 UI · 2 API |
+| TC-ADMIN-05 | positive | Hủy đơn từ `pending` | Bấm "Hủy" | Trạng thái thành "Đã hủy" | 1 UI · 2 API |
+| TC-ADMIN-06 | positive | Hủy đơn từ `confirmed` | Bấm "Hủy" | Trạng thái thành "Đã hủy" | 1 UI · 2 API |
+| TC-ADMIN-07 | negative | **`canceled` là trạng thái kết thúc** | `PUT` đơn `canceled` → `delivered` | **Phải bị từ chối** (FR-10) | 3 Rejection · 4 Integrity |
+| TC-ADMIN-08 | negative | **`delivered` là trạng thái kết thúc** | `PUT` đơn `delivered` → `shipping` | Phải bị từ chối | 3 Rejection · 4 Integrity |
+| TC-ADMIN-09 | negative | Không được nhảy cóc `pending → shipping` | `PUT` bỏ qua `confirmed` | Phải bị từ chối | 3 Rejection |
+| TC-ADMIN-10 | negative | Không được lùi `shipping → pending` | `PUT` lùi trạng thái | Phải bị từ chối | 3 Rejection |
+| TC-ADMIN-11 | negative | Trạng thái không tồn tại | `PUT` với `status: "abc"` | Trả lỗi, không đổi dữ liệu | 3 Rejection |
+| TC-ADMIN-12 | negative | **Token non-admin bị chặn** | Gọi `/api/admin/orders` bằng token user thường | HTTP 401/403 (FR-12) | 5 Security |
+| TC-ADMIN-13 | negative | Không có token bị chặn | Gọi API không kèm token | HTTP 401 | 5 Security |
+| TC-ADMIN-14 | edge | **Địa chỉ giao hàng hiển thị an toàn** | Đơn có địa chỉ `<b>xss</b>` | Hiển thị **text thuần**, không render HTML (FR-18) | 5 Security |
+| TC-ADMIN-15 | edge | Đơn không tồn tại | `PUT /api/admin/orders/999999/status` | HTTP 404 | 3 Rejection |
+| TC-ADMIN-16 | edge | Nút hành động khớp trạng thái hiện tại | Đơn `delivered` | **Không** hiện nút chuyển trạng thái nào | 1 UI |
+
+> ⚠️ **Nghi vấn defect (đối chiếu source):**
+> — `App.jsx:862-869`: đơn ở trạng thái `canceled` vẫn hiện nút **"Đánh dấu Đã giao"**, và `server.js:549-550` có nhánh `if (currentStatus === "canceled" && status === "delivered") isValidTransition = true;` → **cho phép `canceled → delivered`**, vi phạm ràng buộc trạng thái kết thúc của FR-10. TC-ADMIN-07 nhiều khả năng FAIL (nghiêm trọng).
+> — `App.jsx:799-804`: cột Địa chỉ dùng `dangerouslySetInnerHTML` → TC-ADMIN-14 nhiều khả năng FAIL (XSS), vi phạm FR-18.
+> — Ngoài phạm vi 3 feature nhưng ghi nhận: `App.jsx:217-218` tính doanh thu `total_amount * 2` — sai FR-13.
+
+### 1.4.4 Tổng hợp phân bố test case
+
+| Feature | Tổng | Positive | Negative | Edge | Đạt yêu cầu ≥12 |
+| ------- | ---- | -------- | -------- | ---- | ---------------- |
+| FR-04 Personal profile | 15 | 5 | 6 | 3 | ✅ |
+| FR-08 Checkout | 16 | 6 | 6 | 4 | ✅ |
+| FR-18 Admin orders | 16 | 6 | 7 | 3 | ✅ |
+| **Tổng** | **47** | **17** | **19** | **10** | ✅ (≥36) |
+
+> 💡 Bảng này là **thiết kế** test case, chưa phải kết quả chạy. Cột kết quả thật nằm ở §1.6 sau khi thực thi. Các dòng "nghi vấn defect" ở trên mới chỉ đối chiếu source code — **phải chạy thật rồi mới được ghi vào bug report §1.9**.
+
 ## 1.5 Assertion patterns
 
 > Yêu cầu §6: mỗi feature dùng **≥ 3 assertion pattern khác biệt**. "Khác biệt" nghĩa là khác loại bằng chứng, không phải 3 lần `assert.equal`.
 
 | # | Pattern                              | Mô tả                                                        | Dùng ở FR-04 | FR-08 | FR-18 | Ví dụ TC |
 | - | ------------------------------------ | ------------------------------------------------------------ | ------------ | ----- | ----- | -------- |
-| 1 | UI state / text                      | Kiểm thông báo, giá trị field, sự hiện diện của phần tử       | [✓]          | [✓]   | [✓]   | [TC-ID]  |
-| 2 | Persistence / API cross-check        | Sau thao tác UI, gọi API xác nhận dữ liệu **thật sự** đã đổi  | [✓]          | [✓]   | [✓]   | [TC-ID]  |
-| 3 | Negative / rejection                 | Input sai phải bị từ chối: có lỗi, không điều hướng, không tạo bản ghi | [✓]  | [✓]   | [✓]   | [TC-ID]  |
-| 4 | Structural / data integrity          | Tổng tiền = Σ line items − giảm giá; trạng thái đơn đúng state machine | [ ]  | [✓]   | [✓]   | [TC-ID]  |
-| 5 | Security behaviour                   | Token non-admin bị chặn 401/403; payload XSS render dạng text | [ ]          | [ ]   | [✓]   | [TC-ID]  |
+| 1 | UI state / text                      | Kiểm thông báo, giá trị field, sự hiện diện của phần tử       | ✓            | ✓     | ✓     | TC-PROFILE-03 · TC-CHECKOUT-03 · TC-ADMIN-16 |
+| 2 | Persistence / API cross-check        | Sau thao tác UI, gọi API xác nhận dữ liệu **thật sự** đã đổi  | ✓            | ✓     | ✓     | TC-PROFILE-02 · TC-CHECKOUT-01 · TC-ADMIN-02 |
+| 3 | Negative / rejection                 | Input sai phải bị từ chối: có lỗi, không điều hướng, không tạo bản ghi | ✓    | ✓     | ✓     | TC-PROFILE-06 · TC-CHECKOUT-10 · TC-ADMIN-09 |
+| 4 | Structural / data integrity          | Tổng tiền = Σ line items − giảm giá; trạng thái đơn đúng state machine | —    | ✓     | ✓     | TC-CHECKOUT-04 · TC-ADMIN-07 |
+| 5 | Security behaviour                   | Token non-admin bị chặn 401/403; payload XSS render dạng text | ✓            | ✓     | ✓     | TC-PROFILE-12 · TC-CHECKOUT-11 · TC-ADMIN-12/14 |
+
+Mỗi feature dùng ít nhất 4 pattern khác nhau (FR-04: 1·2·3·5 — FR-08: 1·2·3·4·5 — FR-18: 1·2·3·4·5), vượt yêu cầu tối thiểu 3.
 
 ## 1.6 Kết quả thực thi đa trình duyệt
 
@@ -322,7 +425,8 @@ Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapsho
 | Chỉ số                          | Giá trị     |
 | ------------------------------- | ----------- |
 | Số feature tự động hóa          | 3           |
-| Số test case tự động hóa        | [≥36]       |
+| Số test case đã **thiết kế**    | 47 (FR-04: 15 · FR-08: 16 · FR-18: 16) |
+| Số test case tự động hóa        | [n]         |
 | Số test case đã thực thi        | [n]         |
 | Số test case PASS               | [n]         |
 | Số test case FAIL               | [n]         |
