@@ -105,15 +105,18 @@ selenium/
   .mocharc.json
   package.json
   data/
-    fr04-profile.data.json      # [n] test case
-    fr08-checkout.data.json     # [n] test case
-    fr18-admin-orders.data.json # [n] test case
+    fr04-profile.data.json      # 15 test case  ✅
+    fr08-checkout.data.json     # 16 test case  ✅
+    fr18-admin-orders.data.json # chưa làm
   tests/
-    fr04-profile.spec.ts
-    fr08-checkout.spec.ts
-    fr18-admin-orders.spec.ts
+    fr04-profile.spec.ts        # ✅
+    fr08-checkout.spec.ts       # ✅
+    fr18-admin-orders.spec.ts   # chưa làm
   utils/
     config.ts  driver.ts  dataLoader.ts  alerts.ts  reportMetadata.ts  bugReporter.ts  api.ts
+    profilePage.ts              # page object FR-04
+    checkoutPage.ts             # page object FR-08 (/product/:id, /cart, /checkout)
+    runMatrix.ts  verifyReports.ts
   reports/
     fr04-profile/{chrome,edge,firefox}.html
     fr08-checkout/{chrome,edge,firefox}.html
@@ -129,8 +132,12 @@ cd selenium
 npm install
 cp .env.example .env          # điền STUDENT_ID, STUDENT_NAME, URL, tài khoản
 npm run typecheck
-npm run test:all-browsers     # chạy 3 feature × 3 browser = 9 lượt
+npm run test:fr04             # FR-04 × 3 browser, tự đóng dấu báo cáo
+npm run test:fr08             # FR-08 × 3 browser
+npm run verify:reports        # cổng kiểm: đếm case, kiểm 6 file HTML + banner Run by:
 ```
+
+> ⚠️ **Điều kiện chạy FR-08:** SUT phải ở trạng thái seed sạch hoặc ít nhất còn lượt dùng coupon. Bộ test tự phục hồi hạn mức coupon (`ensureCouponAllowance`), nhưng dữ liệu `orders` sẽ tăng dần qua mỗi lần chạy — điều này **không** ảnh hưởng assertion vì mọi case đều so sánh theo `id` đơn hàng tương đối, không theo số tuyệt đối.
 
 ## 1.4 Data-driven — dữ liệu tách rời khỏi script
 
@@ -211,9 +218,14 @@ Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết c
 | TC-CHECKOUT-15 | edge     | Giảm giá không vượt quá tổng đơn          | total 100.000₫ \+ `VIP100` (100.000₫) | `final_amount` \>= 0, không âm                        | 4 Integrity              |
 | TC-CHECKOUT-16 | edge     | Thanh toán khi giỏ rỗng                   | Giỏ rỗng                              | Không tạo được đơn, có thông báo                      | 3 Rejection              |
 
-> ⚠️ **Nghi vấn defect (đối chiếu source):**
-> — `Checkout.jsx:93-102` render tổng tiền bằng `<input type="number">` **cho phép người dùng sửa trực tiếp**, và `handleCheckout` gửi chính giá trị đó lên server. `server.js:297-307` (`POST /api/checkout`) **lưu thẳng `total_amount` từ client, không tính lại**. Vi phạm trực tiếp 2 gạch đầu dòng của FR-08 → TC-CHECKOUT-07 nhiều khả năng FAIL (nghiêm trọng).
-> — `VIP100` giảm 100.000₫ nhưng ngưỡng chỉ 300.000₫ nên TC-CHECKOUT-15 cần dựng đơn sát ngưỡng để kiểm; nếu hệ thống cho `final_amount` âm thì đó là defect.
+> ✅ **Defect đã XÁC NHẬN bằng chạy thật** (3/3 trình duyệt, xem §1.9) — **11 PASS / 5 FAIL**:
+> — `Checkout.jsx:93-102` render tổng tiền bằng `<input type="number">` **cho phép người dùng sửa trực tiếp**, và `handleCheckout` gửi chính giá trị đó lên server. `server.js:297-307` (`POST /api/checkout`) **lưu thẳng `total_amount` từ client, không tính lại**. **Kết quả thật: TC-CHECKOUT-07 FAIL** (BUG-07, Critical).
+> — `server.js` (`POST /api/apply-coupon`) tính giảm giá percent bằng `total_amount * (1 - discount_value)`. Với `SAVE10` (`discount_value = 10`) → `4.000.000 × (1−10) = −36.000.000₫`. **Kết quả thật: TC-CHECKOUT-04 FAIL** (BUG-06, High) — xác nhận thêm bằng gọi API trực tiếp: `{"discount_amount":-36000000,"final_amount":40000000}`.
+> — `server.js` kiểm ngưỡng bằng `total_amount > coupon.min_order_amount` (`>`) thay vì `>=` theo FR-09 C3. **Kết quả thật: TC-CHECKOUT-13 FAIL** (BUG-08, Medium) — đơn đúng 300.000₫ bị từ chối.
+> — `Checkout.jsx:8` có import `clearCart` nhưng **không bao giờ gọi**. **Kết quả thật: TC-CHECKOUT-03 FAIL** (BUG-05, Medium) — giỏ hàng còn nguyên sau khi thanh toán.
+> — `POST /api/checkout` **bỏ qua hoàn toàn `items`**, chỉ ghi `total_amount`. **Kết quả thật: TC-CHECKOUT-16 FAIL** (BUG-09, High) — giỏ rỗng vẫn tạo được đơn.
+> — TC-CHECKOUT-15 **PASS**: `VIP100` trên đơn 310.000₫ cho `final_amount = 210.000₫`, không âm. Đây là mã `fixed` nên không dính lỗi công thức percent ở trên.
+> Expected giữ **theo SRS**, không sửa theo hành vi hiện tại của code.
 
 ### 1.4.3 Bộ test case — Feature C · Pool C · FR-18 Quản lý đơn hàng (Admin)
 
@@ -277,16 +289,18 @@ Mỗi feature dùng ít nhất 4 pattern khác nhau (FR-04: 1·2·3·5 — FR-08
 
 | #   | Feature  | Browser | Tổng TC | Pass    | Fail    | Skip    | Thời lượng | ISO timestamp | Báo cáo HTML                                                                              |
 | --- | -------- | ------- | ------- | ------- | ------- | ------- | ---------- | ------------- | ----------------------------------------------------------------------------------------- |
-| 1   | FR-04    | Chrome  | 15      | 11      | 4       | 0       | 27s        | 2026-08-07T12:20:41.665Z | [`reports/fr04-profile/chrome.html`](selenium/reports/fr04-profile/chrome.html)           |
-| 2   | FR-04    | Edge    | 15      | 11      | 4       | 0       | 15s        | 2026-08-07T12:20:41.665Z | [`.../edge.html`](selenium/reports/fr04-profile/edge.html)                                |
-| 3   | FR-04    | Firefox | 15      | 11      | 4       | 0       | 29s        | 2026-08-07T12:20:41.665Z | [`.../firefox.html`](selenium/reports/fr04-profile/firefox.html)                          |
-| 4   | FR-08    | Chrome  | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`reports/fr08-checkout/chrome.html`](selenium/reports/fr08-checkout/chrome.html)         |
-| 5   | FR-08    | Edge    | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`.../edge.html`](selenium/reports/fr08-checkout/edge.html)                               |
-| 6   | FR-08    | Firefox | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`.../firefox.html`](selenium/reports/fr08-checkout/firefox.html)                         |
+| 1   | FR-04    | Chrome  | 15      | 11      | 4       | 0       | 12s        | 2026-08-07T14:27:36.211Z | [`reports/fr04-profile/chrome.html`](selenium/reports/fr04-profile/chrome.html)           |
+| 2   | FR-04    | Edge    | 15      | 11      | 4       | 0       | 12s        | 2026-08-07T14:27:36.211Z | [`.../edge.html`](selenium/reports/fr04-profile/edge.html)                                |
+| 3   | FR-04    | Firefox | 15      | 11      | 4       | 0       | 15s        | 2026-08-07T14:27:36.211Z | [`.../firefox.html`](selenium/reports/fr04-profile/firefox.html)                          |
+| 4   | FR-08    | Chrome  | 16      | 11      | 5       | 0       | 60s        | 2026-08-07T14:28:35.350Z | [`reports/fr08-checkout/chrome.html`](selenium/reports/fr08-checkout/chrome.html)         |
+| 5   | FR-08    | Edge    | 16      | 11      | 5       | 0       | 60s        | 2026-08-07T14:28:35.350Z | [`.../edge.html`](selenium/reports/fr08-checkout/edge.html)                               |
+| 6   | FR-08    | Firefox | 16      | 11      | 5       | 0       | 60s        | 2026-08-07T14:28:35.350Z | [`.../firefox.html`](selenium/reports/fr08-checkout/firefox.html)                         |
 | 7   | FR-18    | Chrome  | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`reports/fr18-admin-orders/chrome.html`](selenium/reports/fr18-admin-orders/chrome.html) |
 | 8   | FR-18    | Edge    | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`.../edge.html`](selenium/reports/fr18-admin-orders/edge.html)                           |
 | 9   | FR-18    | Firefox | [n]     | [n]     | [n]     | [n]     | [s]        | [ISO]         | [`.../firefox.html`](selenium/reports/fr18-admin-orders/firefox.html)                     |
-|     | **Tổng** |         | **[n]** | **[n]** | **[n]** | **[n]** |            |               | **9 báo cáo**                                                                             |
+|     | **Tổng** |         | **93**  | **66**  | **27**  | **0**   |            |               | **6 / 9 báo cáo**                                                                         |
+
+> ⚠️ Dòng 7–9 (FR-18) **chưa chạy** — chưa tự động hóa. Tổng ở trên chỉ cộng 6 lượt đã thực thi thật.
 
 **Bằng chứng metadata:** mỗi file HTML chứa banner hiển thị trực tiếp khi mở bằng trình duyệt:
 
@@ -308,8 +322,13 @@ Timestamp: [ISO 8601]
 | TC-PROFILE-05 | F      | F    | F       | Defect SUT — tái hiện giống hệt trên cả 3 engine                |
 | TC-PROFILE-08 | F      | F    | F       | Defect SUT — tái hiện giống hệt trên cả 3 engine                |
 | TC-PROFILE-12 | F      | F    | F       | Defect SUT (leo thang đặc quyền, tầng API nên độc lập browser)  |
+| TC-CHECKOUT-03 | F     | F    | F       | Defect SUT — `clearCart` không được gọi                         |
+| TC-CHECKOUT-04 | F     | F    | F       | Defect SUT — công thức percent sai, tầng API nên độc lập browser |
+| TC-CHECKOUT-07 | F     | F    | F       | Defect SUT — tổng tiền sửa được trên cả 3 engine                |
+| TC-CHECKOUT-13 | F     | F    | F       | Defect SUT — so sánh `>` thay vì `>=`, tầng API                 |
+| TC-CHECKOUT-16 | F     | F    | F       | Defect SUT — đơn rỗng vẫn được tạo                              |
 
-**Kết luận: không có khác biệt giữa các trình duyệt** — cả 3 lượt FR-04 đều cho 11 PASS / 4 FAIL với đúng cùng một tập TC fail. Điều này củng cố kết luận rằng 4 FAIL là defect thật của SUT chứ không phải lỗi timing hay lỗi riêng của một engine.
+**Kết luận: không có khác biệt giữa các trình duyệt** — cả 3 lượt FR-04 đều cho 11 PASS / 4 FAIL và cả 3 lượt FR-08 đều cho 11 PASS / 5 FAIL, với đúng cùng một tập TC fail. Điều này củng cố kết luận rằng 9 TC FAIL là defect thật của SUT chứ không phải lỗi timing hay lỗi riêng của một engine.
 
 ## 1.7 Human review — AI sai/thiếu ở đâu và vì sao
 
@@ -329,6 +348,12 @@ Timestamp: [ISO 8601]
 | 8   | TC-PROFILE-12 assert `role === "user"` ở **tiền điều kiện** và không dọn dẹp      | Lần chạy trước đã leo thang thật, tài khoản còn `admin` vĩnh viễn → test fail ở dòng tiền điều kiện chứ không phải ở phát hiện, và đầu độc mọi lượt chạy sau            | Reset `role` về `user` trong `beforeEach`; bọc assert trong `try/finally` để luôn hoàn nguyên kể cả khi fail             | Chất lượng prompt — chưa yêu cầu test phải tự cô lập trạng thái                     |
 | 9   | Đăng nhập bằng cách điền form UI ở mỗi test                                       | `/api/login` cộng `login_attempts` \+2 mỗi lần sai và khóa ở 3 (`server.js:55-60`) → nguy cơ khóa tài khoản giữa chừng                                                  | Seed phiên qua API rồi bơm JWT vào `localStorage.token` đúng như `AuthContext` đọc                                       | Đặc thù feature — cơ chế khóa tài khoản của SUT                                     |
 | 10  | Ảnh chụp bug của lượt chạy cũ không bị xóa                                        | Còn PNG của TC nay đã PASS → bằng chứng sai lệch                                                                                                                        | `resetBugLog()` xóa sạch `*.png` trước mỗi lượt matrix                                                                   | Chất lượng prompt — chưa nêu yêu cầu "bằng chứng phải khớp lần chạy hiện tại"       |
+| 11  | **(FR-08)** Giả định giỏ hàng seed được qua API hoặc `localStorage`               | `CartContext.jsx` giữ giỏ trong `useState([])` thuần — không persist, không gọi server. `POST /api/cart` có thật nhưng ghi vào map in-memory mà `Checkout.jsx` không đọc → giỏ chỉ tồn tại trong **một phiên SPA sống**, mọi `driver.get()` đều xóa sạch | Seed giỏ bằng click thật trên `/product/:id`, và điều hướng **client-side** bằng `history.pushState` \+ `popstate` để không remount `CartProvider` | Giới hạn mô hình — suy từ mẫu e-commerce có giỏ hàng persistent            |
+| 12  | **(FR-08)** Chỉ click 1 lần vào nút "Thêm vào giỏ hàng"                           | `ProductDetail.jsx:24-32` có defect cài sẵn: `clickCount` **nuốt trọn click đầu tiên**, chỉ click thứ 2 mới gọi `addToCart` → giỏ luôn rỗng, 16/16 case không tới được checkout | Click lặp tới khi nút đổi nhãn thành "Đã thêm" (tối đa 3 lần), kèm chú thích rõ đây là workaround cho bug ngoài phạm vi FR-08 | Đặc thù feature — defect của FR-06 chặn đường vào FR-08                   |
+| 13  | **(FR-08)** Đọc số tiền coupon theo **thứ tự xuất hiện** của ký tự `₫`            | Khối coupon render **3** số tiền, số đầu nằm trong câu thông báo ("Giảm 50,000 ₫") → parser hiểu nhầm thông báo là `discount` và `discount` thật thành `final` → **TC-05/06 FAIL oan** dù SUT trả đúng | Đổi sang bám **nhãn** `Tiết kiệm` / `Thành tiền` thay vì vị trí; xác minh chéo bằng gọi thẳng API (`curl`) trước khi kết luận defect | Giới hạn mô hình — parse theo vị trí thay vì theo ngữ nghĩa               |
+| 14  | **(FR-08)** TC-12 (giới hạn lượt dùng) tiêu luôn lượt của mã seed `BIGBUY`        | `coupon_usage` chỉ ghi thêm và **không có API xóa** → sau lần chạy đầu, `BIGBUY` cạn vĩnh viễn với tài khoản fixture, khiến TC-05/06 FAIL ở **mọi lần chạy sau** — nhìn hệt như defect | TC-12 tự tạo mã dùng-một-lần `HW04LIMIT` rồi xóa trong `finally`; thêm `ensureCouponAllowance()` re-mint mã seed khi phát hiện đã cạn | Chất lượng prompt — chưa yêu cầu test phải idempotent qua nhiều lần chạy  |
+| 15  | **(FR-08)** Tin rằng cờ `--spec` sẽ **thay thế** `spec` trong `.mocharc.json`     | Mocha **gộp** hai nguồn → mỗi lượt chạy FR-08 kéo theo cả suite FR-04, báo cáo `fr08-checkout/chrome.html` chứa 31 test của 2 feature. Vẫn "chạy xanh" nên rất dễ bỏ lọt | Bỏ hẳn khóa `spec` khỏi `.mocharc.json`, để mỗi lượt tự khai báo spec; ghi chú lý do ngay trong file config để không ai thêm lại | Giới hạn mô hình — nhầm ngữ nghĩa merge/override của config Mocha          |
+| 16  | **(FR-08)** `resetBugLog()` xóa **toàn bộ** `*.png` trước mỗi lượt matrix         | Đúng khi chỉ có 1 feature, nhưng khi có 2 thì feature chạy **sau** xóa sạch bằng chứng của feature chạy **trước** — chạy FR-08 làm mất cả 4 ảnh `TC-PROFILE-*.png` mà §1.9 đang trỏ link tới, và `BUGS.md` chỉ còn bug của 1 feature | Đổi `resetBugLog(feature, prefixes)` chỉ xóa ảnh thuộc tiền tố TC của chính feature đó; `BUGS.md` được ghép lại từ các file mảnh theo từng feature trong `.sections/` | Đặc thù feature — giải pháp đúng cho 1 feature nhưng sai khi mở rộng ra nhiều feature |
 
 > **Nhận xét tổng hợp:** Nhóm sai nặng nhất không nằm ở logic test mà ở **hạ tầng báo cáo** (#3, #4, #5, #6) — đều là loại lỗi "chạy không báo lỗi nhưng không sinh ra bằng chứng", nguy hiểm vì rất dễ tưởng đã xong. Nhóm thứ hai là **giả định về DOM và trạng thái** (#1, #2, #7, #8, #9): AI suy từ mẫu e-commerce phổ biến thay vì đọc source thật, và mặc định mỗi test chạy trên môi trường sạch. Bài học khi prompt lần sau: (1) bắt buộc đọc JSX/handler thật trước khi sinh selector; (2) luôn kiểm chứng *bằng chứng đầu ra* chứ không chỉ kiểm test pass/fail — chính `verifyReports.ts` lỏng lẻo đã suýt cho qua 3 báo cáo chưa đóng dấu; (3) yêu cầu rõ mỗi test phải tự khôi phục trạng thái, đặc biệt trên SUT có defect cho phép thay đổi không hoàn nguyên.
 
@@ -339,12 +364,25 @@ Timestamp: [ISO 8601]
 | TC ID   | Feature | Nội dung | Lý do không tự động hóa được | Cách kiểm thay thế |
 | ------- | ------- | -------- | ---------------------------- | ------------------ |
 | —       | FR-04   | —        | —                            | —                  |
+| —       | FR-08   | —        | —                            | —                  |
 
 **FR-04: không có TC nào phải bỏ** — cả 15/15 test case đều tự động hóa được và đã thực thi trên cả 3 trình duyệt.
 
 Ghi chú về TC-PROFILE-12: case này kiểm ở **tầng API** (`PUT /api/users/me` kèm `role`) thay vì qua UI, vì màn hình `/profile` không hề render ô nhập `role` — bề mặt tấn công duy nhất là request body. Đây vẫn là tự động hóa đầy đủ, chỉ khác điểm tác động.
 
-> 💡 Mục này sẽ cập nhật tiếp khi làm FR-08 và FR-18.
+**FR-08: không có TC nào phải bỏ** — cả 16/16 test case đều tự động hóa được và đã thực thi trên cả 3 trình duyệt.
+
+Ghi chú về **điểm tác động** của 4 case FR-08 kiểm ở tầng API thay vì UI — đây là lựa chọn thiết kế, không phải giới hạn:
+
+| TC | Vì sao kiểm ở tầng API |
+| -- | ---------------------- |
+| TC-CHECKOUT-12 | Cần **tiêu hết** hạn mức lượt dùng rồi thử lại. Qua UI sẽ phải thanh toán thật nhiều lần và làm bẩn dữ liệu dùng chung; qua API thì tạo/xóa được mã dùng-một-lần riêng. |
+| TC-CHECKOUT-13 / 14 | Kiểm **biên đúng bằng** `min_order_amount` (300.000₫ và 299.999₫). Catalogue rẻ nhất đã 4.000.000₫ nên **không thể** ghép giỏ ra đúng số tiền biên; luật cần kiểm (toán tử so sánh) nằm trọn trong endpoint. |
+| TC-CHECKOUT-15 | Cần đơn sát ngưỡng để lộ khả năng `final_amount` âm — cùng lý do trên. |
+
+TC-CHECKOUT-11 kiểm ở **cả hai** tầng: gọi `POST /api/checkout` không token (phải 401) **và** thao tác UI thật với người dùng đã đăng xuất (phải bị chặn trước khi vào `/checkout`).
+
+> 💡 Mục này sẽ cập nhật tiếp khi làm FR-18.
 
 ## 1.9 Bug report
 
@@ -352,12 +390,20 @@ Ghi chú về TC-PROFILE-12: case này kiểm ở **tầng API** (`PUT /api/user
 
 ### Phân loại kết quả FAIL
 
-| Loại                                    | Số lượng (FR-04) | Xử lý                                            |
-| --------------------------------------- | ---------------- | ------------------------------------------------ |
-| Lỗi script (selector/wait/expected sai) | 6                | Đã sửa script, chạy lại → PASS                   |
-| **Defect thật của SUT**                 | 4                | **Giữ nguyên test FAIL** làm bằng chứng, log bug |
+| Loại                                    | FR-04 | FR-08 | Xử lý                                            |
+| --------------------------------------- | ----- | ----- | ------------------------------------------------ |
+| Lỗi script (selector/wait/expected sai) | 6     | 3     | Đã sửa script, chạy lại → PASS                   |
+| **Defect thật của SUT**                 | 4     | 5     | **Giữ nguyên test FAIL** làm bằng chứng, log bug |
 
-**Chi tiết 6 FAIL do lỗi script (lượt chạy đầu tiên → đã sửa):** TC-PROFILE-01/02/03/13/14/15 ban đầu fail vì `BASELINE.phone = "0900000000"` (đúng SRS) lại bị chính regex lỗi của SUT chặn, khiến các case *không* kiểm SĐT cũng không submit được. Đã đổi baseline sang `912345678` — giá trị build hiện tại chấp nhận — để mỗi case kiểm đúng thứ nó cần kiểm. Quy tắc SĐT theo SRS vẫn được assert **nguyên vẹn** ở TC-PROFILE-04…09.
+**Chi tiết 6 FAIL do lỗi script ở FR-04 (lượt chạy đầu tiên → đã sửa):** TC-PROFILE-01/02/03/13/14/15 ban đầu fail vì `BASELINE.phone = "0900000000"` (đúng SRS) lại bị chính regex lỗi của SUT chặn, khiến các case *không* kiểm SĐT cũng không submit được. Đã đổi baseline sang `912345678` — giá trị build hiện tại chấp nhận — để mỗi case kiểm đúng thứ nó cần kiểm. Quy tắc SĐT theo SRS vẫn được assert **nguyên vẹn** ở TC-PROFILE-04…09.
+
+**Chi tiết 3 FAIL do lỗi script ở FR-08 (đã sửa, xem §1.7 dòng 12–14):**
+
+1. **TC-CHECKOUT-01…16 (toàn bộ)** — giỏ hàng luôn rỗng vì nút "Thêm vào giỏ hàng" nuốt click đầu tiên (`ProductDetail.jsx:24-32`). Sửa: click lặp tới khi nhãn đổi thành "Đã thêm".
+2. **TC-CHECKOUT-05/06** — parser đọc số tiền coupon theo vị trí, hiểu nhầm câu thông báo "Giảm 50,000 ₫" là `discount`. Sửa: bám nhãn `Tiết kiệm`/`Thành tiền`. **Đã xác minh chéo bằng `curl` trực tiếp lên `/api/apply-coupon` trước khi kết luận** — API trả đúng `{"discount_amount":50000,"final_amount":3950000}`, chứng minh đây là lỗi script chứ không phải defect.
+3. **TC-CHECKOUT-05/06 (lần 2)** — TC-12 tiêu cạn lượt dùng duy nhất của mã seed `BIGBUY`, khiến 2 case này fail ở mọi lần chạy sau. Sửa: TC-12 dùng mã dùng-một-lần tự tạo rồi xóa; thêm `ensureCouponAllowance()`.
+
+> Ba lỗi này đều **không** được sửa bằng cách nới assertion — chúng được sửa ở tầng *dựng dữ liệu và đọc kết quả*, còn oracle theo SRS giữ nguyên.
 
 > 💡 Tuyệt đối không nới lỏng assertion để test xanh — làm vậy là xóa mất bằng chứng mà đề bài đang chấm.
 
@@ -369,11 +415,23 @@ Ghi chú về TC-PROFILE-12: case này kiểm ở **tầng API** (`PUT /api/user
 | BUG-02 | TC-PROFILE-05 | FR-04   | High         | SĐT hợp lệ 11 chữ số bắt đầu bằng `0` bị từ chối                                        | SRS §2 FR-04: 11 chữ số là biên trên hợp lệ                       | Alert "Số điện thoại không hợp lệ…", không lưu               | All (3/3)            | [`TC-PROFILE-05.png`](selenium/bug-snapshots/TC-PROFILE-05.png)                     | TBD          |
 | BUG-03 | TC-PROFILE-08 | FR-04   | Medium       | SĐT **không** bắt đầu bằng `0` lại được **chấp nhận**                                   | SRS §2 FR-04: SĐT hợp lệ phải bắt đầu bằng số `0`                 | "Cập nhật thành công!", giá trị sai đặc tả được lưu          | All (3/3)            | [`TC-PROFILE-08.png`](selenium/bug-snapshots/TC-PROFILE-08.png)                     | TBD          |
 | BUG-04 | TC-PROFILE-12 | FR-04   | **Critical** | **Leo thang đặc quyền** — user tự đặt `role: "admin"` qua `PUT /api/users/me` thành công | SRS §2 FR-04: người dùng **không thể** tự thay đổi thuộc tính `role` | HTTP 200, `role` đổi từ `user` → `admin`, tồn tại trong DB   | All (tầng API)       | [`TC-PROFILE-12.png`](selenium/bug-snapshots/TC-PROFILE-12.png)                     | TBD          |
+| BUG-05 | TC-CHECKOUT-03 | FR-08  | Medium       | Giỏ hàng **không được xóa** sau khi thanh toán thành công                               | SRS §4 FR-08: xóa giỏ hàng sau khi thanh toán                      | Mở lại `/cart` vẫn thấy nguyên sản phẩm vừa mua              | All (3/3)            | [`TC-CHECKOUT-03.png`](selenium/bug-snapshots/TC-CHECKOUT-03.png)                   | TBD          |
+| BUG-06 | TC-CHECKOUT-04 | FR-08  | **High**     | **Công thức giảm giá percent bị đảo** → giảm giá **âm**, khách phải trả **nhiều hơn**   | SRS §4 FR-09: `SAVE10` giảm 10% → giảm 400.000₫, còn 3.600.000₫    | `discount_amount = -36.000.000₫`, `final_amount = 40.000.000₫` (gấp 10 lần) | All (tầng API)       | [`TC-CHECKOUT-04.png`](selenium/bug-snapshots/TC-CHECKOUT-04.png)                   | TBD          |
+| BUG-07 | TC-CHECKOUT-07 | FR-08  | **Critical** | **Khách tự sửa được tổng tiền** và server lưu thẳng giá trị đó — trả 1₫ cho đơn 6 triệu | SRS §4 FR-08: tổng tiền **không cho sửa trực tiếp**; backend tự tính lại | Ô tổng tiền là `<input type="number">` sửa được; đơn được tạo với `total_amount = 1` | All (3/3)            | [`TC-CHECKOUT-07.png`](selenium/bug-snapshots/TC-CHECKOUT-07.png)                   | TBD          |
+| BUG-08 | TC-CHECKOUT-13 | FR-08  | Medium       | Đơn **đúng bằng** ngưỡng tối thiểu bị từ chối (lỗi biên `>` thay vì `>=`)               | SRS §4 FR-09 C3: điều kiện là `total_amount >= min_order_amount`    | HTTP 400 "Đơn hàng chưa đủ giá trị tối thiểu 300,000 ₫" với đơn đúng 300.000₫ | All (tầng API)       | [`TC-CHECKOUT-13.png`](selenium/bug-snapshots/TC-CHECKOUT-13.png)                   | TBD          |
+| BUG-09 | TC-CHECKOUT-16 | FR-08  | **High**     | **Giỏ rỗng vẫn tạo được đơn hàng**                                                     | SRS §4 FR-08: không được tạo đơn khi giỏ rỗng                      | Hiện "Thanh toán thành công!" và sinh thêm 1 bản ghi trong `orders` | All (3/3)            | [`TC-CHECKOUT-16.png`](selenium/bug-snapshots/TC-CHECKOUT-16.png)                   | TBD          |
 
 **Nguyên nhân gốc (đối chiếu source, đã xác nhận bằng chạy thật):**
 
 - BUG-01/02/03 cùng một gốc: `frontend-web/src/pages/Profile.jsx:43` dùng regex `/^[1-9][0-9]{8,9}$/` — yêu cầu chữ số đầu là **1–9** và độ dài **9–10**, trong khi SRS yêu cầu chữ số đầu là **`0`** và độ dài **10–11**. Hai luật loại trừ nhau ngay ở chữ số đầu tiên, nên mọi SĐT đúng SRS đều bị chặn và mọi SĐT sai SRS (không bắt đầu bằng 0) lại lọt.
 - BUG-04: `backend/server.js:119-125` destructure `role` từ `req.body` và ghép thẳng vào câu `UPDATE`, không hề kiểm quyền.
+- BUG-05: `frontend-web/src/pages/Checkout.jsx:8` có `const { cart, cartTotal, clearCart } = useCart();` nhưng `handleCheckout` (dòng 40–66) **không bao giờ gọi `clearCart()`** — biến được import rồi bỏ quên.
+- BUG-06: `backend/server.js` (`POST /api/apply-coupon`) tính `discount_amount = Math.floor(total_amount * (1 - coupon.discount_value))`. `discount_value` được seed là **10** (nghĩa là 10%), nên biểu thức thành `total × (1 − 10) = −9 × total`. Công thức đúng phải là `total × discount_value / 100`. Lỗi xuất hiện ở **cả hai** nhánh (có và không có `user_id`).
+- BUG-07: hai tầng cùng lỗi — `Checkout.jsx:93-102` render tổng tiền bằng `<input type="number">` có `onChange` sửa `editableTotal`, và `handleCheckout` gửi chính giá trị đó; `server.js:297-307` nhận `total_amount` từ body rồi `INSERT` thẳng, **không hề đọc `items` để tính lại**. Sửa một tầng vẫn chưa đủ.
+- BUG-08: `server.js` kiểm `if (total_amount > coupon.min_order_amount)` — dùng `>` nên loại trừ đúng điểm biên mà FR-09 C3 quy định là hợp lệ.
+- BUG-09: cùng gốc với BUG-07 — `POST /api/checkout` **bỏ qua hoàn toàn mảng `items`**, không kiểm rỗng, nên một request với giỏ rỗng vẫn `INSERT` thành công.
+
+> BUG-07 và BUG-09 chung một nguyên nhân gốc (`/api/checkout` tin tuyệt đối vào client, không tự tính lại từ `items`) nhưng được tách thành 2 bug vì biểu hiện, mức độ và cách kiểm khác nhau.
 
 Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md).
 
@@ -443,20 +501,20 @@ Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapsho
 
 | Chỉ số                       | Giá trị                                |
 | ---------------------------- | -------------------------------------- |
-| Số feature tự động hóa       | 1 / 3 (FR-04 xong; FR-08, FR-18 chưa làm)         |
+| Số feature tự động hóa       | 2 / 3 (FR-04, FR-08 xong; FR-18 chưa làm)         |
 | Số test case đã **thiết kế** | 47 (FR-04: 15 · FR-08: 16 · FR-18: 16)            |
-| Số test case tự động hóa     | 15 (FR-04)                                        |
-| Số test case đã thực thi     | 45 lượt (15 TC × 3 trình duyệt)                   |
-| Số test case PASS            | 33 lượt (11 TC × 3)                               |
-| Số test case FAIL            | 12 lượt (4 TC × 3) — đều là defect thật của SUT   |
-| Số lượt chạy trình duyệt     | 3 / ≥9                                            |
-| Số báo cáo HTML              | 3 / 9                                             |
-| Số bug phát hiện             | 4 (1 Critical · 2 High · 1 Medium)                |
+| Số test case tự động hóa     | 31 (FR-04: 15 · FR-08: 16)                        |
+| Số test case đã thực thi     | 93 lượt (31 TC × 3 trình duyệt)                   |
+| Số test case PASS            | 66 lượt (22 TC × 3)                               |
+| Số test case FAIL            | 27 lượt (9 TC × 3) — đều là defect thật của SUT   |
+| Số lượt chạy trình duyệt     | 6 / ≥9                                            |
+| Số báo cáo HTML              | 6 / 9                                             |
+| Số bug phát hiện             | 9 (2 Critical · 3 High · 4 Medium)                |
 | Số GitHub Issue đã tạo       | 0 — **cần tạo trước khi nộp**                     |
-| Số TC không tự động hóa được | 0 (trong phạm vi FR-04)                           |
+| Số TC không tự động hóa được | 0 (trong phạm vi FR-04 \+ FR-08)                  |
 | Link video demo              | [link]                                            |
 
-> ⚠️ Các con số trên chỉ phản ánh **FR-04**. Phải hoàn tất FR-08 và FR-18 để đạt mốc 9 báo cáo / ≥36 TC của đề bài.
+> ⚠️ Các con số trên phản ánh **FR-04 và FR-08**. Phải hoàn tất FR-18 để đạt mốc 9 báo cáo / ≥36 TC của đề bài.
 
 ---
 
