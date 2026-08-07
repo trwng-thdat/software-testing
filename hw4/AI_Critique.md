@@ -1,14 +1,14 @@
 # HW04 — AI Critique
 
-> **Bắt buộc (§10 đề bài).** Một đoạn văn **200–300 từ** phê bình AI. Đếm từ trước khi nộp — dưới 200 hoặc trên 300 đều bị trừ.
+> **Bắt buộc (§10 đề bài).** Một đoạn văn **200–300 từ** phê bình AI.
 
-| Trường     | Giá trị                                     |
-| ---------- | ------------------------------------------- |
-| Họ tên     | [Họ tên]                                    |
-| MSSV       | [MSSV]                                      |
-| Assignment | HW04 — Automation Testing                   |
-| AI tool    | [tool đã dùng]                              |
-| Số từ      | [n] / 200–300                               |
+| Trường     | Giá trị                                       |
+| ---------- | --------------------------------------------- |
+| Họ tên     | TRƯƠNG THÀNH ĐẠT                              |
+| MSSV       | 23127344                                      |
+| Assignment | HW04 — Automation Testing                     |
+| AI tool    | Claude Opus 5 (Claude Code, VSCode extension) |
+| Số từ      | 273 / 200–300 ✅                              |
 
 ## Ba câu hỏi bắt buộc phải trả lời
 
@@ -20,28 +20,8 @@
 
 ## Bài viết
 
-> 💡 Viết thành **một đoạn văn liền mạch** (đề bài yêu cầu "a paragraph"), không gạch đầu dòng. Dẫn chứng cụ thể từ bảng §1.7 của [`Main_Report.md`](Main_Report.md) — phê bình chung chung kiểu "AI đôi khi sai" không được điểm.
+Sai lầm đáng nhớ nhất của AI trong bài này không phải một dòng code hỏng, mà là một **bằng chứng rỗng trông như đã hoàn thành**. AI chèn banner `Run by: 23127344` vào giữa `</head>` và `<body>` — vị trí không hợp lệ cho nội dung hiển thị, nên trình duyệt đẩy nó ra khỏi luồng render. Chuỗi ký tự **có** trong cả 9 file HTML, nhưng mở lên **không nhìn thấy gì**, đúng thứ §11 chống gian lận bắt buộc phải thấy được. Nghiêm trọng hơn: chính `verifyReports.ts` do AI viết vẫn báo "All checks passed" suốt ba feature. Em phát hiện bằng mắt khi mở báo cáo, không phải nhờ cổng kiểm.
 
-[Viết 200–300 từ tại đây.]
+Vì sao AI không tự bắt được? Có cả ba nguyên nhân §6 nêu, nhưng gốc rễ là **AI không biết điều nó không biết**. Nó viết cả test lẫn công cụ kiểm chứng test, rồi tin vào kết quả của chính mình mà không một lần tự hỏi oracle có đo đúng thứ cần đo hay không. Đề bài yêu cầu bằng chứng *nhìn thấy được*, AI lại kiểm *chuỗi ký tự có trong file* — sai tầng, và sai một cách im lặng.
 
----
-
-## Ghi chú soạn thảo (xóa mục này trước khi nộp)
-
-**Dẫn chứng có thể dùng — lấy từ chính bài làm, không bịa:**
-
-| Nhóm lỗi                     | Dẫn chứng cụ thể trong bài                                        | Trả lời câu hỏi số |
-| ---------------------------- | ------------------------------------------------------------------ | ------------------ |
-| Selector bịa                 | [AI sinh `data-testid` trong khi SUT không có attribute nào]        | 1, 2               |
-| Không xử lý `alert()`        | [`UnexpectedAlertOpenError` làm đổ vỡ dây chuyền cả file spec]      | 1, 2               |
-| Assert theo hành vi lỗi      | [Bug thật bị hợp thức hóa thành expected → test xanh mà vô nghĩa]   | 1, 2, 3            |
-| Wait cứng `sleep()`          | [Test flaky, chạy chậm]                                             | 1, 2               |
-| Chỉ sinh happy path          | [Thiếu hẳn nhóm boundary/edge nếu không yêu cầu rõ]                 | 1, 2               |
-| Điều hướng admin bằng URL    | [Admin là SPA dạng tab, route đó không tồn tại]                     | 1, 2               |
-
-**Về câu hỏi 2 (vì sao AI không phát hiện):** phân loại nguyên nhân theo đúng ba nhóm mà đề bài §6 nêu — **chất lượng prompt**, **giới hạn mô hình**, hoặc **đặc thù feature**. Nêu rõ nhóm nào chiếm đa số trong bài của em.
-
-**Về câu hỏi 3 (nguyên tắc rút ra):** nên là một phát biểu **kiểm chứng được**, gắn với trải nghiệm thật. Tránh khẩu hiệu sáo rỗng. Ví dụ hướng tiếp cận:
-- AI cần được cấp **đặc tả**, không phải source code, khi viết oracle — nếu cho xem code, AI sẽ mô tả lại hành vi hiện tại (kể cả hành vi sai) thay vì kiểm chứng nó.
-- Test **xanh** do AI sinh không đồng nghĩa test **đúng**; phải xác minh bằng cách cố ý làm nó đỏ.
-- Việc AI làm tốt nhất là phần lặp lại có cấu trúc; phần cần quan sát hệ thống thật vẫn phải do người làm.
+Nguyên tắc em rút ra: **phải cấp cho AI đặc tả, đừng cấp source code, khi cần nó viết oracle.** Đọc code thì AI mô tả lại hành vi hiện tại — kể cả hành vi sai — thay vì kiểm chứng theo SRS; y hệt việc nó kiểm bytes thay vì kiểm hiển thị. Nhờ luôn giữ `expected` theo SRS mà 13 defect cài sẵn mới lộ ra, thay vì bị hợp thức hóa thành "đúng".
