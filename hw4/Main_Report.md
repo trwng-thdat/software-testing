@@ -495,6 +495,18 @@ Ngược lại TC-ADMIN-01…06, 14, 16 đều kiểm **thật trên UI** (click
 
 Chi tiết đầy đủ: [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md).
 
+### Bằng chứng đã tạo GitHub Issues
+
+Cả **13 bug đều đã được báo cáo trên GitHub Issues** của repo SUT, mỗi issue kèm ảnh chụp — đáp ứng yêu cầu §6 (bug phải có mặt ở **cả** báo cáo Markdown **lẫn** GitHub Issues).
+
+![Danh sách 13 issue HW04 trên GitHub](github_issues/01-issues-list-hw04.png)
+
+> Ảnh lọc theo `is:issue state:open author:trwng-thdat` trên repo [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues) — thấy rõ thanh địa chỉ, tên tài khoản tác giả và quy ước tiêu đề `[BUG-xx][Mức độ][FR-xx]`.
+>
+> Vùng hiển thị chỉ chứa 7 issue (#272 → #266) do giới hạn cuộn trang; đủ 13 issue **#260–#272** liệt kê kèm link ở [`github_issues/README.md`](github_issues/README.md). Bộ đếm "Open 78" là tổng issue của tài khoản trên **toàn repo** (gồm cả bài tập khác), **không phải** số issue của HW04.
+
+Chi tiết từng issue: [`github_issues/`](github_issues/) · nội dung gốc: [`bug_report.md`](bug_report.md).
+
 > 💡 Nếu không phát hiện bug nào, ghi rõ "Không phát hiện defect nào trong phạm vi 3 feature" — nhưng lưu ý SUT này **được cố ý cài lỗi sẵn**, nên kết quả 0 bug thường có nghĩa assertion còn quá yếu.
 
 ---
@@ -694,7 +706,7 @@ Toàn bộ mốc định lượng đều **đạt hoặc vượt**. Điểm cộ
 - [ ] Mọi báo cáo hiển thị `Run by: [MSSV]` + ISO timestamp khi mở bằng trình duyệt
 - [ ] Bảng phân tích AI sai/thiếu (§1.7) đã điền, có nguyên nhân gốc
 - [ ] Danh sách TC không tự động hóa được (§1.8) đã điền
-- [ ] Bug đã log **cả** trong Markdown **và** GitHub Issues, mỗi issue có ảnh
+- [x] Bug đã log **cả** trong Markdown **và** GitHub Issues, mỗi issue có ảnh — 13 issue #260–#272, ảnh chụp ở [`github_issues/`](github_issues/)
 - [ ] Video ≥ 5 phút, tiếng Việt, có `whoami`/`hostname` hoặc face-cam, có giải thích 1 lỗi đã sửa
 - [ ] Agent Skill + video demo skill
 - [ ] AI Audit Report + AI Critique (200–300 từ), cả `.md` và `.pdf`
