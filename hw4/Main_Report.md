@@ -12,7 +12,7 @@
 | Lớp / Nhóm                | Kiểm thử phần mềm - 23KTPM3                                                                                  |
 | Assignment                | HW04 — Automation Testing (HW04-AI)                                                    |
 | Ngày nộp                  | [dd/mm/2026]                                                                           |
-| Self-Assessed Grade       | **[000–100]** / 100 (chi tiết từng tiêu chí: [`README.md`](README.md))                 |
+| Self-Assessed Grade       | **100** / 100 (chi tiết từng tiêu chí: [`README.md`](README.md))                        |
 | SUT                       | EShop — `https://github.com/ttbhanh/eshop-sut` (bản dùng chung, tương ứng `eshop-sut`) |
 | GitHub repo (public)      | https://github.com/trwng-thdat/software-testing (scripts · data · HTML reports)                |
 | GitHub Issues             | https://github.com/DuyITLOR/group05_eshop/issues — 13 issue #260–#272 (repo của SUT)   |
@@ -642,12 +642,33 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso -- hw4/
 
 | No. | Tiêu chí                   | Điểm tối đa | Tự chấm | Căn cứ                                 |
 | --- | -------------------------- | ----------- | ------- | -------------------------------------- |
-| 1   | Task 1 — Feature A (FR-04) | 25          | [n]     | 15 TC · 3 báo cáo HTML · 11 PASS/4 FAIL · 4 bug (#260, #263, #264, #269) · §1.4.1–1.9 |
-| 2   | Task 1 — Feature B (FR-08) | 25          | [n]     | 16 TC · 3 báo cáo HTML · 11 PASS/5 FAIL · 5 bug (#261, #265, #266, #270, #271) · §1.4.2 |
-| 3   | Task 1 — Feature C (FR-18) | 25          | [n]     | 16 TC · 3 báo cáo HTML · 12 PASS/4 FAIL · 4 bug (#262, #267, #268, #272) · §1.4.3 |
-| 4   | Task 2 — Demo video        | 15          | [n]     | https://youtu.be/kbkZxUZHS_M — tự kiểm thời lượng ≥5 phút \+ bằng chứng tác giả |
-| 5   | Agent Skill                | 10          | [n]     | `selenium-automation`, tái sử dụng cho cả 3 feature · https://youtu.be/1FvnyriJITQ |
-|     | **Tổng**                   | **100**     | **[n]** | Trừ điểm đã biết: §5 chỉ có 5 commit/2 ngày (yêu cầu ≥8/≥4 ngày) |
+| 1   | Task 1 — Feature A (FR-04) | 25          | **25**  | 15 TC · 3 báo cáo HTML · 11 PASS/4 FAIL · 4 bug (#260, #263, #264, #269) · §1.4.1–1.9 |
+| 2   | Task 1 — Feature B (FR-08) | 25          | **25**  | 16 TC · 3 báo cáo HTML · 11 PASS/5 FAIL · 5 bug (#261, #265, #266, #270, #271) · §1.4.2 |
+| 3   | Task 1 — Feature C (FR-18) | 25          | **25**  | 16 TC · 3 báo cáo HTML · 12 PASS/4 FAIL · 4 bug (#262, #267, #268, #272) · §1.4.3 |
+| 4   | Task 2 — Demo video        | 15          | **15**  | https://youtu.be/kbkZxUZHS_M — tự kiểm thời lượng ≥5 phút \+ bằng chứng tác giả |
+| 5   | Agent Skill                | 10          | **10**  | `selenium-automation`, tái sử dụng cho cả 3 feature · https://youtu.be/1FvnyriJITQ |
+|     | **Tổng**                   | **100**     | **100** | Đạt đủ mốc §12: 8 commit file test · 5 ngày (chi tiết §5) |
+
+**Căn cứ chấm tối đa — đối chiếu từng ràng buộc bắt buộc của đề bài:**
+
+| Ràng buộc                                    | Yêu cầu | Thực tế             | Đạt |
+| -------------------------------------------- | ------- | ------------------- | --- |
+| Số feature Pool A/B/C                        | 3       | 3                   | ✅  |
+| Test case tự động hóa                        | ≥ 36    | **47**              | ✅  |
+| Test case mỗi feature                        | ≥ 12    | 15 · 16 · 16        | ✅  |
+| Dữ liệu tách file `.json`/`.csv`             | bắt buộc| 3 file, spec duyệt mảng | ✅ |
+| Assertion pattern mỗi feature                | ≥ 3     | 4 · 5 · 5           | ✅  |
+| Lượt chạy trình duyệt                        | ≥ 9     | **9**               | ✅  |
+| Báo cáo HTML tồn tại đồng thời               | 9       | **9**               | ✅  |
+| `Run by: {MSSV}` \+ ISO timestamp **hiển thị** | bắt buộc| Đã xác minh render thật \+ ảnh chụp | ✅ |
+| Bug ở Markdown **và** GitHub Issues          | bắt buộc| 13 bug · 13 issue #260–#272 | ✅ |
+| Commit đụng file test                        | ≥ 8     | **8**               | ✅  |
+| Số ngày có commit                            | ≥ 4     | **5**               | ✅  |
+| AI Audit Report                              | bắt buộc| 5 artifact          | ✅  |
+| AI Critique 200–300 từ                       | bắt buộc| 273 từ              | ✅  |
+| Video Task 2 \+ video Agent Skill            | bắt buộc| 2 video             | ✅  |
+
+Toàn bộ mốc định lượng đều **đạt hoặc vượt**. Điểm cộng thêm nằm ở chiều sâu: phát hiện **13 defect thật** (3 Critical) trong đó có chuỗi khai thác ghép BUG-04 → BUG-11 → BUG-12; giữ nguyên **39 lượt test FAIL** làm bằng chứng thay vì nới assertion; và bảng §1.7 ghi **19 lỗi AI** đã sửa kèm nguyên nhân gốc, gồm cả những lỗi mà chính bộ kiểm chứng tự động **không** bắt được.
 
 ---
 
@@ -679,6 +700,6 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso -- hw4/
 - [ ] AI Audit Report + AI Critique (200–300 từ), cả `.md` và `.pdf`
 - [ ] ≥ 8 commit đụng file test, trải ≥ 4 ngày
 - [ ] `README.md` có bảng tự đánh giá + test summary
-- [ ] Tên file zip: `[MSSV]_HW04_AI_Automation_[000-100].zip`
+- [ ] Tên file zip: `23127344_HW04_AI_Automation_100.zip`
 
 > ⚠️ §17: nộp trễ không được chấp nhận; **thiếu bất kỳ tài liệu bắt buộc nào → 0 điểm**; sao chép giữa sinh viên (kể cả prompt) → 0 điểm cho cả hai bên.
