@@ -10,7 +10,7 @@
 | MSSV                      | 23127344                                                                                 |
 | Lớp / Nhóm                | Kiểm thử phần mềm - 23KTPM3                                                                                  |
 | Assignment                | HW04 — Automation Testing (HW04-AI)                                                    |
-| Ngày nộp                  | [dd/mm/2026]                                                                           |
+| Ngày nộp                  | 08/08/2026                                                                             |
 | Self-Assessed Grade       | **100** / 100 (chi tiết từng tiêu chí: [`README.md`](README.md))                        |
 | SUT                       | EShop — `https://github.com/ttbhanh/eshop-sut` (bản dùng chung, tương ứng `eshop-sut`) |
 | GitHub repo (public)      | https://github.com/trwng-thdat/software-testing (scripts · data · HTML reports)                |
