@@ -74,7 +74,7 @@ _Ghi chú kỹ thuật:_ BUG-11 **không** dự đoán được từ đọc sour
 ├── README.md                      # File này (tự đánh giá + test summary)
 ├── git_commit_log.txt             # Log commit — [A] file test (8) · [B] toàn bộ HW04 (27, trải 5 ngày)
 ├── bug_report.md                  # Bug report tổng hợp
-├── github_issues/                 # Ảnh chụp Issues trên GitHub
+├── github_issues/                 # Ảnh chụp trang GitHub Issues (xem README.md trong thư mục)
 ├── selenium/
 │   ├── data/                      # Dữ liệu test tách rời (.json/.csv)
 │   ├── tests/                     # Script automation
