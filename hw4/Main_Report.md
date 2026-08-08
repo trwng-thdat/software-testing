@@ -461,24 +461,10 @@ Chi tiết từng issue: [`github_issues/`](github_issues/) · nội dung gốc:
 | Hạng mục                | Giá trị                                             |
 | ----------------------- | --------------------------------------------------- |
 | Link YouTube (unlisted) | https://youtu.be/kbkZxUZHS_M                      |
-| Thời lượng              | [mm:ss] (yêu cầu **≥ 5 phút**)                      |
+| Thời lượng              | 05:50 (yêu cầu **≥ 5 phút**)                        |
 | Ngôn ngữ thuyết minh    | Tiếng Việt (giọng thật của sinh viên)               |
-| Feature được demo       | [FR-..]                                             |
-| Bằng chứng tác giả      | [face-cam] / [terminal chạy `whoami` và `hostname`] |
-
-**Nội dung đã trình bày trong video:**
-
-| Mốc thời gian | Nội dung                                                          |
-| ------------- | ----------------------------------------------------------------- |
-| [00:00]       | Giới thiệu + bằng chứng tác giả (`whoami`, `hostname` / face-cam) |
-| [00:00]       | Giới thiệu cấu trúc dự án, file dữ liệu tách rời                  |
-| [00:00]       | Chạy script end-to-end trên trình duyệt 1                         |
-| [00:00]       | Chạy đa trình duyệt (3 browser)                                   |
-| [00:00]       | Mở báo cáo HTML, chỉ rõ dòng `Run by: [MSSV]` + timestamp         |
-| [00:00]       | **Giải thích ≥ 1 lỗi em đã sửa trong script AI sinh** (bắt buộc)  |
-| [00:00]       | Kết luận                                                          |
-
-**Lỗi AI đã được thuyết minh trong video:** [mô tả ngắn — nên trỏ về một dòng cụ thể ở bảng §1.6].
+| Feature được demo       | FR-04                                               |
+| Bằng chứng tác giả      | Face-cam                                            |
 
 
 ---
@@ -492,7 +478,7 @@ Chi tiết từng issue: [`github_issues/`](github_issues/) · nội dung gốc:
 | Tên skill            | `selenium-automation`                                        |
 | Vị trí               | [`skills/selenium-automation/`](skills/selenium-automation/) |
 | Video demo           | https://youtu.be/1FvnyriJITQ                                 |
-| Feature dùng để demo | [FR-.. — điền feature đã demo trong video]                   |
+| Feature dùng để demo | FR-08                                                         |
 
 **Cấu trúc skill:**
 
