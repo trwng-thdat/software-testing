@@ -1,7 +1,6 @@
 # HW04 — Automation Testing — Báo cáo chính
 
-> **Template nộp bài.** Mọi ô `[...]`, `TBD`, và dòng ghi chú dạng `> 💡` là chỗ cần điền/xóa trước khi nộp.
-> Nguyên tắc bắt buộc của đề bài: **không được bịa** số liệu thực thi, ảnh chụp, báo cáo HTML hay timestamp. Chỉ điền những gì thật sự đã chạy.
+> **Cam kết:** mọi số liệu thực thi, ảnh chụp, báo cáo HTML và timestamp trong báo cáo này đều lấy từ các lượt chạy thật, không bịa. Các mục chưa chạy được ghi rõ là chưa chạy.
 
 ## 0. Thông tin sinh viên
 
@@ -30,7 +29,6 @@
 
 **Công cụ đã dùng:** **Claude Opus 5** (Claude Code, VSCode extension) · **Selenium 4+** (TypeScript + Mocha + Chai) · **mochawesome** (HTML reporter).
 
-> 💡 Đề bài cho phép Playwright (khuyến khích) **hoặc** Selenium 4+; và Allure **hoặc** Playwright HTML reporter. Template này viết theo hướng **Selenium + mochawesome** (khớp Agent Skill `selenium-automation` ở §Task 3). Nếu đổi công cụ, sửa lại toàn bộ các mục liên quan.
 
 ---
 
@@ -46,7 +44,6 @@
 
 **Nguồn lựa chọn:** kế thừa từ HW02 ([`../hw2/README.md`](../hw2/README.md)) — không trùng với thành viên khác trong nhóm.
 
-> 💡 Nếu **chưa làm HW02**: xóa dòng trên, tự khai báo 3 feature Pool A–C ngay tại đây và **nêu rõ lý do HW02 không có** (yêu cầu §5).
 
 **Môi trường thực thi:**
 
@@ -61,7 +58,6 @@
 | Selenium       | selenium-webdriver 4.46.0 · Mocha 10.8.2  |
 | Tài khoản test | user `hw04.fixture@eshop.test` · admin `admin@eshop.com` |
 
-> 💡 Selenium không chạy được WebKit (đó là engine của Playwright). Đề bài chấp nhận bộ **Chrome / Edge / Firefox** — nêu rõ điều này thay vì thay thầm.
 
 ---
 
@@ -71,7 +67,6 @@
 
 ## 1.1 Nguồn tham chiếu đã đọc
 
-> 💡 Liệt kê tài liệu đã đọc **trước khi** sinh script — đây là căn cứ để assert theo đặc tả chứ không theo hành vi lỗi hiện tại của SUT.
 
 | Nguồn                                                        | Nội dung liên quan                                                                                                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -104,7 +99,6 @@
 | B7   | Cấu hình đa trình duyệt + metadata báo cáo `Run by:`          | [prompt]         | [output]            | [đã sửa gì]          |
 | B8   | Sửa lỗi sau lần chạy thật đầu tiên                            | [prompt]         | [output]            | [đã sửa gì]          |
 
-> 💡 Thêm/bớt dòng theo thực tế. Mỗi dòng ở đây phải khớp một artifact trong AI Audit Report.
 
 ## 1.3 Cấu trúc dự án automation
 
@@ -283,7 +277,6 @@ Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết c
 | FR-18 Admin orders     | 16     | 6        | 7        | 3      | ✅              |
 | **Tổng**               | **47** | **17**   | **20**   | **10** | ✅ (≥36)        |
 
-> 💡 Bảng này là **thiết kế** test case, chưa phải kết quả chạy. Cột kết quả thật nằm ở §1.6 sau khi thực thi. Các dòng "nghi vấn defect" ở trên mới chỉ đối chiếu source code — **phải chạy thật rồi mới được ghi vào bug report §1.9**.
 
 ## 1.5 Assertion patterns
 
@@ -455,7 +448,6 @@ Ngược lại TC-ADMIN-01…06, 14, 16 đều kiểm **thật trên UI** (click
 
 > Ba lỗi này đều **không** được sửa bằng cách nới assertion — chúng được sửa ở tầng *dựng dữ liệu và đọc kết quả*, còn oracle theo SRS giữ nguyên.
 
-> 💡 Tuyệt đối không nới lỏng assertion để test xanh — làm vậy là xóa mất bằng chứng mà đề bài đang chấm.
 
 ### Danh sách bug
 
@@ -507,7 +499,6 @@ Cả **13 bug đều đã được báo cáo trên GitHub Issues** của repo SU
 
 Chi tiết từng issue: [`github_issues/`](github_issues/) · nội dung gốc: [`bug_report.md`](bug_report.md).
 
-> 💡 Nếu không phát hiện bug nào, ghi rõ "Không phát hiện defect nào trong phạm vi 3 feature" — nhưng lưu ý SUT này **được cố ý cài lỗi sẵn**, nên kết quả 0 bug thường có nghĩa assertion còn quá yếu.
 
 ---
 
@@ -537,7 +528,6 @@ Chi tiết từng issue: [`github_issues/`](github_issues/) · nội dung gốc:
 
 **Lỗi AI đã được thuyết minh trong video:** [mô tả ngắn — nên trỏ về một dòng cụ thể ở bảng §1.7].
 
-> 💡 §11 Anti-AI-Cheat: video **phải** có giọng thật và face-cam hoặc terminal `whoami`/`hostname`. Thiếu là mất điểm toàn phần mục này.
 
 ---
 

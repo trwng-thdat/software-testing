@@ -1,8 +1,5 @@
 # HW04 — Automation Testing — Gói nộp bài
 
-> **Template nộp bài.** Điền mọi ô `[...]` và xóa các dòng `> 💡` trước khi nộp.
-> §14 đề bài yêu cầu `README.md` phải chứa **bảng tự đánh giá** và **báo cáo tóm tắt kiểm thử** — hai mục bên dưới.
-
 - **MSSV:** 23127344
 - **Họ tên:** TRƯƠNG THÀNH ĐẠT
 - **Lớp/Khóa:** Kiểm thử phần mềm - 23KTPM3

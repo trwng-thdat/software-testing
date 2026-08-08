@@ -1,12 +1,12 @@
-# HW04 — Bug Report để tạo GitHub Issues
+# HW04 — Bug Report
 
-> **Cách dùng:** mỗi mục dưới đây là **một** GitHub Issue. Copy phần `Title` vào ô tiêu đề, copy toàn bộ khối `Description` vào ô nội dung, rồi **kéo thả ảnh** tương ứng vào cuối ô nội dung (GitHub tự upload và chèn link).
+> Tài liệu này chứa **nội dung gốc của 13 bug** đã phát hiện qua chạy thật, mỗi bug gồm tiêu đề, mô tả đầy đủ (bước tái hiện · kết quả mong đợi trích SRS · kết quả thực tế · nguyên nhân gốc kèm `file:dòng` · mức độ ảnh hưởng) và ảnh chụp kèm theo.
 >
-> Sau khi tạo xong, dán URL của từng issue vào cột **GitHub Issue** ở §1.9 [`Main_Report.md`](Main_Report.md) và trong [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md) — đề bài §6 yêu cầu bug phải có mặt ở **cả** báo cáo Markdown **lẫn** GitHub Issues.
+> **Cả 13 bug đã được tạo thành GitHub Issue [#260–#272](https://github.com/DuyITLOR/group05_eshop/issues)** trên repo SUT, mỗi issue có ảnh đính kèm — đáp ứng yêu cầu §6 (bug phải có ở **cả** Markdown **lẫn** GitHub Issues). Link từng issue đã được dán vào §1.9 [`Main_Report.md`](Main_Report.md) và [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md); ảnh chụp trang Issues ở [`github_issues/`](github_issues/).
 
 ## Tổng quan 13 bug
 
-| # | Bug ID | TC ID | Feature | Mức độ | Ảnh cần chèn | Tiêu đề ngắn | Issue |
+| # | Bug ID | TC ID | Feature | Mức độ | Ảnh chụp | Tiêu đề ngắn | Issue |
 |---|--------|-------|---------|--------|--------------|--------------|-------|
 | 1 | BUG-04 | TC-PROFILE-12 | FR-04 | **Critical** | `selenium/bug-snapshots/TC-PROFILE-12.png` | Leo thang đặc quyền qua `PUT /api/users/me` | [#260](https://github.com/DuyITLOR/group05_eshop/issues/260) |
 | 2 | BUG-07 | TC-CHECKOUT-07 | FR-08 | **Critical** | `selenium/bug-snapshots/TC-CHECKOUT-07.png` | Khách tự sửa được tổng tiền đơn hàng | [#261](https://github.com/DuyITLOR/group05_eshop/issues/261) |
@@ -22,15 +22,13 @@
 | 12 | BUG-08 | TC-CHECKOUT-13 | FR-08 | Medium | `selenium/bug-snapshots/TC-CHECKOUT-13.png` | Lỗi biên ngưỡng coupon (`>` thay vì `>=`) | [#271](https://github.com/DuyITLOR/group05_eshop/issues/271) |
 | 13 | BUG-13 | TC-ADMIN-16 | FR-18 | Medium | `selenium/bug-snapshots/TC-ADMIN-16.png` | UI hiện nút chuyển tiếp ở trạng thái kết thúc | [#272](https://github.com/DuyITLOR/group05_eshop/issues/272) |
 
-**Nhãn (label) gợi ý:** `bug` + mức độ (`critical`/`high`/`medium`) + feature (`FR-04`/`FR-08`/`FR-18`). Thêm `security` cho BUG-04, BUG-07, BUG-11, BUG-12.
-
 > Cả 13 bug đều **tái hiện giống hệt trên Chrome, Edge và Firefox** — không có bug nào chỉ xảy ra trên một engine.
 
 ---
 
 # 🔴 CRITICAL
 
-## Issue 1 — BUG-04  →  **[#260](https://github.com/DuyITLOR/group05_eshop/issues/260)** ✅ đã tạo
+## BUG-04 — Issue **[#260](https://github.com/DuyITLOR/group05_eshop/issues/260)**
 
 **Title:**
 
@@ -74,11 +72,11 @@ HTTP 200. `role` đổi từ `user` → `admin` và **tồn tại vĩnh viễn t
 **Critical.** Bất kỳ user nào cũng tự chiếm được quyền admin. Kết hợp với BUG-11 và BUG-12 tạo thành chuỗi chiếm quyền hoàn chỉnh.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-PROFILE-12.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-PROFILE-12.png`
 
 ---
 
-## Issue 2 — BUG-07  →  **[#261](https://github.com/DuyITLOR/group05_eshop/issues/261)** ✅ đã tạo
+## BUG-07 — Issue **[#261](https://github.com/DuyITLOR/group05_eshop/issues/261)**
 
 **Title:**
 
@@ -126,11 +124,11 @@ Lỗi ở **hai tầng**, sửa một tầng chưa đủ:
 **Critical.** Thiệt hại tài chính trực tiếp, khai thác được chỉ bằng thao tác trên trình duyệt, không cần công cụ gì thêm.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-CHECKOUT-07.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-CHECKOUT-07.png`
 
 ---
 
-## Issue 3 — BUG-11  →  **[#262](https://github.com/DuyITLOR/group05_eshop/issues/262)** ✅ đã tạo
+## BUG-11 — Issue **[#262](https://github.com/DuyITLOR/group05_eshop/issues/262)**
 
 **Title:**
 
@@ -177,13 +175,13 @@ Frontend admin **có** kiểm `role !== "admin"` tại `frontend-admin/src/App.j
 **Critical.** Rò rỉ dữ liệu toàn hệ thống (thông tin cá nhân, địa chỉ của mọi khách hàng) và cho phép user thường **xóa user, xóa coupon, đổi trạng thái đơn**. Đây là defect nghiêm trọng nhất phát hiện được trong bài.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-ADMIN-12.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-ADMIN-12.png`
 
 ---
 
 # 🟠 HIGH
 
-## Issue 4 — BUG-01  →  **[#263](https://github.com/DuyITLOR/group05_eshop/issues/263)** ✅ đã tạo
+## BUG-01 — Issue **[#263](https://github.com/DuyITLOR/group05_eshop/issues/263)**
 
 **Title:**
 
@@ -228,11 +226,11 @@ Cùng gốc với BUG-02 và BUG-03.
 **High.** Người dùng Việt Nam **không thể** lưu số điện thoại thật của mình — mọi SĐT đúng chuẩn VN đều bị chặn.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-PROFILE-04.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-PROFILE-04.png`
 
 ---
 
-## Issue 5 — BUG-02  →  **[#264](https://github.com/DuyITLOR/group05_eshop/issues/264)** ✅ đã tạo
+## BUG-02 — Issue **[#264](https://github.com/DuyITLOR/group05_eshop/issues/264)**
 
 **Title:**
 
@@ -275,11 +273,11 @@ Alert `"Số điện thoại không hợp lệ. Vui lòng nhập đúng 9-10 ch�
 **High.** Chặn toàn bộ nhóm SĐT 11 chữ số hợp lệ.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-PROFILE-05.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-PROFILE-05.png`
 
 ---
 
-## Issue 6 — BUG-06  →  **[#265](https://github.com/DuyITLOR/group05_eshop/issues/265)** ✅ đã tạo
+## BUG-06 — Issue **[#265](https://github.com/DuyITLOR/group05_eshop/issues/265)**
 
 **Title:**
 
@@ -329,11 +327,11 @@ discount_amount = Math.floor(total_amount \* (1 - coupon.discount_value))
 **High.** Mọi coupon loại `percent` đều tính sai. Khách bị tính tiền cao gấp nhiều lần — thiệt hại tài chính và mất uy tín nghiêm trọng.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-CHECKOUT-04.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-CHECKOUT-04.png`
 
 ---
 
-## Issue 7 — BUG-09  →  **[#266](https://github.com/DuyITLOR/group05_eshop/issues/266)** ✅ đã tạo
+## BUG-09 — Issue **[#266](https://github.com/DuyITLOR/group05_eshop/issues/266)**
 
 **Title:**
 
@@ -378,11 +376,11 @@ Hiện "Thanh toán thành công!" và **sinh thêm 1 bản ghi** trong bảng `
 **High.** Sinh đơn rác trong hệ thống, làm sai thống kê doanh thu và có thể bị lạm dụng để spam.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-CHECKOUT-16.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-CHECKOUT-16.png`
 
 ---
 
-## Issue 8 — BUG-10  →  **[#267](https://github.com/DuyITLOR/group05_eshop/issues/267)** ✅ đã tạo
+## BUG-10 — Issue **[#267](https://github.com/DuyITLOR/group05_eshop/issues/267)**
 
 **Title:**
 
@@ -431,11 +429,11 @@ Liên quan BUG-13 (UI hiện đúng cái nút để khai thác nhánh này).
 **High.** Phá vỡ tính toàn vẹn của vòng đời đơn hàng; đơn đã hủy vẫn được tính vào doanh thu `delivered`.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-ADMIN-07.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-ADMIN-07.png`
 
 ---
 
-## Issue 9 — BUG-12  →  **[#268](https://github.com/DuyITLOR/group05_eshop/issues/268)** ✅ đã tạo
+## BUG-12 — Issue **[#268](https://github.com/DuyITLOR/group05_eshop/issues/268)**
 
 **Title:**
 
@@ -480,13 +478,13 @@ Payload bị **render thành thẻ HTML thật**: chữ "xss" hiển thị **in 
 **High.** Thay `<b>` bằng `<script>` hoặc `<img onerror=...>` là script chạy **trong phiên của admin**. Kết hợp BUG-11 (API admin không kiểm quyền) tạo thành đường chiếm quyền hoàn chỉnh: kẻ tấn công chỉ cần **đặt một đơn hàng** là đưa được mã độc vào trang quản trị.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-ADMIN-14.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-ADMIN-14.png`
 
 ---
 
 # 🟡 MEDIUM
 
-## Issue 10 — BUG-03  →  **[#269](https://github.com/DuyITLOR/group05_eshop/issues/269)** ✅ đã tạo
+## BUG-03 — Issue **[#269](https://github.com/DuyITLOR/group05_eshop/issues/269)**
 
 **Title:**
 
@@ -529,11 +527,11 @@ SRS §2 FR-04: SĐT hợp lệ **phải bắt đầu bằng số `0`** → giá 
 **Medium.** Dữ liệu SĐT sai định dạng lọt vào DB, ảnh hưởng khâu liên hệ giao hàng.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-PROFILE-08.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-PROFILE-08.png`
 
 ---
 
-## Issue 11 — BUG-05  →  **[#270](https://github.com/DuyITLOR/group05_eshop/issues/270)** ✅ đã tạo
+## BUG-05 — Issue **[#270](https://github.com/DuyITLOR/group05_eshop/issues/270)**
 
 **Title:**
 
@@ -577,11 +575,11 @@ Giỏ hàng **vẫn còn nguyên** sản phẩm vừa mua.
 **Medium.** Khách dễ **mua trùng** đơn do tưởng chưa thanh toán; trải nghiệm sai lệch.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-CHECKOUT-03.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-CHECKOUT-03.png`
 
 ---
 
-## Issue 12 — BUG-08  →  **[#271](https://github.com/DuyITLOR/group05_eshop/issues/271)** ✅ đã tạo
+## BUG-08 — Issue **[#271](https://github.com/DuyITLOR/group05_eshop/issues/271)**
 
 **Title:**
 
@@ -629,11 +627,11 @@ Dùng `>` nên **loại trừ đúng điểm biên** mà FR-09 C3 quy định l�
 **Medium.** Khách đủ điều kiện nhưng không dùng được mã giảm giá — lỗi off-by-one kinh điển, ảnh hưởng đúng nhóm khách mua sát ngưỡng.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-CHECKOUT-13.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-CHECKOUT-13.png`
 
 ---
 
-## Issue 13 — BUG-13  →  **[#272](https://github.com/DuyITLOR/group05_eshop/issues/272)** ✅ đã tạo
+## BUG-13 — Issue **[#272](https://github.com/DuyITLOR/group05_eshop/issues/272)**
 
 **Title:**
 
@@ -679,19 +677,19 @@ SRS §5 FR-10: `delivered` và `canceled` là **trạng thái kết thúc** → 
 **Medium.** Dẫn dắt admin thực hiện thao tác sai chỉ bằng một cú nhấp, làm hỏng dữ liệu đơn hàng.
 ```
 
-**📎 Ảnh cần chèn:** `selenium/bug-snapshots/TC-ADMIN-16.png`
+**📎 Ảnh chụp:** `selenium/bug-snapshots/TC-ADMIN-16.png`
 
 ---
 
-## ✅ Đã tạo xong 13 issue — #260 đến #272
+## Nơi bug được ghi nhận
 
-Repo SUT (nơi chứa lỗi): https://github.com/DuyITLOR/group05_eshop/issues
+| Tài liệu | Nội dung |
+| -------- | -------- |
+| GitHub Issues [#260–#272](https://github.com/DuyITLOR/group05_eshop/issues) | 13 issue trên repo SUT, mỗi issue kèm ảnh chụp |
+| [`github_issues/`](github_issues/) | Ảnh chụp trang Issues làm bằng chứng đã báo cáo |
+| §1.9 [`Main_Report.md`](Main_Report.md) | Bảng 13 bug kèm link issue, nguyên nhân gốc |
+| [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md) | Log sinh tự động mỗi lượt chạy; link issue lấy từ bảng `FILED` trong `utils/bugReporter.ts` nên không mất khi chạy lại |
 
-> Bug được báo trên repo của **SUT**, không phải repo bài làm ([`trwng-thdat/software-testing`](https://github.com/trwng-thdat/software-testing)) — vì defect thuộc mã nguồn EShop, phải nằm ở nơi lập trình viên sửa được.
-
-- [x] Điền URL issue vào cột `GitHub Issue` ở §1.9 [`Main_Report.md`](Main_Report.md)
-- [x] Điền URL issue vào [`selenium/bug-snapshots/BUGS.md`](selenium/bug-snapshots/BUGS.md) — link được **sinh tự động** từ bảng `FILED` trong `utils/bugReporter.ts`, nên không bị mất khi chạy lại test
-- [x] Cập nhật số issue ở §4 `Main_Report.md` và [`README.md`](README.md)
-- [ ] **Còn lại:** chụp màn hình trang Issues, lưu vào thư mục `github_issues/` theo cấu trúc gói nộp
+> Bug được báo trên repo của **SUT** (`DuyITLOR/group05_eshop`), không phải repo bài làm ([`trwng-thdat/software-testing`](https://github.com/trwng-thdat/software-testing)) — vì defect thuộc mã nguồn EShop, phải nằm ở nơi lập trình viên sửa được.
 
 > ⚠️ Ảnh chụp trong `selenium/bug-snapshots/` là **screenshot toàn trang trình duyệt tại đúng thời điểm test fail**, sinh tự động bởi `utils/bugReporter.ts`. Với các bug ở **tầng API** (BUG-08, BUG-10, BUG-11), ảnh chỉ thể hiện trạng thái trình duyệt chứ không thể hiện request/response — bằng chứng thật nằm ở phần "Kết quả thực tế" trích từ log chạy và ở báo cáo HTML tương ứng trong `selenium/reports/`.
