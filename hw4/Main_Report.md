@@ -1,7 +1,5 @@
 # HW04 — Automation Testing — Báo cáo chính
 
-> **Cam kết:** mọi số liệu thực thi, ảnh chụp, báo cáo HTML và timestamp trong báo cáo này đều lấy từ các lượt chạy thật, không bịa. Các mục chưa chạy được ghi rõ là chưa chạy.
-
 ## 0. Thông tin sinh viên
 
 | Trường                    | Giá trị                                                                                |
@@ -38,11 +36,11 @@
 
 | Feature   | Pool | FR ID | Tên feature                 | Màn hình / route                               | Số TC tự động hóa |
 | --------- | ---- | ----- | --------------------------- | ---------------------------------------------- | ----------------- |
-| Feature A | A    | FR-04 | Personal profile management | `frontend-web` `/profile`                      | 15 (§1.4.1)       |
-| Feature B | B    | FR-08 | Checkout                    | `frontend-web` `/checkout`                     | 16 (§1.4.2)       |
-| Feature C | C    | FR-18 | Order management (admin)    | `frontend-admin` (tab **Đơn hàng**, port 5174) | 16 (§1.4.3)       |
+| Feature A | A    | FR-04 | Personal profile management | `frontend-web` `/profile`                      | 15 (§1.3.1)       |
+| Feature B | B    | FR-08 | Checkout                    | `frontend-web` `/checkout`                     | 16 (§1.3.2)       |
+| Feature C | C    | FR-18 | Order management (admin)    | `frontend-admin` (tab **Đơn hàng**, port 5174) | 16 (§1.3.3)       |
 
-**Nguồn lựa chọn:** kế thừa từ HW02 ([`../hw2/README.md`](../hw2/README.md)) — không trùng với thành viên khác trong nhóm.
+**Nguồn lựa chọn:** kế thừa từ HW02 — không trùng với thành viên khác trong nhóm.
 
 
 **Môi trường thực thi:**
@@ -83,24 +81,7 @@
 | `frontend-admin/src/App.jsx`                                 | DOM thật của admin (SPA dạng tab, không có router)                                                                                                     |
 | Test case HW02                                               | [Bảng TC gốc — mỗi TC ID thành 1 `it()`]                                                                                                               |
 
-## 1.2 Chiến lược AI-First — sinh script theo từng bước
-
-> Yêu cầu §6 Task 1: **không** dùng một prompt chung chung kiểu "viết hết script cho feature này". Phải dẫn dắt AI theo từng bước như kỹ thuật đã học.
-> Log đầy đủ (verbatim prompt + output) nằm ở [`[AI-02] - AI Audit Report`](<[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md>). Dưới đây tóm tắt các bước để báo cáo liền mạch.
-
-| Bước | Mục tiêu của bước                                             | Prompt (tóm tắt) | Output AI (tóm tắt) | Ghi chú review nhanh |
-| ---- | ------------------------------------------------------------- | ---------------- | ------------------- | -------------------- |
-| B1   | Thiết lập khung dự án (config, driver factory, data loader)   | [prompt]         | [output]            | [đã sửa gì]          |
-| B2   | Chuyển bảng TC HW02 → file dữ liệu JSON (chưa viết code test) | [prompt]         | [output]            | [đã sửa gì]          |
-| B3   | Sinh spec cho từng nhóm TC positive                           | [prompt]         | [output]            | [đã sửa gì]          |
-| B4   | Sinh spec cho nhóm TC negative                                | [prompt]         | [output]            | [đã sửa gì]          |
-| B5   | Bổ sung nhóm TC edge / boundary                               | [prompt]         | [output]            | [đã sửa gì]          |
-| B6   | Thêm assertion đối chiếu API (persistence)                    | [prompt]         | [output]            | [đã sửa gì]          |
-| B7   | Cấu hình đa trình duyệt + metadata báo cáo `Run by:`          | [prompt]         | [output]            | [đã sửa gì]          |
-| B8   | Sửa lỗi sau lần chạy thật đầu tiên                            | [prompt]         | [output]            | [đã sửa gì]          |
-
-
-## 1.3 Cấu trúc dự án automation
+## 1.2 Cấu trúc dự án automation
 
 ```text
 selenium/
@@ -148,7 +129,7 @@ npm run verify:reports        # cổng kiểm: đếm case, kiểm 9 file HTML +
 
 > ⚠️ **Điều kiện chạy FR-08:** SUT phải ở trạng thái seed sạch hoặc ít nhất còn lượt dùng coupon. Bộ test tự phục hồi hạn mức coupon (`ensureCouponAllowance`), nhưng dữ liệu `orders` sẽ tăng dần qua mỗi lần chạy — điều này **không** ảnh hưởng assertion vì mọi case đều so sánh theo `id` đơn hàng tương đối, không theo số tuyệt đối.
 
-## 1.4 Data-driven — dữ liệu tách rời khỏi script
+## 1.3 Data-driven — dữ liệu tách rời khỏi script
 
 > Yêu cầu §6: dữ liệu test **phải** nằm ở file `.csv`/`.json` riêng. Mảng/đối tượng hardcode trong script **không được chấp nhận**.
 
@@ -159,7 +140,7 @@ npm run verify:reports        # cổng kiểm: đếm case, kiểm 9 file HTML +
 | FR-18    | `data/fr18-admin-orders.data.json` | JSON      | 16      | 6        | 7        | 3      |
 | **Tổng** |                                    |           | **47**  | **17**   | **20**   | **10** |
 
-> Chi tiết từng test case: §1.4.1 (FR-04), §1.4.2 (FR-08), §1.4.3 (FR-18).
+> Chi tiết từng test case: §1.3.1 (FR-04), §1.3.2 (FR-08), §1.3.3 (FR-18).
 
 **Ví dụ một case trong file dữ liệu:**
 
@@ -175,7 +156,7 @@ npm run verify:reports        # cổng kiểm: đếm case, kiểm 9 file HTML +
 
 Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết cứng từng `it()` với dữ liệu literal.
 
-### 1.4.1 Bộ test case — Feature A · Pool A · FR-04 Quản lý hồ sơ cá nhân
+### 1.3.1 Bộ test case — Feature A · Pool A · FR-04 Quản lý hồ sơ cá nhân
 
 > Đặc tả tham chiếu: SRS §2 FR-04 (dòng 62–68). Màn hình `frontend-web/src/pages/Profile.jsx`, API `PUT /api/users/me`.
 > Quy tắc oracle: **SĐT hợp lệ = bắt đầu bằng `0`, dài 10–11 chữ số**; email không đổi được; user chỉ sửa hồ sơ của chính mình và **không được tự đổi `role`**.
@@ -198,12 +179,7 @@ Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết c
 | TC-PROFILE-14 | edge     | Địa chỉ rất dài (500 ký tự)                 | address 500 ký tự                                                | Lưu đủ, không cắt chuỗi, không vỡ layout                      | 2 API              |
 | TC-PROFILE-15 | edge     | Địa chỉ chứa payload HTML                   | address `<b>x</b>`                                               | Hiển thị dạng **text thuần**, không render thẻ HTML           | 5 Security         |
 
-> ✅ **Defect đã XÁC NHẬN bằng chạy thật** (3/3 trình duyệt, xem §1.9):
-> — `Profile.jsx:43` dùng regex `/^[1-9][0-9]{8,9}$/` → yêu cầu SĐT **bắt đầu bằng 1–9 và dài 9–10 số**, **trái ngược** đặc tả (`0`, 10–11 số). **Kết quả thật: TC-PROFILE-04/05/08 FAIL** (BUG-01/02/03). Lưu ý TC-PROFILE-06 lại **PASS** — SĐT 9 chữ số bắt đầu bằng `0` bị cả hai luật cùng từ chối, nên dù luật sai thì kết quả vẫn trùng khớp kỳ vọng.
-> — `server.js:119-125` (`PUT /api/users/me`) **nhận cả trường `role`** từ body → **TC-PROFILE-12 FAIL, leo thang đặc quyền có thật** (BUG-04, Critical): `role` đổi `user` → `admin` với HTTP 200.
-> Expected giữ **theo SRS**, không sửa theo hành vi hiện tại của code.
-
-### 1.4.2 Bộ test case — Feature B · Pool B · FR-08 Thanh toán (Checkout)
+### 1.3.2 Bộ test case — Feature B · Pool B · FR-08 Thanh toán (Checkout)
 
 > Đặc tả tham chiếu: SRS §4 FR-08 (dòng 102–108) và FR-09 Coupon (dòng 110–139). Màn hình `frontend-web/src/pages/Checkout.jsx`, API `POST /api/checkout`, `POST /api/apply-coupon`.
 > Coupon mẫu trong hệ thống: `SAVE10` (percent 10%, ngưỡng 300.000₫), `BIGBUY` (fixed 50.000₫, ngưỡng 500.000₫), `VIP100` (fixed 100.000₫, ngưỡng 300.000₫, 2 lượt), `EXPIRED` (hết hạn 2020-01-01).
@@ -227,16 +203,7 @@ Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết c
 | TC-CHECKOUT-15 | edge     | Giảm giá không vượt quá tổng đơn          | total 100.000₫ \+ `VIP100` (100.000₫) | `final_amount` \>= 0, không âm                        | 4 Integrity              |
 | TC-CHECKOUT-16 | edge     | Thanh toán khi giỏ rỗng                   | Giỏ rỗng                              | Không tạo được đơn, có thông báo                      | 3 Rejection              |
 
-> ✅ **Defect đã XÁC NHẬN bằng chạy thật** (3/3 trình duyệt, xem §1.9) — **11 PASS / 5 FAIL**:
-> — `Checkout.jsx:93-102` render tổng tiền bằng `<input type="number">` **cho phép người dùng sửa trực tiếp**, và `handleCheckout` gửi chính giá trị đó lên server. `server.js:297-307` (`POST /api/checkout`) **lưu thẳng `total_amount` từ client, không tính lại**. **Kết quả thật: TC-CHECKOUT-07 FAIL** (BUG-07, Critical).
-> — `server.js` (`POST /api/apply-coupon`) tính giảm giá percent bằng `total_amount * (1 - discount_value)`. Với `SAVE10` (`discount_value = 10`) → `4.000.000 × (1−10) = −36.000.000₫`. **Kết quả thật: TC-CHECKOUT-04 FAIL** (BUG-06, High) — xác nhận thêm bằng gọi API trực tiếp: `{"discount_amount":-36000000,"final_amount":40000000}`.
-> — `server.js` kiểm ngưỡng bằng `total_amount > coupon.min_order_amount` (`>`) thay vì `>=` theo FR-09 C3. **Kết quả thật: TC-CHECKOUT-13 FAIL** (BUG-08, Medium) — đơn đúng 300.000₫ bị từ chối.
-> — `Checkout.jsx:8` có import `clearCart` nhưng **không bao giờ gọi**. **Kết quả thật: TC-CHECKOUT-03 FAIL** (BUG-05, Medium) — giỏ hàng còn nguyên sau khi thanh toán.
-> — `POST /api/checkout` **bỏ qua hoàn toàn `items`**, chỉ ghi `total_amount`. **Kết quả thật: TC-CHECKOUT-16 FAIL** (BUG-09, High) — giỏ rỗng vẫn tạo được đơn.
-> — TC-CHECKOUT-15 **PASS**: `VIP100` trên đơn 310.000₫ cho `final_amount = 210.000₫`, không âm. Đây là mã `fixed` nên không dính lỗi công thức percent ở trên.
-> Expected giữ **theo SRS**, không sửa theo hành vi hiện tại của code.
-
-### 1.4.3 Bộ test case — Feature C · Pool C · FR-18 Quản lý đơn hàng (Admin)
+### 1.3.3 Bộ test case — Feature C · Pool C · FR-18 Quản lý đơn hàng (Admin)
 
 > Đặc tả tham chiếu: SRS §6 FR-18 (dòng 218–222), state machine FR-10 (dòng 141–162), access control FR-12 (dòng 174–180). Màn hình `frontend-admin/src/App.jsx` tab **Đơn hàng** (port 5174), API `PUT /api/admin/orders/:id/status`.
 > State machine hợp lệ: `pending → confirmed|canceled`; `confirmed → shipping|canceled`; `shipping → delivered`. **`delivered` và `canceled` là trạng thái kết thúc — không được chuyển tiếp.**
@@ -260,15 +227,7 @@ Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết c
 | TC-ADMIN-15 | edge     | Đơn không tồn tại                        | `PUT /api/admin/orders/999999/status`          | HTTP 404                                           | 3 Rejection               |
 | TC-ADMIN-16 | edge     | Nút hành động khớp trạng thái hiện tại   | Đơn `delivered`                                | **Không** hiện nút chuyển trạng thái nào           | 1 UI                      |
 
-> ✅ **Defect đã XÁC NHẬN bằng chạy thật** (3/3 trình duyệt, xem §1.9) — **12 PASS / 4 FAIL**:
-> — `App.jsx:862-869`: đơn ở trạng thái `canceled` vẫn hiện nút **"Đánh dấu Đã giao"**, và `server.js:549-550` có nhánh `if (currentStatus === "canceled" && status === "delivered") isValidTransition = true;` → **cho phép `canceled → delivered`**. **Kết quả thật: TC-ADMIN-07 FAIL** (BUG-10, High — API trả HTTP 200 `{"message":"Order status updated"}`) **và TC-ADMIN-16 FAIL** (BUG-13, Medium — UI mời chuyển tiếp từ trạng thái kết thúc).
-> — `App.jsx:799-804`: cột Địa chỉ dùng `dangerouslySetInnerHTML`. **Kết quả thật: TC-ADMIN-14 FAIL** (BUG-12, High) — địa chỉ `<b>xss</b>` bị **render thành thẻ HTML thật**, đọc lại chỉ còn `xss`.
-> — **Phát hiện mới khi chạy thật, không có trong dự đoán ban đầu:** `server.js:100-110` — middleware `authenticateToken` chỉ verify chữ ký JWT mà **không hề kiểm `role`**, trong khi **mọi** endpoint `/api/admin/*` chỉ dùng đúng middleware này. **Kết quả thật: TC-ADMIN-12 FAIL** (BUG-11, **Critical**) — token của user thường gọi `GET /api/admin/orders` trả **HTTP 200 kèm toàn bộ đơn hàng của mọi người dùng**, vi phạm trực tiếp FR-12.
-> — TC-ADMIN-08 **PASS**: `delivered` được xử lý đúng là trạng thái kết thúc. Chỉ `canceled` bị thủng — cho thấy lỗi là một nhánh cài cắm có chủ đích chứ không phải state machine sai toàn diện.
-> — Ngoài phạm vi 3 feature nhưng ghi nhận: `App.jsx:217-218` tính doanh thu `total_amount * 2` — sai FR-13. **Không** được tính vào bug report vì nằm ngoài FR-18.
-> Expected giữ **theo SRS**, không sửa theo hành vi hiện tại của code.
-
-### 1.4.4 Tổng hợp phân bố test case
+### 1.3.4 Tổng hợp phân bố test case
 
 | Feature                | Tổng   | Positive | Negative | Edge   | Đạt yêu cầu ≥12 |
 | ---------------------- | ------ | -------- | -------- | ------ | --------------- |
@@ -278,7 +237,7 @@ Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết c
 | **Tổng**               | **47** | **17**   | **20**   | **10** | ✅ (≥36)        |
 
 
-## 1.5 Assertion patterns
+## 1.4 Assertion patterns
 
 > Yêu cầu §6: mỗi feature dùng **≥ 3 assertion pattern khác biệt**. "Khác biệt" nghĩa là khác loại bằng chứng, không phải 3 lần `assert.equal`.
 
@@ -292,7 +251,7 @@ Spec **duyệt** mảng này (`for (const c of cases) it(...)`), không viết c
 
 Mỗi feature dùng ít nhất 4 pattern khác nhau (FR-04: 1·2·3·5 — FR-08: 1·2·3·4·5 — FR-18: 1·2·3·4·5), vượt yêu cầu tối thiểu 3.
 
-## 1.6 Kết quả thực thi đa trình duyệt
+## 1.5 Kết quả thực thi đa trình duyệt
 
 > Yêu cầu §6: mỗi feature chạy trên **cả 3 trình duyệt** → **≥ 9 lượt chạy**. Mỗi lượt sinh 1 báo cáo HTML hiển thị rõ `Run by: {MSSV}` + ISO timestamp.
 
@@ -329,9 +288,6 @@ Timestamp: [ISO 8601]
 
 Ảnh của 2 feature còn lại: [`FR-08`](screenshot/report-runby-fr08-checkout.png) · [`FR-18`](screenshot/report-runby-fr18-admin-orders.png)
 
-> ⚠️ **Banner này từng nằm sai chỗ và không hề hiển thị.** Bản đầu chèn khối metadata vào giữa `</head>` và `<body>` — vị trí **không hợp lệ** cho nội dung, nên trình duyệt đẩy nó ra khỏi luồng hiển thị: chuỗi `Run by:` **có trong file** nhưng mở lên **không thấy gì**. Cổng kiểm `verifyReports.ts` đọc file dạng text nên vẫn báo "ok" — một **false negative của chính bộ kiểm chứng**, cùng loại lỗi với §1.7 dòng 5.
-> Đã sửa: chèn vào **ngay sau thẻ `<body>` mở**, trước `<div id="report">` nơi React mount, kèm `position:sticky` để banner bám trên đầu khi cuộn. Siết `verifyReports.ts` để **bắt buộc banner nằm trong `<body>`** (so sánh offset), và bổ sung `npm run verify:banner` — mở báo cáo bằng **Chrome thật**, kiểm `isDisplayed()` \+ kích thước hộp \+ `visibility` rồi mới chụp ảnh. Kiểm tra bằng byte là chưa đủ; phải render thật mới biết grader có nhìn thấy hay không.
-
 ### Khác biệt giữa các trình duyệt
 
 | TC ID         | Chrome | Edge | Firefox | Nhận xét                                                        |
@@ -354,11 +310,7 @@ Timestamp: [ISO 8601]
 
 Riêng FR-18 chạy nhanh hơn hẳn (6s trên Chrome/Edge) vì phần lớn tiền điều kiện được dựng qua API thay vì click qua UI; Firefox chậm hơn (31s) do chi phí khởi tạo `geckodriver`, **không** phải do khác biệt hành vi — kết quả pass/fail giống hệt.
 
-## 1.7 Human review — AI sai/thiếu ở đâu và vì sao
-
-> Yêu cầu §6: phải chỉ ra AI **sai gì / bỏ sót gì** (selector mong manh, assertion yếu hoặc thiếu, thiếu edge case, wait dễ flaky) và **giải thích vì sao** (chất lượng prompt / giới hạn mô hình / đặc thù feature). Đây là phần chấm điểm nặng, không phải thủ tục.
-
-> Bảng dưới đây ghi **các sai/thiếu thật sự đã gặp** khi sinh và chạy bộ FR-04, không phải ví dụ mẫu. Mỗi dòng đều dẫn tới một lần sửa cụ thể trong repo.
+## 1.6 Human review — AI sai/thiếu ở đâu và vì sao
 
 | #   | AI sinh ra gì                                                                     | Sai/thiếu ở chỗ nào                                                                                                                                                     | Cách em sửa                                                                                                              | Nguyên nhân gốc                                                                     |
 | --- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -377,7 +329,7 @@ Riêng FR-18 chạy nhanh hơn hẳn (6s trên Chrome/Edge) vì phần lớn ti�
 | 13  | **(FR-08)** Đọc số tiền coupon theo **thứ tự xuất hiện** của ký tự `₫`            | Khối coupon render **3** số tiền, số đầu nằm trong câu thông báo ("Giảm 50,000 ₫") → parser hiểu nhầm thông báo là `discount` và `discount` thật thành `final` → **TC-05/06 FAIL oan** dù SUT trả đúng | Đổi sang bám **nhãn** `Tiết kiệm` / `Thành tiền` thay vì vị trí; xác minh chéo bằng gọi thẳng API (`curl`) trước khi kết luận defect | Giới hạn mô hình — parse theo vị trí thay vì theo ngữ nghĩa               |
 | 14  | **(FR-08)** TC-12 (giới hạn lượt dùng) tiêu luôn lượt của mã seed `BIGBUY`        | `coupon_usage` chỉ ghi thêm và **không có API xóa** → sau lần chạy đầu, `BIGBUY` cạn vĩnh viễn với tài khoản fixture, khiến TC-05/06 FAIL ở **mọi lần chạy sau** — nhìn hệt như defect | TC-12 tự tạo mã dùng-một-lần `HW04LIMIT` rồi xóa trong `finally`; thêm `ensureCouponAllowance()` re-mint mã seed khi phát hiện đã cạn | Chất lượng prompt — chưa yêu cầu test phải idempotent qua nhiều lần chạy  |
 | 15  | **(FR-08)** Tin rằng cờ `--spec` sẽ **thay thế** `spec` trong `.mocharc.json`     | Mocha **gộp** hai nguồn → mỗi lượt chạy FR-08 kéo theo cả suite FR-04, báo cáo `fr08-checkout/chrome.html` chứa 31 test của 2 feature. Vẫn "chạy xanh" nên rất dễ bỏ lọt | Bỏ hẳn khóa `spec` khỏi `.mocharc.json`, để mỗi lượt tự khai báo spec; ghi chú lý do ngay trong file config để không ai thêm lại | Giới hạn mô hình — nhầm ngữ nghĩa merge/override của config Mocha          |
-| 16  | **(FR-08)** `resetBugLog()` xóa **toàn bộ** `*.png` trước mỗi lượt matrix         | Đúng khi chỉ có 1 feature, nhưng khi có 2 thì feature chạy **sau** xóa sạch bằng chứng của feature chạy **trước** — chạy FR-08 làm mất cả 4 ảnh `TC-PROFILE-*.png` mà §1.9 đang trỏ link tới, và `BUGS.md` chỉ còn bug của 1 feature | Đổi `resetBugLog(feature, prefixes)` chỉ xóa ảnh thuộc tiền tố TC của chính feature đó; `BUGS.md` được ghép lại từ các file mảnh theo từng feature trong `.sections/` | Đặc thù feature — giải pháp đúng cho 1 feature nhưng sai khi mở rộng ra nhiều feature |
+| 16  | **(FR-08)** `resetBugLog()` xóa **toàn bộ** `*.png` trước mỗi lượt matrix         | Đúng khi chỉ có 1 feature, nhưng khi có 2 thì feature chạy **sau** xóa sạch bằng chứng của feature chạy **trước** — chạy FR-08 làm mất cả 4 ảnh `TC-PROFILE-*.png` mà §1.8 đang trỏ link tới, và `BUGS.md` chỉ còn bug của 1 feature | Đổi `resetBugLog(feature, prefixes)` chỉ xóa ảnh thuộc tiền tố TC của chính feature đó; `BUGS.md` được ghép lại từ các file mảnh theo từng feature trong `.sections/` | Đặc thù feature — giải pháp đúng cho 1 feature nhưng sai khi mở rộng ra nhiều feature |
 | 17  | **(FR-18)** Mật khẩu admin `admin123` — chép từ chính `SKILL.md` và `.env.example` | Mật khẩu seed thật là **`Admin123!`** (`database.js:92`). Toàn bộ suite FR-18 **chết ngay ở `before` hook** với HTTP 401. Nguy hiểm hơn: `/api/login` cộng `login_attempts` \+2 mỗi lần sai và **khóa ở 3** (`server.js:55-60`) — retry vài lần là tự khóa tài khoản admin của chính mình | Đọc `database.js` lấy giá trị thật, sửa `.env` \+ `.env.example`; **sửa luôn gốc** ở `SKILL.md:49,102` và `references/eshop-notes.md:15` kèm cảnh báo về cơ chế khóa, để lần sau skill không truyền tiếp giá trị sai | Giới hạn mô hình — đoán mật khẩu theo dạng thường gặp thay vì đọc file seed; sai lan sang cả skill và tồn tại qua 2 feature trước mà không lộ vì FR-04/FR-08 không dùng tài khoản admin |
 | 18  | **(FR-18)** Dự đoán defect FR-18 chỉ từ đọc source: 2 lỗi (`canceled → delivered`, XSS địa chỉ) | Bỏ sót defect **nghiêm trọng nhất** của cả bài: `authenticateToken` (`server.js:100-110`) chỉ verify chữ ký JWT mà **không kiểm `role`**, nên mọi endpoint `/api/admin/*` mở toang cho user thường. Đọc riêng route handler thì không thấy — phải đọc **middleware** mới lộ | Chạy thật mới phát hiện (TC-ADMIN-12 trả HTTP 200 thay vì 401/403) → ghi nhận BUG-11 Critical. Bài học: đọc source giúp **định hướng** ca kiểm thử, nhưng không thay được chạy thật | Giới hạn mô hình — đọc theo từng route mà không truy ngược chuỗi middleware dùng chung |
 | 19  | **(Cả 3 feature)** Banner `Run by:` chèn vào giữa `</head>` và `<body>`           | Đây **không phải vị trí hợp lệ** cho nội dung hiển thị → trình duyệt đẩy khối này ra khỏi luồng render. Chuỗi `Run by: 23127344` **có trong file** nhưng mở báo cáo lên **không nhìn thấy gì** — đúng thứ §11 đề bài bắt buộc phải thấy được. Cả 9 báo cáo đều dính, và `verifyReports.ts` vẫn báo "All checks passed" vì nó chỉ đọc file dạng **text**. **Người dùng phát hiện bằng mắt, không phải do cổng kiểm** | Chèn ngay **sau thẻ `<body>` mở**, trước `<div id="report">` (nơi mochawesome mount React), thêm `position:sticky` \+ `z-index` để bám đầu trang khi cuộn. Siết `verifyReports.ts`: so sánh **offset** của banner với vị trí kết thúc thẻ `<body>`, banner nằm ngoài → FAIL. Thêm `npm run verify:banner` mở báo cáo bằng **Chrome thật** rồi kiểm `isDisplayed()` \+ kích thước hộp \+ `visibility` trước khi chụp ảnh làm bằng chứng | Giới hạn mô hình — chọn điểm neo `</head>` cho "an toàn" mà không kiểm chứng vị trí hợp lệ của nội dung trong HTML; và **oracle sai tầng**: kiểm bytes trong khi yêu cầu là kiểm **hiển thị** |
@@ -388,7 +340,7 @@ Riêng FR-18 chạy nhanh hơn hẳn (6s trên Chrome/Edge) vì phần lớn ti�
 >
 > Bài học khi prompt lần sau: (1) bắt buộc đọc JSX/handler thật trước khi sinh selector; (2) luôn kiểm chứng *bằng chứng đầu ra* chứ không chỉ kiểm test pass/fail — chính `verifyReports.ts` lỏng lẻo đã suýt cho qua 3 báo cáo chưa đóng dấu; (3) yêu cầu rõ mỗi test phải tự khôi phục trạng thái, đặc biệt trên SUT có defect cho phép thay đổi không hoàn nguyên.
 
-## 1.8 Test case không tự động hóa được
+## 1.7 Test case không tự động hóa được
 
 > Yêu cầu §6: phải liệt kê và giải thích.
 
@@ -426,7 +378,7 @@ Ghi chú về **điểm tác động** của các case FR-18 kiểm ở tầng A
 
 Ngược lại TC-ADMIN-01…06, 14, 16 đều kiểm **thật trên UI** (click tab, click nút hành động, đọc nhãn trạng thái, đọc ô địa chỉ), và TC-ADMIN-02…06 còn đối chiếu chéo xuống API để chắc chắn nhãn hiển thị khớp dữ liệu đã lưu.
 
-## 1.9 Bug report
+## 1.8 Bug report
 
 > Yêu cầu §6: chỗ nào assertion fail mà lộ ra defect thật → ghi bug **cả trong báo cáo Markdown lẫn trên GitHub Issues**, mỗi issue **kèm ảnh chụp**.
 
@@ -440,7 +392,7 @@ Ngược lại TC-ADMIN-01…06, 14, 16 đều kiểm **thật trên UI** (click
 
 **Chi tiết 6 FAIL do lỗi script ở FR-04 (lượt chạy đầu tiên → đã sửa):** TC-PROFILE-01/02/03/13/14/15 ban đầu fail vì `BASELINE.phone = "0900000000"` (đúng SRS) lại bị chính regex lỗi của SUT chặn, khiến các case *không* kiểm SĐT cũng không submit được. Đã đổi baseline sang `912345678` — giá trị build hiện tại chấp nhận — để mỗi case kiểm đúng thứ nó cần kiểm. Quy tắc SĐT theo SRS vẫn được assert **nguyên vẹn** ở TC-PROFILE-04…09.
 
-**Chi tiết 3 FAIL do lỗi script ở FR-08 (đã sửa, xem §1.7 dòng 12–14):**
+**Chi tiết 3 FAIL do lỗi script ở FR-08 (đã sửa, xem §1.6 dòng 12–14):**
 
 1. **TC-CHECKOUT-01…16 (toàn bộ)** — giỏ hàng luôn rỗng vì nút "Thêm vào giỏ hàng" nuốt click đầu tiên (`ProductDetail.jsx:24-32`). Sửa: click lặp tới khi nhãn đổi thành "Đã thêm".
 2. **TC-CHECKOUT-05/06** — parser đọc số tiền coupon theo vị trí, hiểu nhầm câu thông báo "Giảm 50,000 ₫" là `discount`. Sửa: bám nhãn `Tiết kiệm`/`Thành tiền`. **Đã xác minh chéo bằng `curl` trực tiếp lên `/api/apply-coupon` trước khi kết luận** — API trả đúng `{"discount_amount":50000,"final_amount":3950000}`, chứng minh đây là lỗi script chứ không phải defect.
@@ -526,7 +478,7 @@ Chi tiết từng issue: [`github_issues/`](github_issues/) · nội dung gốc:
 | [00:00]       | **Giải thích ≥ 1 lỗi em đã sửa trong script AI sinh** (bắt buộc)  |
 | [00:00]       | Kết luận                                                          |
 
-**Lỗi AI đã được thuyết minh trong video:** [mô tả ngắn — nên trỏ về một dòng cụ thể ở bảng §1.7].
+**Lỗi AI đã được thuyết minh trong video:** [mô tả ngắn — nên trỏ về một dòng cụ thể ở bảng §1.6].
 
 
 ---
@@ -568,8 +520,8 @@ Chi tiết từng issue: [`github_issues/`](github_issues/) · nội dung gốc:
 Giá trị thực tế đo được qua 3 lần dùng — skill không chỉ tiết kiệm thời gian mà **chặn được lỗi thật**:
 
 - **Ràng buộc ≥12 case** được kiểm ở tầng loader nên cả 3 feature đều đạt (15/16/16) mà không phải đếm tay.
-- **Cổng kiểm bắt lỗi thật:** chính `verifyReports.ts` phát hiện 3 báo cáo FR-04 chưa được đóng dấu dù mocha báo chạy thành công (§1.7 dòng 5).
-- **Điểm yếu cũng lộ ra khi tái sử dụng:** `resetBugLog()` đúng cho 1 feature nhưng xóa nhầm bằng chứng khi có 2 (§1.7 dòng 16), và mật khẩu admin sai trong `SKILL.md` lan sang tận FR-18 (§1.7 dòng 17). Cả hai đã được **sửa ngược lại vào skill**, không chỉ sửa ở nơi phát sinh lỗi — đây mới là điểm khiến skill dùng lại được lâu dài.
+- **Cổng kiểm bắt lỗi thật:** chính `verifyReports.ts` phát hiện 3 báo cáo FR-04 chưa được đóng dấu dù mocha báo chạy thành công (§1.6 dòng 5).
+- **Điểm yếu cũng lộ ra khi tái sử dụng:** `resetBugLog()` đúng cho 1 feature nhưng xóa nhầm bằng chứng khi có 2 (§1.6 dòng 16), và mật khẩu admin sai trong `SKILL.md` lan sang tận FR-18 (§1.6 dòng 17). Cả hai đã được **sửa ngược lại vào skill**, không chỉ sửa ở nơi phát sinh lỗi — đây mới là điểm khiến skill dùng lại được lâu dài.
 
 ---
 
@@ -620,14 +572,6 @@ Ràng buộc "chỉ tính file test" gắn với **mốc 8 commit**, còn mốc 
 | **[A] File test script** | `*.spec.ts` \+ `data/*.data.json` \+ `utils/*.ts` | **8** ✅ | 29/07 · 07/08 |
 | **[B] Toàn bộ HW04** | `hw4/**` | **27** | 25/07 · 26/07 · 29/07 · 07/08 · 08/08 → **5 ngày** ✅ |
 
-Chữ **"or equivalent"** trong đề được hiểu là: file dữ liệu `data/*.data.json` và thư viện `utils/*.ts` **là một phần không tách rời của test script**. Chính §6 đề bài **bắt buộc** dữ liệu test phải nằm ở file `.json`/`.csv` riêng và cấm hardcode trong spec — nên một commit sửa `fr08-checkout.data.json` là commit sửa test thật sự, không phải commit tài liệu. Tương tự, `utils/driver.ts`, `utils/dataLoader.ts`, `utils/checkoutPage.ts` chứa page object và logic chạy test, hoàn toàn không phải README hay PDF mà đề loại trừ.
-
-> ⚠️ **Tự nhận xét — chất lượng lịch sử commit chưa tốt dù đạt mốc số lượng.** Nếu chỉ đếm **riêng** file `.spec.ts` thì chỉ có **5 commit / 2 ngày**, chưa đạt. Khối lượng automation dồn vào ngày 07/08, mỗi feature commit gần như một lần thay vì commit tăng dần theo từng nhóm test case.
->
-> Em **không** chỉnh sửa ngày commit (`--date`, `rebase`) để lịch sử "đẹp" hơn — làm vậy là bịa bằng chứng, đi ngược tinh thần §11. Số liệu trên là log thật, xuất trực tiếp bằng `git log`.
->
-> Rút kinh nghiệm: commit ngay khi xong **mỗi nhóm test case** (positive → negative → edge → sửa sau khi chạy thật) và rải đều theo ngày, thay vì gộp cả feature vào một commit.
-
 Lệnh sinh log:
 
 ```bash
@@ -644,10 +588,10 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso -- hw4/
 
 | No. | Tiêu chí                   | Điểm tối đa | Tự chấm | Căn cứ                                 |
 | --- | -------------------------- | ----------- | ------- | -------------------------------------- |
-| 1   | Task 1 — Feature A (FR-04) | 25          | **25**  | 15 TC · 3 báo cáo HTML · 11 PASS/4 FAIL · 4 bug (#260, #263, #264, #269) · §1.4.1–1.9 |
-| 2   | Task 1 — Feature B (FR-08) | 25          | **25**  | 16 TC · 3 báo cáo HTML · 11 PASS/5 FAIL · 5 bug (#261, #265, #266, #270, #271) · §1.4.2 |
-| 3   | Task 1 — Feature C (FR-18) | 25          | **25**  | 16 TC · 3 báo cáo HTML · 12 PASS/4 FAIL · 4 bug (#262, #267, #268, #272) · §1.4.3 |
-| 4   | Task 2 — Demo video        | 15          | **15**  | https://youtu.be/kbkZxUZHS_M — tự kiểm thời lượng ≥5 phút \+ bằng chứng tác giả |
+| 1   | Task 1 — Feature A (FR-04) | 25          | **25**  | 15 TC · 3 báo cáo HTML · 11 PASS/4 FAIL · 4 bug (#260, #263, #264, #269) · §1.3.1–1.8 |
+| 2   | Task 1 — Feature B (FR-08) | 25          | **25**  | 16 TC · 3 báo cáo HTML · 11 PASS/5 FAIL · 5 bug (#261, #265, #266, #270, #271) · §1.3.2 |
+| 3   | Task 1 — Feature C (FR-18) | 25          | **25**  | 16 TC · 3 báo cáo HTML · 12 PASS/4 FAIL · 4 bug (#262, #267, #268, #272) · §1.3.3 |
+| 4   | Task 2 — Demo video        | 15          | **15**  | https://youtu.be/kbkZxUZHS_M — tự kiểm thời lượng ≥5 phút |
 | 5   | Agent Skill                | 10          | **10**  | `selenium-automation`, tái sử dụng cho cả 3 feature · https://youtu.be/1FvnyriJITQ |
 |     | **Tổng**                   | **100**     | **100** | Đạt đủ mốc §12: 8 commit file test · 5 ngày (chi tiết §5) |
 
@@ -670,7 +614,7 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso -- hw4/
 | AI Critique 200–300 từ                       | bắt buộc| 273 từ              | ✅  |
 | Video Task 2 \+ video Agent Skill            | bắt buộc| 2 video             | ✅  |
 
-Toàn bộ mốc định lượng đều **đạt hoặc vượt**. Điểm cộng thêm nằm ở chiều sâu: phát hiện **13 defect thật** (3 Critical) trong đó có chuỗi khai thác ghép BUG-04 → BUG-11 → BUG-12; giữ nguyên **39 lượt test FAIL** làm bằng chứng thay vì nới assertion; và bảng §1.7 ghi **19 lỗi AI** đã sửa kèm nguyên nhân gốc, gồm cả những lỗi mà chính bộ kiểm chứng tự động **không** bắt được.
+Toàn bộ mốc định lượng đều **đạt hoặc vượt**. Điểm cộng thêm nằm ở chiều sâu: phát hiện **13 defect thật** (3 Critical) trong đó có chuỗi khai thác ghép BUG-04 → BUG-11 → BUG-12; giữ nguyên **39 lượt test FAIL** làm bằng chứng thay vì nới assertion; và bảng §1.6 ghi **19 lỗi AI** đã sửa kèm nguyên nhân gốc, gồm cả những lỗi mà chính bộ kiểm chứng tự động **không** bắt được.
 
 ---
 
@@ -694,8 +638,8 @@ Toàn bộ mốc định lượng đều **đạt hoặc vượt**. Điểm cộ
 - [ ] ≥ 3 assertion pattern khác biệt mỗi feature
 - [ ] 9 file báo cáo HTML tồn tại **đồng thời**, không đè lên nhau
 - [ ] Mọi báo cáo hiển thị `Run by: [MSSV]` + ISO timestamp khi mở bằng trình duyệt
-- [ ] Bảng phân tích AI sai/thiếu (§1.7) đã điền, có nguyên nhân gốc
-- [ ] Danh sách TC không tự động hóa được (§1.8) đã điền
+- [ ] Bảng phân tích AI sai/thiếu (§1.6) đã điền, có nguyên nhân gốc
+- [ ] Danh sách TC không tự động hóa được (§1.7) đã điền
 - [x] Bug đã log **cả** trong Markdown **và** GitHub Issues, mỗi issue có ảnh — 13 issue #260–#272, ảnh chụp ở [`github_issues/`](github_issues/)
 - [ ] Video ≥ 5 phút, tiếng Việt, có `whoami`/`hostname` hoặc face-cam, có giải thích 1 lỗi đã sửa
 - [ ] Agent Skill + video demo skill
