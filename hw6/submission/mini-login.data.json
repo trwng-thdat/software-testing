@@ -1,0 +1,52 @@
+[
+  {
+    "tc_id": "TC-01",
+    "scenario": "Valid credentials - regular user",
+    "email": "test@eshop.com",
+    "password": "Test1234!",
+    "expected_status": 200,
+    "expect_token": true,
+    "expected_role": "user",
+    "expected_message": "Login successful"
+  },
+  {
+    "tc_id": "TC-02",
+    "scenario": "Valid credentials - admin user (role claim in JWT)",
+    "email": "admin@eshop.com",
+    "password": "Admin123!",
+    "expected_status": 200,
+    "expect_token": true,
+    "expected_role": "admin",
+    "expected_message": "Login successful"
+  },
+  {
+    "tc_id": "TC-03",
+    "scenario": "Wrong password for an existing account",
+    "email": "admin@eshop.com",
+    "password": "WrongPassword999!",
+    "expected_status": 401,
+    "expect_token": false,
+    "expected_role": null,
+    "expected_error": "Invalid email or password"
+  },
+  {
+    "tc_id": "TC-04",
+    "scenario": "Non-existent email (must not reveal which field was wrong)",
+    "email": "no.such.user.23127344@eshop.com",
+    "password": "Test1234!",
+    "expected_status": 401,
+    "expect_token": false,
+    "expected_role": null,
+    "expected_error": "Invalid email or password"
+  },
+  {
+    "tc_id": "TC-05",
+    "scenario": "SQL injection in email field (tautology payload)",
+    "email": "' OR 1=1 --",
+    "password": "anything",
+    "expected_status": 401,
+    "expect_token": false,
+    "expected_role": null,
+    "expected_error": "Invalid email or password"
+  }
+]

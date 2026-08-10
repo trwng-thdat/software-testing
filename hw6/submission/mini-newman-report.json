@@ -1,0 +1,2947 @@
+{
+  "collection": {
+    "_": {
+      "postman_id": "b3f1c9d2-23127344-4a6e-9f21-mini-login-0001"
+    },
+    "item": [
+      {
+        "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+        "name": "POST /api/login — data-driven",
+        "request": {
+          "description": {
+            "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+            "type": "text/plain"
+          },
+          "url": {
+            "path": [
+              "api",
+              "login"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "d8bc252a-c58b-46e2-a7dd-8772648c236a",
+              "type": "text/javascript",
+              "exec": [
+                "// Mini Exercise B4.3 — stamp every request with the student id header.",
+                "pm.request.headers.upsert({",
+                "  key: \"X-Student-Id\",",
+                "  value: pm.environment.get(\"studentId\"),",
+                "});",
+                "",
+                "// Surface which iteration is running, so the Newman CLI log is readable.",
+                "console.log(",
+                "  \"[MINI] \" +",
+                "    pm.iterationData.get(\"tc_id\") +",
+                "    \" | \" +",
+                "    pm.iterationData.get(\"scenario\") +",
+                "    \" | X-Student-Id=\" +",
+                "    pm.environment.get(\"studentId\"),",
+                ");"
+              ],
+              "_lastExecutionId": "96d32572-2650-4e0a-837e-05e0ab13c585"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "bf3fd597-b6d9-43aa-85e8-a287fc695a4f",
+              "type": "text/javascript",
+              "exec": [
+                "const tc = pm.iterationData.get(\"tc_id\");",
+                "const expectedStatus = Number(pm.iterationData.get(\"expected_status\"));",
+                "const expectToken = pm.iterationData.get(\"expect_token\") === true;",
+                "",
+                "// ---------- 1. Status code, driven by the data file ----------",
+                "pm.test(`[MINI] ${tc} — status is ${expectedStatus}`, () => {",
+                "  pm.response.to.have.status(expectedStatus);",
+                "});",
+                "",
+                "// ---------- 2. Self-written assertion: Content-Type must be JSON ----------",
+                "// AI missed this one; the SUT returns an HTML error page on malformed input.",
+                "pm.test(`[MINI] ${tc} — Content-Type is application/json`, () => {",
+                "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(",
+                "    \"application/json\",",
+                "  );",
+                "});",
+                "",
+                "// ---------- 3. Self-written assertion: response time budget ----------",
+                "pm.test(`[MINI] ${tc} — response time < 1000 ms`, () => {",
+                "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                "});",
+                "",
+                "// ---------- 4. Request actually carried the student id ----------",
+                "pm.test(`[MINI] ${tc} — request sent X-Student-Id`, () => {",
+                "  pm.expect(pm.request.headers.get(\"X-Student-Id\")).to.eql(",
+                "    pm.environment.get(\"studentId\"),",
+                "  );",
+                "});",
+                "",
+                "// ---------- 5. Body must be parseable JSON ----------",
+                "let body = null;",
+                "pm.test(`[MINI] ${tc} — body is valid JSON`, () => {",
+                "  body = pm.response.json();",
+                "  pm.expect(body).to.be.an(\"object\");",
+                "});",
+                "",
+                "if (body === null) {",
+                "  // Nothing further can be asserted on an unparseable body.",
+                "  return;",
+                "}",
+                "",
+                "if (expectToken) {",
+                "  // ---------- Positive path: schema + JWT validation ----------",
+                "  pm.test(`[MINI] ${tc} — schema: message, token, user present`, () => {",
+                "    pm.expect(body).to.have.property(\"message\");",
+                "    pm.expect(body).to.have.property(\"token\");",
+                "    pm.expect(body).to.have.property(\"user\");",
+                "  });",
+                "",
+                "  pm.test(`[MINI] ${tc} — message matches expectation`, () => {",
+                "    pm.expect(body.message).to.eql(pm.iterationData.get(\"expected_message\"));",
+                "  });",
+                "",
+                "  pm.test(`[MINI] ${tc} — token is a well-formed JWT (3 dot-separated parts)`, () => {",
+                "    pm.expect(body.token).to.be.a(\"string\").and.to.not.be.empty;",
+                "    pm.expect(body.token.split(\".\")).to.have.lengthOf(3);",
+                "  });",
+                "",
+                "  pm.test(`[MINI] ${tc} — JWT payload carries the expected role`, () => {",
+                "    const payload = JSON.parse(",
+                "      Buffer.from(body.token.split(\".\")[1], \"base64\").toString(\"utf8\"),",
+                "    );",
+                "    pm.expect(payload).to.have.property(\"id\");",
+                "    pm.expect(payload.role).to.eql(pm.iterationData.get(\"expected_role\"));",
+                "  });",
+                "",
+                "  pm.test(`[MINI] ${tc} — user object echoes the email that logged in`, () => {",
+                "    pm.expect(body.user.email).to.eql(pm.iterationData.get(\"email\"));",
+                "  });",
+                "",
+                "  // Save the token so later requests in a real suite could reuse it.",
+                "  pm.environment.set(\"authToken\", body.token);",
+                "} else {",
+                "  // ---------- Negative path: no credential material may leak ----------",
+                "  pm.test(`[MINI] ${tc} — error message matches expectation`, () => {",
+                "    pm.expect(body).to.have.property(\"error\");",
+                "    pm.expect(body.error).to.eql(pm.iterationData.get(\"expected_error\"));",
+                "  });",
+                "",
+                "  pm.test(`[MINI] ${tc} — no token issued on failure`, () => {",
+                "    pm.expect(body).to.not.have.property(\"token\");",
+                "  });",
+                "",
+                "  pm.test(`[MINI] ${tc} — no user object leaked on failure`, () => {",
+                "    pm.expect(body).to.not.have.property(\"user\");",
+                "  });",
+                "",
+                "  pm.test(`[MINI] ${tc} — generic error does not disclose which field was wrong`, () => {",
+                "    const e = String(body.error).toLowerCase();",
+                "    pm.expect(e).to.not.include(\"not found\");",
+                "    pm.expect(e).to.not.include(\"no such user\");",
+                "    pm.expect(e).to.not.include(\"wrong password\");",
+                "  });",
+                "",
+                "  pm.test(`[MINI] ${tc} — no SQL/stack-trace detail in the error body`, () => {",
+                "    const raw = pm.response.text().toLowerCase();",
+                "    pm.expect(raw).to.not.include(\"sqlite\");",
+                "    pm.expect(raw).to.not.include(\"syntax error\");",
+                "    pm.expect(raw).to.not.include(\"at object.\");",
+                "  });",
+                "}"
+              ],
+              "_lastExecutionId": "58a4110e-6b3b-4d07-9d2b-992bc876e311"
+            }
+          }
+        ]
+      }
+    ],
+    "event": [],
+    "variable": [
+      {
+        "description": {
+          "content": "Collection-level variable — student id kept with the collection itself.",
+          "type": "text/plain"
+        },
+        "type": "string",
+        "value": "23127344",
+        "key": "collectionOwner"
+      },
+      {
+        "description": {
+          "content": "Collection-level variable — endpoint under test.",
+          "type": "text/plain"
+        },
+        "type": "string",
+        "value": "/api/login",
+        "key": "loginPath"
+      }
+    ],
+    "info": {
+      "_postman_id": "b3f1c9d2-23127344-4a6e-9f21-mini-login-0001",
+      "name": "mini-login (23127344)",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "description": {
+        "content": "Mini Exercise — API Testing pipeline for POST /api/login of the eshop-sut backend.\n\nData-driven collection: every expected value is read from mini-login.data.json, so the same request runs 5 iterations covering positive, negative and security cases.\n\nStudent: Truong Thanh Dat — 23127344",
+        "type": "text/plain"
+      }
+    }
+  },
+  "environment": {
+    "_": {
+      "postman_variable_scope": "environment",
+      "postman_exported_using": "Postman/11.x"
+    },
+    "id": "e7a2d418-23127344-4c33-8b57-mini-login-env",
+    "name": "mini-local",
+    "values": [
+      {
+        "type": "any",
+        "value": "http://localhost:3000",
+        "key": "baseUrl"
+      },
+      {
+        "type": "any",
+        "value": "23127344",
+        "key": "studentId"
+      },
+      {
+        "type": "any",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzg2MzUwMzQyfQ.OXtcg0g6YyDB18M5i42SRl_YPHnOLnz4qpyZZSFTbmg",
+        "key": "authToken"
+      }
+    ]
+  },
+  "globals": {
+    "id": "34f7c965-623a-4031-8e51-a8ac5a8d2601",
+    "values": []
+  },
+  "run": {
+    "stats": {
+      "iterations": {
+        "total": 5,
+        "pending": 0,
+        "failed": 0
+      },
+      "items": {
+        "total": 5,
+        "pending": 0,
+        "failed": 0
+      },
+      "scripts": {
+        "total": 10,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequests": {
+        "total": 5,
+        "pending": 0,
+        "failed": 0
+      },
+      "requests": {
+        "total": 5,
+        "pending": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 5,
+        "pending": 0,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 50,
+        "pending": 0,
+        "failed": 0
+      },
+      "testScripts": {
+        "total": 5,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequestScripts": {
+        "total": 5,
+        "pending": 0,
+        "failed": 0
+      }
+    },
+    "timings": {
+      "responseAverage": 13.4,
+      "responseMin": 5,
+      "responseMax": 44,
+      "responseSd": 15.304901175767192,
+      "dnsAverage": 0,
+      "dnsMin": 0,
+      "dnsMax": 0,
+      "dnsSd": 0,
+      "firstByteAverage": 0,
+      "firstByteMin": 0,
+      "firstByteMax": 0,
+      "firstByteSd": 0,
+      "started": 1786350342095,
+      "completed": 1786350342611
+    },
+    "executions": [
+      {
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 1,
+          "cycles": 5,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "6fcc3c42-657e-42f4-95d8-0371c6ffa3c1",
+          "httpRequestId": "4e2e0cde-5051-4cd1-b359-b544e447345f"
+        },
+        "item": {
+          "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+          "name": "POST /api/login — data-driven",
+          "request": {
+            "description": {
+              "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "login"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "d8bc252a-c58b-46e2-a7dd-8772648c236a",
+                "type": "text/javascript",
+                "exec": [
+                  "// Mini Exercise B4.3 — stamp every request with the student id header.",
+                  "pm.request.headers.upsert({",
+                  "  key: \"X-Student-Id\",",
+                  "  value: pm.environment.get(\"studentId\"),",
+                  "});",
+                  "",
+                  "// Surface which iteration is running, so the Newman CLI log is readable.",
+                  "console.log(",
+                  "  \"[MINI] \" +",
+                  "    pm.iterationData.get(\"tc_id\") +",
+                  "    \" | \" +",
+                  "    pm.iterationData.get(\"scenario\") +",
+                  "    \" | X-Student-Id=\" +",
+                  "    pm.environment.get(\"studentId\"),",
+                  ");"
+                ],
+                "_lastExecutionId": "96d32572-2650-4e0a-837e-05e0ab13c585"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "bf3fd597-b6d9-43aa-85e8-a287fc695a4f",
+                "type": "text/javascript",
+                "exec": [
+                  "const tc = pm.iterationData.get(\"tc_id\");",
+                  "const expectedStatus = Number(pm.iterationData.get(\"expected_status\"));",
+                  "const expectToken = pm.iterationData.get(\"expect_token\") === true;",
+                  "",
+                  "// ---------- 1. Status code, driven by the data file ----------",
+                  "pm.test(`[MINI] ${tc} — status is ${expectedStatus}`, () => {",
+                  "  pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "// ---------- 2. Self-written assertion: Content-Type must be JSON ----------",
+                  "// AI missed this one; the SUT returns an HTML error page on malformed input.",
+                  "pm.test(`[MINI] ${tc} — Content-Type is application/json`, () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(",
+                  "    \"application/json\",",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 3. Self-written assertion: response time budget ----------",
+                  "pm.test(`[MINI] ${tc} — response time < 1000 ms`, () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "// ---------- 4. Request actually carried the student id ----------",
+                  "pm.test(`[MINI] ${tc} — request sent X-Student-Id`, () => {",
+                  "  pm.expect(pm.request.headers.get(\"X-Student-Id\")).to.eql(",
+                  "    pm.environment.get(\"studentId\"),",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 5. Body must be parseable JSON ----------",
+                  "let body = null;",
+                  "pm.test(`[MINI] ${tc} — body is valid JSON`, () => {",
+                  "  body = pm.response.json();",
+                  "  pm.expect(body).to.be.an(\"object\");",
+                  "});",
+                  "",
+                  "if (body === null) {",
+                  "  // Nothing further can be asserted on an unparseable body.",
+                  "  return;",
+                  "}",
+                  "",
+                  "if (expectToken) {",
+                  "  // ---------- Positive path: schema + JWT validation ----------",
+                  "  pm.test(`[MINI] ${tc} — schema: message, token, user present`, () => {",
+                  "    pm.expect(body).to.have.property(\"message\");",
+                  "    pm.expect(body).to.have.property(\"token\");",
+                  "    pm.expect(body).to.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — message matches expectation`, () => {",
+                  "    pm.expect(body.message).to.eql(pm.iterationData.get(\"expected_message\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — token is a well-formed JWT (3 dot-separated parts)`, () => {",
+                  "    pm.expect(body.token).to.be.a(\"string\").and.to.not.be.empty;",
+                  "    pm.expect(body.token.split(\".\")).to.have.lengthOf(3);",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — JWT payload carries the expected role`, () => {",
+                  "    const payload = JSON.parse(",
+                  "      Buffer.from(body.token.split(\".\")[1], \"base64\").toString(\"utf8\"),",
+                  "    );",
+                  "    pm.expect(payload).to.have.property(\"id\");",
+                  "    pm.expect(payload.role).to.eql(pm.iterationData.get(\"expected_role\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — user object echoes the email that logged in`, () => {",
+                  "    pm.expect(body.user.email).to.eql(pm.iterationData.get(\"email\"));",
+                  "  });",
+                  "",
+                  "  // Save the token so later requests in a real suite could reuse it.",
+                  "  pm.environment.set(\"authToken\", body.token);",
+                  "} else {",
+                  "  // ---------- Negative path: no credential material may leak ----------",
+                  "  pm.test(`[MINI] ${tc} — error message matches expectation`, () => {",
+                  "    pm.expect(body).to.have.property(\"error\");",
+                  "    pm.expect(body.error).to.eql(pm.iterationData.get(\"expected_error\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no token issued on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"token\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no user object leaked on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — generic error does not disclose which field was wrong`, () => {",
+                  "    const e = String(body.error).toLowerCase();",
+                  "    pm.expect(e).to.not.include(\"not found\");",
+                  "    pm.expect(e).to.not.include(\"no such user\");",
+                  "    pm.expect(e).to.not.include(\"wrong password\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no SQL/stack-trace detail in the error body`, () => {",
+                  "    const raw = pm.response.text().toLowerCase();",
+                  "    pm.expect(raw).to.not.include(\"sqlite\");",
+                  "    pm.expect(raw).to.not.include(\"syntax error\");",
+                  "    pm.expect(raw).to.not.include(\"at object.\");",
+                  "  });",
+                  "}"
+                ],
+                "_lastExecutionId": "58a4110e-6b3b-4d07-9d2b-992bc876e311"
+              }
+            }
+          ]
+        },
+        "request": {
+          "description": {
+            "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+            "type": "text/plain"
+          },
+          "url": {
+            "protocol": "http",
+            "port": "3000",
+            "path": [
+              "api",
+              "login"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "X-Student-Id",
+              "value": "23127344"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "5d957abd-a97e-4960-8e6d-c325a7bdfe6e",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:3000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "58",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"test@eshop.com\",\n  \"password\": \"Test1234!\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "034b0677-a947-4af3-90e6-89adc773f2fe",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "366"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"16e-iC55oIvblkeay1Q2oFpLptP/S+s\""
+            },
+            {
+              "key": "Date",
+              "value": "Mon, 10 Aug 2026 08:25:42 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              76,
+              111,
+              103,
+              105,
+              110,
+              32,
+              115,
+              117,
+              99,
+              99,
+              101,
+              115,
+              115,
+              102,
+              117,
+              108,
+              34,
+              44,
+              34,
+              116,
+              111,
+              107,
+              101,
+              110,
+              34,
+              58,
+              34,
+              101,
+              121,
+              74,
+              104,
+              98,
+              71,
+              99,
+              105,
+              79,
+              105,
+              74,
+              73,
+              85,
+              122,
+              73,
+              49,
+              78,
+              105,
+              73,
+              115,
+              73,
+              110,
+              82,
+              53,
+              99,
+              67,
+              73,
+              54,
+              73,
+              107,
+              112,
+              88,
+              86,
+              67,
+              74,
+              57,
+              46,
+              101,
+              121,
+              74,
+              112,
+              90,
+              67,
+              73,
+              54,
+              77,
+              105,
+              119,
+              105,
+              99,
+              109,
+              57,
+              115,
+              90,
+              83,
+              73,
+              54,
+              73,
+              110,
+              86,
+              122,
+              90,
+              88,
+              73,
+              105,
+              76,
+              67,
+              74,
+              112,
+              89,
+              88,
+              81,
+              105,
+              79,
+              106,
+              69,
+              51,
+              79,
+              68,
+              89,
+              122,
+              78,
+              84,
+              65,
+              122,
+              78,
+              68,
+              74,
+              57,
+              46,
+              68,
+              50,
+              108,
+              109,
+              116,
+              89,
+              88,
+              88,
+              100,
+              97,
+              121,
+              80,
+              97,
+              82,
+              50,
+              110,
+              111,
+              78,
+              79,
+              110,
+              74,
+              65,
+              95,
+              111,
+              119,
+              89,
+              82,
+              53,
+              77,
+              85,
+              121,
+              114,
+              45,
+              52,
+              68,
+              51,
+              89,
+              109,
+              114,
+              102,
+              118,
+              71,
+              119,
+              34,
+              44,
+              34,
+              117,
+              115,
+              101,
+              114,
+              34,
+              58,
+              123,
+              34,
+              105,
+              100,
+              34,
+              58,
+              50,
+              44,
+              34,
+              110,
+              97,
+              109,
+              101,
+              34,
+              58,
+              34,
+              84,
+              101,
+              115,
+              116,
+              32,
+              85,
+              115,
+              101,
+              114,
+              34,
+              44,
+              34,
+              101,
+              109,
+              97,
+              105,
+              108,
+              34,
+              58,
+              34,
+              116,
+              101,
+              115,
+              116,
+              64,
+              101,
+              115,
+              104,
+              111,
+              112,
+              46,
+              99,
+              111,
+              109,
+              34,
+              44,
+              34,
+              112,
+              97,
+              115,
+              115,
+              119,
+              111,
+              114,
+              100,
+              34,
+              58,
+              34,
+              84,
+              101,
+              115,
+              116,
+              49,
+              50,
+              51,
+              52,
+              33,
+              34,
+              44,
+              34,
+              114,
+              111,
+              108,
+              101,
+              34,
+              58,
+              34,
+              117,
+              115,
+              101,
+              114,
+              34,
+              44,
+              34,
+              108,
+              111,
+              103,
+              105,
+              110,
+              95,
+              97,
+              116,
+              116,
+              101,
+              109,
+              112,
+              116,
+              115,
+              34,
+              58,
+              48,
+              44,
+              34,
+              108,
+              111,
+              99,
+              107,
+              101,
+              100,
+              95,
+              117,
+              110,
+              116,
+              105,
+              108,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              44,
+              34,
+              114,
+              101,
+              115,
+              101,
+              116,
+              95,
+              116,
+              111,
+              107,
+              101,
+              110,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              44,
+              34,
+              115,
+              104,
+              105,
+              112,
+              112,
+              105,
+              110,
+              103,
+              95,
+              97,
+              100,
+              100,
+              114,
+              101,
+              115,
+              115,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              44,
+              34,
+              112,
+              104,
+              111,
+              110,
+              101,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              125,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 44,
+          "responseSize": 366
+        },
+        "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+        "assertions": [
+          {
+            "assertion": "[MINI] TC-01 — status is 200",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — Content-Type is application/json",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — response time < 1000 ms",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — request sent X-Student-Id",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — body is valid JSON",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — schema: message, token, user present",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — message matches expectation",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — token is a well-formed JWT (3 dot-separated parts)",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — JWT payload carries the expected role",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-01 — user object echoes the email that logged in",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "10815708-894b-492f-8b46-215bacfa2a23",
+          "length": 1,
+          "cycles": 5,
+          "position": 0,
+          "iteration": 1,
+          "cr": true,
+          "httpRequestId": "a9771e04-be08-42d2-a366-03561145da92"
+        },
+        "item": {
+          "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+          "name": "POST /api/login — data-driven",
+          "request": {
+            "description": {
+              "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "login"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "d8bc252a-c58b-46e2-a7dd-8772648c236a",
+                "type": "text/javascript",
+                "exec": [
+                  "// Mini Exercise B4.3 — stamp every request with the student id header.",
+                  "pm.request.headers.upsert({",
+                  "  key: \"X-Student-Id\",",
+                  "  value: pm.environment.get(\"studentId\"),",
+                  "});",
+                  "",
+                  "// Surface which iteration is running, so the Newman CLI log is readable.",
+                  "console.log(",
+                  "  \"[MINI] \" +",
+                  "    pm.iterationData.get(\"tc_id\") +",
+                  "    \" | \" +",
+                  "    pm.iterationData.get(\"scenario\") +",
+                  "    \" | X-Student-Id=\" +",
+                  "    pm.environment.get(\"studentId\"),",
+                  ");"
+                ],
+                "_lastExecutionId": "96d32572-2650-4e0a-837e-05e0ab13c585"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "bf3fd597-b6d9-43aa-85e8-a287fc695a4f",
+                "type": "text/javascript",
+                "exec": [
+                  "const tc = pm.iterationData.get(\"tc_id\");",
+                  "const expectedStatus = Number(pm.iterationData.get(\"expected_status\"));",
+                  "const expectToken = pm.iterationData.get(\"expect_token\") === true;",
+                  "",
+                  "// ---------- 1. Status code, driven by the data file ----------",
+                  "pm.test(`[MINI] ${tc} — status is ${expectedStatus}`, () => {",
+                  "  pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "// ---------- 2. Self-written assertion: Content-Type must be JSON ----------",
+                  "// AI missed this one; the SUT returns an HTML error page on malformed input.",
+                  "pm.test(`[MINI] ${tc} — Content-Type is application/json`, () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(",
+                  "    \"application/json\",",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 3. Self-written assertion: response time budget ----------",
+                  "pm.test(`[MINI] ${tc} — response time < 1000 ms`, () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "// ---------- 4. Request actually carried the student id ----------",
+                  "pm.test(`[MINI] ${tc} — request sent X-Student-Id`, () => {",
+                  "  pm.expect(pm.request.headers.get(\"X-Student-Id\")).to.eql(",
+                  "    pm.environment.get(\"studentId\"),",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 5. Body must be parseable JSON ----------",
+                  "let body = null;",
+                  "pm.test(`[MINI] ${tc} — body is valid JSON`, () => {",
+                  "  body = pm.response.json();",
+                  "  pm.expect(body).to.be.an(\"object\");",
+                  "});",
+                  "",
+                  "if (body === null) {",
+                  "  // Nothing further can be asserted on an unparseable body.",
+                  "  return;",
+                  "}",
+                  "",
+                  "if (expectToken) {",
+                  "  // ---------- Positive path: schema + JWT validation ----------",
+                  "  pm.test(`[MINI] ${tc} — schema: message, token, user present`, () => {",
+                  "    pm.expect(body).to.have.property(\"message\");",
+                  "    pm.expect(body).to.have.property(\"token\");",
+                  "    pm.expect(body).to.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — message matches expectation`, () => {",
+                  "    pm.expect(body.message).to.eql(pm.iterationData.get(\"expected_message\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — token is a well-formed JWT (3 dot-separated parts)`, () => {",
+                  "    pm.expect(body.token).to.be.a(\"string\").and.to.not.be.empty;",
+                  "    pm.expect(body.token.split(\".\")).to.have.lengthOf(3);",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — JWT payload carries the expected role`, () => {",
+                  "    const payload = JSON.parse(",
+                  "      Buffer.from(body.token.split(\".\")[1], \"base64\").toString(\"utf8\"),",
+                  "    );",
+                  "    pm.expect(payload).to.have.property(\"id\");",
+                  "    pm.expect(payload.role).to.eql(pm.iterationData.get(\"expected_role\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — user object echoes the email that logged in`, () => {",
+                  "    pm.expect(body.user.email).to.eql(pm.iterationData.get(\"email\"));",
+                  "  });",
+                  "",
+                  "  // Save the token so later requests in a real suite could reuse it.",
+                  "  pm.environment.set(\"authToken\", body.token);",
+                  "} else {",
+                  "  // ---------- Negative path: no credential material may leak ----------",
+                  "  pm.test(`[MINI] ${tc} — error message matches expectation`, () => {",
+                  "    pm.expect(body).to.have.property(\"error\");",
+                  "    pm.expect(body.error).to.eql(pm.iterationData.get(\"expected_error\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no token issued on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"token\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no user object leaked on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — generic error does not disclose which field was wrong`, () => {",
+                  "    const e = String(body.error).toLowerCase();",
+                  "    pm.expect(e).to.not.include(\"not found\");",
+                  "    pm.expect(e).to.not.include(\"no such user\");",
+                  "    pm.expect(e).to.not.include(\"wrong password\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no SQL/stack-trace detail in the error body`, () => {",
+                  "    const raw = pm.response.text().toLowerCase();",
+                  "    pm.expect(raw).to.not.include(\"sqlite\");",
+                  "    pm.expect(raw).to.not.include(\"syntax error\");",
+                  "    pm.expect(raw).to.not.include(\"at object.\");",
+                  "  });",
+                  "}"
+                ],
+                "_lastExecutionId": "58a4110e-6b3b-4d07-9d2b-992bc876e311"
+              }
+            }
+          ]
+        },
+        "request": {
+          "description": {
+            "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+            "type": "text/plain"
+          },
+          "url": {
+            "protocol": "http",
+            "port": "3000",
+            "path": [
+              "api",
+              "login"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "X-Student-Id",
+              "value": "23127344"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "b2763dfb-778b-45fc-862e-c8e7d053c811",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:3000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "59",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"admin@eshop.com\",\n  \"password\": \"Admin123!\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "6e4d1eb7-977d-4467-bc4a-15bc2c3bbe7a",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "371"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"173-GchyJv8v97dAiqJiIHy82GRkqDE\""
+            },
+            {
+              "key": "Date",
+              "value": "Mon, 10 Aug 2026 08:25:42 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              76,
+              111,
+              103,
+              105,
+              110,
+              32,
+              115,
+              117,
+              99,
+              99,
+              101,
+              115,
+              115,
+              102,
+              117,
+              108,
+              34,
+              44,
+              34,
+              116,
+              111,
+              107,
+              101,
+              110,
+              34,
+              58,
+              34,
+              101,
+              121,
+              74,
+              104,
+              98,
+              71,
+              99,
+              105,
+              79,
+              105,
+              74,
+              73,
+              85,
+              122,
+              73,
+              49,
+              78,
+              105,
+              73,
+              115,
+              73,
+              110,
+              82,
+              53,
+              99,
+              67,
+              73,
+              54,
+              73,
+              107,
+              112,
+              88,
+              86,
+              67,
+              74,
+              57,
+              46,
+              101,
+              121,
+              74,
+              112,
+              90,
+              67,
+              73,
+              54,
+              77,
+              83,
+              119,
+              105,
+              99,
+              109,
+              57,
+              115,
+              90,
+              83,
+              73,
+              54,
+              73,
+              109,
+              70,
+              107,
+              98,
+              87,
+              108,
+              117,
+              73,
+              105,
+              119,
+              105,
+              97,
+              87,
+              70,
+              48,
+              73,
+              106,
+              111,
+              120,
+              78,
+              122,
+              103,
+              50,
+              77,
+              122,
+              85,
+              119,
+              77,
+              122,
+              81,
+              121,
+              102,
+              81,
+              46,
+              79,
+              88,
+              116,
+              99,
+              103,
+              48,
+              103,
+              54,
+              89,
+              121,
+              68,
+              66,
+              49,
+              56,
+              77,
+              53,
+              105,
+              52,
+              50,
+              83,
+              82,
+              108,
+              95,
+              89,
+              80,
+              72,
+              110,
+              79,
+              76,
+              110,
+              122,
+              52,
+              113,
+              112,
+              121,
+              90,
+              90,
+              83,
+              70,
+              84,
+              98,
+              109,
+              103,
+              34,
+              44,
+              34,
+              117,
+              115,
+              101,
+              114,
+              34,
+              58,
+              123,
+              34,
+              105,
+              100,
+              34,
+              58,
+              49,
+              44,
+              34,
+              110,
+              97,
+              109,
+              101,
+              34,
+              58,
+              34,
+              65,
+              100,
+              109,
+              105,
+              110,
+              32,
+              85,
+              115,
+              101,
+              114,
+              34,
+              44,
+              34,
+              101,
+              109,
+              97,
+              105,
+              108,
+              34,
+              58,
+              34,
+              97,
+              100,
+              109,
+              105,
+              110,
+              64,
+              101,
+              115,
+              104,
+              111,
+              112,
+              46,
+              99,
+              111,
+              109,
+              34,
+              44,
+              34,
+              112,
+              97,
+              115,
+              115,
+              119,
+              111,
+              114,
+              100,
+              34,
+              58,
+              34,
+              65,
+              100,
+              109,
+              105,
+              110,
+              49,
+              50,
+              51,
+              33,
+              34,
+              44,
+              34,
+              114,
+              111,
+              108,
+              101,
+              34,
+              58,
+              34,
+              97,
+              100,
+              109,
+              105,
+              110,
+              34,
+              44,
+              34,
+              108,
+              111,
+              103,
+              105,
+              110,
+              95,
+              97,
+              116,
+              116,
+              101,
+              109,
+              112,
+              116,
+              115,
+              34,
+              58,
+              48,
+              44,
+              34,
+              108,
+              111,
+              99,
+              107,
+              101,
+              100,
+              95,
+              117,
+              110,
+              116,
+              105,
+              108,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              44,
+              34,
+              114,
+              101,
+              115,
+              101,
+              116,
+              95,
+              116,
+              111,
+              107,
+              101,
+              110,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              44,
+              34,
+              115,
+              104,
+              105,
+              112,
+              112,
+              105,
+              110,
+              103,
+              95,
+              97,
+              100,
+              100,
+              114,
+              101,
+              115,
+              115,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              44,
+              34,
+              112,
+              104,
+              111,
+              110,
+              101,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              125,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 6,
+          "responseSize": 371
+        },
+        "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+        "assertions": [
+          {
+            "assertion": "[MINI] TC-02 — status is 200",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — Content-Type is application/json",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — response time < 1000 ms",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — request sent X-Student-Id",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — body is valid JSON",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — schema: message, token, user present",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — message matches expectation",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — token is a well-formed JWT (3 dot-separated parts)",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — JWT payload carries the expected role",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-02 — user object echoes the email that logged in",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "32dc40a9-b69d-4823-bd99-9ad2f8232281",
+          "length": 1,
+          "cycles": 5,
+          "position": 0,
+          "iteration": 2,
+          "cr": true,
+          "httpRequestId": "2b085efc-f5de-44cc-af77-33da4554d8a1"
+        },
+        "item": {
+          "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+          "name": "POST /api/login — data-driven",
+          "request": {
+            "description": {
+              "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "login"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "d8bc252a-c58b-46e2-a7dd-8772648c236a",
+                "type": "text/javascript",
+                "exec": [
+                  "// Mini Exercise B4.3 — stamp every request with the student id header.",
+                  "pm.request.headers.upsert({",
+                  "  key: \"X-Student-Id\",",
+                  "  value: pm.environment.get(\"studentId\"),",
+                  "});",
+                  "",
+                  "// Surface which iteration is running, so the Newman CLI log is readable.",
+                  "console.log(",
+                  "  \"[MINI] \" +",
+                  "    pm.iterationData.get(\"tc_id\") +",
+                  "    \" | \" +",
+                  "    pm.iterationData.get(\"scenario\") +",
+                  "    \" | X-Student-Id=\" +",
+                  "    pm.environment.get(\"studentId\"),",
+                  ");"
+                ],
+                "_lastExecutionId": "96d32572-2650-4e0a-837e-05e0ab13c585"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "bf3fd597-b6d9-43aa-85e8-a287fc695a4f",
+                "type": "text/javascript",
+                "exec": [
+                  "const tc = pm.iterationData.get(\"tc_id\");",
+                  "const expectedStatus = Number(pm.iterationData.get(\"expected_status\"));",
+                  "const expectToken = pm.iterationData.get(\"expect_token\") === true;",
+                  "",
+                  "// ---------- 1. Status code, driven by the data file ----------",
+                  "pm.test(`[MINI] ${tc} — status is ${expectedStatus}`, () => {",
+                  "  pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "// ---------- 2. Self-written assertion: Content-Type must be JSON ----------",
+                  "// AI missed this one; the SUT returns an HTML error page on malformed input.",
+                  "pm.test(`[MINI] ${tc} — Content-Type is application/json`, () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(",
+                  "    \"application/json\",",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 3. Self-written assertion: response time budget ----------",
+                  "pm.test(`[MINI] ${tc} — response time < 1000 ms`, () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "// ---------- 4. Request actually carried the student id ----------",
+                  "pm.test(`[MINI] ${tc} — request sent X-Student-Id`, () => {",
+                  "  pm.expect(pm.request.headers.get(\"X-Student-Id\")).to.eql(",
+                  "    pm.environment.get(\"studentId\"),",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 5. Body must be parseable JSON ----------",
+                  "let body = null;",
+                  "pm.test(`[MINI] ${tc} — body is valid JSON`, () => {",
+                  "  body = pm.response.json();",
+                  "  pm.expect(body).to.be.an(\"object\");",
+                  "});",
+                  "",
+                  "if (body === null) {",
+                  "  // Nothing further can be asserted on an unparseable body.",
+                  "  return;",
+                  "}",
+                  "",
+                  "if (expectToken) {",
+                  "  // ---------- Positive path: schema + JWT validation ----------",
+                  "  pm.test(`[MINI] ${tc} — schema: message, token, user present`, () => {",
+                  "    pm.expect(body).to.have.property(\"message\");",
+                  "    pm.expect(body).to.have.property(\"token\");",
+                  "    pm.expect(body).to.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — message matches expectation`, () => {",
+                  "    pm.expect(body.message).to.eql(pm.iterationData.get(\"expected_message\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — token is a well-formed JWT (3 dot-separated parts)`, () => {",
+                  "    pm.expect(body.token).to.be.a(\"string\").and.to.not.be.empty;",
+                  "    pm.expect(body.token.split(\".\")).to.have.lengthOf(3);",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — JWT payload carries the expected role`, () => {",
+                  "    const payload = JSON.parse(",
+                  "      Buffer.from(body.token.split(\".\")[1], \"base64\").toString(\"utf8\"),",
+                  "    );",
+                  "    pm.expect(payload).to.have.property(\"id\");",
+                  "    pm.expect(payload.role).to.eql(pm.iterationData.get(\"expected_role\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — user object echoes the email that logged in`, () => {",
+                  "    pm.expect(body.user.email).to.eql(pm.iterationData.get(\"email\"));",
+                  "  });",
+                  "",
+                  "  // Save the token so later requests in a real suite could reuse it.",
+                  "  pm.environment.set(\"authToken\", body.token);",
+                  "} else {",
+                  "  // ---------- Negative path: no credential material may leak ----------",
+                  "  pm.test(`[MINI] ${tc} — error message matches expectation`, () => {",
+                  "    pm.expect(body).to.have.property(\"error\");",
+                  "    pm.expect(body.error).to.eql(pm.iterationData.get(\"expected_error\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no token issued on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"token\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no user object leaked on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — generic error does not disclose which field was wrong`, () => {",
+                  "    const e = String(body.error).toLowerCase();",
+                  "    pm.expect(e).to.not.include(\"not found\");",
+                  "    pm.expect(e).to.not.include(\"no such user\");",
+                  "    pm.expect(e).to.not.include(\"wrong password\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no SQL/stack-trace detail in the error body`, () => {",
+                  "    const raw = pm.response.text().toLowerCase();",
+                  "    pm.expect(raw).to.not.include(\"sqlite\");",
+                  "    pm.expect(raw).to.not.include(\"syntax error\");",
+                  "    pm.expect(raw).to.not.include(\"at object.\");",
+                  "  });",
+                  "}"
+                ],
+                "_lastExecutionId": "58a4110e-6b3b-4d07-9d2b-992bc876e311"
+              }
+            }
+          ]
+        },
+        "request": {
+          "description": {
+            "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+            "type": "text/plain"
+          },
+          "url": {
+            "protocol": "http",
+            "port": "3000",
+            "path": [
+              "api",
+              "login"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "X-Student-Id",
+              "value": "23127344"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "8a7f4d70-0bb6-434f-8d5c-ab65d15685c3",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:3000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "67",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"admin@eshop.com\",\n  \"password\": \"WrongPassword999!\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "3330609a-ffd8-4dda-bd21-3e9decab1ce3",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "37"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"25-3YG4LRpklFolV4uVOnUIRm2hZA0\""
+            },
+            {
+              "key": "Date",
+              "value": "Mon, 10 Aug 2026 08:25:42 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              101,
+              114,
+              114,
+              111,
+              114,
+              34,
+              58,
+              34,
+              73,
+              110,
+              118,
+              97,
+              108,
+              105,
+              100,
+              32,
+              101,
+              109,
+              97,
+              105,
+              108,
+              32,
+              111,
+              114,
+              32,
+              112,
+              97,
+              115,
+              115,
+              119,
+              111,
+              114,
+              100,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 5,
+          "responseSize": 37
+        },
+        "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+        "assertions": [
+          {
+            "assertion": "[MINI] TC-03 — status is 401",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — Content-Type is application/json",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — response time < 1000 ms",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — request sent X-Student-Id",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — body is valid JSON",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — error message matches expectation",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — no token issued on failure",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — no user object leaked on failure",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — generic error does not disclose which field was wrong",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-03 — no SQL/stack-trace detail in the error body",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "fbf21c69-c2c6-4297-bb39-cb7ff4f37fe8",
+          "length": 1,
+          "cycles": 5,
+          "position": 0,
+          "iteration": 3,
+          "cr": true,
+          "httpRequestId": "8aec4269-4cee-4913-bcd8-c21216a17ff4"
+        },
+        "item": {
+          "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+          "name": "POST /api/login — data-driven",
+          "request": {
+            "description": {
+              "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "login"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "d8bc252a-c58b-46e2-a7dd-8772648c236a",
+                "type": "text/javascript",
+                "exec": [
+                  "// Mini Exercise B4.3 — stamp every request with the student id header.",
+                  "pm.request.headers.upsert({",
+                  "  key: \"X-Student-Id\",",
+                  "  value: pm.environment.get(\"studentId\"),",
+                  "});",
+                  "",
+                  "// Surface which iteration is running, so the Newman CLI log is readable.",
+                  "console.log(",
+                  "  \"[MINI] \" +",
+                  "    pm.iterationData.get(\"tc_id\") +",
+                  "    \" | \" +",
+                  "    pm.iterationData.get(\"scenario\") +",
+                  "    \" | X-Student-Id=\" +",
+                  "    pm.environment.get(\"studentId\"),",
+                  ");"
+                ],
+                "_lastExecutionId": "96d32572-2650-4e0a-837e-05e0ab13c585"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "bf3fd597-b6d9-43aa-85e8-a287fc695a4f",
+                "type": "text/javascript",
+                "exec": [
+                  "const tc = pm.iterationData.get(\"tc_id\");",
+                  "const expectedStatus = Number(pm.iterationData.get(\"expected_status\"));",
+                  "const expectToken = pm.iterationData.get(\"expect_token\") === true;",
+                  "",
+                  "// ---------- 1. Status code, driven by the data file ----------",
+                  "pm.test(`[MINI] ${tc} — status is ${expectedStatus}`, () => {",
+                  "  pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "// ---------- 2. Self-written assertion: Content-Type must be JSON ----------",
+                  "// AI missed this one; the SUT returns an HTML error page on malformed input.",
+                  "pm.test(`[MINI] ${tc} — Content-Type is application/json`, () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(",
+                  "    \"application/json\",",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 3. Self-written assertion: response time budget ----------",
+                  "pm.test(`[MINI] ${tc} — response time < 1000 ms`, () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "// ---------- 4. Request actually carried the student id ----------",
+                  "pm.test(`[MINI] ${tc} — request sent X-Student-Id`, () => {",
+                  "  pm.expect(pm.request.headers.get(\"X-Student-Id\")).to.eql(",
+                  "    pm.environment.get(\"studentId\"),",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 5. Body must be parseable JSON ----------",
+                  "let body = null;",
+                  "pm.test(`[MINI] ${tc} — body is valid JSON`, () => {",
+                  "  body = pm.response.json();",
+                  "  pm.expect(body).to.be.an(\"object\");",
+                  "});",
+                  "",
+                  "if (body === null) {",
+                  "  // Nothing further can be asserted on an unparseable body.",
+                  "  return;",
+                  "}",
+                  "",
+                  "if (expectToken) {",
+                  "  // ---------- Positive path: schema + JWT validation ----------",
+                  "  pm.test(`[MINI] ${tc} — schema: message, token, user present`, () => {",
+                  "    pm.expect(body).to.have.property(\"message\");",
+                  "    pm.expect(body).to.have.property(\"token\");",
+                  "    pm.expect(body).to.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — message matches expectation`, () => {",
+                  "    pm.expect(body.message).to.eql(pm.iterationData.get(\"expected_message\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — token is a well-formed JWT (3 dot-separated parts)`, () => {",
+                  "    pm.expect(body.token).to.be.a(\"string\").and.to.not.be.empty;",
+                  "    pm.expect(body.token.split(\".\")).to.have.lengthOf(3);",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — JWT payload carries the expected role`, () => {",
+                  "    const payload = JSON.parse(",
+                  "      Buffer.from(body.token.split(\".\")[1], \"base64\").toString(\"utf8\"),",
+                  "    );",
+                  "    pm.expect(payload).to.have.property(\"id\");",
+                  "    pm.expect(payload.role).to.eql(pm.iterationData.get(\"expected_role\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — user object echoes the email that logged in`, () => {",
+                  "    pm.expect(body.user.email).to.eql(pm.iterationData.get(\"email\"));",
+                  "  });",
+                  "",
+                  "  // Save the token so later requests in a real suite could reuse it.",
+                  "  pm.environment.set(\"authToken\", body.token);",
+                  "} else {",
+                  "  // ---------- Negative path: no credential material may leak ----------",
+                  "  pm.test(`[MINI] ${tc} — error message matches expectation`, () => {",
+                  "    pm.expect(body).to.have.property(\"error\");",
+                  "    pm.expect(body.error).to.eql(pm.iterationData.get(\"expected_error\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no token issued on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"token\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no user object leaked on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — generic error does not disclose which field was wrong`, () => {",
+                  "    const e = String(body.error).toLowerCase();",
+                  "    pm.expect(e).to.not.include(\"not found\");",
+                  "    pm.expect(e).to.not.include(\"no such user\");",
+                  "    pm.expect(e).to.not.include(\"wrong password\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no SQL/stack-trace detail in the error body`, () => {",
+                  "    const raw = pm.response.text().toLowerCase();",
+                  "    pm.expect(raw).to.not.include(\"sqlite\");",
+                  "    pm.expect(raw).to.not.include(\"syntax error\");",
+                  "    pm.expect(raw).to.not.include(\"at object.\");",
+                  "  });",
+                  "}"
+                ],
+                "_lastExecutionId": "58a4110e-6b3b-4d07-9d2b-992bc876e311"
+              }
+            }
+          ]
+        },
+        "request": {
+          "description": {
+            "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+            "type": "text/plain"
+          },
+          "url": {
+            "protocol": "http",
+            "port": "3000",
+            "path": [
+              "api",
+              "login"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "X-Student-Id",
+              "value": "23127344"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "d3d43de2-0250-498b-b463-12ae47a31ed2",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:3000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "75",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"no.such.user.23127344@eshop.com\",\n  \"password\": \"Test1234!\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "54cfe23a-7797-4c69-a3d0-6ab904e975fb",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "37"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"25-3YG4LRpklFolV4uVOnUIRm2hZA0\""
+            },
+            {
+              "key": "Date",
+              "value": "Mon, 10 Aug 2026 08:25:42 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              101,
+              114,
+              114,
+              111,
+              114,
+              34,
+              58,
+              34,
+              73,
+              110,
+              118,
+              97,
+              108,
+              105,
+              100,
+              32,
+              101,
+              109,
+              97,
+              105,
+              108,
+              32,
+              111,
+              114,
+              32,
+              112,
+              97,
+              115,
+              115,
+              119,
+              111,
+              114,
+              100,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 6,
+          "responseSize": 37
+        },
+        "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+        "assertions": [
+          {
+            "assertion": "[MINI] TC-04 — status is 401",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — Content-Type is application/json",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — response time < 1000 ms",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — request sent X-Student-Id",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — body is valid JSON",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — error message matches expectation",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — no token issued on failure",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — no user object leaked on failure",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — generic error does not disclose which field was wrong",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-04 — no SQL/stack-trace detail in the error body",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "3beb3a7e-0e8e-4b70-b130-9e0181ae4a0c",
+          "length": 1,
+          "cycles": 5,
+          "position": 0,
+          "iteration": 4,
+          "cr": true,
+          "httpRequestId": "62663248-b5e2-4f21-a1cf-36ba04ffff49"
+        },
+        "item": {
+          "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+          "name": "POST /api/login — data-driven",
+          "request": {
+            "description": {
+              "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "login"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "d8bc252a-c58b-46e2-a7dd-8772648c236a",
+                "type": "text/javascript",
+                "exec": [
+                  "// Mini Exercise B4.3 — stamp every request with the student id header.",
+                  "pm.request.headers.upsert({",
+                  "  key: \"X-Student-Id\",",
+                  "  value: pm.environment.get(\"studentId\"),",
+                  "});",
+                  "",
+                  "// Surface which iteration is running, so the Newman CLI log is readable.",
+                  "console.log(",
+                  "  \"[MINI] \" +",
+                  "    pm.iterationData.get(\"tc_id\") +",
+                  "    \" | \" +",
+                  "    pm.iterationData.get(\"scenario\") +",
+                  "    \" | X-Student-Id=\" +",
+                  "    pm.environment.get(\"studentId\"),",
+                  ");"
+                ],
+                "_lastExecutionId": "96d32572-2650-4e0a-837e-05e0ab13c585"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "bf3fd597-b6d9-43aa-85e8-a287fc695a4f",
+                "type": "text/javascript",
+                "exec": [
+                  "const tc = pm.iterationData.get(\"tc_id\");",
+                  "const expectedStatus = Number(pm.iterationData.get(\"expected_status\"));",
+                  "const expectToken = pm.iterationData.get(\"expect_token\") === true;",
+                  "",
+                  "// ---------- 1. Status code, driven by the data file ----------",
+                  "pm.test(`[MINI] ${tc} — status is ${expectedStatus}`, () => {",
+                  "  pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "// ---------- 2. Self-written assertion: Content-Type must be JSON ----------",
+                  "// AI missed this one; the SUT returns an HTML error page on malformed input.",
+                  "pm.test(`[MINI] ${tc} — Content-Type is application/json`, () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(",
+                  "    \"application/json\",",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 3. Self-written assertion: response time budget ----------",
+                  "pm.test(`[MINI] ${tc} — response time < 1000 ms`, () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "// ---------- 4. Request actually carried the student id ----------",
+                  "pm.test(`[MINI] ${tc} — request sent X-Student-Id`, () => {",
+                  "  pm.expect(pm.request.headers.get(\"X-Student-Id\")).to.eql(",
+                  "    pm.environment.get(\"studentId\"),",
+                  "  );",
+                  "});",
+                  "",
+                  "// ---------- 5. Body must be parseable JSON ----------",
+                  "let body = null;",
+                  "pm.test(`[MINI] ${tc} — body is valid JSON`, () => {",
+                  "  body = pm.response.json();",
+                  "  pm.expect(body).to.be.an(\"object\");",
+                  "});",
+                  "",
+                  "if (body === null) {",
+                  "  // Nothing further can be asserted on an unparseable body.",
+                  "  return;",
+                  "}",
+                  "",
+                  "if (expectToken) {",
+                  "  // ---------- Positive path: schema + JWT validation ----------",
+                  "  pm.test(`[MINI] ${tc} — schema: message, token, user present`, () => {",
+                  "    pm.expect(body).to.have.property(\"message\");",
+                  "    pm.expect(body).to.have.property(\"token\");",
+                  "    pm.expect(body).to.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — message matches expectation`, () => {",
+                  "    pm.expect(body.message).to.eql(pm.iterationData.get(\"expected_message\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — token is a well-formed JWT (3 dot-separated parts)`, () => {",
+                  "    pm.expect(body.token).to.be.a(\"string\").and.to.not.be.empty;",
+                  "    pm.expect(body.token.split(\".\")).to.have.lengthOf(3);",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — JWT payload carries the expected role`, () => {",
+                  "    const payload = JSON.parse(",
+                  "      Buffer.from(body.token.split(\".\")[1], \"base64\").toString(\"utf8\"),",
+                  "    );",
+                  "    pm.expect(payload).to.have.property(\"id\");",
+                  "    pm.expect(payload.role).to.eql(pm.iterationData.get(\"expected_role\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — user object echoes the email that logged in`, () => {",
+                  "    pm.expect(body.user.email).to.eql(pm.iterationData.get(\"email\"));",
+                  "  });",
+                  "",
+                  "  // Save the token so later requests in a real suite could reuse it.",
+                  "  pm.environment.set(\"authToken\", body.token);",
+                  "} else {",
+                  "  // ---------- Negative path: no credential material may leak ----------",
+                  "  pm.test(`[MINI] ${tc} — error message matches expectation`, () => {",
+                  "    pm.expect(body).to.have.property(\"error\");",
+                  "    pm.expect(body.error).to.eql(pm.iterationData.get(\"expected_error\"));",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no token issued on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"token\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no user object leaked on failure`, () => {",
+                  "    pm.expect(body).to.not.have.property(\"user\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — generic error does not disclose which field was wrong`, () => {",
+                  "    const e = String(body.error).toLowerCase();",
+                  "    pm.expect(e).to.not.include(\"not found\");",
+                  "    pm.expect(e).to.not.include(\"no such user\");",
+                  "    pm.expect(e).to.not.include(\"wrong password\");",
+                  "  });",
+                  "",
+                  "  pm.test(`[MINI] ${tc} — no SQL/stack-trace detail in the error body`, () => {",
+                  "    const raw = pm.response.text().toLowerCase();",
+                  "    pm.expect(raw).to.not.include(\"sqlite\");",
+                  "    pm.expect(raw).to.not.include(\"syntax error\");",
+                  "    pm.expect(raw).to.not.include(\"at object.\");",
+                  "  });",
+                  "}"
+                ],
+                "_lastExecutionId": "58a4110e-6b3b-4d07-9d2b-992bc876e311"
+              }
+            }
+          ]
+        },
+        "request": {
+          "description": {
+            "content": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file.",
+            "type": "text/plain"
+          },
+          "url": {
+            "protocol": "http",
+            "port": "3000",
+            "path": [
+              "api",
+              "login"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "X-Student-Id",
+              "value": "23127344"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "7686aef2-baa1-46be-9d73-f9bbe8f5ca0d",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:3000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "54",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"' OR 1=1 --\",\n  \"password\": \"anything\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "c2bf729d-6a7e-4506-b522-941b6283c935",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "37"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"25-3YG4LRpklFolV4uVOnUIRm2hZA0\""
+            },
+            {
+              "key": "Date",
+              "value": "Mon, 10 Aug 2026 08:25:42 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              101,
+              114,
+              114,
+              111,
+              114,
+              34,
+              58,
+              34,
+              73,
+              110,
+              118,
+              97,
+              108,
+              105,
+              100,
+              32,
+              101,
+              109,
+              97,
+              105,
+              108,
+              32,
+              111,
+              114,
+              32,
+              112,
+              97,
+              115,
+              115,
+              119,
+              111,
+              114,
+              100,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 6,
+          "responseSize": 37
+        },
+        "id": "924e1bff-c801-4de9-a478-c0c9a1cda55b",
+        "assertions": [
+          {
+            "assertion": "[MINI] TC-05 — status is 401",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — Content-Type is application/json",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — response time < 1000 ms",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — request sent X-Student-Id",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — body is valid JSON",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — error message matches expectation",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — no token issued on failure",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — no user object leaked on failure",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — generic error does not disclose which field was wrong",
+            "skipped": false
+          },
+          {
+            "assertion": "[MINI] TC-05 — no SQL/stack-trace detail in the error body",
+            "skipped": false
+          }
+        ]
+      }
+    ],
+    "transfers": {
+      "responseTotal": 848
+    },
+    "failures": [],
+    "error": null
+  }
+}

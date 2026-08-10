@@ -1,0 +1,133 @@
+# Mini Exercise — CI/CD for API testing with Newman
+# Student: Truong Thanh Dat — 23127344
+# API under test: POST /api/login
+#
+# Place this file at .github/workflows/newman-api-test.yml in the eshop-sut fork.
+#
+# The workflow: starts the provider (eshop-sut backend), waits until it is
+# actually serving, runs the data-driven Newman collection, and uploads the
+# JSON report. Newman exits non-zero when any assertion fails, which is what
+# turns the build red for the intentional-fail commit (step C2).
+
+name: product-api
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: POST /api/login — data-driven (5 iterations)
+    runs-on: ubuntu-latest
+
+    env:
+      STUDENT_ID: "23127344"
+      # Directory holding the four mini-* artifacts, relative to the repo root.
+      TESTS_DIR: hw6/submission
+      # eshop-sut backend lives nested inside this repo (hw3/docs/eshop-sut).
+      BACKEND_DIR: hw3/docs/eshop-sut/backend
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install backend dependencies
+        working-directory: ${{ env.BACKEND_DIR }}
+        # `npm ci` needs a lockfile in sync with package.json; fall back to
+        # `npm install` so the job does not break if the lockfile drifts.
+        run: npm ci || npm install
+
+      - name: Install Newman
+        run: npm install --global newman
+
+      - name: Start the provider (eshop-sut backend)
+        working-directory: ${{ env.BACKEND_DIR }}
+        # The backend has no `dev` script, so start server.js directly.
+        # nohup + & keeps it alive for the following steps.
+        run: |
+          nohup node server.js > "${{ runner.temp }}/backend.log" 2>&1 &
+          echo "BACKEND_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for the provider to become ready
+        # Poll a known-seeded product instead of sleeping a fixed duration.
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3000/api/products/1 > /dev/null 2>&1; then
+              echo "Provider is up after ${i}s"
+              curl -sS http://localhost:3000/api/products/1
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Provider did not become ready within 30s"
+          cat "${{ runner.temp }}/backend.log" || true
+          exit 1
+
+      - name: Run Newman (data-driven, 5 iterations)
+        working-directory: ${{ env.TESTS_DIR }}
+        run: |
+          newman run mini-login.postman_collection.json \
+            --environment mini-local.postman_environment.json \
+            --iteration-data mini-login.data.json \
+            --reporters cli,json \
+            --reporter-json-export mini-newman-report.json
+
+      - name: Summarise the run
+        # Runs even on failure so the red build still explains itself.
+        if: always()
+        working-directory: ${{ env.TESTS_DIR }}
+        run: |
+          if [ ! -f mini-newman-report.json ]; then
+            echo "No Newman report was produced." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          node -e "
+            const r = require('./mini-newman-report.json');
+            const s = r.run.stats;
+            const out = [];
+            out.push('## Newman API test results');
+            out.push('');
+            out.push('- Student ID: ${{ env.STUDENT_ID }}');
+            out.push('- Collection: ' + r.collection.info.name);
+            out.push('- Iterations: ' + s.iterations.total + ' (failed: ' + s.iterations.failed + ')');
+            out.push('- Assertions: ' + s.assertions.total + ' (failed: ' + s.assertions.failed + ')');
+            out.push('');
+            if (r.run.failures.length) {
+              out.push('### Failures');
+              out.push('');
+              for (const f of r.run.failures) {
+                out.push('- **' + (f.error.test || f.error.name) + '** — ' + f.error.message);
+              }
+            } else {
+              out.push('All assertions passed.');
+            }
+            require('fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY, out.join('\n') + '\n');
+          "
+
+      - name: Upload the Newman report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-report-${{ env.STUDENT_ID }}
+          path: ${{ env.TESTS_DIR }}/mini-newman-report.json
+          if-no-files-found: warn
+
+      - name: Upload the backend log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-log-${{ env.STUDENT_ID }}
+          path: ${{ runner.temp }}/backend.log
+          if-no-files-found: ignore
+
+      - name: Stop the provider
+        if: always()
+        run: kill "$BACKEND_PID" 2>/dev/null || true

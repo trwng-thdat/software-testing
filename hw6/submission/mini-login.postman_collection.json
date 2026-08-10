@@ -1,0 +1,186 @@
+{
+  "info": {
+    "_postman_id": "b3f1c9d2-23127344-4a6e-9f21-mini-login-0001",
+    "name": "mini-login (23127344)",
+    "description": "Mini Exercise — API Testing pipeline for POST /api/login of the eshop-sut backend.\n\nData-driven collection: every expected value is read from mini-login.data.json, so the same request runs 5 iterations covering positive, negative and security cases.\n\nStudent: Truong Thanh Dat — 23127344",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "POST /api/login — data-driven",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Mini Exercise B4.3 — stamp every request with the student id header.",
+              "pm.request.headers.upsert({",
+              "  key: \"X-Student-Id\",",
+              "  value: pm.environment.get(\"studentId\"),",
+              "});",
+              "",
+              "// Surface which iteration is running, so the Newman CLI log is readable.",
+              "console.log(",
+              "  \"[MINI] \" +",
+              "    pm.iterationData.get(\"tc_id\") +",
+              "    \" | \" +",
+              "    pm.iterationData.get(\"scenario\") +",
+              "    \" | X-Student-Id=\" +",
+              "    pm.environment.get(\"studentId\"),",
+              ");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const tc = pm.iterationData.get(\"tc_id\");",
+              "const expectedStatus = Number(pm.iterationData.get(\"expected_status\"));",
+              "const expectToken = pm.iterationData.get(\"expect_token\") === true;",
+              "",
+              "// ---------- 1. Status code, driven by the data file ----------",
+              "pm.test(`[MINI] ${tc} — status is ${expectedStatus}`, () => {",
+              "  pm.response.to.have.status(expectedStatus);",
+              "});",
+              "",
+              "// ---------- 2. Self-written assertion: Content-Type must be JSON ----------",
+              "// AI missed this one; the SUT returns an HTML error page on malformed input.",
+              "pm.test(`[MINI] ${tc} — Content-Type is application/json`, () => {",
+              "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(",
+              "    \"application/json\",",
+              "  );",
+              "});",
+              "",
+              "// ---------- 3. Self-written assertion: response time budget ----------",
+              "pm.test(`[MINI] ${tc} — response time < 1000 ms`, () => {",
+              "  pm.expect(pm.response.responseTime).to.be.below(1000);",
+              "});",
+              "",
+              "// ---------- 4. Request actually carried the student id ----------",
+              "pm.test(`[MINI] ${tc} — request sent X-Student-Id`, () => {",
+              "  pm.expect(pm.request.headers.get(\"X-Student-Id\")).to.eql(",
+              "    pm.environment.get(\"studentId\"),",
+              "  );",
+              "});",
+              "",
+              "// ---------- 5. Body must be parseable JSON ----------",
+              "let body = null;",
+              "pm.test(`[MINI] ${tc} — body is valid JSON`, () => {",
+              "  body = pm.response.json();",
+              "  pm.expect(body).to.be.an(\"object\");",
+              "});",
+              "",
+              "if (body === null) {",
+              "  // Nothing further can be asserted on an unparseable body.",
+              "  return;",
+              "}",
+              "",
+              "if (expectToken) {",
+              "  // ---------- Positive path: schema + JWT validation ----------",
+              "  pm.test(`[MINI] ${tc} — schema: message, token, user present`, () => {",
+              "    pm.expect(body).to.have.property(\"message\");",
+              "    pm.expect(body).to.have.property(\"token\");",
+              "    pm.expect(body).to.have.property(\"user\");",
+              "  });",
+              "",
+              "  pm.test(`[MINI] ${tc} — message matches expectation`, () => {",
+              "    pm.expect(body.message).to.eql(pm.iterationData.get(\"expected_message\"));",
+              "  });",
+              "",
+              "  pm.test(`[MINI] ${tc} — token is a well-formed JWT (3 dot-separated parts)`, () => {",
+              "    pm.expect(body.token).to.be.a(\"string\").and.to.not.be.empty;",
+              "    pm.expect(body.token.split(\".\")).to.have.lengthOf(3);",
+              "  });",
+              "",
+              "  pm.test(`[MINI] ${tc} — JWT payload carries the expected role`, () => {",
+              "    const payload = JSON.parse(",
+              "      Buffer.from(body.token.split(\".\")[1], \"base64\").toString(\"utf8\"),",
+              "    );",
+              "    pm.expect(payload).to.have.property(\"id\");",
+              "    pm.expect(payload.role).to.eql(pm.iterationData.get(\"expected_role\"));",
+              "  });",
+              "",
+              "  pm.test(`[MINI] ${tc} — user object echoes the email that logged in`, () => {",
+              "    pm.expect(body.user.email).to.eql(pm.iterationData.get(\"email\"));",
+              "  });",
+              "",
+              "  // Save the token so later requests in a real suite could reuse it.",
+              "  pm.environment.set(\"authToken\", body.token);",
+              "} else {",
+              "  // ---------- Negative path: no credential material may leak ----------",
+              "  pm.test(`[MINI] ${tc} — error message matches expectation`, () => {",
+              "    pm.expect(body).to.have.property(\"error\");",
+              "    pm.expect(body.error).to.eql(pm.iterationData.get(\"expected_error\"));",
+              "  });",
+              "",
+              "  pm.test(`[MINI] ${tc} — no token issued on failure`, () => {",
+              "    pm.expect(body).to.not.have.property(\"token\");",
+              "  });",
+              "",
+              "  pm.test(`[MINI] ${tc} — no user object leaked on failure`, () => {",
+              "    pm.expect(body).to.not.have.property(\"user\");",
+              "  });",
+              "",
+              "  pm.test(`[MINI] ${tc} — generic error does not disclose which field was wrong`, () => {",
+              "    const e = String(body.error).toLowerCase();",
+              "    pm.expect(e).to.not.include(\"not found\");",
+              "    pm.expect(e).to.not.include(\"no such user\");",
+              "    pm.expect(e).to.not.include(\"wrong password\");",
+              "  });",
+              "",
+              "  pm.test(`[MINI] ${tc} — no SQL/stack-trace detail in the error body`, () => {",
+              "    const raw = pm.response.text().toLowerCase();",
+              "    pm.expect(raw).to.not.include(\"sqlite\");",
+              "    pm.expect(raw).to.not.include(\"syntax error\");",
+              "    pm.expect(raw).to.not.include(\"at object.\");",
+              "  });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "login"]
+        },
+        "description": "Logs a user in. Expected values (status, token presence, role, message/error) all come from the iteration data file."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "collectionOwner",
+      "value": "23127344",
+      "type": "string",
+      "description": "Collection-level variable — student id kept with the collection itself."
+    },
+    {
+      "key": "loginPath",
+      "value": "/api/login",
+      "type": "string",
+      "description": "Collection-level variable — endpoint under test."
+    }
+  ]
+}
