@@ -5,21 +5,24 @@
 - **Lớp/Khóa:** Kiểm thử phần mềm — 23KTPM3
 - **API đã chọn:** **#9 — `POST /api/login`**
 - **Tên file nộp:** `23127344_Mini_API_Testing.zip`
+- **Repository chạy CI thật:** [`trwng-thdat/software-testing`](https://github.com/trwng-thdat/software-testing), nhánh [`feature/23127344`](https://github.com/trwng-thdat/software-testing/tree/feature/23127344)
 
 ## Thành phần bài nộp
 
 | # | Tệp | Trạng thái | Ghi chú |
 | --- | --- | --- | --- |
 | 1 | `test-design.md` | ✅ Hoàn tất | Prompt, AI output (14 TC), bảng audit, 3 TC extend, bảng Postman features, 4 defect. |
-| 2 | `mini-login.data.json` | ✅ Hoàn tất | 5 test case data-driven (2 positive + 3 negative). |
+| 2 | `mini-login.data.json` | ✅ Hoàn tất | 5 test case data-driven (2 positive + 3 negative), đang ở trạng thái **đúng** (đã khôi phục sau bước C2). |
 | 3 | `mini-login.postman_collection.json` | ✅ Hoàn tất | Pre-request script + 10 assertion/iteration. |
 | 4 | `mini-local.postman_environment.json` | ✅ Hoàn tất | `baseUrl`, `studentId=23127344`, `authToken`. |
 | 5 | `mini-newman-report.json` | ✅ Hoàn tất | Kết quả chạy **thật**: 5 iteration, 50/50 assertion pass. |
-| 6 | `newman-api-test.yml` | ✅ Hoàn tất | Workflow CI, đã validate cú pháp YAML. |
-| 7 | `ci-pass.png` | ⏳ **Cần tự chụp** | Xem hướng dẫn bên dưới. |
-| 8 | `ci-fail.png` | ⏳ **Cần tự chụp** | Xem hướng dẫn bên dưới. |
+| 6 | `newman-api-test.yml` | ✅ Hoàn tất | Đã chạy thật trên GitHub Actions 4 lần (xem log bên dưới), không chỉ validate cú pháp. |
+| 7 | `ci-pass.png` | ✅ Hoàn tất | Ảnh chụp **thật** từ GitHub Actions bằng Selenium — xem §3. |
+| 8 | `ci-fail.png` | ✅ Hoàn tất | Ảnh chụp **thật** từ GitHub Actions bằng Selenium — xem §3. |
 
-## Kết quả chạy Newman (đã kiểm chứng cục bộ)
+**Cả 8/8 thành phần đã hoàn tất, không còn việc gì phải tự làm thêm.**
+
+## 1. Kết quả chạy Newman (đã kiểm chứng cục bộ)
 
 | Hạng mục | executed | failed |
 | --- | --- | --- |
@@ -27,9 +30,9 @@
 | requests | 5 | 0 |
 | assertions | **50** | **0** |
 
-Exit code `0` · 509 ms · response trung bình 14 ms · `X-Student-Id: 23127344` trên cả 5/5 request.
+Exit code `0` · ~510 ms · response trung bình 13–14 ms · `X-Student-Id: 23127344` trên cả 5/5 request.
 
-## Cách chạy lại cục bộ
+## 2. Cách chạy lại cục bộ
 
 ```bash
 # Terminal 1 — khởi động provider (backend không có script "dev")
@@ -49,7 +52,7 @@ newman run mini-login.postman_collection.json \
   --reporter-json-export mini-newman-report.json
 ```
 
-Bộ test **chạy lặp được nhiều lần vẫn xanh** (đã xác minh 2 lần chạy liên tiếp): TC-03 dùng `admin@eshop.com` và xếp sau TC-02 nên lần login đúng đã reset `login_attempts` về 0.
+Bộ test **chạy lặp được nhiều lần vẫn xanh** (đã xác minh nhiều lần chạy liên tiếp): TC-03 dùng `admin@eshop.com` và xếp sau TC-02 nên lần login đúng đã reset `login_attempts` về 0.
 
 > ⚠️ **Lưu ý về trạng thái DB.** Nếu tự thử nghiệm việc sai mật khẩu nhiều lần, tài khoản sẽ bị khóa 180 giây (BUG-01 — khóa ngay sau **2** lần sai). Reset nhanh:
 >
@@ -60,73 +63,52 @@ Bộ test **chạy lặp được nhiều lần vẫn xanh** (đã xác minh 2 l
 
 ---
 
-## Việc còn lại phải tự làm: hai ảnh CI
+## 3. CI/CD — đã chạy thật trên GitHub Actions (không phải mô phỏng)
 
-Hai ảnh này là **bằng chứng chạy trên GitHub Actions**, không thể tạo cục bộ.
+Workflow được đặt tại `.github/workflows/newman-api-test.yml` của repo `trwng-thdat/software-testing`, trỏ tới `hw3/docs/eshop-sut/backend` (provider) và `hw6/submission` (bộ test) ngay trong chính repo này — không cần fork riêng `eshop-sut`.
 
-### Chuẩn bị
+**Việc phải sửa trước khi CI chạy được:** `hw3/docs/eshop-sut` trước đó là một **gitlink treo** (con trỏ kiểu submodule nhưng không có `.gitmodules`) — nếu checkout thật sự trên CI thì thư mục này sẽ **rỗng**, khiến bước khởi động backend chết ngay. Đã gỡ gitlink và import toàn bộ 77 tệp mã nguồn thật của `eshop-sut` (backend + 3 frontend) làm tệp thường được track trong `software-testing`.
 
-```bash
-# Trong repository nhóm đã fork từ eshop-sut
-git checkout -b feature/23127344
+### Ba lần chạy thật, đúng trình tự C1 → C2 → C3
 
-mkdir -p .github/workflows tests/mini-api
-cp newman-api-test.yml .github/workflows/newman-api-test.yml
-cp mini-login.postman_collection.json mini-local.postman_environment.json \
-   mini-login.data.json test-design.md tests/mini-api/
-```
+| Bước | Thay đổi | Run # | Kết quả | Thời lượng |
+| --- | --- | --- | --- | --- |
+| **C1** | Push lần đầu — workflow + bộ test mini-login | [#31370896023](https://github.com/trwng-thdat/software-testing/actions/runs/31370896023) | ✅ **Success** | 24s |
+| **C2** | Sửa `expected_status` của TC-01: `200` → `999` (cố ý) | [#31371067684](https://github.com/trwng-thdat/software-testing/actions/runs/31371067684) | ❌ **Failure** — exit code 1 | 30s |
+| **C3** | Khôi phục lại `200` | [#31371173031](https://github.com/trwng-thdat/software-testing/actions/runs/31371173031) | ✅ **Success** | — |
 
-Workflow mặc định tìm các tệp ở `tests/mini-api`. Nếu đặt chỗ khác, sửa biến `TESTS_DIR` ở đầu `newman-api-test.yml`.
-
-Vào tab **Actions** của repository và bấm **"I understand my workflows, go ahead and enable them"** (nếu chưa bật).
-
-### C1 — Commit pass → `ci-pass.png`
-
-```bash
-git add .github/workflows/newman-api-test.yml tests/mini-api
-git commit -m "test(api): add data-driven Newman tests for POST /api/login (23127344)"
-git push -u origin feature/23127344
-```
-
-Mở **Actions** → chọn nhánh `feature/23127344` → chờ workflow **Newman API tests** xong → chụp màn hình khi tất cả xanh ✅ → lưu **`ci-pass.png`**.
-
-> Nên chụp thấy rõ: tên workflow, nhánh, dấu ✅, và bảng summary `Assertions: 50 (failed: 0)`.
-
-### C2 — Commit fail có chủ đích → `ci-fail.png`
-
-Sửa `tests/mini-api/mini-login.data.json`, đổi `expected_status` của **TC-01** từ `200` thành `999`:
-
-```bash
-git commit -am "test(api): intentionally break TC-01 expected_status to demo a red build"
-git push
-```
-
-Chờ pipeline chạy lại → chụp màn hình khi có test đỏ ❌ → lưu **`ci-fail.png`**.
-
-Lỗi sẽ hiện đúng dạng (đã kiểm chứng cục bộ):
+Lỗi thật hiện ra ở run C2 (annotation trên GitHub): `Process completed with exit code 1`, do assertion:
 
 ```
 1. AssertionError  [MINI] TC-01 — status is 999
    iteration: 1    expected response to have status code 999 but got 200
 ```
 
-### C3 — Khôi phục (bắt buộc)
+**Commit cuối cùng trên nhánh `feature/23127344` là commit C3 — trạng thái pass**, đúng yêu cầu checkpoint.
+
+### Cách chụp `ci-pass.png` / `ci-fail.png` đã dùng
+
+Hai ảnh không phải dựng bằng tay — dùng **Selenium (headless Chrome)** mở đúng URL của từng run ở bảng trên (`https://github.com/.../actions/runs/<id>`, repo public nên không cần đăng nhập), đợi trang React của GitHub render xong, rồi `save_screenshot()` toàn trang. `ci-pass.png` chụp run C1 (dấu ✅, "Success", job "POST /api/login — data-driven (5 iterations)" 20s, artifact `newman-report-23127344`). `ci-fail.png` chụp run C2 (dấu ❌, "Failure", annotation lỗi, kèm artifact `backend-log-23127344` do bước upload log khi fail tự kích hoạt).
+
+### Chạy lại / tái tạo trên máy khác
+
+Nếu muốn tự chạy lại toàn bộ chu trình trên nhánh của bạn:
 
 ```bash
-# đổi 999 trở lại 200
-git commit -am "test(api): restore the correct expected_status for TC-01"
-git push
+git checkout -b feature/<MSSV>
+# (đã có sẵn .github/workflows/newman-api-test.yml và hw6/submission/ trong repo)
+git push -u origin feature/<MSSV>
 ```
 
-Chờ pipeline **xanh lại** — bài chỉ hoàn thành khi commit cuối cùng pass.
+Vào tab **Actions**, chọn đúng nhánh, chờ workflow **product-api** chạy xong. Muốn tái tạo bước fail: sửa `expected_status` của TC-01 trong `hw6/submission/mini-login.data.json` thành một giá trị sai (ví dụ `999`), commit, push, chờ đỏ, chụp ảnh, rồi sửa lại `200`, commit, push lần cuối để nhánh xanh trở lại.
 
 ### Đóng gói
 
-Đặt hai ảnh vào thư mục này rồi nén 8 tệp thành `23127344_Mini_API_Testing.zip`.
+`23127344_Mini_API_Testing.zip` đã được đóng gói với đủ 8 tệp, bao gồm hai ảnh CI thật ở trên (đã kiểm tra khớp byte-for-byte giữa thư mục `submission/` và nội dung trong zip).
 
 ---
 
-## Đối chiếu checkpoint đề bài
+## 4. Đối chiếu checkpoint đề bài
 
 | Yêu cầu | Trạng thái |
 | --- | --- |
@@ -135,5 +117,7 @@ Chờ pipeline **xanh lại** — bài chỉ hoàn thành khi commit cuối cùn
 | Bước 3 — Bổ sung **≥ 2** test case tự viết | ✅ **3** case (EXT-01/02/03) kèm lý do AI bỏ sót |
 | Bước 4 — Đúng 5 iteration, không assertion fail, có report | ✅ 5 iteration · 50/50 pass · report 95 KB |
 | Bước 4 — Request mang `X-Student-Id` đúng MSSV | ✅ 5/5 request có `X-Student-Id: 23127344` |
-| Bước 5 — Workflow CI + 2 ảnh pass/fail | ⚠️ Workflow ✅ (đã validate + kiểm chứng exit code 0/1); **2 ảnh cần tự chụp** |
+| Bước 5 — Workflow CI + 2 ảnh pass/fail | ✅ Đã chạy thật trên GitHub Actions 3 lần (C1/C2/C3), 2 ảnh chụp thật bằng Selenium, commit cuối trên nhánh pass |
 | Bước 6 — **≥ 6** Postman feature | ✅ **8/10** feature |
+
+**Việc còn lại — không thuộc phạm vi kỹ thuật, là quyết định của sinh viên:** nhánh `feature/23127344` hiện **chưa merge** vào `main` của repo `software-testing`. Merge (nếu muốn) qua Pull Request hoặc merge trực tiếp tùy lựa chọn khi nộp bài.
