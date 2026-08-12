@@ -51,13 +51,32 @@
 
 Three endpoint groups are covered by **one** end-to-end workflow, exercised identically by all three test plans.
 
-| Group | SUT endpoint(s) | FR ref | Why chosen |
-|---|---|---|---|
-| Auth-heavy | `POST /api/...` _<fill in>_ | FR-02 | _<login + lockout behaviour>_ |
-| Read-heavy | `GET /api/...` _<fill in>_ | FR-05 / FR-06 | _<listing/search + detail>_ |
-| Transactional | `POST /api/...` _<fill in>_ | FR-07 / FR-08 | _<add-to-cart + checkout>_ |
+**Chosen workflow: "Profile + order-history journey."** A logged-in customer reviews their own profile and past orders, updates their shipping details, then prices a discount coupon.
 
-**Non-duplication statement.** My workflow is _<workflow name>_. Group members test: _<name → workflow>_, _<name → workflow>_. No overlap.
+| Group         | SUT endpoint(s)                                  | API spec ref | FR ref       | Why chosen                                                                                                                                              |
+| ------------- | ------------------------------------------------ | ------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Auth-heavy    | `POST /api/login`                                | §1.2         | FR-02        | Issues the JWT every later step needs; subject to the 3-fail account lockout, so it is the group where lockout must be managed.                         |
+| Read-heavy    | `GET /api/users/me`, `GET /api/orders/my-orders` | §2.1, §4.4   | FR-04, FR-11 | Two authenticated reads of per-user data — the response is user-specific, so it cannot be served from a shared cache the way a public product list can. |
+| Transactional | `PUT /api/users/me`, `POST /api/apply-coupon`    | §2.2, §5.1   | FR-04, FR-09 | `PUT /api/users/me` is a real DB write on the users row; `apply-coupon` exercises the coupon calculation and its `max_uses_per_user` accounting.        |
+
+**Base URL:** `http://localhost:3000` (per API spec).
+
+**Non-duplication statement.** My workflow is the **profile + order-history journey** (FR-04 / FR-11 / FR-09). No other member tests FR-04 profile management. Group members test:
+
+| Member   | Their workflow                                                                            | Overlap with mine        |
+| -------- | ----------------------------------------------------------------------------------------- | ------------------------ |
+| _<name>_ | Shopper journey: login → product search → product detail → cart → checkout                | `POST /api/login` only   |
+| _<name>_ | _<categories / forgot-password / coupon / cancel-order set>_                              | _<see open items below>_ |
+| _<name>_ | Admin category journey: login → categories list → create category                         | `POST /api/login` only   |
+| _<name>_ | Admin journey: login → admin orders → admin users → import products → update order status | `POST /api/login` only   |
+
+`POST /api/login` is shared across all members because every auth-heavy journey requires a token; the _workflows_ remain distinct, which is what the assignment requires. My read-heavy and transactional steps are not used by any other member.
+
+> **Open items to resolve before building the test plans** — _<delete this block once settled>_
+>
+> 1. **Collision check.** One teammate's endpoint list includes `GET /api/orders/my-orders` and `POST /api/apply-coupon` (my steps 3 and 5). If that list is a final workflow, substitute: step 3 → `GET /api/orders/:id` (§4.5) and step 5 → `PUT /api/orders/:id/cancel` (§4.6). Confirm with the team and record the outcome here.
+> 2. **Is `apply-coupon` transactional?** API spec §5.1 describes it as returning a calculated `discount_amount` / `final_amount`, which may be a pure computation with no DB write — yet §6.4 defines `max_uses_per_user`, implying usage is tracked somewhere. Verify by hand whether a row is persisted. If it is not, this step is read-heavy, and `PUT /api/orders/:id/cancel` becomes the second transactional step.
+> 3. **Lockout reset path.** The API spec documents no lockout response and no reset endpoint, so FR-02's 3-fail lockout must be reset directly in the database. Locate the DB file and the relevant users-table columns; record the procedure in §3.8.
 
 ---
 
@@ -115,47 +134,92 @@ I drove the AI through the technique one step at a time rather than issuing a si
 All three plans run the same thread-group body:
 
 ```
-1. POST  <login endpoint>            → extract auth token          [auth-heavy]
+1. POST /api/login                    → extract $.token              [auth-heavy]
+   body: {"email": "${email}", "password": "${password}"}   (users.csv)
+   assert: HTTP 200 AND body contains a non-empty "token"
    think time: <n> ms
-2. GET   <product list / search>     → extract a product id         [read-heavy]
+
+2. GET  /api/users/me                                                [read-heavy]
+   header: Authorization: Bearer ${authToken}
+   assert: HTTP 200 AND $.email == ${email}   (proves the token maps to the right user)
    think time: <n> ms
-3. GET   <product detail/{id}>                                      [read-heavy]
+
+3. GET  /api/orders/my-orders         → extract $[0].id as orderId   [read-heavy]
+   header: Authorization: Bearer ${authToken}
+   assert: HTTP 200 AND response is a JSON array
    think time: <n> ms
-4. POST  <add to cart>                                              [transactional]
+
+4. PUT  /api/users/me                                                [transactional]
+   header: Authorization: Bearer ${authToken}
+   body: {"name": "${name}", "shipping_address": "${address}", "phone": "${phone}"}
+         (profiles.csv — distinct per row, so each VU writes a different value)
+   assert: HTTP 200
    think time: <n> ms
-5. POST  <checkout / create order>   → assert order id returned     [transactional]
+
+5. POST /api/apply-coupon                                            [transactional]
+   header: Authorization: Bearer ${authToken}
+   body: {"code": "${couponCode}", "total_amount": ${totalAmount}, "user_id": ${userId}}
+         (coupons.csv)
+   assert: HTTP 200 AND body contains "final_amount"
 ```
 
-**Coverage justification.** _<one short paragraph: step 1 is the auth-heavy group because ...; steps 2–3 are read-heavy because ...; steps 4–5 are transactional because they write and involve a DB transaction ...>_
+**Coverage justification.** Step 1 is the **auth-heavy** group: it is the only credential-verifying call, it performs the password hash comparison and JWT signing that make login CPU-bound, and it is the endpoint governed by FR-02's 3-fail lockout. Steps 2–3 are **read-heavy**: both are authenticated `GET`s that read per-user rows, and because the response body differs per user they cannot be served from a shared cache — unlike a public product list, so they measure real per-request database work under concurrency. Steps 4–5 are **transactional**: step 4 is an `UPDATE` on the caller's users row (parameterized so no two virtual users write identical values, avoiding a no-op write), and step 5 exercises the coupon calculation together with its `max_uses_per_user` accounting. Every request after step 1 depends on the token extracted from it, so the workflow is a genuine end-to-end journey rather than five independent calls.
+
+> **Caveat carried from §1.** If `POST /api/apply-coupon` proves to be a pure calculation with no persistence, step 5 is read-heavy rather than transactional and must be replaced with `PUT /api/orders/:id/cancel` (§4.6), using the `orderId` extracted in step 3. Verify before finalising the plans.
 
 **Correlation points.**
 
-| Extracted value | From step | Extractor | Used in step |
-|---|---|---|---|
-| `authToken` | 1 | _<JSON Extractor `$.token`>_ | 2–5 (header) |
-| `productId` | 2 | _<...>_ | 3, 4 |
-| `cartId` / `orderId` | 4 / 5 | _<...>_ | 5 / assertion |
+| Extracted value | From step | Extractor                                     | Used in step                                               |
+| --------------- | --------- | --------------------------------------------- | ---------------------------------------------------------- |
+| `authToken`     | 1         | JSON Extractor `$.token`                      | 2, 3, 4, 5 — `Authorization: Bearer ${authToken}` header   |
+| `userId`        | 1         | JSON Extractor `$.user.id`                    | 5 (`user_id` in the request body)                          |
+| `orderId`       | 3         | JSON Extractor `$[0].id`, default `NOT_FOUND` | Only if step 5 is switched to `PUT /api/orders/:id/cancel` |
+
+> Extracting `userId` from the login response rather than reading it from CSV keeps the coupon request consistent with the token actually issued. A CSV-supplied `user_id` could disagree with the JWT if the seed data drifts, which would make step 5 fail for reasons unrelated to performance.
+>
+> If `orderId` is used, guard step 5 with an **If Controller** on `${orderId} != NOT_FOUND` — a freshly seeded account has no orders, and firing `PUT /api/orders/NOT_FOUND/cancel` would inflate the error rate with a data problem rather than a performance signal.
 
 **Assertions per step.**
 
-| Step | Assertion | Rationale |
-|---|---|---|
-| 1 | HTTP 200 **and** body contains a token | Status alone passes on an error envelope returned with 200 |
-| 2 | HTTP 200 **and** non-empty result array | Catches "successful but empty" responses under load |
-| 3 | HTTP 200, `id` matches requested | _<...>_ |
-| 4 | HTTP 200/201 | _<...>_ |
-| 5 | HTTP 200/201 **and** order id present | The only assertion that proves the write actually committed |
-| all | Duration assertion _<n> ms_ | _<optional — state whether used, and note it inflates the error rate if enabled>_ |
+| Step | Assertion                                              | Rationale                                                                                                                                                                                 |
+| ---- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | HTTP 200 **and** `$.token` present and non-empty       | Status alone passes on an error envelope returned with 200; and an empty token would silently break steps 2–5, which would then fail for the wrong reason                                 |
+| 2    | HTTP 200 **and** `$.email` equals the CSV `${email}`   | Proves the token maps to the intended user. Under high concurrency this is the assertion that would expose a session/token mix-up — a correctness bug that a status-only check cannot see |
+| 3    | HTTP 200 **and** body parses as a JSON array           | Catches "successful but malformed" responses under load. Deliberately **not** asserting non-empty: a freshly seeded account legitimately has no orders                                    |
+| 4    | HTTP 200 **and** `$.name` equals the written `${name}` | Echoing back the written value is the only cheap evidence the `UPDATE` actually committed rather than returning 200 from a swallowed error                                                |
+| 5    | HTTP 200 **and** `$.final_amount` present              | Per API spec §5.1 the response must contain `discount_amount` / `final_amount`; a 200 without them means the calculation did not run                                                      |
+| all  | Duration assertion — _<state whether used>_            | If enabled, it counts slow-but-correct responses as errors, which conflates latency with failure. Recommended: **leave off** and analyse latency from percentiles in the `.jtl` instead   |
 
 ### 3.3 Data-driven inputs (CSV)
 
-| File | Columns | Rows | Consumed by | Sharing mode / recycle |
-|---|---|---|---|---|
-| `data/users.csv` | `username,password` | _<n>_ | Step 1 | _<All threads / Shared, recycle=false>_ |
-| `data/products.csv` | `productId,qty` | _<n>_ | Steps 3–4 | _<...>_ |
-| `data/<...>.csv` | _<...>_ | _<n>_ | _<...>_ | _<...>_ |
+| File                | Columns                       | Rows             | Consumed by | Sharing mode / recycle                          |
+| ------------------- | ----------------------------- | ---------------- | ----------- | ----------------------------------------------- |
+| `data/users.csv`    | `email,password`              | _<n ≥ peak VUs>_ | Step 1      | All threads, `recycle=false`, `stopThread=true` |
+| `data/profiles.csv` | `name,shipping_address,phone` | _<n>_            | Step 4      | All threads, `recycle=true`                     |
+| `data/coupons.csv`  | `code,total_amount`           | _<n>_            | Step 5      | All threads, `recycle=true`                     |
 
-**Why `recycle = <true/false>`:** _<if false, threads that exhaust the file stop / error — explain how you sized the file against thread count × loops>_.
+Sample rows (replace with your seeded values):
+
+```
+# users.csv
+email,password
+perf001@test.com,Password123!
+perf002@test.com,Password123!
+
+# profiles.csv — distinct values so each write changes a row
+name,shipping_address,phone
+Nguyen Van A,123 Le Loi Q1 TP.HCM,0912345001
+Tran Thi B,45 Nguyen Hue Q1 TP.HCM,0912345002
+
+# coupons.csv
+code,total_amount
+SAVE10,500000
+TET2025,300000
+```
+
+**Why one account per virtual user.** `users.csv` uses `recycle=false` with `stopThread=true` and is sized at or above the peak thread count, so **no two virtual users share a login**. This is deliberate: FR-02 locks an account after 3 failed logins, and a shared account under Stress or Spike load would risk cascading lockouts that make the error rate a measurement of FR-02 rather than of performance. Sizing the file below the peak VU count would silently stop threads mid-run and understate the offered load — so the row count must be verified against §3.4's peak figure before each run.
+
+**Why `profiles.csv` and `coupons.csv` use `recycle=true`.** These are not identity-bearing, so reuse across virtual users is harmless; recycling keeps the files small. `profiles.csv` values must still differ **row to row** so that step 4 performs a real `UPDATE` rather than rewriting identical data.
 
 ### 3.4 Scenario parameters (Load / Stress / Spike)
 
