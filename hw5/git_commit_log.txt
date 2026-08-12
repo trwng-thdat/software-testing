@@ -8,7 +8,7 @@ Generated: 2026-08-12 22:35:44 +0700
 COMMIT LOG - HW05
 ========================================================================
 
-42accc6 | 2026-08-12 22:35:44 +0700 | trwng-thdat | chore(hw5): export git commit log and record SHAs in the report
+5aaf3ec | 2026-08-12 22:35:44 +0700 | trwng-thdat | chore(hw5): export git commit log and record SHAs in the report
 9900816 | 2026-08-12 22:34:48 +0700 | trwng-thdat | design(hw5): select spec-verified profile + order-history workflow
 081af2d | 2026-08-12 22:34:28 +0700 | trwng-thdat | docs(hw5): fill AI audit report template with artifact scaffold
 5cb31df | 2026-08-12 22:34:14 +0700 | trwng-thdat | docs(hw5): add main report skeleton mapped to the HW05 spec
@@ -18,7 +18,7 @@ e1960bd | 2026-08-12 22:32:31 +0700 | trwng-thdat | docs(hw5): add EShop API spe
 FULL DETAIL
 ========================================================================
 
-commit 42accc6b6d70c50e62edfba2baf3a10a9e61cb01
+commit 5aaf3ec54b32a1ae99092bfe6995dab77ac5a823
 Author: trwng-thdat <truongthanhdat0305@gmail.com>
 Date:   2026-08-12 22:35:44 +0700
 
@@ -32,8 +32,8 @@ Date:   2026-08-12 22:35:44 +0700
     Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
 
  hw5/Main_Report.md     |  15 +++++-
- hw5/git_commit_log.txt | 124 +++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 138 insertions(+), 1 deletion(-)
+ hw5/git_commit_log.txt | 142 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 156 insertions(+), 1 deletion(-)
 
 commit 9900816155d00de733122380f9dbf0cc73f6e0f6
 Author: trwng-thdat <truongthanhdat0305@gmail.com>
