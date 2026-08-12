@@ -507,6 +507,9 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso > git_commit_log.txt
 | Khung báo cáo chính                   | `5cb31df` | docs(hw5): add main report skeleton mapped to the HW05 spec        |
 | Khung AI audit report                 | `081af2d` | docs(hw5): fill AI audit report template with artifact scaffold    |
 | Thiết kế luồng (đã đối chiếu API spec) | `9900816` | design(hw5): select spec-verified profile + order-history workflow |
+| Xuất nhật ký commit                   | `5aaf3ec` | chore(hw5): export git commit log and record SHAs in the report    |
+| Cập nhật lại nhật ký commit           | `abe3dd6` | chore(hw5): refresh commit log to include the export commit itself |
+| Dịch tài liệu sang tiếng Việt         | `b564656` | docs(hw5): dịch báo cáo chính và AI audit report sang tiếng Việt   |
 
 **Còn phải làm** (giai đoạn thực thi — điền dần khi commit):
 
