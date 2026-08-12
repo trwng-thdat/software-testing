@@ -1,0 +1,142 @@
+HW05 - Performance Testing (AI-First)
+Student ID: 23127344
+Repository: software-testing
+Branch: main
+Generated: 2026-08-12 22:35:44 +0700
+
+========================================================================
+COMMIT LOG - HW05
+========================================================================
+
+42accc6 | 2026-08-12 22:35:44 +0700 | trwng-thdat | chore(hw5): export git commit log and record SHAs in the report
+9900816 | 2026-08-12 22:34:48 +0700 | trwng-thdat | design(hw5): select spec-verified profile + order-history workflow
+081af2d | 2026-08-12 22:34:28 +0700 | trwng-thdat | docs(hw5): fill AI audit report template with artifact scaffold
+5cb31df | 2026-08-12 22:34:14 +0700 | trwng-thdat | docs(hw5): add main report skeleton mapped to the HW05 spec
+e1960bd | 2026-08-12 22:32:31 +0700 | trwng-thdat | docs(hw5): add EShop API specification as the test basis
+
+========================================================================
+FULL DETAIL
+========================================================================
+
+commit 42accc6b6d70c50e62edfba2baf3a10a9e61cb01
+Author: trwng-thdat <truongthanhdat0305@gmail.com>
+Date:   2026-08-12 22:35:44 +0700
+
+    chore(hw5): export git commit log and record SHAs in the report
+    
+    Adds git_commit_log.txt (summary lines plus full detail with file
+    stats), required by HW05 section 12. Fills report section 8 with the
+    four design-phase commits and leaves the execution-phase rows to be
+    filled as those commits are made.
+    
+    Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+
+ hw5/Main_Report.md     |  15 +++++-
+ hw5/git_commit_log.txt | 124 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 138 insertions(+), 1 deletion(-)
+
+commit 9900816155d00de733122380f9dbf0cc73f6e0f6
+Author: trwng-thdat <truongthanhdat0305@gmail.com>
+Date:   2026-08-12 22:34:48 +0700
+
+    design(hw5): select spec-verified profile + order-history workflow
+    
+    Workflow covering all three endpoint groups, every step verified against
+    api_spec.md:
+    
+      1. POST /api/login           (1.2)  auth-heavy
+      2. GET  /api/users/me        (2.1)  read-heavy
+      3. GET  /api/orders/my-orders(4.4)  read-heavy
+      4. PUT  /api/users/me        (2.2)  transactional
+      5. POST /api/apply-coupon    (5.1)  transactional
+    
+    Chosen because no other group member tests FR-04 profile management;
+    only POST /api/login overlaps, which is unavoidable since every
+    auth-heavy journey needs a token.
+    
+    Adds correlation points (token, user id, order id), per-step assertions
+    that check response bodies rather than status codes alone, and a
+    three-file CSV design. users.csv is sized at or above the peak thread
+    count with recycle=false so no two virtual users share a login, which
+    keeps the FR-02 three-fail lockout from turning the error rate into a
+    measurement of lockout instead of performance.
+    
+    Records the design in the audit report as artifacts #2 and #3. Artifact
+    #2 is tagged INVALID: the first proposal named /api/profile and
+    PUT /api/profile, routes that do not exist in the SUT. They were
+    pattern-matched from the FR titles rather than read from the test basis
+    (ISTQB FL 3.2.1). Supplying api_spec.md corrected them to /api/users/me.
+    
+    Three open items remain before the test plans can be built: confirm the
+    my-orders and apply-coupon collision with teammates, verify whether
+    apply-coupon persists anything, and locate the database lockout-reset
+    path.
+    
+    Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+
+ hw5/Main_Report.md | 126 ++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 95 insertions(+), 31 deletions(-)
+
+commit 081af2d3139c56ec5be1b2d11909f72b6291a09c
+Author: trwng-thdat <truongthanhdat0305@gmail.com>
+Date:   2026-08-12 22:34:28 +0700
+
+    docs(hw5): fill AI audit report template with artifact scaffold
+    
+    Follows the template's own rules: sample rows removed, one row per
+    artifact, verbatim prompts, VALID/INVALID/INCOMPLETE verdicts, and
+    reasoning citing ISTQB Foundation Level sections.
+    
+    Artifact #1 records the first real interaction (generating the report
+    skeleton) and is tagged INCOMPLETE: a placeholder document is not a
+    measured deliverable per ISTQB FL 1.4.3 and 5.3.
+    
+    Artifacts #2-#10 are scaffolded for the JMeter work still to come.
+    Section 5 (conclusion) and the disclosure brackets are left for the
+    student to complete in their own words.
+    
+    Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+
+ ...AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md | 116 +++++++++++++++++++++
+ 1 file changed, 116 insertions(+)
+
+commit 5cb31dfcce7fbef2b76a93eee1173ae4e454f49e
+Author: trwng-thdat <truongthanhdat0305@gmail.com>
+Date:   2026-08-12 22:34:14 +0700
+
+    docs(hw5): add main report skeleton mapped to the HW05 spec
+    
+    Section-by-section scaffold covering every deliverable the assignment
+    requires:
+    
+    - Task 1: AI design chain, E2E workflow, correlation/assertion tables,
+      CSV inventory, Load/Stress/Spike parameter matrix, three distinct
+      report views, human-review table, execution evidence, lockout reset,
+      endurance threshold
+    - Task 2: misinterpretation hunt, feasible-vs-hallucinated verdicts
+    - Task 3: continuous performance testing model, flow chart, trade-offs
+    - Agent Skill, AI critique, commit log, deliverables checklist,
+      self-assessment weighted 20/20/20/10/10/10 per the spec
+    
+    Measurable fields are left as placeholders; they must be filled from
+    raw .jtl output, not estimated.
+    
+    Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+
+ hw5/Main_Report.md | 539 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 539 insertions(+)
+
+commit e1960bd2058fe98f92c466ba39a298375f6fda35
+Author: trwng-thdat <truongthanhdat0305@gmail.com>
+Date:   2026-08-12 22:32:31 +0700
+
+    docs(hw5): add EShop API specification as the test basis
+    
+    Authoritative endpoint list for the SUT (base URL http://localhost:3000).
+    All HW05 test-plan endpoints must cite a section of this file; it is the
+    test basis that replaces guessed route names.
+    
+    Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+
+ api_spec.md | 236 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 236 insertions(+)

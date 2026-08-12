@@ -499,17 +499,30 @@ Exported to `git_commit_log.txt` with:
 git log --pretty=format:"%h | %ad | %an | %s" --date=iso > git_commit_log.txt
 ```
 
+**Completed so far** (design phase):
+
+| Step                            | Commit    | Message                                                        |
+| ------------------------------- | --------- | -------------------------------------------------------------- |
+| API spec captured as test basis | `e1960bd` | docs(hw5): add EShop API specification as the test basis        |
+| Report skeleton                 | `5cb31df` | docs(hw5): add main report skeleton mapped to the HW05 spec     |
+| AI audit report scaffold        | `081af2d` | docs(hw5): fill AI audit report template with artifact scaffold |
+| Workflow design (spec-verified) | `9900816` | design(hw5): select spec-verified profile + order-history workflow |
+
+**Still to come** (execution phase — fill as you commit):
+
 | Step                         | Commit  | Message |
 | ---------------------------- | ------- | ------- |
+| CSV data                     | _<sha>_ | _<...>_ |
 | Load plan                    | _<sha>_ | _<...>_ |
 | Stress plan                  | _<sha>_ | _<...>_ |
 | Spike plan                   | _<sha>_ | _<...>_ |
-| CSV data                     | _<sha>_ | _<...>_ |
 | Run results (.jtl + reports) | _<sha>_ | _<...>_ |
 | Endurance run                | _<sha>_ | _<...>_ |
 | AI analysis                  | _<sha>_ | _<...>_ |
 | CPT proposal                 | _<sha>_ | _<...>_ |
 | Agent skill                  | _<sha>_ | _<...>_ |
+
+Regenerate `git_commit_log.txt` after each new commit so the submitted log stays current.
 
 ---
 
