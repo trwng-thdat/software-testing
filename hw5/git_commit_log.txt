@@ -2,12 +2,16 @@ HW05 - Performance Testing (AI-First)
 Student ID: 23127344
 Repository: software-testing
 Branch: main
-Generated: 2026-08-12 22:54:30 +0700
+Generated: 2026-08-13 10:50:53 +0700
 
 ========================================================================
 COMMIT LOG - HW05
 ========================================================================
 
+98c3941 | 2026-08-13 10:50:53 +0700 | trwng-thdat | docs(hw5): ghi artifact #4 và #5 vào AI Audit Report
+471777c | 2026-08-13 10:50:34 +0700 | trwng-thdat | test(hw5): thêm test plan Load 23127344_Load_20260812.jmx
+a849e2e | 2026-08-13 10:50:13 +0700 | trwng-thdat | test(hw5): thêm dữ liệu CSV data-driven cho luồng E2E
+203bcdd | 2026-08-12 22:58:22 +0700 | trwng-thdat | chore(hw5): rút gọn nhật ký commit còn phần tóm tắt
 b564656 | 2026-08-12 22:54:30 +0700 | trwng-thdat | docs(hw5): dịch báo cáo chính và AI audit report sang tiếng Việt
 abe3dd6 | 2026-08-12 22:36:46 +0700 | trwng-thdat | chore(hw5): refresh commit log to include the export commit itself
 5aaf3ec | 2026-08-12 22:35:44 +0700 | trwng-thdat | chore(hw5): export git commit log and record SHAs in the report
