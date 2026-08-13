@@ -227,16 +227,16 @@ TET2025,300000
 
 |                        | Load                                  | Stress                                          | Spike                                             |
 | ---------------------- | ------------------------------------- | ----------------------------------------------- | ------------------------------------------------- |
-| File test plan         | `23127344_Load_20260812.jmx`          | `23127344_Stress_20260812.jmx`                  | `23127344_Spike_<YYYYMMDD>.jmx`                   |
-| Số virtual user (đỉnh) | 50                                    | 100 (5 bậc × 20 VU, cộng dồn)                   | _<n>_                                             |
-| Ramp-up                | 60 giây (~1 VU/giây)                  | Theo bậc: +20 VU mỗi 120 giây, mỗi bậc ramp 30s | _<gần như tức thời, s>_                           |
-| Thời gian giữ tải      | 600 giây                              | 600 giây (bậc cuối chỉ giữ 120 giây)            | _<s>_                                             |
-| Ramp-down              | Không (kết thúc theo scheduler)       | Không (mọi bậc cùng dừng ở giây 600)            | _<s>_                                             |
-| Số vòng lặp mỗi VU     | Lặp vô hạn đến hết thời lượng         | Lặp vô hạn đến hết thời lượng                   | _<...>_                                           |
-| Think time             | Uniform 1,5–4 giây tùy bước           | Giống Load (dùng chung thân workflow)           | _<...>_                                           |
-| Listener               | **Summary Report**                    | **Aggregate Report**                            | _<View Results Tree — loại thứ ba>_               |
-| Mục tiêu               | Quan sát hành vi ở trạng thái ổn định | Tìm điểm gãy (knee) của hệ thống                | Chịu được và phục hồi sau cú tăng tải đột ngột    |
-| Tiêu chí đạt           | _<p95 < X ms, error rate < Y%>_       | _<xác định điểm knee; không crash>_             | _<phục hồi trong Z giây, không còn 5xx sau spike>_ |
+| File test plan         | `23127344_Load_20260812.jmx`          | `23127344_Stress_20260812.jmx`                  | `23127344_Spike_20260812.jmx`                     |
+| Số virtual user (đỉnh) | 50                                    | 100 (5 bậc × 20 VU, cộng dồn)                   | 100 (nền 10 VU → spike 100 VU)                    |
+| Ramp-up                | 60 giây (~1 VU/giây)                  | Theo bậc: +20 VU mỗi 120 giây, mỗi bậc ramp 30s | **5 giây cho 100 VU** (gần như tức thời)          |
+| Thời gian giữ tải      | 600 giây                              | 600 giây (bậc cuối chỉ giữ 120 giây)            | Spike giữ 60 giây; tổng bài test 420 giây         |
+| Ramp-down              | Không (kết thúc theo scheduler)       | Không (mọi bậc cùng dừng ở giây 600)            | Spike tắt đột ngột ở giây 180, nền tiếp tục 240s  |
+| Số vòng lặp mỗi VU     | Lặp vô hạn đến hết thời lượng         | Lặp vô hạn đến hết thời lượng                   | Lặp vô hạn đến hết thời lượng từng giai đoạn      |
+| Think time             | Uniform 1,5–4 giây tùy bước           | Giống Load (dùng chung thân workflow)           | Giống Load (dùng chung thân workflow)             |
+| Listener               | **Summary Report**                    | **Aggregate Report**                            | **View Results Tree** (chỉ ghi lỗi)               |
+| Mục tiêu               | Quan sát hành vi ở trạng thái ổn định | Tìm điểm gãy (knee) của hệ thống                | Chịu được và **phục hồi** sau cú tăng tải đột ngột |
+| Tiêu chí đạt           | _<p95 < X ms, error rate < Y%>_       | _<xác định điểm knee; không crash>_             | _<p95 giai đoạn 3 trở về ≈ p95 giai đoạn 1 trong vòng Z giây; không còn 5xx sau spike>_ |
 
 **Hồ sơ tải của kịch bản Stress (5 bậc).** JMeter bản chuẩn không có sẵn cơ chế tăng tải theo bậc, nên tôi dùng 5 Thread Group riêng với `delay` lệch nhau — cách này **không cần cài plugin**, giúp file mở được trên mọi bản JMeter 5.6.3 gốc. Các bậc cộng dồn lên nhau và cùng kết thúc tại giây 600:
 
@@ -250,6 +250,18 @@ TET2025,300000
 
 Mỗi bậc giữ tải ít nhất 120 giây trước khi bậc kế tiếp vào, đủ để hệ thống ổn định và để đọc được p95 của riêng mức tải đó — nếu tăng bậc quá nhanh thì không phân biệt được độ trễ tăng do tải hay do hệ thống chưa kịp ổn định. Tất cả tham số đều override được qua dòng lệnh: `-Jstepvusers=30 -Jsteprampup=20`.
 
+**Hồ sơ tải của kịch bản Spike (3 giai đoạn).** Tổng thời lượng 420 giây:
+
+| Giai đoạn | Khoảng thời gian | VU  | Ramp-up | Vai trò                                                      |
+| --------- | ---------------- | --- | ------- | ------------------------------------------------------------ |
+| 1 — Nền trước | giây 0–120   | 10  | 20 giây | Lấy p95 tham chiếu ở mức tải bình thường                     |
+| 2 — Spike     | giây 120–180 | 100 | **5 giây** | Cú tăng tải đột ngột: gấp 10 lần mức nền trong 5 giây     |
+| 3 — Nền sau   | giây 180–420 | 10  | 20 giây | **Đo phục hồi** — dài 240 giây, gấp đôi giai đoạn 1        |
+
+**Vì sao giai đoạn 3 là phần quan trọng nhất.** Mục tiêu của spike test không chỉ là "hệ thống có sập khi tải tăng đột ngột không", mà còn là "sau khi tải rút đi thì hệ thống có trở về bình thường không, và mất bao lâu". Nếu test plan kết thúc ngay sau spike thì nó không thể trả lời câu hỏi thứ hai. Giai đoạn 3 được thiết kế dài gấp đôi giai đoạn 1 để đủ dữ liệu quan sát: **so sánh p95 của giai đoạn 3 với p95 của giai đoạn 1 chính là thước đo phục hồi**. Nếu p95 giai đoạn 3 vẫn cao hơn hẳn giai đoạn 1 cho tới cuối bài test, đó là dấu hiệu hệ thống chưa hồi phục — ví dụ connection pool chưa được giải phóng, hàng đợi còn tồn đọng, hoặc bộ nhớ chưa được thu hồi.
+
+Tham số override: `-Jbasevusers=20 -Jspikevusers=150`.
+
 **Lý giải tham số (đề xuất của AI → quyết định của tôi).**
 
 - **Think time.** AI đề xuất _<giá trị>_; tôi chọn _<giá trị>_ vì _<người dùng thật đọc một trang sản phẩm mất vài giây; think-time bằng 0 sẽ biến load test thành stress test>_.
@@ -261,11 +273,15 @@ Mỗi bậc giữ tải ít nhất 120 giây trước khi bậc kế tiếp vào
 
 Ba loại listener / output **khác nhau**, không lặp lại:
 
-| Kịch bản | Report view                            | Sản phẩm             | Vì sao view này phù hợp với kịch bản đó                              |
-| -------- | -------------------------------------- | -------------------- | -------------------------------------------------------------------- |
-| Load     | _<Summary Report>_                     | `reports/load/...`   | _<tổng hợp ổn định trong suốt giai đoạn tải đều>_                    |
-| Stress   | _<Aggregate Report>_                   | `reports/stress/...` | _<percentile mới là thứ quan trọng khi phần đuôi phân phối bùng nổ>_ |
-| Spike    | _<View Results Tree (chỉ hiện lỗi)>_   | `reports/spike/...`  | _<cần chi tiết từng sample để biết cái gì hỏng trong lúc spike>_     |
+| Kịch bản | Report view                          | Phần tử JMeter             | Sản phẩm             | Vì sao view này phù hợp với kịch bản đó                                                                                                   |
+| -------- | ------------------------------------ | -------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Load     | **Summary Report**                   | `SummaryReport`            | `reports/load/...`   | Tải giữ đều nên con số tổng hợp là đủ; view này cho throughput và error rate gọn gàng trên toàn bộ giai đoạn ổn định                       |
+| Stress   | **Aggregate Report**                 | `StatVisualizer`           | `reports/stress/...` | Khi tải tăng dần thì phần đuôi phân phối mới là thứ đáng xem; view này có sẵn cột p90 / p95 / p99 để xác định điểm knee — Summary Report không có |
+| Spike    | **View Results Tree** (chỉ ghi lỗi)  | `ViewResultsFullVisualizer` | `reports/spike/...`  | Cần xem **chi tiết từng request thất bại** trong lúc spike (mã lỗi, nội dung response) — điều mà hai view tổng hợp kia không thể cho thấy   |
+
+Ba loại listener hoàn toàn khác nhau, không lặp lại, đúng yêu cầu của đề bài.
+
+> **Lưu ý về View Results Tree trong kịch bản Spike.** Listener này được đặt `error_logging=true`, tức **chỉ ghi lại các sample thất bại**. Lý do: View Results Tree lưu toàn bộ nội dung request/response vào bộ nhớ, nếu ghi tất cả sample ở mức 100 VU thì JMeter sẽ ngốn RAM rất nhanh và chính load generator trở thành nút thắt — kết quả đo được sẽ phản ánh giới hạn của JMeter chứ không phải của SUT. Ghi riêng lỗi vừa đủ để phân tích vừa an toàn về bộ nhớ.
 
 Cả ba lần chạy đều đồng thời sinh ra file `.jtl` thô và thư mục HTML dashboard của JMeter (đây là bằng chứng, không tính vào "ba report view").
 
@@ -551,9 +567,9 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 | ---------------------------------------------- | ---------------------------------------- | ---- |
 | Báo cáo chính (Markdown + PDF)                 | `Main_Report.md` / `.pdf`                | ☐    |
 | Liên kết repo GitHub công khai                 | _<URL>_                                  | ☐    |
-| Test plan Load                                 | `23127344_Load_<YYYYMMDD>.jmx`           | ☐    |
-| Test plan Stress                               | `23127344_Stress_<YYYYMMDD>.jmx`         | ☐    |
-| Test plan Spike                                | `23127344_Spike_<YYYYMMDD>.jmx`          | ☐    |
+| Test plan Load                                 | `plans/23127344_Load_20260812.jmx`       | ☑ (chưa chạy) |
+| Test plan Stress                               | `plans/23127344_Stress_20260812.jmx`     | ☑ (chưa chạy) |
+| Test plan Spike                                | `plans/23127344_Spike_20260812.jmx`      | ☑ (chưa chạy) |
 | 3 file log `.jtl` thô (đầy đủ)                 | `results/`                               | ☐    |
 | 3 thư mục báo cáo HTML                         | `reports/`                               | ☐    |
 | Ảnh chụp resource monitor                      | `evidence/*/tool+monitor.png`            | ☐    |
