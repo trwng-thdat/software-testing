@@ -2,12 +2,14 @@ HW05 - Performance Testing (AI-First)
 Student ID: 23127344
 Repository: software-testing
 Branch: main
-Generated: 2026-08-13 14:04:45 +0700
+Generated: 2026-08-13 14:22:24 +0700
 
 ========================================================================
 COMMIT LOG - HW05
 ========================================================================
 
+021301c | 2026-08-13 14:22:24 +0700 | trwng-thdat | docs(hw5): ghi 4 lỗi từ đợt rà soát vào §3.6 và audit artifact #8
+a11af1a | 2026-08-13 14:04:46 +0700 | trwng-thdat | chore(hw5): cập nhật nhật ký commit
 ca7f183 | 2026-08-13 14:04:45 +0700 | trwng-thdat | docs(hw5): ghi artifact #7 và hoàn thiện §3.4, §3.5
 b6ee845 | 2026-08-13 14:04:45 +0700 | trwng-thdat | test(hw5): thêm test plan Spike 23127344_Spike_20260812.jmx
 0bcbfa7 | 2026-08-13 13:44:48 +0700 | trwng-thdat | chore(hw5): cập nhật nhật ký commit
