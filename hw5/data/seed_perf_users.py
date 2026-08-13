@@ -32,6 +32,20 @@ CACH DUNG
     python hw5/data/seed_perf_users.py            # them 120 tai khoan
     python hw5/data/seed_perf_users.py --reset    # mo khoa + reset bo dem
     python hw5/data/seed_perf_users.py --verify   # chi kiem tra, khong ghi
+    python hw5/data/seed_perf_users.py --db <duong_dan_database.sqlite>
+
+CANH BAO VE DUONG DAN CSDL
+--------------------------
+Neu may co NHIEU ban sao group05_eshop, script mac dinh seed vao ban nam canh
+thu muc hw5 - co the KHAC voi ban ma backend dang thuc su chay. Trieu chung:
+seed bao 120 tai khoan nhung login van tra 401.
+
+Cach xac dinh CSDL that su dang duoc dung (PowerShell):
+    Get-CimInstance Win32_Process -Filter "Name='node.exe'" |
+      Select-Object ProcessId, CommandLine
+
+Tim tien trino chay server.js, lay thu muc cua no, roi truyen vao --db.
+Script se in ra duong dan tuyet doi cua CSDL no dang ghi de doi chieu.
 
 --reset dung GIUA CAC LAN CHAY Stress/Spike, theo yeu cau HW05 muc 6 Task 1:
 "Khi cac lan chay Stress/Spike kich hoat co che khoa dang nhap sau 3 lan that bai,
@@ -45,21 +59,36 @@ COUNT = 120
 PASSWORD = "Password123!"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.normpath(
+DEFAULT_DB = os.path.normpath(
     os.path.join(HERE, "..", "..", "group05_eshop", "backend", "database.sqlite")
 )
+
+
+def resolve_db():
+    """Cho phep chi dinh CSDL qua --db, vi may co the co nhieu ban sao SUT."""
+    if "--db" in sys.argv:
+        i = sys.argv.index("--db")
+        if i + 1 < len(sys.argv):
+            return os.path.abspath(sys.argv[i + 1])
+        print("Thieu duong dan sau --db")
+        sys.exit(2)
+    return DEFAULT_DB
 
 
 def main():
     reset_only = "--reset" in sys.argv
     verify_only = "--verify" in sys.argv
+    db_path = resolve_db()
 
-    if not os.path.exists(DB_PATH):
-        print("Khong tim thay CSDL: %s" % DB_PATH)
-        print("Chay 'node database.js' trong group05_eshop/backend de tao truoc.")
+    # In duong dan tuyet doi de doi chieu voi CSDL ma backend thuc su dang mo.
+    print("CSDL dich: %s" % db_path)
+
+    if not os.path.exists(db_path):
+        print("Khong tim thay CSDL o duong dan tren.")
+        print("Neu backend chay tu thu muc khac, truyen duong dan bang --db.")
         return 1
 
-    con = sqlite3.connect(DB_PATH)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     if verify_only:

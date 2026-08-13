@@ -391,6 +391,10 @@ Cả ba lần chạy đều đồng thời sinh ra file `.jtl` thô và thư m�
 | 10  | **Assertion `PUT /api/users/me` kiểm tra body chứa số điện thoại vừa ghi**                                         | `server.js:131-134` chỉ trả `{"message": "Profile updated"}` — **không** trả lại giá trị vừa ghi. Assertion này sẽ fail **100%** ở mọi vòng lặp, biến một endpoint hoạt động bình thường thành lỗi giả trong báo cáo                                                                                                                                                                                                                                                                                                                                                                  | Đổi thành assert body chứa `Profile updated`, rồi **thêm bước `04b GET /api/users/me`** assert `$.phone` khớp giá trị vừa ghi. Đây mới thật sự là bằng chứng lệnh UPDATE đã commit xuống CSDL                                                               | Chính tôi (AI) tạo ra lỗi này khi sinh file Spike, xuất phát từ một nguyên tắc **đúng** trong `workflows.md` ("assertion ghi dữ liệu phải kiểm server trả lại đúng giá trị vừa ghi") nhưng áp dụng **mà không kiểm chứng** endpoint cụ thể có hành xử như vậy không. Nguyên tắc tốt áp dụng mù vẫn tạo ra lỗi   |
 | 11  | **`POST /api/apply-coupon` bị gán nhãn `[transactional]`**                                                         | Đọc `server.js:363-441`: endpoint chỉ `SELECT` từ bảng `coupons` và `coupon_usage` rồi tính toán, **không có lệnh INSERT/UPDATE nào**. Bảng `coupon_usage` chỉ được ghi bởi `POST /api/coupon-usage` (`server.js:444-454`) — một endpoint **khác**, không nằm trong luồng này. Vậy nhãn transactional là sai                                                                                                                                                                                                                                                                          | Đổi nhãn thành `[read-only + compute]` trong cả ba test plan. Nhóm transactional vẫn được phủ bởi `PUT /api/users/me` §2.2 (`server.js:131` có `db.run` UPDATE thật)                                                                                        | Giả định này đã được đánh dấu ⚠️ "chưa xác minh" ngay trong Agent Skill từ đầu, vì `api_spec.md` §5.1 mô tả endpoint _tính toán_ còn §6.4 lại định nghĩa `max_uses_per_user` — hai chi tiết mâu thuẫn nhau. Skill đã đúng khi **không tự quyết mà đánh dấu để hỏi**; chỉ có mã nguồn mới trả lời dứt khoát được |
 
+| 12  | **Assertion `$.phone` ở bước 4b so sánh sai kiểu dữ liệu** | JSONPathAssertion đặt `JSONVALIDATION=true` + `ISREGEX=false` so sánh giá trị theo kiểu chặt. `$.phone` trả về **chuỗi** `"0912345001"`, nhưng giá trị mong đợi `${pphone}` bị diễn giải như **số** nên mất số `0` đứng đầu. Kết quả: JMeter báo `expected to be '0912345001', but found '0912345001'` — hai giá trị **hiển thị giống hệt nhau** nhưng vẫn fail. Bước 4b fail **100%**, đẩy tỉ lệ lỗi toàn bài lên 17,65% | Bật `ISREGEX=true` để so khớp dạng chuỗi thay vì so sánh kiểu. Sau khi sửa, smoke 1 VU đạt **0% lỗi** trên đủ 6 nhãn | Lỗi do chính tôi (AI) tạo ra khi thêm bước 4b để sửa lỗi \#10. Nguyên nhân sâu xa: `profiles.csv` sinh số điện thoại có số `0` đứng đầu — một đặc điểm của **dữ liệu Việt Nam** mà mặc định của JMeter không lường trước. Đây là loại lỗi **chỉ lộ ra khi chạy thật**, không công cụ tĩnh nào bắt được vì cả JSON Path lẫn giá trị mong đợi đều đúng về mặt cú pháp |
+
+> **Bối cảnh phát hiện lỗi 12.** Lỗi này lộ ra ở **lần chạy smoke đầu tiên trên SUT thật** (1 VU, 40 giây) — bước kiểm tra mà `RUNBOOK.md` đặt ra chính vì mục đích này. Nếu bỏ qua smoke và chạy thẳng ba kịch bản chính, cả ba file `.jtl` sẽ có tỉ lệ lỗi ~17% do một assertion hỏng, và mọi phân tích ở Task 2 sẽ dựa trên số liệu sai. Đáng chú ý: đây là lỗi **thứ hai liên tiếp** do AI tạo ra trong lúc đang sửa lỗi khác (lỗi \#10 → thêm bước 4b → sinh ra lỗi \#12).
+
 > **Bối cảnh phát hiện lỗi 8–11.** Bốn lỗi này chỉ lộ ra khi tôi đưa **mã nguồn SUT** (`group05_eshop/backend/`) cho AI đối chiếu, sau khi cả ba test plan đã "đạt" mọi lần kiểm tra trước đó. Điểm đáng chú ý: lỗi 8 và 9 **không nằm trong file `.jmx`** mà nằm ở sự lệch pha giữa dữ liệu test và trạng thái CSDL — không một công cụ kiểm tra `.jmx` nào phát hiện được, kể cả script `validate_jmx.py` do chính tôi viết. Lỗi 10 còn đáng suy nghĩ hơn: nó do AI tạo ra **trong lúc đang sửa các lỗi khác**, tức là quá trình sửa lỗi tự nó cũng sinh lỗi mới.
 
 > **Bối cảnh phát hiện lỗi 3–6.** Bốn lỗi trên được tìm ra khi tôi rà soát lại cả ba test plan **sau khi đã viết xong**, chứ không phải trong lúc viết. Trước đó tôi đã chạy script kiểm tra ba lần và cả ba lần đều kết luận "OK" — vì script chỉ kiểm tra **cú pháp XML và cấu trúc hashTree**, tức là những thứ dễ kiểm, chứ không kiểm tra **ngữ nghĩa thực thi của JMeter**, tức là thứ thực sự quan trọng. Toàn bộ bốn lỗi này đều thuộc loại "âm thầm": bài test vẫn chạy, vẫn xuất `.jtl`, không có thông báo lỗi nào.
@@ -398,6 +402,46 @@ Cả ba lần chạy đều đồng thời sinh ra file `.jtl` thô và thư m�
 **Suy ngẫm.** AI mắc lỗi theo một mô thức khá nhất quán qua bảy dòng trên: nó tạo ra **cấu trúc trông đúng nhưng chưa được neo vào hành vi thật** của hệ thống. Dòng 1 là tên endpoint suy đoán từ tiêu đề FR thay vì đọc đặc tả; dòng 3, 4, 6 là hiểu sai ngữ nghĩa runtime của JMeter (CSV đọc theo vòng lặp, scope của timer, cộng dồn nhu cầu dữ liệu qua các giai đoạn); dòng 5 là chọn giá trị mặc định trông vô hại thay vì giá trị gây lỗi quan sát được. Điểm chung: mọi lỗi đều **không thể phát hiện bằng cách nhìn vào file**, mà chỉ lộ ra khi truy ngược "khi chạy thật thì điều gì sẽ xảy ra". Bài học rút ra là AI đặc biệt yếu ở những quy tắc ngữ nghĩa mang tính quy ước của một công cụ cụ thể — và nguy hiểm hơn, chính AI cũng không tự nhận ra giới hạn đó: nó tự kiểm tra ba lần và ba lần đều báo "OK".
 
 ### 3.7 Thực thi và bằng chứng
+
+#### 3.7.0 Kiểm chứng luồng trên SUT thật trước khi chạy tải
+
+Trước khi chạy bất kỳ kịch bản tải nào, tôi kiểm chứng từng bước bằng request thật tới SUT đang chạy. Đây là bước bắt buộc theo `RUNBOOK.md`, và nó đã **bắt được lỗi \#12** mà không công cụ tĩnh nào phát hiện được.
+
+**Bước 1 — Xác minh từng assertion bằng request trực tiếp** (không qua JMeter, để loại trừ biến số):
+
+| Bước | Endpoint | Assertion | Kết quả thật |
+| --- | --- | --- | --- |
+| 01 | `POST /api/login` | HTTP 200, `$.token` không rỗng, `$.user.id` | ✅ token hợp lệ, `id = 3` |
+| 02 | `GET /api/users/me` | HTTP 200, `$.email` khớp CSV | ✅ `perf001@test.com` |
+| 03 | `GET /api/orders/my-orders` | HTTP 200, body là mảng JSON | ✅ mảng rỗng `[]` (tài khoản mới seed) |
+| 04 | `PUT /api/users/me` | HTTP 200, body chứa `Profile updated` | ✅ `{"message":"Profile updated"}` |
+| 04b | `GET /api/users/me` | HTTP 200, `$.phone` khớp giá trị vừa ghi | ✅ `0912345001` |
+| 05 | `POST /api/apply-coupon` | HTTP 200, có `$.final_amount` | ✅ có trường, giá trị `5000000` |
+
+**13/13 assertion PASS.** Ba JSON Path suy ra từ mã nguồn (`$.token`, `$.user.id`, `$.email`) nay được xác nhận bằng response thật.
+
+**Bước 2 — Smoke test 1 VU / 40 giây qua JMeter.** Lần chạy đầu **thất bại**: tỉ lệ lỗi 17,65%, toàn bộ ở bước 4b. Thông báo lỗi của JMeter:
+
+```
+Value in json path '$.phone' expected to be '0912345001', but found '0912345001'
+```
+
+Hai giá trị **hiển thị giống hệt nhau** nhưng assertion vẫn fail — nguyên nhân là so sánh kiểu dữ liệu, không phải so sánh chuỗi (lỗi \#12 §3.6). Sau khi bật `ISREGEX=true`:
+
+| Nhãn | n | Lỗi % | p50 | p95 |
+| --- | --- | --- | --- | --- |
+| `01 POST /api/login [auth-heavy]` | 3 | 0,0% | 4 | 22 |
+| `02 GET /api/users/me [read-heavy]` | 3 | 0,0% | 2 | 2 |
+| `03 GET /api/orders/my-orders [read-heavy]` | 2 | 0,0% | 2 | 2 |
+| `04 PUT /api/users/me [transactional]` | 2 | 0,0% | 2 | 2 |
+| `04b GET /api/users/me [verify ghi]` | 2 | 0,0% | 3 | 3 |
+| `05 POST /api/apply-coupon [read-only + compute]` | 2 | 0,0% | 2 | 3 |
+
+**Đủ 6 nhãn, 0% lỗi** → các test plan sẵn sàng cho tải thật.
+
+> **Một sự cố về môi trường đáng ghi lại.** Lần verify đầu tiên, login trả `Invalid email or password` mặc dù script seed báo "120 tài khoản". Nguyên nhân: máy có **hai bản sao** thư mục `group05_eshop` — backend chạy từ `C:\HCMUS\Software Testing\group05_eshop\`, còn script seed ghi vào `C:\HCMUS\Software Testing\software-testing\group05_eshop\`. Hai file `database.sqlite` khác nhau hoàn toàn. Đã sửa `seed_perf_users.py` để nhận tham số `--db` và **in ra đường dẫn tuyệt đối** của CSDL đích mỗi lần chạy, giúp phát hiện ngay tình huống này. Cách xác định CSDL mà backend thực sự dùng: `Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Select CommandLine`.
+
+#### 3.7.1 Kết quả ba kịch bản chính
 
 | Kịch bản | Bắt đầu (giờ địa phương) | Thời lượng | Số sample | Tỉ lệ lỗi % | TB (ms) | p90     | p95     | p99     | Throughput (req/s) | File log thô                         | Báo cáo HTML                |
 | -------- | ------------------------ | ---------- | --------- | ----------- | ------- | ------- | ------- | ------- | ------------------ | ------------------------------------ | --------------------------- |
