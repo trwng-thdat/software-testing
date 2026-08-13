@@ -116,10 +116,19 @@ assertion nào fail rồi sửa trước khi đi tiếp — **đừng chạy t�
 
 ### Quy tắc chung cho cả ba lần chạy
 
-1. **Trước mỗi lần chạy:** reset lockout
+> ⚠️ **SUT xóa sạch CSDL mỗi lần khởi động lại.** `database.js:117` gọi
+> `initDatabase()` ở top level, hàm này `DROP TABLE` cả 6 bảng rồi seed lại
+> 2 tài khoản mặc định. `server.js:4` require file đó, nên **mỗi lần backend
+> restart là 120 tài khoản `perf*` biến mất**. Điều này đã thật sự xảy ra giữa
+> một lần chạy Load và khiến bài test cho 100% lỗi trên 14 229 sample.
+
+1. **Trước mỗi lần chạy:** seed lại rồi kiểm chứng luồng — 2 giây, bảo vệ 10 phút
    ```powershell
-   python hw5\data\seed_perf_users.py --reset
+   python hw5\data\seed_perf_users.py --db "C:\HCMUS\Software Testing\group05_eshop\backend\database.sqlite"
+   python hw5\scripts\verify_flow.py
    ```
+   `verify_flow.py` phải in `KET QUA: ca 13 assertion deu PASS`. Nếu không,
+   **đừng chạy tải** — sửa trước đã.
 2. **Trong lúc chạy:** mở Task Manager → tab **Details** → chuột phải tiêu đề cột →
    *Select columns* → tick **CPU**, **Memory (active private working set)**.
    Tìm dòng `node.exe`. Chụp màn hình sao cho **thấy đồng thời** cửa sổ JMeter/terminal

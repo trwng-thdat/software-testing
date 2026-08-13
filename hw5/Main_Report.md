@@ -439,7 +439,13 @@ Hai giá trị **hiển thị giống hệt nhau** nhưng assertion vẫn fail �
 
 **Đủ 6 nhãn, 0% lỗi** → các test plan sẵn sàng cho tải thật.
 
-> **Một sự cố về môi trường đáng ghi lại.** Lần verify đầu tiên, login trả `Invalid email or password` mặc dù script seed báo "120 tài khoản". Nguyên nhân: máy có **hai bản sao** thư mục `group05_eshop` — backend chạy từ `C:\HCMUS\Software Testing\group05_eshop\`, còn script seed ghi vào `C:\HCMUS\Software Testing\software-testing\group05_eshop\`. Hai file `database.sqlite` khác nhau hoàn toàn. Đã sửa `seed_perf_users.py` để nhận tham số `--db` và **in ra đường dẫn tuyệt đối** của CSDL đích mỗi lần chạy, giúp phát hiện ngay tình huống này. Cách xác định CSDL mà backend thực sự dùng: `Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Select CommandLine`.
+> **Sự cố môi trường \#1 — hai bản sao SUT.** Lần verify đầu tiên, login trả `Invalid email or password` mặc dù script seed báo "120 tài khoản". Nguyên nhân: máy có **hai bản sao** thư mục `group05_eshop` — backend chạy từ `C:\HCMUS\Software Testing\group05_eshop\`, còn script seed ghi vào `C:\HCMUS\Software Testing\software-testing\group05_eshop\`. Hai file `database.sqlite` khác nhau hoàn toàn. Đã sửa `seed_perf_users.py` để nhận tham số `--db` và **in ra đường dẫn tuyệt đối** của CSDL đích mỗi lần chạy, giúp phát hiện ngay tình huống này. Cách xác định CSDL mà backend thực sự dùng: `Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Select CommandLine`.
+
+> **Sự cố môi trường \#2 — SUT xóa sạch CSDL mỗi lần khởi động lại.** Lần chạy Load đầu tiên cho kết quả **100% lỗi, chỉ 1 nhãn duy nhất** (`01 POST /api/login`) trên 14 229 sample — đúng triệu chứng mà `check_jtl.py` được viết ra để bắt. Truy nguyên: `database.js:117` gọi `initDatabase()` ở **top level**, mà hàm này bắt đầu bằng `DROP TABLE IF EXISTS` cho cả 6 bảng (dòng 15–20). Vì `server.js:4` có `require("./database")`, **mỗi lần backend khởi động lại là toàn bộ dữ liệu bị xóa và seed lại về 2 tài khoản mặc định**. Đối chiếu thời gian xác nhận: tiến trình `node.exe` khởi động lúc 06:39:29, `mtime` của `database.sqlite` cũng đúng 06:39:29 — backend đã restart giữa lúc bài test đang chạy và cuốn sạch 120 tài khoản `perf*`.
+>
+> **Hệ quả với quy trình chạy test:** không thể seed một lần rồi chạy cả bốn kịch bản. Phải **seed lại sau mỗi lần backend khởi động lại**, và nếu backend restart giữa chừng thì lần chạy đó phải bỏ. Vì vậy `RUNBOOK.md` bổ sung bước chạy `verify_flow.py` **ngay trước mỗi lần chạy tải** — nó tốn 2 giây nhưng bảo vệ 10 phút chạy test khỏi việc cho ra dữ liệu vô nghĩa.
+>
+> Đây cũng là minh chứng thực tế cho lỗi \#8 ở §3.6: dữ liệu test lệch pha với CSDL là loại lỗi **không nằm trong file `.jmx`**, không công cụ kiểm tra `.jmx` nào phát hiện được, và bài test vẫn "chạy xong" bình thường với đầy đủ 14 229 sample cùng file `.jtl` hợp lệ.
 
 #### 3.7.1 Kết quả ba kịch bản chính
 
