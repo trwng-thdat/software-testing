@@ -390,16 +390,50 @@ Override: -Jspike_vusers=100 -Jspike_rampup=10 -Jhost=localhost -Jport=3000</str
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <!-- Assert noi dung: server tra lai dung gia tri vua ghi = bang chung UPDATE da commit.
-                 Chi kiem status code la khong du (workflows.md muc "Assertion theo buoc"). -->
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua phone vua ghi" enabled="true">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua 'Profile updated' (server.js:133)" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="-1450858172">${pphone}</stringProp>
+                <stringProp name="-2073297834">Profile updated</stringProp>
               </collectionProp>
               <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">2</intProp>
             </ResponseAssertion>
+            <hashTree/>
+            <!-- Assert noi dung: server tra lai dung gia tri vua ghi = bang chung UPDATE da commit.
+                 Chi kiem status code la khong du (workflows.md muc "Assertion theo buoc"). -->
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
+              <stringProp name="ConstantTimer.delay">1500</stringProp>
+              <stringProp name="RandomTimer.range">1500</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD1 04b GET /api/users/me [verify ghi]" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/users/me</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">8</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - $.phone khop gia tri vua ghi (bang chung UPDATE da commit)" enabled="true">
+              <stringProp name="JSON_PATH">$.phone</stringProp>
+              <stringProp name="EXPECTED_VALUE">${pphone}</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
             <hashTree/>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
               <stringProp name="ConstantTimer.delay">1500</stringProp>
@@ -415,7 +449,7 @@ Override: -Jspike_vusers=100 -Jspike_rampup=10 -Jhost=localhost -Jport=3000</str
             <boolProp name="IfController.useExpression">false</boolProp>
           </IfController>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD1 05 POST /api/apply-coupon [transactional]" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD1 05 POST /api/apply-coupon [read-only + compute]" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
                 <collectionProp name="Arguments.arguments">
@@ -655,14 +689,48 @@ Override: -Jspike_vusers=100 -Jspike_rampup=10 -Jhost=localhost -Jport=3000</str
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua phone vua ghi" enabled="true">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua 'Profile updated' (server.js:133)" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="-1450858172">${pphone}</stringProp>
+                <stringProp name="-2073297834">Profile updated</stringProp>
               </collectionProp>
               <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">2</intProp>
             </ResponseAssertion>
+            <hashTree/>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
+              <stringProp name="ConstantTimer.delay">1500</stringProp>
+              <stringProp name="RandomTimer.range">1500</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD2 04b GET /api/users/me [verify ghi]" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/users/me</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">8</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - $.phone khop gia tri vua ghi (bang chung UPDATE da commit)" enabled="true">
+              <stringProp name="JSON_PATH">$.phone</stringProp>
+              <stringProp name="EXPECTED_VALUE">${pphone}</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
             <hashTree/>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
               <stringProp name="ConstantTimer.delay">1500</stringProp>
@@ -677,7 +745,7 @@ Override: -Jspike_vusers=100 -Jspike_rampup=10 -Jhost=localhost -Jport=3000</str
             <boolProp name="IfController.useExpression">false</boolProp>
           </IfController>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD2 05 POST /api/apply-coupon [transactional]" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD2 05 POST /api/apply-coupon [read-only + compute]" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
                 <collectionProp name="Arguments.arguments">
@@ -916,14 +984,48 @@ Override: -Jspike_vusers=100 -Jspike_rampup=10 -Jhost=localhost -Jport=3000</str
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua phone vua ghi" enabled="true">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua 'Profile updated' (server.js:133)" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="-1450858172">${pphone}</stringProp>
+                <stringProp name="-2073297834">Profile updated</stringProp>
               </collectionProp>
               <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
               <intProp name="Assertion.test_type">2</intProp>
             </ResponseAssertion>
+            <hashTree/>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
+              <stringProp name="ConstantTimer.delay">1500</stringProp>
+              <stringProp name="RandomTimer.range">1500</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD3 04b GET /api/users/me [verify ghi]" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/users/me</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">8</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - $.phone khop gia tri vua ghi (bang chung UPDATE da commit)" enabled="true">
+              <stringProp name="JSON_PATH">$.phone</stringProp>
+              <stringProp name="EXPECTED_VALUE">${pphone}</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
             <hashTree/>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
               <stringProp name="ConstantTimer.delay">1500</stringProp>
@@ -938,7 +1040,7 @@ Override: -Jspike_vusers=100 -Jspike_rampup=10 -Jhost=localhost -Jport=3000</str
             <boolProp name="IfController.useExpression">false</boolProp>
           </IfController>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD3 05 POST /api/apply-coupon [transactional]" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD3 05 POST /api/apply-coupon [read-only + compute]" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
                 <collectionProp name="Arguments.arguments">

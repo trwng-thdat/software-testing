@@ -197,9 +197,17 @@ Cả ba test plan đều chạy cùng một thân thread group:
 
 | File                | Cột dữ liệu                   | Số dòng | Dùng ở bước | Chế độ chia sẻ / recycle                        |
 | ------------------- | ----------------------------- | ------- | ----------- | ----------------------------------------------- |
-| `data/users.csv`    | `email,password`              | 120     | Bước 1      | All threads, `recycle=false`, `stopThread=true` |
+| `data/users.csv`    | `email,password`              | 120     | Bước 1      | All threads, `recycle=true`, `stopThread=false`  |
 | `data/profiles.csv` | `name,shipping_address,phone` | 60      | Bước 4      | All threads, `recycle=true`                     |
-| `data/coupons.csv`  | `code,total_amount`           | 5       | Bước 5      | All threads, `recycle=true`                     |
+| `data/coupons.csv`  | `code,total_amount`           | 6       | Bước 5      | All threads, `recycle=true`                     |
+
+**Script seed dữ liệu.** `data/seed_perf_users.py` tạo 120 tài khoản `perf001…perf120@test.com` trong CSDL SUT. Bắt buộc chạy **trước lần chạy test đầu tiên**, vì `backend/database.js` chỉ seed hai tài khoản mặc định (xem lỗi \#8 ở §3.6):
+
+```bash
+python hw5/data/seed_perf_users.py            # seed 120 tài khoản (idempotent)
+python hw5/data/seed_perf_users.py --reset    # mở khóa + reset bộ đếm giữa các lần chạy
+python hw5/data/seed_perf_users.py --verify   # chỉ kiểm tra, không ghi
+```
 
 **Cách chọn số dòng `users.csv` = 120.** Con số này phải lớn hơn hoặc bằng số VU đỉnh của **kịch bản nặng nhất**, chứ không phải của riêng kịch bản Load. Kịch bản Stress cộng dồn tới 100 VU (§3.4), nên 120 dòng đủ cho cả ba kịch bản và còn dư biên. Đây là lỗi tôi đã mắc phải trong lần dựng đầu: file ban đầu chỉ có 60 dòng, vừa đủ cho Load 50 VU nhưng **thiếu cho Stress** — với `recycle=false` và `stopThread=true`, bậc 4 và bậc 5 sẽ tự tắt thread ngay khi khởi động, bài test vẫn "chạy xong" nhưng thực tế chỉ đo được khoảng 60 VU thay vì 100. Ghi nhận ở AI Audit Report artifact \#6.
 
@@ -216,11 +224,22 @@ name,shipping_address,phone
 Perf User 01,01 Le Loi Q1 TP.HCM,0912345001
 Perf User 02,02 Le Loi Q1 TP.HCM,0912345002
 
-# coupons.csv — 5 dòng
+# coupons.csv — 6 dòng, mọi mã đều đối chiếu với database.js:107-110
 code,total_amount
 SAVE10,500000
-TET2025,300000
+BIGBUY,600000
+VIP100,400000
 ```
+
+**Cách chọn giá trị `coupons.csv`.** Mỗi dòng phải thỏa `total_amount > min_order_amount` của mã tương ứng (`server.js:379` dùng `>` chứ không phải `>=`), nếu không server trả 400 và assertion HTTP 200 sẽ fail vì **dữ liệu sai**, không phải vì hiệu năng:
+
+| Mã       | `min_order_amount` | `max_uses_per_user` | `total_amount` đã dùng |
+| -------- | ------------------ | ------------------- | ---------------------- |
+| `SAVE10` | 300 000            | 1                   | 350 000 / 500 000 / 1 000 000 |
+| `BIGBUY` | 500 000            | 1                   | 600 000 / 900 000      |
+| `VIP100` | 300 000            | 2                   | 400 000                |
+
+Hai mã còn lại trong seed **cố ý không dùng**: `EXPIRED` hết hạn từ 2020 (`server.js:382` trả 400), và `TET2025` chỉ là ví dụ minh họa trong `api_spec.md` §6.4 chứ không tồn tại trong CSDL.
 
 **Vì sao mỗi virtual user dùng một tài khoản riêng.** File `users.csv` dùng `recycle=false` kèm `stopThread=true` và có số dòng lớn hơn hoặc bằng số thread đỉnh, nên **không có hai virtual user nào dùng chung một tài khoản đăng nhập**. Đây là lựa chọn có chủ đích: FR-02 khóa tài khoản sau 3 lần đăng nhập sai, và một tài khoản dùng chung dưới tải Stress hoặc Spike sẽ có nguy cơ gây khóa dây chuyền, biến error rate thành phép đo cơ chế FR-02 thay vì đo hiệu năng. Ngược lại, nếu số dòng ít hơn số VU đỉnh thì các thread sẽ âm thầm dừng giữa chừng và làm giảm tải thực tế đưa vào hệ thống — vì vậy phải đối chiếu số dòng với con số VU đỉnh ở §3.4 trước mỗi lần chạy.
 
@@ -303,6 +322,12 @@ Cả ba lần chạy đều đồng thời sinh ra file `.jtl` thô và thư m�
 | 5   | **`userId` có giá trị mặc định là `0`** khi JSON Extractor không tìm thấy `$.user.id` | Số `0` là một user_id **hợp lệ về kiểu dữ liệu**, nên request `apply-coupon` vẫn được gửi đi với `"user_id": 0`. Server có thể trả HTTP 200 kèm dữ liệu sai, hoặc tệ hơn là ghi nhận nhầm — trong cả hai trường hợp assertion đều pass và lỗi bị che giấu hoàn toàn | Đổi giá trị mặc định thành chuỗi rõ ràng sai như `USERID_NOT_FOUND` để request thất bại dứt khoát và hiện lên trong báo cáo | AI chọn `0` theo thói quen "giá trị mặc định cho kiểu số", không cân nhắc rằng trong ngữ cảnh này giá trị mặc định cần phải **gây lỗi có thể quan sát được**, chứ không phải trông vô hại |
 | 6   | **Kịch bản Spike cần đúng 120 tài khoản** (10 + 100 + 10 qua ba giai đoạn) trong khi `users.csv` có đúng 120 dòng | Không còn biên an toàn nào. Chỉ cần một thread khởi động lại hoặc một vòng lặp phát sinh thêm là hết dữ liệu. (Sau khi sửa lỗi số 3 sang `recycle=true` thì vấn đề này tự hết, nhưng nếu giữ nguyên `recycle=false` thì đây là quả bom hẹn giờ) | Xử lý cùng lúc với lỗi số 3 | AI tính số dòng CSV theo **số VU đỉnh tại một thời điểm**, không cộng dồn nhu cầu qua các giai đoạn nối tiếp nhau |
 | 7   | _<ví dụ: sai schema JMX / phần tử listener mà JMeter <phiên bản> không nhận>_  | _<file không mở được>_                                                                                                                         | _<...>_                                               | _<kiến thức về JMX của mô hình đã lệch phiên bản>_                 |
+| 8   | **`users.csv` dùng 120 tài khoản `perf001…perf120@test.com` không hề tồn tại trong CSDL** | `backend/database.js:91-94` chỉ seed **đúng hai** tài khoản: `admin@eshop.com` và `test@eshop.com`. Truy vấn trực tiếp `database.sqlite` xác nhận `SELECT COUNT(*) FROM users WHERE email LIKE 'perf%'` trả về **0**. Nếu chạy test, `server.js:37-38` trả 401 cho mọi request đăng nhập, `$.token` không trích được, If Controller chặn toàn bộ 4 bước sau — file `.jtl` chỉ chứa endpoint login toàn lỗi. Đây là **lỗi nghiêm trọng nhất** trong toàn bộ đợt rà soát: nó vô hiệu hóa 100% bài test nhưng không nằm trong file `.jmx` nên mọi công cụ kiểm tra `.jmx` đều không thấy | Viết `data/seed_perf_users.py` seed 120 tài khoản vào CSDL. Script idempotent (chạy lại không tạo bản trùng) và có cờ `--reset` để mở khóa giữa các lần chạy Stress/Spike. Đã chạy và xác minh: 120/120 tài khoản tồn tại | AI thiết kế dữ liệu test **từ đặc tả API** mà không đối chiếu với **trạng thái thật của CSDL**. `api_spec.md` mô tả cấu trúc request/response nhưng không liệt kê dữ liệu đã seed, nên AI không có cách nào biết — và cũng không đặt câu hỏi. Bài học: đặc tả API không phải là đặc tả dữ liệu |
+| 9   | **`coupons.csv` dùng mã `TET2025` không tồn tại, và `SAVE10` với `total_amount=250000` dưới mức tối thiểu** | `database.js:107-110` seed đúng 4 mã: `SAVE10`, `BIGBUY`, `VIP100`, `EXPIRED`. Mã `TET2025` được AI lấy từ **ví dụ minh họa** trong `api_spec.md` §6.4 và tưởng là dữ liệu có thật → `server.js:373` trả **404**. Dòng `SAVE10,250000` cũng fail vì `server.js:379` yêu cầu `total_amount > min_order_amount` mà `SAVE10` có `min_order_amount = 300000` → trả **400**. Tổng cộng **4/5 dòng CSV sẽ fail**, trong khi assertion mong đợi HTTP 200 | Thay toàn bộ `coupons.csv` bằng 6 dòng đối chiếu trực tiếp với dữ liệu seed. Đã viết script kiểm chứng từng dòng theo đúng logic `server.js:363-441`: cả 6 dòng đều trả 200 | AI không phân biệt được **ví dụ minh họa trong tài liệu** với **dữ liệu thật trong hệ thống**. Đây là dạng nhầm lẫn đặc trưng khi tài liệu vừa mô tả schema vừa chứa sample values |
+| 10  | **Assertion `PUT /api/users/me` kiểm tra body chứa số điện thoại vừa ghi** | `server.js:131-134` chỉ trả `{"message": "Profile updated"}` — **không** trả lại giá trị vừa ghi. Assertion này sẽ fail **100%** ở mọi vòng lặp, biến một endpoint hoạt động bình thường thành lỗi giả trong báo cáo | Đổi thành assert body chứa `Profile updated`, rồi **thêm bước `04b GET /api/users/me`** assert `$.phone` khớp giá trị vừa ghi. Đây mới thật sự là bằng chứng lệnh UPDATE đã commit xuống CSDL | Chính tôi (AI) tạo ra lỗi này khi sinh file Spike, xuất phát từ một nguyên tắc **đúng** trong `workflows.md` ("assertion ghi dữ liệu phải kiểm server trả lại đúng giá trị vừa ghi") nhưng áp dụng **mà không kiểm chứng** endpoint cụ thể có hành xử như vậy không. Nguyên tắc tốt áp dụng mù vẫn tạo ra lỗi |
+| 11  | **`POST /api/apply-coupon` bị gán nhãn `[transactional]`** | Đọc `server.js:363-441`: endpoint chỉ `SELECT` từ bảng `coupons` và `coupon_usage` rồi tính toán, **không có lệnh INSERT/UPDATE nào**. Bảng `coupon_usage` chỉ được ghi bởi `POST /api/coupon-usage` (`server.js:444-454`) — một endpoint **khác**, không nằm trong luồng này. Vậy nhãn transactional là sai | Đổi nhãn thành `[read-only + compute]` trong cả ba test plan. Nhóm transactional vẫn được phủ bởi `PUT /api/users/me` §2.2 (`server.js:131` có `db.run` UPDATE thật) | Giả định này đã được đánh dấu ⚠️ "chưa xác minh" ngay trong Agent Skill từ đầu, vì `api_spec.md` §5.1 mô tả endpoint *tính toán* còn §6.4 lại định nghĩa `max_uses_per_user` — hai chi tiết mâu thuẫn nhau. Skill đã đúng khi **không tự quyết mà đánh dấu để hỏi**; chỉ có mã nguồn mới trả lời dứt khoát được |
+
+> **Bối cảnh phát hiện lỗi 8–11.** Bốn lỗi này chỉ lộ ra khi tôi đưa **mã nguồn SUT** (`group05_eshop/backend/`) cho AI đối chiếu, sau khi cả ba test plan đã "đạt" mọi lần kiểm tra trước đó. Điểm đáng chú ý: lỗi 8 và 9 **không nằm trong file `.jmx`** mà nằm ở sự lệch pha giữa dữ liệu test và trạng thái CSDL — không một công cụ kiểm tra `.jmx` nào phát hiện được, kể cả script `validate_jmx.py` do chính tôi viết. Lỗi 10 còn đáng suy nghĩ hơn: nó do AI tạo ra **trong lúc đang sửa các lỗi khác**, tức là quá trình sửa lỗi tự nó cũng sinh lỗi mới.
 
 > **Bối cảnh phát hiện lỗi 3–6.** Bốn lỗi trên được tìm ra khi tôi rà soát lại cả ba test plan **sau khi đã viết xong**, chứ không phải trong lúc viết. Trước đó tôi đã chạy script kiểm tra ba lần và cả ba lần đều kết luận "OK" — vì script chỉ kiểm tra **cú pháp XML và cấu trúc hashTree**, tức là những thứ dễ kiểm, chứ không kiểm tra **ngữ nghĩa thực thi của JMeter**, tức là thứ thực sự quan trọng. Toàn bộ bốn lỗi này đều thuộc loại "âm thầm": bài test vẫn chạy, vẫn xuất `.jtl`, không có thông báo lỗi nào.
 
@@ -514,7 +539,7 @@ flowchart TD
 | Vị trí                    | _<đường dẫn trong repo, ví dụ `.claude/skills/<tên>/SKILL.md`>_                      |
 | Skill tự động hóa việc gì | _<thiết kế → sinh test plan → chạy → phân tích .jtl → phân tích → soạn phần báo cáo>_ |
 | Có thể tái dùng cho       | _<bất kỳ nhóm endpoint nào của SUT, bằng cách truyền vào ...>_                        |
-| Video demo (YouTube)      | _<URL>_                                                                              |
+| Video demo (YouTube)      | https://youtu.be/MJwC7o_ab_g                                                          |
 
 **Cách skill được dùng end-to-end trong video demo:** _<3–6 gạch đầu dòng>_
 
@@ -576,9 +601,10 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 | ---------------------------------------------- | ---------------------------------------- | ---- |
 | Báo cáo chính (Markdown + PDF)                 | `Main_Report.md` / `.pdf`                | ☐    |
 | Liên kết repo GitHub công khai                 | _<URL>_                                  | ☐    |
-| Test plan Load                                 | `plans/23127344_Load_20260812.jmx`       | ☐ có file, **cần sửa 4 lỗi §3.6** |
-| Test plan Stress                               | `plans/23127344_Stress_20260812.jmx`     | ☐ có file, **cần sửa 4 lỗi §3.6** |
-| Test plan Spike                                | `plans/23127344_Spike_20260812.jmx`      | ☐ có file, **cần sửa 4 lỗi §3.6** |
+| Test plan Load                                 | `plans/23127344_Load_20260812.jmx`       | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
+| Test plan Stress                               | `plans/23127344_Stress_20260812.jmx`     | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
+| Test plan Spike                                | `plans/23127344_Spike_20260813.jmx`      | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
+| Script seed dữ liệu                            | `data/seed_perf_users.py`                | ☑ đã chạy, 120/120 tài khoản (lỗi \#8 §3.6) |
 | 3 file log `.jtl` thô (đầy đủ)                 | `results/`                               | ☐    |
 | 3 thư mục báo cáo HTML                         | `reports/`                               | ☐    |
 | Ảnh chụp resource monitor                      | `evidence/*/tool+monitor.png`            | ☐    |
