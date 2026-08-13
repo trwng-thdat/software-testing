@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="23127344_Spike_20260812 - EShop Profile + Order History Journey" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="23127344_Spike_20260813 - EShop Profile + Order History Journey" enabled="true">
       <stringProp name="TestPlan.comments">HW05 Spike Test - MSSV 23127344
-Luong: login -&gt; users/me -&gt; orders/my-orders -&gt; PUT users/me -&gt; apply-coupon
-Muc tieu: kiem tra he thong co chiu duoc cu tang tai dot ngot va co PHUC
-HOI ve muc nen hay khong.
+Luong (giong Load va Stress, chi khac ho so tai va listener):
+  01 POST /api/login            §1.2  [auth-heavy]
+  02 GET  /api/users/me         §2.1  [read-heavy]
+  03 GET  /api/orders/my-orders §4.4  [read-heavy]
+  04 PUT  /api/users/me         §2.2  [transactional]
+  05 POST /api/apply-coupon     §5.1  [transactional - CHUA XAC MINH, xem ghi chu duoi]
 
-Ho so tai (tong 420 giay):
-  Giai doan 1 - NEN TRUOC:  10 VU, giay 0-120   (ramp 20s)
-  Giai doan 2 - SPIKE:     100 VU, giay 120-180 (ramp 5s - gan nhu tuc thoi)
-  Giai doan 3 - NEN SAU:    10 VU, giay 180-420 (ramp 20s)
+Muc tieu: do kha nang chiu tai tang dot ngot VA kha nang PHUC HOI sau khi tai rut di.
+Ba giai doan (3 thread group chay song song, lech delay):
+  GD1 Nen truoc: 10 VU  | delay 0   | duration 120s | ramp 20s -> lay p95 tham chieu
+  GD2 Spike    : 60 VU  | delay 120 | duration 60s  | ramp 5s  -> tang gap 6 lan gan nhu tuc thi
+  GD3 Nen sau  : 10 VU  | delay 180 | duration 240s | ramp 20s -> DO PHUC HOI (dai gap doi GD1)
+Tong thoi luong: 420 giay.
 
-Giai doan 3 la phan quan trong nhat: no keo dai 240 giay - gap doi giai
-doan 1 - de do xem sau khi spike rut di thi p95 co tro ve muc nen khong,
-va mat bao lau. Neu khong co giai doan nay thi test plan khong the tra
-loi cau hoi "he thong co phuc hoi khong".
+CACH DOC KET QUA: so sanh p95 cua GD3 voi p95 cua GD1 (loc theo timestamp trong .jtl).
+  - p95 GD3 tro ve gan p95 GD1  -> he thong phuc hoi tot
+  - p95 GD3 van cao den het bai test -> CHUA phuc hoi (connection pool chua giai phong,
+    hang doi ton dong, hoac bo nho chua thu hoi)
 
-So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringProp>
+=== DIEU KIEN CHUA XAC MINH (phai kiem truoc khi tin so lieu) ===
+[1] SPIKE_VUSERS giam tu 100 (mac dinh trong scenario-profiles.md) xuong 60 vi load generator
+    chay CUNG MAY voi SUT. JMeter canh tranh CPU voi SUT, nen con so RPS do duoc bi gioi han
+    boi chinh may sinh tai, KHONG phai gioi han that cua SUT. Phai ghi chu dieu nay khi dien giai.
+[2] Ramp 5 giay cho 60 VU co the vuot kha nang khoi tao thread cua chinh JMeter.
+    Sau lan chay dau PHAI kiem cot allThreads trong .jtl xem co that su dat 60 trong khoang
+    giay 120-180 khong. Neu khong dat, noi ramp len 10s (-Jspike_rampup=10) hoac giam VU.
+[3] users.csv dat recycle=true nen NHIEU VU DUNG CHUNG tai khoan (bat buoc: tong nhu cau
+    ~770 vong lap tren 120 dong CSV). FR-02 khoa tai khoan sau 3 lan dang nhap THAT BAI.
+    CHUA XAC MINH bo dem lockout co reset khi dang nhap thanh cong hay khong. Neu bo dem
+    cong don ma khong reset, tai khoan co the bi khoa giua chung -> ti le loi tang vot
+    KHONG PHAI do hieu nang. Neu thay loi 401/423 tang dan theo thoi gian, nghi ngo lockout.
+[4] POST /api/apply-coupon §5.1 duoc gan nhan [transactional] nhung CHUA XAC MINH co ghi CSDL
+    khong. §5.1 mo ta no chi tinh toan, nhung §6.4 dinh nghia max_uses_per_user ham y so lan
+    dung duoc luu o dau do. Nhom transactional van duoc phu chac chan boi PUT /api/users/me §2.2.
+
+Chay: jmeter -n -t 23127344_Spike_20260813.jmx -l ../results/spike.jtl -e -o ../reports/spike
+Override: -Jspike_vusers=100 -Jspike_rampup=10 -Jhost=localhost -Jport=3000</stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -32,19 +54,54 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
             <stringProp name="Argument.value">${__P(port,3000)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="DATA_DIR" elementType="Argument">
+            <stringProp name="Argument.name">DATA_DIR</stringProp>
+            <stringProp name="Argument.value">${__P(datadir,../data)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="BASE_VUSERS" elementType="Argument">
             <stringProp name="Argument.name">BASE_VUSERS</stringProp>
-            <stringProp name="Argument.value">${__P(basevusers,10)}</stringProp>
+            <stringProp name="Argument.value">${__P(base_vusers,10)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="BASE_RAMPUP" elementType="Argument">
+            <stringProp name="Argument.name">BASE_RAMPUP</stringProp>
+            <stringProp name="Argument.value">${__P(base_rampup,20)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="PRE_DURATION" elementType="Argument">
+            <stringProp name="Argument.name">PRE_DURATION</stringProp>
+            <stringProp name="Argument.value">${__P(pre_duration,120)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="SPIKE_VUSERS" elementType="Argument">
             <stringProp name="Argument.name">SPIKE_VUSERS</stringProp>
-            <stringProp name="Argument.value">${__P(spikevusers,100)}</stringProp>
+            <stringProp name="Argument.value">${__P(spike_vusers,60)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="DATA_DIR" elementType="Argument">
-            <stringProp name="Argument.name">DATA_DIR</stringProp>
-            <stringProp name="Argument.value">${__P(datadir,../data)}</stringProp>
+          <elementProp name="SPIKE_RAMPUP" elementType="Argument">
+            <stringProp name="Argument.name">SPIKE_RAMPUP</stringProp>
+            <stringProp name="Argument.value">${__P(spike_rampup,5)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="SPIKE_DELAY" elementType="Argument">
+            <stringProp name="Argument.name">SPIKE_DELAY</stringProp>
+            <stringProp name="Argument.value">${__P(spike_delay,120)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="SPIKE_DURATION" elementType="Argument">
+            <stringProp name="Argument.name">SPIKE_DURATION</stringProp>
+            <stringProp name="Argument.value">${__P(spike_duration,60)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="POST_DELAY" elementType="Argument">
+            <stringProp name="Argument.name">POST_DELAY</stringProp>
+            <stringProp name="Argument.value">${__P(post_delay,180)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="POST_DURATION" elementType="Argument">
+            <stringProp name="Argument.name">POST_DURATION</stringProp>
+            <stringProp name="Argument.value">${__P(post_duration,240)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -83,62 +140,75 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
       </CookieManager>
       <hashTree/>
 
-      <!-- ============ GIAI DOAN 1 - NEN TRUOC (10 VU, giay 0-120) ============
-           Muc nen truoc spike. Dung de lay p95 tham chieu. -->
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="TG GIAI DOAN 1 - NEN TRUOC (10 VU, giay 0-120)" enabled="true">
+      <!-- ============ DU LIEU CSV (dat o cap TEST PLAN de ca 3 giai doan dung chung) ============
+           LOI 1 + LOI 4 trong jmeter-pitfalls.md: kich ban nhieu giai doan phai CONG DON nhu cau CSV,
+           vi thread cua giai doan sau la thread MOI hoan toan.
+           Uoc tinh: thoi luong 1 vong lap ~13s (tong think time ~11.5s + response time)
+             GD1: 10 VU x (120/13)  ~= 92  vong lap
+             GD2: 60 VU x (60/13)   ~= 277 vong lap
+             GD3: 10 VU x (240/13)  ~= 185 vong lap
+             =======================================
+             TONG                   ~= 554 vong lap   (vuot xa 120 dong users.csv)
+           -> BAT BUOC recycle=true + stopThread=false cho CA BA file.
+           Neu de recycle=false + stopThread=true (nhu Load plan dang dat cho users.csv),
+           moi thread se bi GIET sau khi can 120 dong -> bai test dung som ma KHONG bao loi. -->
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - users.csv (recycle: 554 vong lap &gt; 120 dong)" enabled="true">
+        <stringProp name="filename">${DATA_DIR}/users.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">email,password</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - profiles.csv" enabled="true">
+        <stringProp name="filename">${DATA_DIR}/profiles.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">pname,paddress,pphone</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - coupons.csv" enabled="true">
+        <stringProp name="filename">${DATA_DIR}/coupons.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">couponCode,totalAmount</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <!-- ==================================================================== -->
+      <!-- GIAI DOAN 1 - NEN TRUOC: 10 VU, delay 0, duration 120s, ramp 20s     -->
+      <!-- Vai tro: lay p95 tham chieu de so sanh voi giai doan 3               -->
+      <!-- ==================================================================== -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="GD1 - Nen truoc ${BASE_VUSERS} VU (p95 tham chieu)" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${BASE_VUSERS}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">20</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${BASE_RAMPUP}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">120</stringProp>
+        <stringProp name="ThreadGroup.duration">${PRE_DURATION}</stringProp>
         <stringProp name="ThreadGroup.delay">0</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
       </ThreadGroup>
       <hashTree>
-<!-- ============ DU LIEU CSV ============ -->
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - users.csv (1 tai khoan / 1 VU)" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/users.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">email,password</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">false</boolProp>
-          <boolProp name="stopThread">true</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - profiles.csv" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/profiles.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">pname,paddress,pphone</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">true</boolProp>
-          <boolProp name="stopThread">false</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - coupons.csv" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/coupons.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">couponCode,totalAmount</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">true</boolProp>
-          <boolProp name="stopThread">false</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-
-        <!-- ============ BUOC 1: LOGIN (auth-heavy) ============ -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 POST /api/login [auth-heavy]" enabled="true">
+        <!-- BUOC 1: LOGIN (auth-heavy) §1.2 -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD1 01 POST /api/login [auth-heavy]" enabled="true">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -180,21 +250,24 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
             <stringProp name="JSONPostProcessor.defaultValues">TOKEN_NOT_FOUND</stringProp>
           </JSONPostProcessor>
           <hashTree/>
+          <!-- LOI 3: defaultValues phai la chuoi RO RANG SAI. Khong dung '0' vi do la
+               user_id hop le ve kieu -> request van gui di, server van tra 200, loi bi che giau. -->
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract - userId" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">userId</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.user.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">USERID_NOT_FOUND</stringProp>
           </JSONPostProcessor>
           <hashTree/>
+          <!-- LOI 2: timer nam TRONG hashTree cua sampler, khong ngang hang.
+               Neu ngang hang, JMeter ap dung MOI timer cho MOI sampler -> think time nhan ~5 lan. -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-2.5s" enabled="true">
+            <stringProp name="ConstantTimer.delay">1500</stringProp>
+            <stringProp name="RandomTimer.range">1000</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
         </hashTree>
-        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-2.5s" enabled="true">
-          <stringProp name="ConstantTimer.delay">1500</stringProp>
-          <stringProp name="RandomTimer.range">1000</stringProp>
-        </UniformRandomTimer>
-        <hashTree/>
 
-        <!-- Chi chay tiep khi login thanh cong -->
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF - co token hop le" enabled="true">
           <stringProp name="IfController.condition">"${authToken}" != "TOKEN_NOT_FOUND"</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
@@ -211,8 +284,8 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
           </HeaderManager>
           <hashTree/>
 
-          <!-- ============ BUOC 2: GET /api/users/me (read-heavy) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 GET /api/users/me [read-heavy]" enabled="true">
+          <!-- BUOC 2: GET /api/users/me (read-heavy) §2.1 -->
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD1 02 GET /api/users/me [read-heavy]" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -240,15 +313,15 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+              <stringProp name="ConstantTimer.delay">2000</stringProp>
+              <stringProp name="RandomTimer.range">2000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
 
-          <!-- ============ BUOC 3: GET /api/orders/my-orders (read-heavy) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 GET /api/orders/my-orders [read-heavy]" enabled="true">
+          <!-- BUOC 3: GET /api/orders/my-orders (read-heavy) §4.4 -->
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD1 03 GET /api/orders/my-orders [read-heavy]" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -280,18 +353,18 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <stringProp name="JSONPostProcessor.referenceNames">orderId</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">ORDERID_NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+              <stringProp name="ConstantTimer.delay">2000</stringProp>
+              <stringProp name="RandomTimer.range">2000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
 
-          <!-- ============ BUOC 4: PUT /api/users/me (transactional) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 PUT /api/users/me [transactional]" enabled="true">
+          <!-- BUOC 4: PUT /api/users/me (transactional) §2.2 -->
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD1 04 PUT /api/users/me [transactional]" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -317,115 +390,97 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-          </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
-            <stringProp name="ConstantTimer.delay">1500</stringProp>
-            <stringProp name="RandomTimer.range">1500</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-
-          <!-- ============ BUOC 5: POST /api/apply-coupon (transactional) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="05 POST /api/apply-coupon [transactional]" enabled="true">
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{"code":"${couponCode}","total_amount":${totalAmount},"user_id":${userId}}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-            <stringProp name="HTTPSampler.path">/api/apply-coupon</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+            <!-- Assert noi dung: server tra lai dung gia tri vua ghi = bang chung UPDATE da commit.
+                 Chi kiem status code la khong du (workflows.md muc "Assertion theo buoc"). -->
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua phone vua ghi" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="49586">200</stringProp>
+                <stringProp name="-1450858172">${pphone}</stringProp>
               </collectionProp>
-              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
-              <intProp name="Assertion.test_type">8</intProp>
+              <intProp name="Assertion.test_type">2</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - co $.final_amount" enabled="true">
-              <stringProp name="JSON_PATH">$.final_amount</stringProp>
-              <stringProp name="EXPECTED_VALUE"></stringProp>
-              <boolProp name="JSONVALIDATION">false</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
+              <stringProp name="ConstantTimer.delay">1500</stringProp>
+              <stringProp name="RandomTimer.range">1500</stringProp>
+            </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
+
+          <!-- BUOC 5: POST /api/apply-coupon (transactional - chua xac minh) §5.1 -->
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF - co userId hop le" enabled="true">
+            <stringProp name="IfController.condition">"${userId}" != "USERID_NOT_FOUND"</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">false</boolProp>
+          </IfController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD1 05 POST /api/apply-coupon [transactional]" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{"code":"${couponCode}","total_amount":${totalAmount},"user_id":${userId}}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/apply-coupon</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="49586">200</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">8</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - co $.final_amount" enabled="true">
+                <stringProp name="JSON_PATH">$.final_amount</stringProp>
+                <stringProp name="EXPECTED_VALUE"></stringProp>
+                <boolProp name="JSONVALIDATION">false</boolProp>
+                <boolProp name="EXPECT_NULL">false</boolProp>
+                <boolProp name="INVERT">false</boolProp>
+                <boolProp name="ISREGEX">false</boolProp>
+              </JSONPathAssertion>
+              <hashTree/>
+              <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+                <stringProp name="ConstantTimer.delay">2000</stringProp>
+                <stringProp name="RandomTimer.range">2000</stringProp>
+              </UniformRandomTimer>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
         </hashTree>
+      </hashTree>
 
-              </hashTree>
-
-      <!-- ============ GIAI DOAN 2 - SPIKE (100 VU, giay 120-180) ============
-           Cu tang tai dot ngot: ramp 5 giay cho 100 VU. -->
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="TG GIAI DOAN 2 - SPIKE (100 VU, giay 120-180)" enabled="true">
+      <!-- ==================================================================== -->
+      <!-- GIAI DOAN 2 - SPIKE: 60 VU, delay 120s, duration 60s, ramp 5s        -->
+      <!-- Vai tro: tang tai gap 6 lan gan nhu tuc thi                          -->
+      <!-- CANH BAO: ramp 5s co the vuot kha nang khoi tao thread cua JMeter.   -->
+      <!--           Kiem cot allThreads trong .jtl sau lan chay dau.           -->
+      <!-- ==================================================================== -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="GD2 - SPIKE ${SPIKE_VUSERS} VU (ramp ${SPIKE_RAMPUP}s)" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${SPIKE_VUSERS}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${SPIKE_RAMPUP}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">60</stringProp>
-        <stringProp name="ThreadGroup.delay">120</stringProp>
+        <stringProp name="ThreadGroup.duration">${SPIKE_DURATION}</stringProp>
+        <stringProp name="ThreadGroup.delay">${SPIKE_DELAY}</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
       </ThreadGroup>
       <hashTree>
-<!-- ============ DU LIEU CSV ============ -->
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - users.csv (1 tai khoan / 1 VU)" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/users.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">email,password</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">false</boolProp>
-          <boolProp name="stopThread">true</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - profiles.csv" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/profiles.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">pname,paddress,pphone</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">true</boolProp>
-          <boolProp name="stopThread">false</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - coupons.csv" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/coupons.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">couponCode,totalAmount</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">true</boolProp>
-          <boolProp name="stopThread">false</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-
-        <!-- ============ BUOC 1: LOGIN (auth-heavy) ============ -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 POST /api/login [auth-heavy]" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD2 01 POST /api/login [auth-heavy]" enabled="true">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -471,17 +526,16 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
             <stringProp name="JSONPostProcessor.referenceNames">userId</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.user.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">USERID_NOT_FOUND</stringProp>
           </JSONPostProcessor>
           <hashTree/>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-2.5s" enabled="true">
+            <stringProp name="ConstantTimer.delay">1500</stringProp>
+            <stringProp name="RandomTimer.range">1000</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
         </hashTree>
-        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-2.5s" enabled="true">
-          <stringProp name="ConstantTimer.delay">1500</stringProp>
-          <stringProp name="RandomTimer.range">1000</stringProp>
-        </UniformRandomTimer>
-        <hashTree/>
 
-        <!-- Chi chay tiep khi login thanh cong -->
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF - co token hop le" enabled="true">
           <stringProp name="IfController.condition">"${authToken}" != "TOKEN_NOT_FOUND"</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
@@ -498,8 +552,7 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
           </HeaderManager>
           <hashTree/>
 
-          <!-- ============ BUOC 2: GET /api/users/me (read-heavy) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 GET /api/users/me [read-heavy]" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD2 02 GET /api/users/me [read-heavy]" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -527,15 +580,14 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+              <stringProp name="ConstantTimer.delay">2000</stringProp>
+              <stringProp name="RandomTimer.range">2000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
 
-          <!-- ============ BUOC 3: GET /api/orders/my-orders (read-heavy) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 GET /api/orders/my-orders [read-heavy]" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD2 03 GET /api/orders/my-orders [read-heavy]" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -567,18 +619,17 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <stringProp name="JSONPostProcessor.referenceNames">orderId</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">ORDERID_NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+              <stringProp name="ConstantTimer.delay">2000</stringProp>
+              <stringProp name="RandomTimer.range">2000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
 
-          <!-- ============ BUOC 4: PUT /api/users/me (transactional) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 PUT /api/users/me [transactional]" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD2 04 PUT /api/users/me [transactional]" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -604,115 +655,93 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-          </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
-            <stringProp name="ConstantTimer.delay">1500</stringProp>
-            <stringProp name="RandomTimer.range">1500</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-
-          <!-- ============ BUOC 5: POST /api/apply-coupon (transactional) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="05 POST /api/apply-coupon [transactional]" enabled="true">
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{"code":"${couponCode}","total_amount":${totalAmount},"user_id":${userId}}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-            <stringProp name="HTTPSampler.path">/api/apply-coupon</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua phone vua ghi" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="49586">200</stringProp>
+                <stringProp name="-1450858172">${pphone}</stringProp>
               </collectionProp>
-              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
-              <intProp name="Assertion.test_type">8</intProp>
+              <intProp name="Assertion.test_type">2</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - co $.final_amount" enabled="true">
-              <stringProp name="JSON_PATH">$.final_amount</stringProp>
-              <stringProp name="EXPECTED_VALUE"></stringProp>
-              <boolProp name="JSONVALIDATION">false</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
+              <stringProp name="ConstantTimer.delay">1500</stringProp>
+              <stringProp name="RandomTimer.range">1500</stringProp>
+            </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
+
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF - co userId hop le" enabled="true">
+            <stringProp name="IfController.condition">"${userId}" != "USERID_NOT_FOUND"</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">false</boolProp>
+          </IfController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD2 05 POST /api/apply-coupon [transactional]" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{"code":"${couponCode}","total_amount":${totalAmount},"user_id":${userId}}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/apply-coupon</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="49586">200</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">8</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - co $.final_amount" enabled="true">
+                <stringProp name="JSON_PATH">$.final_amount</stringProp>
+                <stringProp name="EXPECTED_VALUE"></stringProp>
+                <boolProp name="JSONVALIDATION">false</boolProp>
+                <boolProp name="EXPECT_NULL">false</boolProp>
+                <boolProp name="INVERT">false</boolProp>
+                <boolProp name="ISREGEX">false</boolProp>
+              </JSONPathAssertion>
+              <hashTree/>
+              <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+                <stringProp name="ConstantTimer.delay">2000</stringProp>
+                <stringProp name="RandomTimer.range">2000</stringProp>
+              </UniformRandomTimer>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
         </hashTree>
+      </hashTree>
 
-              </hashTree>
-
-      <!-- ============ GIAI DOAN 3 - NEN SAU / PHUC HOI (10 VU, giay 180-420) ============
-           Giai doan do phuc hoi. Dai gap doi giai doan 1. -->
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="TG GIAI DOAN 3 - NEN SAU / PHUC HOI (10 VU, giay 180-420)" enabled="true">
+      <!-- ==================================================================== -->
+      <!-- GIAI DOAN 3 - NEN SAU: 10 VU, delay 180s, duration 240s, ramp 20s    -->
+      <!-- Vai tro: DO PHUC HOI. Day la phan KHONG DUOC BO cua spike test.      -->
+      <!-- Dai gap doi GD1 de du du lieu ket luan he thong co tro ve binh thuong. -->
+      <!-- ==================================================================== -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="GD3 - Nen sau ${BASE_VUSERS} VU (do phuc hoi)" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${BASE_VUSERS}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">20</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${BASE_RAMPUP}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">240</stringProp>
-        <stringProp name="ThreadGroup.delay">180</stringProp>
+        <stringProp name="ThreadGroup.duration">${POST_DURATION}</stringProp>
+        <stringProp name="ThreadGroup.delay">${POST_DELAY}</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
       </ThreadGroup>
       <hashTree>
-<!-- ============ DU LIEU CSV ============ -->
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - users.csv (1 tai khoan / 1 VU)" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/users.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">email,password</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">false</boolProp>
-          <boolProp name="stopThread">true</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - profiles.csv" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/profiles.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">pname,paddress,pphone</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">true</boolProp>
-          <boolProp name="stopThread">false</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - coupons.csv" enabled="true">
-          <stringProp name="filename">${DATA_DIR}/coupons.csv</stringProp>
-          <stringProp name="fileEncoding">UTF-8</stringProp>
-          <stringProp name="variableNames">couponCode,totalAmount</stringProp>
-          <boolProp name="ignoreFirstLine">true</boolProp>
-          <stringProp name="delimiter">,</stringProp>
-          <boolProp name="quotedData">false</boolProp>
-          <boolProp name="recycle">true</boolProp>
-          <boolProp name="stopThread">false</boolProp>
-          <stringProp name="shareMode">shareMode.all</stringProp>
-        </CSVDataSet>
-        <hashTree/>
-
-        <!-- ============ BUOC 1: LOGIN (auth-heavy) ============ -->
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 POST /api/login [auth-heavy]" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD3 01 POST /api/login [auth-heavy]" enabled="true">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -758,17 +787,16 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
             <stringProp name="JSONPostProcessor.referenceNames">userId</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.user.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">USERID_NOT_FOUND</stringProp>
           </JSONPostProcessor>
           <hashTree/>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-2.5s" enabled="true">
+            <stringProp name="ConstantTimer.delay">1500</stringProp>
+            <stringProp name="RandomTimer.range">1000</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
         </hashTree>
-        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-2.5s" enabled="true">
-          <stringProp name="ConstantTimer.delay">1500</stringProp>
-          <stringProp name="RandomTimer.range">1000</stringProp>
-        </UniformRandomTimer>
-        <hashTree/>
 
-        <!-- Chi chay tiep khi login thanh cong -->
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF - co token hop le" enabled="true">
           <stringProp name="IfController.condition">"${authToken}" != "TOKEN_NOT_FOUND"</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
@@ -785,8 +813,7 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
           </HeaderManager>
           <hashTree/>
 
-          <!-- ============ BUOC 2: GET /api/users/me (read-heavy) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 GET /api/users/me [read-heavy]" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD3 02 GET /api/users/me [read-heavy]" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -814,15 +841,14 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+              <stringProp name="ConstantTimer.delay">2000</stringProp>
+              <stringProp name="RandomTimer.range">2000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
 
-          <!-- ============ BUOC 3: GET /api/orders/my-orders (read-heavy) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 GET /api/orders/my-orders [read-heavy]" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD3 03 GET /api/orders/my-orders [read-heavy]" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -854,18 +880,17 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <stringProp name="JSONPostProcessor.referenceNames">orderId</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">ORDERID_NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+              <stringProp name="ConstantTimer.delay">2000</stringProp>
+              <stringProp name="RandomTimer.range">2000</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
 
-          <!-- ============ BUOC 4: PUT /api/users/me (transactional) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 PUT /api/users/me [transactional]" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD3 04 PUT /api/users/me [transactional]" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -891,64 +916,84 @@ So sanh p95 cua giai doan 1 va giai doan 3 chinh la thuoc do phuc hoi.</stringPr
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-          </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
-            <stringProp name="ConstantTimer.delay">1500</stringProp>
-            <stringProp name="RandomTimer.range">1500</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-
-          <!-- ============ BUOC 5: POST /api/apply-coupon (transactional) ============ -->
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="05 POST /api/apply-coupon [transactional]" enabled="true">
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{"code":"${couponCode}","total_amount":${totalAmount},"user_id":${userId}}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-            <stringProp name="HTTPSampler.path">/api/apply-coupon</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - body chua phone vua ghi" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="49586">200</stringProp>
+                <stringProp name="-1450858172">${pphone}</stringProp>
               </collectionProp>
-              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
-              <intProp name="Assertion.test_type">8</intProp>
+              <intProp name="Assertion.test_type">2</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - co $.final_amount" enabled="true">
-              <stringProp name="JSON_PATH">$.final_amount</stringProp>
-              <stringProp name="EXPECTED_VALUE"></stringProp>
-              <boolProp name="JSONVALIDATION">false</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 1.5-3s" enabled="true">
+              <stringProp name="ConstantTimer.delay">1500</stringProp>
+              <stringProp name="RandomTimer.range">1500</stringProp>
+            </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
-            <stringProp name="RandomTimer.range">2000</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-        </hashTree>
 
-              </hashTree>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF - co userId hop le" enabled="true">
+            <stringProp name="IfController.condition">"${userId}" != "USERID_NOT_FOUND"</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">false</boolProp>
+          </IfController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GD3 05 POST /api/apply-coupon [transactional]" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{"code":"${couponCode}","total_amount":${totalAmount},"user_id":${userId}}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/apply-coupon</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert - HTTP 200" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="49586">200</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">8</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert - co $.final_amount" enabled="true">
+                <stringProp name="JSON_PATH">$.final_amount</stringProp>
+                <stringProp name="EXPECTED_VALUE"></stringProp>
+                <boolProp name="JSONVALIDATION">false</boolProp>
+                <boolProp name="EXPECT_NULL">false</boolProp>
+                <boolProp name="INVERT">false</boolProp>
+                <boolProp name="ISREGEX">false</boolProp>
+              </JSONPathAssertion>
+              <hashTree/>
+              <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think time 2-4s" enabled="true">
+                <stringProp name="ConstantTimer.delay">2000</stringProp>
+                <stringProp name="RandomTimer.range">2000</stringProp>
+              </UniformRandomTimer>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+      </hashTree>
 
       <!-- ============ LISTENER: VIEW RESULTS TREE (rieng cho Spike) ============
-           Chi ghi cac sample LOI (error_logging=true) de khong phinh bo nho
-           khi chay 100 VU. Muc dich: xem chi tiet TUNG request that bai trong
-           luc spike - dieu ma Summary/Aggregate Report khong the cho thay. -->
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree (chi hien loi)" enabled="true">
+           HW05 yeu cau ba test plan dung ba listener KHAC NHAU:
+             Load   -> SummaryReport
+             Stress -> StatVisualizer
+             Spike  -> ViewResultsFullVisualizer  (day)
+           error_logging=true: CHI ghi sample LOI vao bo nho. Neu ghi TAT CA sample o muc 60 VU,
+           JMeter ngon RAM rat nhanh va chinh load generator thanh nut that -> ket qua do phan anh
+           gioi han cua JMeter chu khong phai cua SUT.
+           responseDataOnError=true: giu response body cua sample loi de chan doan nguyen nhan.
+           threadCounts=true: cot allThreads trong .jtl la cach DUY NHAT xac nhan so VU that su dat. -->
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree (chi ghi loi)" enabled="true">
         <boolProp name="ResultCollector.error_logging">true</boolProp>
         <objProp>
           <name>saveConfig</name>
