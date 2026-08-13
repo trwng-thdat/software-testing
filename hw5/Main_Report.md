@@ -192,26 +192,28 @@ Cả ba test plan đều chạy cùng một thân thread group:
 
 ### 3.3 Dữ liệu đầu vào dạng data-driven (CSV)
 
-| File                | Cột dữ liệu                   | Số dòng                | Dùng ở bước | Chế độ chia sẻ / recycle                        |
-| ------------------- | ----------------------------- | ---------------------- | ----------- | ----------------------------------------------- |
-| `data/users.csv`    | `email,password`              | _<n ≥ số VU đỉnh>_     | Bước 1      | All threads, `recycle=false`, `stopThread=true` |
-| `data/profiles.csv` | `name,shipping_address,phone` | _<n>_                  | Bước 4      | All threads, `recycle=true`                     |
-| `data/coupons.csv`  | `code,total_amount`           | _<n>_                  | Bước 5      | All threads, `recycle=true`                     |
+| File                | Cột dữ liệu                   | Số dòng | Dùng ở bước | Chế độ chia sẻ / recycle                        |
+| ------------------- | ----------------------------- | ------- | ----------- | ----------------------------------------------- |
+| `data/users.csv`    | `email,password`              | 120     | Bước 1      | All threads, `recycle=false`, `stopThread=true` |
+| `data/profiles.csv` | `name,shipping_address,phone` | 60      | Bước 4      | All threads, `recycle=true`                     |
+| `data/coupons.csv`  | `code,total_amount`           | 5       | Bước 5      | All threads, `recycle=true`                     |
+
+**Cách chọn số dòng `users.csv` = 120.** Con số này phải lớn hơn hoặc bằng số VU đỉnh của **kịch bản nặng nhất**, chứ không phải của riêng kịch bản Load. Kịch bản Stress cộng dồn tới 100 VU (§3.4), nên 120 dòng đủ cho cả ba kịch bản và còn dư biên. Đây là lỗi tôi đã mắc phải trong lần dựng đầu: file ban đầu chỉ có 60 dòng, vừa đủ cho Load 50 VU nhưng **thiếu cho Stress** — với `recycle=false` và `stopThread=true`, bậc 4 và bậc 5 sẽ tự tắt thread ngay khi khởi động, bài test vẫn "chạy xong" nhưng thực tế chỉ đo được khoảng 60 VU thay vì 100. Ghi nhận ở AI Audit Report artifact \#6.
 
 Dòng dữ liệu mẫu (thay bằng giá trị đã seed thực tế):
 
 ```
-# users.csv
+# users.csv — 120 dòng, perf001 … perf120
 email,password
 perf001@test.com,Password123!
 perf002@test.com,Password123!
 
-# profiles.csv — giá trị khác nhau để mỗi lần ghi đều làm thay đổi dữ liệu
+# profiles.csv — 60 dòng, giá trị khác nhau để mỗi lần ghi đều làm thay đổi dữ liệu
 name,shipping_address,phone
-Nguyen Van A,123 Le Loi Q1 TP.HCM,0912345001
-Tran Thi B,45 Nguyen Hue Q1 TP.HCM,0912345002
+Perf User 01,01 Le Loi Q1 TP.HCM,0912345001
+Perf User 02,02 Le Loi Q1 TP.HCM,0912345002
 
-# coupons.csv
+# coupons.csv — 5 dòng
 code,total_amount
 SAVE10,500000
 TET2025,300000
@@ -223,17 +225,30 @@ TET2025,300000
 
 ### 3.4 Tham số từng kịch bản (Load / Stress / Spike)
 
-|                        | Load                                  | Stress                                | Spike                                             |
-| ---------------------- | ------------------------------------- | ------------------------------------- | ------------------------------------------------- |
-| File test plan         | `23127344_Load_<YYYYMMDD>.jmx`        | `23127344_Stress_<YYYYMMDD>.jmx`      | `23127344_Spike_<YYYYMMDD>.jmx`                   |
-| Số virtual user (đỉnh) | _<n>_                                 | _<n>_                                 | _<n>_                                             |
-| Ramp-up                | _<s>_                                 | _<theo bậc: n user mỗi m giây>_       | _<gần như tức thời, s>_                           |
-| Thời gian giữ tải      | _<s>_                                 | _<s>_                                 | _<s>_                                             |
-| Ramp-down              | _<s>_                                 | _<s>_                                 | _<s>_                                             |
-| Số vòng lặp mỗi VU     | _<n / chạy đến hết thời lượng>_       | _<...>_                               | _<...>_                                           |
-| Think time             | _<n ± n ms, Gaussian/Uniform>_        | _<...>_                               | _<...>_                                           |
-| Mục tiêu               | Quan sát hành vi ở trạng thái ổn định | Tìm điểm gãy của hệ thống             | Chịu được và phục hồi sau cú tăng tải đột ngột    |
-| Tiêu chí đạt           | _<p95 < X ms, error rate < Y%>_       | _<xác định điểm knee; không crash>_   | _<phục hồi trong Z giây, không còn 5xx sau spike>_ |
+|                        | Load                                  | Stress                                          | Spike                                             |
+| ---------------------- | ------------------------------------- | ----------------------------------------------- | ------------------------------------------------- |
+| File test plan         | `23127344_Load_20260812.jmx`          | `23127344_Stress_20260812.jmx`                  | `23127344_Spike_<YYYYMMDD>.jmx`                   |
+| Số virtual user (đỉnh) | 50                                    | 100 (5 bậc × 20 VU, cộng dồn)                   | _<n>_                                             |
+| Ramp-up                | 60 giây (~1 VU/giây)                  | Theo bậc: +20 VU mỗi 120 giây, mỗi bậc ramp 30s | _<gần như tức thời, s>_                           |
+| Thời gian giữ tải      | 600 giây                              | 600 giây (bậc cuối chỉ giữ 120 giây)            | _<s>_                                             |
+| Ramp-down              | Không (kết thúc theo scheduler)       | Không (mọi bậc cùng dừng ở giây 600)            | _<s>_                                             |
+| Số vòng lặp mỗi VU     | Lặp vô hạn đến hết thời lượng         | Lặp vô hạn đến hết thời lượng                   | _<...>_                                           |
+| Think time             | Uniform 1,5–4 giây tùy bước           | Giống Load (dùng chung thân workflow)           | _<...>_                                           |
+| Listener               | **Summary Report**                    | **Aggregate Report**                            | _<View Results Tree — loại thứ ba>_               |
+| Mục tiêu               | Quan sát hành vi ở trạng thái ổn định | Tìm điểm gãy (knee) của hệ thống                | Chịu được và phục hồi sau cú tăng tải đột ngột    |
+| Tiêu chí đạt           | _<p95 < X ms, error rate < Y%>_       | _<xác định điểm knee; không crash>_             | _<phục hồi trong Z giây, không còn 5xx sau spike>_ |
+
+**Hồ sơ tải của kịch bản Stress (5 bậc).** JMeter bản chuẩn không có sẵn cơ chế tăng tải theo bậc, nên tôi dùng 5 Thread Group riêng với `delay` lệch nhau — cách này **không cần cài plugin**, giúp file mở được trên mọi bản JMeter 5.6.3 gốc. Các bậc cộng dồn lên nhau và cùng kết thúc tại giây 600:
+
+| Bậc | Bắt đầu (giây) | Thời lượng | VU thêm vào | VU cộng dồn |
+| --- | -------------- | ---------- | ----------- | ----------- |
+| 1   | 0              | 600 giây   | +20         | 20          |
+| 2   | 120            | 480 giây   | +20         | 40          |
+| 3   | 240            | 360 giây   | +20         | 60          |
+| 4   | 360            | 240 giây   | +20         | 80          |
+| 5   | 480            | 120 giây   | +20         | 100         |
+
+Mỗi bậc giữ tải ít nhất 120 giây trước khi bậc kế tiếp vào, đủ để hệ thống ổn định và để đọc được p95 của riêng mức tải đó — nếu tăng bậc quá nhanh thì không phân biệt được độ trễ tăng do tải hay do hệ thống chưa kịp ổn định. Tất cả tham số đều override được qua dòng lệnh: `-Jstepvusers=30 -Jsteprampup=20`.
 
 **Lý giải tham số (đề xuất của AI → quyết định của tôi).**
 
@@ -259,11 +274,12 @@ Cả ba lần chạy đều đồng thời sinh ra file `.jtl` thô và thư m�
 | #   | AI đã tạo ra gì                                                                | Vì sao sai                                                                                                                                     | Tôi đã sửa thế nào                                    | Nguyên nhân gốc                                                    |
 | --- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------ |
 | 1   | Đề xuất endpoint `GET /api/profile` và `PUT /api/profile`                      | Hai route này **không tồn tại** trong SUT; endpoint thật là `GET /api/users/me` và `PUT /api/users/me` (API spec §2.1, §2.2)                  | Cung cấp `api_spec.md` và yêu cầu mọi endpoint phải kèm số mục tham chiếu | AI suy đoán tên route bằng cách khớp mẫu từ tiêu đề FR-04 thay vì đọc test basis; tôi cũng chưa cung cấp tài liệu API ngay từ đầu |
-| 2   | _<ví dụ: think time = 0 / cố định 100 ms>_                                     | _<không giống người dùng thật; làm RPS tăng ảo>_                                                                                               | _<Gaussian 2000 ± 500 ms>_                            | _<prompt chưa mô tả mô hình hành vi người dùng>_                   |
-| 3   | _<ví dụ: 500 thread ramp trong 1 giây cho test plan "Load">_                   | _<đó là spike chứ không phải load; ngoài ra vượt quá năng lực phần cứng của tôi>_                                                              | _<...>_                                               | _<mô hình không biết gì về phần cứng của tôi>_                     |
-| 4   | _<ví dụ: chỉ assert HTTP 200>_                                                 | _<SUT trả về 200 kèm khung lỗi trong trường hợp <...>>_                                                                                        | _<bổ sung assertion trên body>_                       | _<hành vi đặc thù của endpoint, không thể suy ra từ prompt>_       |
-| 5   | _<ví dụ: không xử lý lockout — dùng chung một tài khoản cho mọi thread>_       | _<FR-02 khóa sau 3 lần đăng nhập sai; khi Stress thì mọi VU đều bị khóa và error rate sẽ đo cơ chế khóa chứ không đo hiệu năng>_               | _<CSV gồm N tài khoản riêng biệt + bước reset rõ ràng>_ | _<AI chưa đọc FR-02 / tôi chưa cung cấp đặc tả cho nó>_           |
-| 6   | _<ví dụ: sai schema JMX / phần tử listener mà JMeter <phiên bản> không nhận>_  | _<file không mở được>_                                                                                                                         | _<...>_                                               | _<kiến thức về JMX của mô hình đã lệch phiên bản>_                 |
+| 2   | `users.csv` chỉ có 60 dòng, trong khi kịch bản Stress cộng dồn tới 100 VU      | Với `recycle=false` + `stopThread=true`, bậc 4 và 5 sẽ tự tắt thread ngay khi khởi động vì hết dữ liệu. Bài test vẫn "chạy xong" và xuất `.jtl` bình thường nhưng chỉ đo được ~60 VU thay vì 100 — **sai số âm thầm, không có thông báo lỗi nào** | Mở rộng `users.csv` lên 120 dòng, `profiles.csv` lên 60 dòng; ghi nguyên tắc "tính theo kịch bản nặng nhất" vào §3.3 | AI sinh CSV ở thời điểm chỉ mới biết kịch bản Load (50 VU), sau đó dựng Stress (100 VU) mà không tự đối chiếu ngược lại số dòng đã tạo — thiếu kiểm tra tính nhất quán xuyên suốt các artifact |
+| 3   | _<ví dụ: think time = 0 / cố định 100 ms>_                                     | _<không giống người dùng thật; làm RPS tăng ảo>_                                                                                               | _<Gaussian 2000 ± 500 ms>_                            | _<prompt chưa mô tả mô hình hành vi người dùng>_                   |
+| 4   | _<ví dụ: 500 thread ramp trong 1 giây cho test plan "Load">_                   | _<đó là spike chứ không phải load; ngoài ra vượt quá năng lực phần cứng của tôi>_                                                              | _<...>_                                               | _<mô hình không biết gì về phần cứng của tôi>_                     |
+| 5   | _<ví dụ: chỉ assert HTTP 200>_                                                 | _<SUT trả về 200 kèm khung lỗi trong trường hợp <...>>_                                                                                        | _<bổ sung assertion trên body>_                       | _<hành vi đặc thù của endpoint, không thể suy ra từ prompt>_       |
+| 6   | _<ví dụ: không xử lý lockout — dùng chung một tài khoản cho mọi thread>_       | _<FR-02 khóa sau 3 lần đăng nhập sai; khi Stress thì mọi VU đều bị khóa và error rate sẽ đo cơ chế khóa chứ không đo hiệu năng>_               | _<CSV gồm N tài khoản riêng biệt + bước reset rõ ràng>_ | _<AI chưa đọc FR-02 / tôi chưa cung cấp đặc tả cho nó>_           |
+| 7   | _<ví dụ: sai schema JMX / phần tử listener mà JMeter <phiên bản> không nhận>_  | _<file không mở được>_                                                                                                                         | _<...>_                                               | _<kiến thức về JMX của mô hình đã lệch phiên bản>_                 |
 
 **Suy ngẫm.** _<2–4 câu: AI mắc loại lỗi nào một cách có hệ thống — cấu trúc nghe hợp lý nhưng chưa được kiểm chứng, không có quyền truy cập môi trường của bạn, không nắm ngữ nghĩa đặc thù của SUT.>_
 
