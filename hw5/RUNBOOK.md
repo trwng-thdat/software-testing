@@ -27,23 +27,36 @@ node -e "require('express'); require('sqlite3'); console.log('OK')"
 ```
 Phải in ra `OK`. Nếu vẫn lỗi, xóa cả `package-lock.json` rồi `npm install` lại.
 
-### 0.2 Cài JMeter
+### 0.2 Cài JMeter — ✅ ĐÃ XONG
 
-Máy đã có Java 21 (đã kiểm tra), chỉ thiếu JMeter.
+JMeter 5.6.3 đã được cài tại `C:\apache-jmeter-5.6.3`, Java 21 đã có sẵn.
 
-1. Tải bản binary `apache-jmeter-5.6.3.zip` tại <https://jmeter.apache.org/download_jmeter.cgi>
-2. Giải nén vào `C:\apache-jmeter-5.6.3` (tránh đường dẫn có dấu cách và tiếng Việt)
-3. Kiểm tra:
+| Hạng mục | Giá trị |
+| --- | --- |
+| Phiên bản | Apache JMeter 5.6.3 |
+| Đường dẫn | `C:\apache-jmeter-5.6.3\bin\jmeter.bat` |
+| Nguồn tải | `https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-5.6.3.zip` |
+| SHA-512 | `387fadca903ee0aa...0163076` — **đã đối chiếu khớp** với checksum chính thức của Apache |
+| Java | 21.0.10 LTS |
 
-```powershell
-C:\apache-jmeter-5.6.3\bin\jmeter.bat --version
-```
-
-Phải in ra dòng có `5.6.3`. Để gõ ngắn gọn về sau:
+Để gõ ngắn gọn trong phiên PowerShell hiện tại:
 
 ```powershell
 $env:PATH += ";C:\apache-jmeter-5.6.3\bin"
 ```
+
+**Cả ba file `.jmx` đã được xác nhận mở được bằng JMeter thật** (chạy thử với
+`-Jvusers=1 -Jduration=1`, SUT chưa bật nên 0 sample là đúng):
+
+| File | Kết quả nạp | Ghi chú |
+| --- | --- | --- |
+| `23127344_Load_20260812.jmx` | ✅ `Starting standalone test` | Không lỗi, không exception |
+| `23127344_Spike_20260813.jmx` | ✅ `Starting standalone test` | Không lỗi, không exception |
+| `23127344_Stress_20260812.jmx` | ✅ `Created the tree successfully` | Không thể chạy nhanh vì bậc 5 có `delay=480s` cứng trong file; chỉ xác nhận khâu nạp |
+
+> Đây là điều mà mọi lần kiểm tra trước đó **không** chứng minh được:
+> `validate_jmx.py` chỉ đọc XML, không thể biết JMeter có chấp nhận file hay không.
+> Nay đã xác nhận bằng chính JMeter 5.6.3.
 
 ### 0.3 Khởi động SUT
 

@@ -86,14 +86,18 @@ Ba nhóm endpoint được bao phủ bởi **một** luồng nghiệp vụ end-t
 
 | Hạng mục       | Giá trị                                         |
 | -------------- | ----------------------------------------------- |
-| Hostname       | _<phải trùng với các bài tập trước>_            |
-| CPU            | _<model, số nhân/luồng, xung cơ bản/boost>_     |
-| RAM            | _<dung lượng, loại, bus>_                       |
-| Ổ cứng         | _<loại, model>_                                 |
-| GPU            | _<model>_                                       |
-| Hệ điều hành   | _<tên + build>_                                 |
-| Java / Runtime | _<phiên bản JVM của JMeter, hoặc phiên bản k6>_ |
-| Mạng           | localhost (loopback) — _<hoặc điền vào>_        |
+| Hostname       | `THANHDAT` |
+| Máy            | Victus by HP Laptop 16-e1xxx |
+| CPU            | AMD Ryzen 5 6600H with Radeon Graphics — 6 nhân / 12 luồng, ~3,3 GHz |
+| RAM            | 16 GB (15,2 GB khả dụng) |
+| Ổ cứng         | _<model SSD — xem mục "Disk & DVD/CD-ROM Drives" trong dxdiag.txt>_ |
+| GPU            | AMD Radeon (tích hợp) + NVIDIA GeForce RTX 3050 Laptop GPU (rời) |
+| Hệ điều hành   | Windows 11 Home Single Language, build 26200 |
+| Java / Runtime | OpenJDK 21.0.10 LTS (build 21.0.10+8-LTS-217) |
+| JMeter         | Apache JMeter 5.6.3 |
+| Mạng           | localhost (loopback) — SUT và load generator cùng máy |
+
+> **Hệ quả của cấu hình 6 nhân / 12 luồng.** JMeter và SUT chia nhau cùng bộ CPU này. Ở kịch bản Spike, 60 VU đồng thời nghĩa là 60 thread JMeter cộng với event loop của Node.js cùng tranh 12 luồng logic — đây là lý do VU đỉnh được giảm từ 100 xuống 60 (§3.4), và là lý do phải kiểm cột `allThreads` trong `.jtl` trước khi kết luận bất cứ điều gì về giới hạn của SUT.
 
 **Bằng chứng:** `evidence/hardware/dxdiag.png` (ảnh chụp màn hình), `evidence/hardware/dxdiag.txt`.
 
@@ -109,7 +113,31 @@ Ba nhóm endpoint được bao phủ bởi **một** luồng nghiệp vụ end-t
 
 ### 2.3 Máy sinh tải (load generator)
 
-Chạy trên **cùng máy** với SUT / trên máy riêng — _<ghi rõ trường hợp nào>_. Lưu ý hệ quả: _<nếu cùng máy, load generator cạnh tranh CPU với SUT; điều này giới hạn RPS đạt được và phải nêu rõ khi diễn giải kết quả>_.
+Chạy trên **cùng máy** với SUT.
+
+| Hạng mục | Giá trị |
+| --- | --- |
+| Công cụ | Apache JMeter 5.6.3 |
+| Đường dẫn cài đặt | `C:\apache-jmeter-5.6.3` |
+| Nguồn tải | `https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-5.6.3.zip` |
+| SHA-512 | Đã đối chiếu khớp với checksum chính thức của Apache |
+| Java runtime | 21.0.10 LTS |
+
+**Hệ quả của việc chạy cùng máy — phải nêu khi diễn giải mọi con số:** JMeter cạnh tranh CPU trực tiếp với tiến trình `node.exe` của SUT. Do đó:
+
+1. **RPS đo được là giới hạn của cả cụm máy**, không phải giới hạn của riêng SUT. Con số thật của SUT khi chạy trên hạ tầng riêng sẽ cao hơn.
+2. **VU đỉnh của kịch bản Spike đã giảm từ 100 xuống 60** vì lý do này (§3.4). Ở mức 100 VU, phần lớn tài nguyên sẽ dành cho việc JMeter khởi tạo và quản lý thread thay vì cho SUT xử lý request.
+3. Khi p95 tăng ở tải cao, **không thể quy kết ngay cho SUT** — phải kiểm cột `allThreads` trong `.jtl` để loại trừ khả năng chính JMeter mới là nút thắt.
+
+**Xác minh cả ba test plan mở được bằng JMeter thật.** Chạy thử từng file với 1 VU trong 1 giây (SUT chưa bật, nên 0 sample là kết quả đúng — mục tiêu chỉ là xác nhận JMeter chấp nhận file):
+
+| File | Kết quả | Ghi chú |
+| --- | --- | --- |
+| `23127344_Load_20260812.jmx` | ✅ `Starting standalone test` | Không lỗi, không exception |
+| `23127344_Spike_20260813.jmx` | ✅ `Starting standalone test` | Không lỗi, không exception |
+| `23127344_Stress_20260812.jmx` | ✅ `Created the tree successfully` | Bậc 5 có `delay=480s` cứng trong file nên không rút ngắn được; chỉ xác nhận khâu nạp |
+
+> Đây là **tầng kiểm chứng thứ năm**, bổ sung cho bốn tầng ở §3.1. Nó chứng minh một điều mà `validate_jmx.py` về nguyên lý không thể: script chỉ đọc XML và kiểm tra cấu trúc `hashTree`, nó không biết JMeter 5.6.3 có nhận diện được từng `guiclass` / `testclass` hay không. Một file XML hoàn toàn hợp lệ vẫn có thể bị JMeter **âm thầm bỏ qua phần tử** nếu tên lớp sai phiên bản.
 
 ---
 
@@ -656,9 +684,9 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 | --------------------------------------------- | ---------------------------------------- | ------------------------------------------------------- |
 | Báo cáo chính (Markdown + PDF)                | `Main_Report.md` / `.pdf`                | ☐                                                       |
 | Liên kết repo GitHub công khai                | _<URL>_                                  | ☐                                                       |
-| Test plan Load                                | `plans/23127344_Load_20260812.jmx`       | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
-| Test plan Stress                              | `plans/23127344_Stress_20260812.jmx`     | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
-| Test plan Spike                               | `plans/23127344_Spike_20260813.jmx`      | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
+| Test plan Load                                | `plans/23127344_Load_20260812.jmx`       | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); **đã mở được bằng JMeter 5.6.3** |
+| Test plan Stress                              | `plans/23127344_Stress_20260812.jmx`     | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); **đã mở được bằng JMeter 5.6.3** |
+| Test plan Spike                               | `plans/23127344_Spike_20260813.jmx`      | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); **đã mở được bằng JMeter 5.6.3** |
 | Script seed dữ liệu                           | `data/seed_perf_users.py`                | ☑ đã chạy, 120/120 tài khoản (lỗi \#8 §3.6)             |
 | 3 file log `.jtl` thô (đầy đủ)                | `results/`                               | ☐                                                       |
 | 3 thư mục báo cáo HTML                        | `reports/`                               | ☐                                                       |
