@@ -2,12 +2,13 @@ HW05 - Performance Testing (AI-First)
 Student ID: 23127344
 Repository: software-testing
 Branch: main
-Generated: 2026-08-13 23:19:37 +0700
+Generated: 2026-08-13 23:42:04 +0700
 
 ========================================================================
 COMMIT LOG - HW05
 ========================================================================
 
+9ca3bd6 | 2026-08-13 23:42:04 +0700 | trwng-thdat | fix(hw5): sửa 3 test plan cho khớp mã nguồn SUT sau khi đối chiếu backend
 01e70d9 | 2026-08-13 23:19:37 +0700 | trwng-thdat | test(hw5): thay test plan Spike bằng bản 20260813 sinh từ agent skill
 60b9af1 | 2026-08-13 14:46:21 +0700 | trwng-thdat | feat(hw5): thêm agent skill sinh test plan JMeter cho EShop
 28ca6d0 | 2026-08-13 14:28:45 +0700 | trwng-thdat | chore(hw5): cập nhật nhật ký commit
