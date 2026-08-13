@@ -1,19 +1,19 @@
 # HW05 — Kiểm thử Hiệu năng (Performance Testing, AI-First)
 
-| Trường thông tin                          | Giá trị                                           |
-| ----------------------------------------- | ------------------------------------------------- |
-| Mã bài tập                                | HW05-AI                                           |
-| MSSV                                      | 23127344                                          |
-| Họ và tên                                 | _<điền vào>_                                      |
-| Lớp / Nhóm                                | _<điền vào>_                                      |
-| Ngày nộp                                  | _<YYYY-MM-DD>_                                    |
-| SUT                                       | EShop — https://github.com/ttbhanh/eshop-sut      |
-| Commit / tag của SUT đã kiểm thử          | _<git SHA>_                                       |
-| Công cụ sử dụng                           | JMeter _<phiên bản>_ / k6 _<phiên bản>_           |
-| Công cụ AI đã dùng                        | _<ví dụ: Claude Opus 5 (Claude Code), ChatGPT...>_ |
-| Repo công khai (test plan + dữ liệu)      | _<GitHub URL>_                                    |
-| Video demo (YouTube unlisted, ≥ 6 phút)   | _<URL>_                                           |
-| Điểm tự đánh giá                          | _<000–100>_                                       |
+| Trường thông tin                        | Giá trị                                            |
+| --------------------------------------- | -------------------------------------------------- |
+| Mã bài tập                              | HW05-AI                                            |
+| MSSV                                    | 23127344                                           |
+| Họ và tên                               | _<điền vào>_                                       |
+| Lớp / Nhóm                              | _<điền vào>_                                       |
+| Ngày nộp                                | _<YYYY-MM-DD>_                                     |
+| SUT                                     | EShop — https://github.com/ttbhanh/eshop-sut       |
+| Commit / tag của SUT đã kiểm thử        | _<git SHA>_                                        |
+| Công cụ sử dụng                         | JMeter _<phiên bản>_ / k6 _<phiên bản>_            |
+| Công cụ AI đã dùng                      | _<ví dụ: Claude Opus 5 (Claude Code), ChatGPT...>_ |
+| Repo công khai (test plan + dữ liệu)    | _<GitHub URL>_                                     |
+| Video demo (YouTube unlisted, ≥ 6 phút) | _<URL>_                                            |
+| Điểm tự đánh giá                        | _<000–100>_                                        |
 
 > **Khai báo sử dụng AI.** Tôi có sử dụng công cụ AI cho các công việc sau: _<liệt kê ngắn gọn — thiết kế test plan, phân tích .jtl, đề xuất CPT, ...>_. Toàn bộ nhật ký tương tác được ghi trong `AI_Audit_Report.md` (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát và chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
 
@@ -53,22 +53,22 @@ Ba nhóm endpoint được bao phủ bởi **một** luồng nghiệp vụ end-t
 
 **Luồng được chọn: "Hành trình hồ sơ cá nhân + lịch sử đơn hàng."** Một khách hàng đã đăng nhập xem lại hồ sơ cá nhân và các đơn hàng cũ của mình, cập nhật thông tin giao hàng, sau đó tính thử mã giảm giá.
 
-| Nhóm          | Endpoint của SUT                                 | Mục API spec | Mã FR        | Lý do lựa chọn                                                                                                                                                     |
-| ------------- | ------------------------------------------------ | ------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Auth-heavy    | `POST /api/login`                                | §1.2         | FR-02        | Cấp JWT mà mọi bước sau đều cần; đồng thời chịu ràng buộc khóa tài khoản sau 3 lần đăng nhập sai, nên đây là nhóm bắt buộc phải quản lý lockout.                   |
+| Nhóm          | Endpoint của SUT                                 | Mục API spec | Mã FR        | Lý do lựa chọn                                                                                                                                                                            |
+| ------------- | ------------------------------------------------ | ------------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Auth-heavy    | `POST /api/login`                                | §1.2         | FR-02        | Cấp JWT mà mọi bước sau đều cần; đồng thời chịu ràng buộc khóa tài khoản sau 3 lần đăng nhập sai, nên đây là nhóm bắt buộc phải quản lý lockout.                                          |
 | Read-heavy    | `GET /api/users/me`, `GET /api/orders/my-orders` | §2.1, §4.4   | FR-04, FR-11 | Hai thao tác đọc dữ liệu riêng của từng người dùng và có yêu cầu xác thực — response khác nhau theo từng user nên không thể phục vụ từ cache dùng chung như danh sách sản phẩm công khai. |
-| Transactional | `PUT /api/users/me`, `POST /api/apply-coupon`    | §2.2, §5.1   | FR-04, FR-09 | `PUT /api/users/me` là thao tác ghi thật xuống dòng dữ liệu người dùng; `apply-coupon` kích hoạt phần tính toán mã giảm giá cùng cơ chế đếm `max_uses_per_user`.  |
+| Transactional | `PUT /api/users/me`, `POST /api/apply-coupon`    | §2.2, §5.1   | FR-04, FR-09 | `PUT /api/users/me` là thao tác ghi thật xuống dòng dữ liệu người dùng; `apply-coupon` kích hoạt phần tính toán mã giảm giá cùng cơ chế đếm `max_uses_per_user`.                          |
 
 **Base URL:** `http://localhost:3000` (theo tài liệu API spec).
 
 **Cam kết không trùng lặp.** Luồng của tôi là **hành trình hồ sơ cá nhân + lịch sử đơn hàng** (FR-04 / FR-11 / FR-09). Không thành viên nào khác kiểm thử FR-04 (quản lý hồ sơ cá nhân). Các thành viên trong nhóm kiểm thử:
 
-| Thành viên | Luồng nghiệp vụ của họ                                                                              | Phần trùng với tôi          |
-| ---------- | --------------------------------------------------------------------------------------------------- | --------------------------- |
-| _<tên>_    | Hành trình mua sắm: login → tìm sản phẩm → chi tiết sản phẩm → giỏ hàng → checkout                 | Chỉ `POST /api/login`       |
-| _<tên>_    | _<nhóm categories / forgot-password / coupon / cancel-order>_                                        | _<xem mục tồn đọng bên dưới>_ |
-| _<tên>_    | Hành trình admin danh mục: login → danh sách categories → tạo category                              | Chỉ `POST /api/login`       |
-| _<tên>_    | Hành trình admin: login → admin orders → admin users → import products → cập nhật trạng thái đơn   | Chỉ `POST /api/login`       |
+| Thành viên | Luồng nghiệp vụ của họ                                                                           | Phần trùng với tôi            |
+| ---------- | ------------------------------------------------------------------------------------------------ | ----------------------------- |
+| _<tên>_    | Hành trình mua sắm: login → tìm sản phẩm → chi tiết sản phẩm → giỏ hàng → checkout               | Chỉ `POST /api/login`         |
+| _<tên>_    | _<nhóm categories / forgot-password / coupon / cancel-order>_                                    | _<xem mục tồn đọng bên dưới>_ |
+| _<tên>_    | Hành trình admin danh mục: login → danh sách categories → tạo category                           | Chỉ `POST /api/login`         |
+| _<tên>_    | Hành trình admin: login → admin orders → admin users → import products → cập nhật trạng thái đơn | Chỉ `POST /api/login`         |
 
 `POST /api/login` được dùng chung bởi tất cả thành viên vì mọi hành trình auth-heavy đều cần token; tuy nhiên các _luồng nghiệp vụ_ vẫn khác biệt, và đó mới là điều đề bài yêu cầu. Các bước read-heavy và transactional của tôi không trùng với bất kỳ thành viên nào.
 
@@ -84,28 +84,28 @@ Ba nhóm endpoint được bao phủ bởi **một** luồng nghiệp vụ end-t
 
 ### 2.1 Cấu hình phần cứng
 
-| Hạng mục       | Giá trị                                        |
-| -------------- | ---------------------------------------------- |
-| Hostname       | _<phải trùng với các bài tập trước>_           |
-| CPU            | _<model, số nhân/luồng, xung cơ bản/boost>_    |
-| RAM            | _<dung lượng, loại, bus>_                      |
-| Ổ cứng         | _<loại, model>_                                |
-| GPU            | _<model>_                                      |
-| Hệ điều hành   | _<tên + build>_                                |
+| Hạng mục       | Giá trị                                         |
+| -------------- | ----------------------------------------------- |
+| Hostname       | _<phải trùng với các bài tập trước>_            |
+| CPU            | _<model, số nhân/luồng, xung cơ bản/boost>_     |
+| RAM            | _<dung lượng, loại, bus>_                       |
+| Ổ cứng         | _<loại, model>_                                 |
+| GPU            | _<model>_                                       |
+| Hệ điều hành   | _<tên + build>_                                 |
 | Java / Runtime | _<phiên bản JVM của JMeter, hoặc phiên bản k6>_ |
-| Mạng           | localhost (loopback) — _<hoặc điền vào>_       |
+| Mạng           | localhost (loopback) — _<hoặc điền vào>_        |
 
 **Bằng chứng:** `evidence/hardware/dxdiag.png` (ảnh chụp màn hình), `evidence/hardware/dxdiag.txt`.
 
 ### 2.2 Triển khai SUT
 
-| Hạng mục                     | Giá trị                                    |
-| ---------------------------- | ------------------------------------------ |
-| Cách khởi chạy               | _<docker compose / npm start / ...>_       |
-| URL:port của backend         | _<http://localhost:PORT>_                  |
-| Cơ sở dữ liệu                | _<SQLite / ...>_ , file tại _<đường dẫn>_  |
-| Dữ liệu seed                 | _<cách seed CSDL / số dòng>_               |
-| Có reset CSDL giữa các lần chạy? | _<có/không — bằng cách nào>_           |
+| Hạng mục                         | Giá trị                                   |
+| -------------------------------- | ----------------------------------------- |
+| Cách khởi chạy                   | _<docker compose / npm start / ...>_      |
+| URL:port của backend             | _<http://localhost:PORT>_                 |
+| Cơ sở dữ liệu                    | _<SQLite / ...>_ , file tại _<đường dẫn>_ |
+| Dữ liệu seed                     | _<cách seed CSDL / số dòng>_              |
+| Có reset CSDL giữa các lần chạy? | _<có/không — bằng cách nào>_              |
 
 ### 2.3 Máy sinh tải (load generator)
 
@@ -119,18 +119,32 @@ Chạy trên **cùng máy** với SUT / trên máy riêng — _<ghi rõ trườn
 
 Tôi dẫn dắt AI đi qua từng bước của kỹ thuật kiểm thử thay vì đưa ra một prompt chung chung duy nhất. Tóm tắt chuỗi tương tác (prompt và output đầy đủ nằm ở Phụ lục A):
 
-| #   | Bước                          | Mục đích của prompt                                                          | AI tạo ra gì                                                                          | Kết luận của tôi                                        |
-| --- | ----------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| 1   | Khảo sát endpoint             | Yêu cầu AI đọc ảnh chụp endpoint của nhóm và đề xuất luồng không trùng lặp   | Đề xuất luồng hồ sơ cá nhân, nhưng dùng route `/api/profile` **không tồn tại**        | **Đã bác bỏ** — xem §3.6 dòng 1 (audit \#2, INVALID)   |
-| 2   | Đối chiếu đặc tả              | Cung cấp `api_spec.md` và yêu cầu mọi endpoint phải kèm số mục tham chiếu    | Dựng lại luồng 5 bước, mỗi bước có mục tham chiếu (§1.2, §2.1, §4.4, §2.2, §5.1)     | Chấp nhận, còn 3 vấn đề tồn đọng ở §1 (audit \#3)      |
-| 3   | Tham số hóa                   | Yêu cầu cấu trúc CSV và trường nào cần thay đổi theo từng VU                 | Ba file CSV kèm chế độ chia sẻ; số dòng ban đầu tính sai                              | Đã sửa số dòng — xem §3.6 dòng 2 (audit \#4)           |
-| 4   | Định hình kịch bản Load       | Yêu cầu thread / ramp-up / think-time kèm lý giải                            | 50 VU / ramp 60s / 600s, think time Uniform 1,5–4 giây                                 | Chấp nhận thiết kế, nhưng cài đặt timer sai (§3.6 dòng 4) |
-| 5   | Assertion + correlation       | Yêu cầu assertion kiểm tra body chứ không chỉ status code                    | 9 assertion, có `$.email` khớp CSV; 3 JSON Extractor                                   | Chấp nhận, trừ giá trị mặc định `userId=0` (§3.6 dòng 5) |
-| 6   | Sinh file JMX Stress          | Yêu cầu hồ sơ tăng tải theo bậc, không phụ thuộc plugin                      | 5 Thread Group với delay lệch nhau, cộng dồn 20→100 VU                                 | Chấp nhận (audit \#6)                                   |
-| 7   | Sinh file JMX Spike           | Yêu cầu hình dạng spike kèm giai đoạn đo phục hồi                            | 3 giai đoạn: nền 10 VU → spike 100 VU (ramp 5s) → nền 10 VU dài gấp đôi              | Chấp nhận (audit \#7)                                   |
-| 8   | **Rà soát chéo toàn bộ**      | Yêu cầu AI đóng vai người rà soát độc lập, kiểm tra lại cả ba file           | Phát hiện **4 lỗi ngữ nghĩa** mà 3 lượt tự kiểm tra trước đó đều bỏ sót               | **Đây là bước có giá trị nhất** — xem §3.6 dòng 3–6 (audit \#8) |
+| #   | Bước                     | Mục đích của prompt                                                        | AI tạo ra gì                                                                     | Kết luận của tôi                                                |
+| --- | ------------------------ | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 1   | Khảo sát endpoint        | Yêu cầu AI đọc ảnh chụp endpoint của nhóm và đề xuất luồng không trùng lặp | Đề xuất luồng hồ sơ cá nhân, nhưng dùng route `/api/profile` **không tồn tại**   | **Đã bác bỏ** — xem §3.6 dòng 1 (audit \#2, INVALID)            |
+| 2   | Đối chiếu đặc tả         | Cung cấp `api_spec.md` và yêu cầu mọi endpoint phải kèm số mục tham chiếu  | Dựng lại luồng 5 bước, mỗi bước có mục tham chiếu (§1.2, §2.1, §4.4, §2.2, §5.1) | Chấp nhận, còn 3 vấn đề tồn đọng ở §1 (audit \#3)               |
+| 3   | Tham số hóa              | Yêu cầu cấu trúc CSV và trường nào cần thay đổi theo từng VU               | Ba file CSV kèm chế độ chia sẻ; số dòng ban đầu tính sai                         | Đã sửa số dòng — xem §3.6 dòng 2 (audit \#4)                    |
+| 4   | Định hình kịch bản Load  | Yêu cầu thread / ramp-up / think-time kèm lý giải                          | 50 VU / ramp 60s / 600s, think time Uniform 1,5–4 giây                           | Chấp nhận thiết kế, nhưng cài đặt timer sai (§3.6 dòng 4)       |
+| 5   | Assertion + correlation  | Yêu cầu assertion kiểm tra body chứ không chỉ status code                  | 9 assertion, có `$.email` khớp CSV; 3 JSON Extractor                             | Chấp nhận, trừ giá trị mặc định `userId=0` (§3.6 dòng 5)        |
+| 6   | Sinh file JMX Stress     | Yêu cầu hồ sơ tăng tải theo bậc, không phụ thuộc plugin                    | 5 Thread Group với delay lệch nhau, cộng dồn 20→100 VU                           | Chấp nhận (audit \#6)                                           |
+| 7   | Sinh file JMX Spike      | Yêu cầu hình dạng spike kèm giai đoạn đo phục hồi                          | 3 giai đoạn: nền 10 VU → spike 100 VU (ramp 5s) → nền 10 VU dài gấp đôi          | Chấp nhận (audit \#7)                                           |
+| 8   | **Rà soát chéo toàn bộ** | Yêu cầu AI đóng vai người rà soát độc lập, kiểm tra lại cả ba file         | Phát hiện **4 lỗi ngữ nghĩa** mà 3 lượt tự kiểm tra trước đó đều bỏ sót          | **Bước giá trị nhất trong 8 bước đầu** — §3.6 dòng 3–6 (audit \#8) |
+| 9   | Dựng Agent Skill         | Đóng gói quy trình thành skill tái sử dụng, mã hóa sẵn 4 lỗi đã gặp        | `jmeter-testplan-eshop`: SKILL.md, 4 file tham chiếu, template XML, script kiểm tra | Chấp nhận — xem §6 (audit \#9)                                  |
+| 10  | Sinh lại Spike bằng skill | Kiểm chứng skill có thật sự tránh được 4 lỗi cũ hay không                 | File Spike mới sạch cả 4 lỗi ngay từ lần sinh đầu, nhưng **tự sinh một lỗi mới** (assertion PUT) | Chấp nhận file, ghi nhận lỗi mới — §3.6 dòng 10 (audit \#10)    |
+| 11  | **Đối chiếu mã nguồn SUT** | Cung cấp `group05_eshop/backend/` và yêu cầu kiểm chứng mọi giả định còn treo | Phát hiện **4 lỗi mới** (§3.6 dòng 8–11), trong đó 2 lỗi **không nằm trong file `.jmx`**; xác minh dứt điểm 3 giả định treo từ bước 2 | **Bước quyết định** — nếu bỏ qua, cả ba bài test vẫn chạy nhưng cho ra `.jtl` vô nghĩa (audit \#11) |
 
-> **Nhận xét về chính quy trình này.** Bảy bước đầu đi theo đúng tinh thần "dẫn dắt AI từng bước" mà đề bài yêu cầu, và mỗi bước đều cho ra sản phẩm dùng được. Nhưng bước 8 mới là bước phát hiện ra rằng ba trong số các sản phẩm đó **không chạy đúng như thiết kế**. Bài học: chia nhỏ prompt giúp AI tạo ra cấu trúc tốt hơn, nhưng **không** giúp nó tự phát hiện lỗi ngữ nghĩa — muốn vậy phải có một lượt rà soát riêng với vai trò đối nghịch, và tốt nhất là kèm kiểm chứng thực tế trên môi trường thật.
+> **Nhận xét về chính quy trình này.** Tám bước đầu đi theo đúng tinh thần "dẫn dắt AI từng bước" mà đề bài yêu cầu, và mỗi bước đều cho ra sản phẩm dùng được. Nhưng bước 8 mới phát hiện ra rằng ba trong số các sản phẩm đó **không chạy đúng như thiết kế**, và bước 11 còn lộ ra một tầng sai lệch sâu hơn nữa.
+>
+> **Bốn tầng kiểm chứng — mỗi tầng bắt được loại lỗi mà tầng trước không thấy:**
+>
+> | Tầng | Cách kiểm | Bắt được | Về nguyên lý không thể thấy |
+> | --- | --- | --- | --- |
+> | 1 | AI tự kiểm tra | Lỗi cú pháp XML | Mọi lỗi ngữ nghĩa — 3 lượt đều báo "OK" |
+> | 2 | `validate_jmx.py` | 4 lỗi ngữ nghĩa JMeter (§3.6 dòng 3–6) | Bất cứ thứ gì nằm ngoài file `.jmx` |
+> | 3 | Đối chiếu `api_spec.md` | Tên endpoint bịa (§3.6 dòng 1) | Đặc tả mô tả *schema*, không mô tả *dữ liệu đã seed* |
+> | 4 | **Đọc mã nguồn + truy vấn CSDL thật** | Dữ liệu test lệch pha với CSDL (dòng 8–9); hành vi endpoint khác đặc tả (dòng 10–11) | Vẫn chưa chứng minh file mở được bằng JMeter thật |
+>
+> Bài học quan trọng nhất không phải là "AI hay sai", mà là **mỗi tầng kiểm chứng chỉ nhìn thấy loại lỗi nằm trong phạm vi dữ liệu của nó**. `validate_jmx.py` do chính AI viết, chạy sạch trên cả ba file, và điều đó hoàn toàn không mâu thuẫn với việc 120 tài khoản trong `users.csv` không tồn tại trong CSDL — vì thông tin ấy không nằm trong file mà script đọc. Một công cụ kiểm tra chỉ mạnh ngang phạm vi dữ liệu nó được nhìn thấy, và cảm giác an toàn do nó tạo ra tỉ lệ nghịch với phạm vi đó.
 
 ### 3.2 Luồng nghiệp vụ end-to-end
 
@@ -154,50 +168,72 @@ Cả ba test plan đều chạy cùng một thân thread group:
 
 4. PUT  /api/users/me                                                [transactional]
    header: Authorization: Bearer ${authToken}
-   body: {"name": "${name}", "shipping_address": "${address}", "phone": "${phone}"}
+   body: {"name": "${pname}", "shipping_address": "${paddress}", "phone": "${pphone}"}
          (profiles.csv — mỗi dòng một giá trị khác nhau, để mỗi VU ghi một giá trị riêng)
-   assert: HTTP 200
+   assert: HTTP 200 VÀ body chứa "Profile updated"
    think time: <n> ms
 
-5. POST /api/apply-coupon                                            [transactional]
+4b. GET /api/users/me                                                [verify ghi]
+   header: Authorization: Bearer ${authToken}
+   assert: HTTP 200 VÀ $.phone == ${pphone}
+   → Bước bắt buộc, KHÔNG phải tùy chọn: server.js:131-134 chỉ trả
+     {"message":"Profile updated"} nên bản thân response của bước 4 không
+     chứng minh được lệnh UPDATE đã commit. Phải đọc lại mới có bằng chứng.
+   think time: <n> ms
+
+5. POST /api/apply-coupon                                     [read-only + compute]
    header: Authorization: Bearer ${authToken}
    body: {"code": "${couponCode}", "total_amount": ${totalAmount}, "user_id": ${userId}}
          (coupons.csv)
+   bọc trong If Controller: "${userId}" != "USERID_NOT_FOUND"
    assert: HTTP 200 VÀ body chứa "final_amount"
 ```
 
-**Lý giải độ bao phủ.** Bước 1 thuộc nhóm **auth-heavy**: đây là lời gọi duy nhất thực hiện xác thực thông tin đăng nhập, nó phải so khớp hash mật khẩu và ký JWT — hai thao tác khiến login trở thành tác vụ nặng CPU — đồng thời đây cũng là endpoint chịu ràng buộc khóa 3 lần của FR-02. Bước 2–3 thuộc nhóm **read-heavy**: cả hai đều là `GET` có xác thực và đọc dữ liệu riêng của từng người dùng; vì nội dung response khác nhau theo từng user nên chúng không thể được phục vụ từ cache dùng chung — khác với danh sách sản phẩm công khai — do đó chúng đo được khối lượng truy vấn CSDL thực sự phát sinh trên mỗi request khi có nhiều người dùng đồng thời. Bước 4–5 thuộc nhóm **transactional**: bước 4 là một lệnh `UPDATE` lên dòng dữ liệu người dùng của chính người gọi (được tham số hóa để không có hai virtual user nào ghi cùng một giá trị, tránh trường hợp ghi mà không thay đổi gì), còn bước 5 kích hoạt phần tính toán mã giảm giá cùng cơ chế đếm `max_uses_per_user`. Mọi request sau bước 1 đều phụ thuộc vào token trích xuất được từ bước đó, nên đây là một hành trình end-to-end thực sự chứ không phải năm lời gọi rời rạc.
+**Lý giải độ bao phủ.** Bước 1 thuộc nhóm **auth-heavy**: đây là lời gọi duy nhất thực hiện xác thực thông tin đăng nhập, nó phải so khớp hash mật khẩu và ký JWT — hai thao tác khiến login trở thành tác vụ nặng CPU — đồng thời đây cũng là endpoint chịu ràng buộc khóa 3 lần của FR-02. Bước 2–3 thuộc nhóm **read-heavy**: cả hai đều là `GET` có xác thực và đọc dữ liệu riêng của từng người dùng; vì nội dung response khác nhau theo từng user nên chúng không thể được phục vụ từ cache dùng chung — khác với danh sách sản phẩm công khai — do đó chúng đo được khối lượng truy vấn CSDL thực sự phát sinh trên mỗi request khi có nhiều người dùng đồng thời. Bước 4 thuộc nhóm **transactional**: đây là lệnh `UPDATE` lên dòng dữ liệu người dùng của chính người gọi (`server.js:131` — `db.run` với câu lệnh `UPDATE users SET ...`), được tham số hóa để không có hai virtual user nào ghi cùng một giá trị, tránh trường hợp ghi mà không thay đổi gì. Bước 4b đọc lại để xác nhận lệnh ghi đã commit. Bước 5 thuộc nhóm **read-only + compute**: nó chỉ `SELECT` rồi tính toán, không ghi gì xuống CSDL. Mọi request sau bước 1 đều phụ thuộc vào token trích xuất được từ bước đó, nên đây là một hành trình end-to-end thực sự chứ không phải năm lời gọi rời rạc.
 
-> **Lưu ý chuyển tiếp từ §1.** Nếu `POST /api/apply-coupon` thực chất chỉ là phép tính toán thuần túy không ghi dữ liệu, thì bước 5 thuộc nhóm read-heavy chứ không phải transactional, và phải được thay bằng `PUT /api/orders/:id/cancel` (§4.6), sử dụng `orderId` đã trích xuất ở bước 3. Cần kiểm chứng trước khi chốt các test plan.
+> **Đã kiểm chứng: `POST /api/apply-coupon` KHÔNG ghi CSDL.** Nghi vấn nêu ở §1 nay đã có câu trả lời dứt khoát từ mã nguồn. `server.js:363-441` chỉ thực hiện `SELECT` từ bảng `coupons` (dòng 370) và đếm trên `coupon_usage` (dòng 388) rồi tính `discount_amount` / `final_amount` — **không có một lệnh `INSERT` hay `UPDATE` nào**. Bảng `coupon_usage` chỉ được ghi bởi `POST /api/coupon-usage` (`server.js:444-454`), là một endpoint **khác** và không nằm trong luồng này. Do đó `max_uses_per_user` không bao giờ tăng khi chạy test, và bước 5 phải mang nhãn `[read-only + compute]`.
+>
+> **Hệ quả với độ bao phủ ba nhóm:** luồng này chỉ còn **một** endpoint transactional thật sự là `PUT /api/users/me` (bước 4). Điều này **vẫn thỏa** yêu cầu của đề bài — đề chỉ yêu cầu bao phủ cả ba nhóm, không quy định số lượng endpoint mỗi nhóm — và bước 4b tăng cường bằng chứng cho nhóm này bằng cách xác minh dữ liệu thật sự xuống được CSDL. Phương án thay bước 5 bằng `PUT /api/orders/:id/cancel` (§4.6) đã **không** được chọn: tài khoản `perf*` vừa seed chưa có đơn hàng nào nên `$[0].id` luôn trả về giá trị mặc định, và việc dựng sẵn đơn hàng cho 120 tài khoản chỉ để có thêm một endpoint transactional là chi phí không tương xứng.
 
 **Các điểm correlation.**
 
-| Giá trị trích xuất | Từ bước | Extractor                                          | Dùng ở bước                                                       |
-| ------------------ | ------- | -------------------------------------------------- | ----------------------------------------------------------------- |
-| `authToken`        | 1       | JSON Extractor `$.token`                           | 2, 3, 4, 5 — header `Authorization: Bearer ${authToken}`          |
-| `userId`           | 1       | JSON Extractor `$.user.id`                         | 5 (trường `user_id` trong body)                                   |
-| `orderId`          | 3       | JSON Extractor `$[0].id`, mặc định `NOT_FOUND`     | Chỉ dùng nếu bước 5 đổi sang `PUT /api/orders/:id/cancel`         |
+| Giá trị trích xuất | Từ bước | Extractor                                      | Dùng ở bước                                               |
+| ------------------ | ------- | ---------------------------------------------- | --------------------------------------------------------- |
+| `authToken`        | 1       | JSON Extractor `$.token`, mặc định `TOKEN_NOT_FOUND`     | 2, 3, 4, 4b, 5 — header `Authorization: Bearer ${authToken}` |
+| `userId`           | 1       | JSON Extractor `$.user.id`, mặc định `USERID_NOT_FOUND`  | 5 (trường `user_id` trong body)                             |
+| `orderId`          | 3       | JSON Extractor `$[0].id`, mặc định `ORDERID_NOT_FOUND`   | Dự phòng — hiện không dùng ở bước nào                       |
+
+**Đã kiểm chứng cấu trúc response.** Ba JSON Path trên đều được xác nhận bằng cách đọc mã nguồn, không phải suy đoán từ đặc tả:
+
+| JSON Path   | Nguồn xác minh                                                       | Kết luận |
+| ----------- | -------------------------------------------------------------------- | -------- |
+| `$.token`   | `server.js:52` — `res.json({ message, token, user })`                | ✅ đúng |
+| `$.user.id` | `server.js:52` — `user` là toàn bộ row từ `SELECT *`, có cột `id`    | ✅ đúng |
+| `$.email`   | `server.js:113-114` — `GET /api/users/me` trả nguyên row, `email` ở **cấp gốc** chứ không lồng trong `user` | ✅ đúng |
+
+> Đây là điểm mà Agent Skill đã đánh dấu ⚠️ ngay từ đầu vì `api_spec.md` §1.2 chỉ ghi *"trả về chuỗi JWT `token` và thông tin `user`"* mà không nêu cấu trúc JSON. Nếu cấu trúc thật là `$.data.token`, extractor sẽ trả về `TOKEN_NOT_FOUND`, If Controller chặn toàn bộ các bước sau, và bài test chỉ đo mỗi endpoint login **mà không báo lỗi gì**. Việc kiểm chứng bằng mã nguồn đã loại bỏ rủi ro này.
 
 > Việc trích xuất `userId` từ response đăng nhập thay vì đọc từ CSV giúp request áp mã giảm giá luôn nhất quán với token thực sự được cấp. Nếu lấy `user_id` từ CSV, giá trị này có thể lệch với JWT khi dữ liệu seed thay đổi, khiến bước 5 thất bại vì lý do không liên quan đến hiệu năng.
 >
-> Nếu có dùng `orderId`, hãy bọc bước 5 trong một **If Controller** với điều kiện `${orderId} != NOT_FOUND` — một tài khoản vừa được seed sẽ chưa có đơn hàng nào, và việc gọi `PUT /api/orders/NOT_FOUND/cancel` sẽ làm tăng error rate vì lỗi dữ liệu chứ không phải vì tín hiệu hiệu năng.
+> **Mọi giá trị mặc định đều được chọn để gây lỗi quan sát được** (`*_NOT_FOUND` thay vì `0` hay chuỗi rỗng) — xem lỗi \#5 ở §3.6. Bước 5 được bọc trong If Controller `"${userId}" != "USERID_NOT_FOUND"` để một lần trích xuất hỏng không sinh thêm request rác làm sai lệch tỉ lệ lỗi.
 
 **Assertion cho từng bước.**
 
-| Bước | Assertion                                                | Lý do                                                                                                                                                                                              |
-| ---- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1    | HTTP 200 **và** `$.token` tồn tại, không rỗng            | Chỉ kiểm tra status code sẽ vẫn "pass" khi server trả về khung lỗi kèm mã 200; ngoài ra token rỗng sẽ âm thầm phá vỡ bước 2–5, khiến chúng thất bại vì lý do sai lệch                              |
-| 2    | HTTP 200 **và** `$.email` khớp với `${email}` trong CSV  | Chứng minh token ánh xạ đúng người dùng. Khi tải cao, đây chính là assertion có thể phát hiện tình trạng lẫn session/token — một lỗi tính đúng đắn mà việc kiểm tra status code đơn thuần không thấy |
-| 3    | HTTP 200 **và** body phân tích được thành mảng JSON      | Bắt được response "thành công nhưng sai định dạng" khi có tải. Cố ý **không** yêu cầu mảng khác rỗng: một tài khoản vừa seed hoàn toàn có thể chưa có đơn hàng nào                                  |
-| 4    | HTTP 200 **và** `$.name` khớp giá trị `${name}` vừa ghi  | Việc server trả lại đúng giá trị vừa ghi là bằng chứng rẻ tiền nhất cho thấy lệnh `UPDATE` thực sự đã commit, chứ không phải trả 200 từ một lỗi bị nuốt                                             |
-| 5    | HTTP 200 **và** có trường `$.final_amount`               | Theo API spec §5.1, response bắt buộc chứa `discount_amount` / `final_amount`; nếu trả 200 mà thiếu chúng thì phép tính đã không chạy                                                               |
-| tất cả | Duration assertion — _<ghi rõ có dùng hay không>_       | Nếu bật, nó sẽ tính các response chậm-nhưng-đúng thành lỗi, làm lẫn lộn độ trễ với thất bại. Khuyến nghị: **không bật**, thay vào đó phân tích độ trễ qua các percentile trong file `.jtl`          |
+| Bước   | Assertion                                               | Lý do                                                                                                                                                                                                |
+| ------ | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1      | HTTP 200 **và** `$.token` tồn tại, không rỗng           | Chỉ kiểm tra status code sẽ vẫn "pass" khi server trả về khung lỗi kèm mã 200; ngoài ra token rỗng sẽ âm thầm phá vỡ bước 2–5, khiến chúng thất bại vì lý do sai lệch                                |
+| 2      | HTTP 200 **và** `$.email` khớp với `${email}` trong CSV | Chứng minh token ánh xạ đúng người dùng. Khi tải cao, đây chính là assertion có thể phát hiện tình trạng lẫn session/token — một lỗi tính đúng đắn mà việc kiểm tra status code đơn thuần không thấy |
+| 3      | HTTP 200 **và** body phân tích được thành mảng JSON     | Bắt được response "thành công nhưng sai định dạng" khi có tải. Cố ý **không** yêu cầu mảng khác rỗng: một tài khoản vừa seed hoàn toàn có thể chưa có đơn hàng nào                                   |
+| 4      | HTTP 200 **và** body chứa `Profile updated`             | `server.js:131-134` chỉ trả `{"message":"Profile updated"}` — **không** trả lại giá trị vừa ghi. Thiết kế ban đầu assert `$.name` khớp giá trị vừa ghi sẽ **fail 100%** (lỗi \#10 §3.6). Bản thân assertion này chỉ chứng minh handler chạy tới cuối, chưa chứng minh dữ liệu đã xuống CSDL |
+| **4b** | HTTP 200 **và** `$.phone` khớp `${pphone}` vừa ghi      | Đây mới là bằng chứng lệnh `UPDATE` đã commit. Đọc lại qua một request độc lập là cách duy nhất kiểm chứng được, vì response của bước 4 không mang thông tin đó. Chọn `$.phone` thay vì `$.name` vì `profiles.csv` sinh số điện thoại duy nhất theo từng dòng nên khó trùng ngẫu nhiên |
+| 5      | HTTP 200 **và** có trường `$.final_amount`              | Theo API spec §5.1, response bắt buộc chứa `discount_amount` / `final_amount`; nếu trả 200 mà thiếu chúng thì phép tính đã không chạy. **Lưu ý:** assertion này **không** bắt được bug tính sai phần trăm của SUT (`server.js:399-401` dùng `total * (1 - discount_value)` khiến `SAVE10` trên 500 000 ₫ trả `final_amount = 5 000 000` thay vì 450 000) — response vẫn là 200 và vẫn có trường `final_amount`. Đây là giới hạn cố hữu của kiểm thử hiệu năng, ghi nhận ở §3.11 |
+| tất cả | Duration assertion — _<ghi rõ có dùng hay không>_       | Nếu bật, nó sẽ tính các response chậm-nhưng-đúng thành lỗi, làm lẫn lộn độ trễ với thất bại. Khuyến nghị: **không bật**, thay vào đó phân tích độ trễ qua các percentile trong file `.jtl`           |
 
 ### 3.3 Dữ liệu đầu vào dạng data-driven (CSV)
 
 | File                | Cột dữ liệu                   | Số dòng | Dùng ở bước | Chế độ chia sẻ / recycle                        |
 | ------------------- | ----------------------------- | ------- | ----------- | ----------------------------------------------- |
-| `data/users.csv`    | `email,password`              | 120     | Bước 1      | All threads, `recycle=true`, `stopThread=false`  |
+| `data/users.csv`    | `email,password`              | 120     | Bước 1      | All threads, `recycle=true`, `stopThread=false` |
 | `data/profiles.csv` | `name,shipping_address,phone` | 60      | Bước 4      | All threads, `recycle=true`                     |
 | `data/coupons.csv`  | `code,total_amount`           | 6       | Bước 5      | All threads, `recycle=true`                     |
 
@@ -233,11 +269,11 @@ VIP100,400000
 
 **Cách chọn giá trị `coupons.csv`.** Mỗi dòng phải thỏa `total_amount > min_order_amount` của mã tương ứng (`server.js:379` dùng `>` chứ không phải `>=`), nếu không server trả 400 và assertion HTTP 200 sẽ fail vì **dữ liệu sai**, không phải vì hiệu năng:
 
-| Mã       | `min_order_amount` | `max_uses_per_user` | `total_amount` đã dùng |
-| -------- | ------------------ | ------------------- | ---------------------- |
+| Mã       | `min_order_amount` | `max_uses_per_user` | `total_amount` đã dùng        |
+| -------- | ------------------ | ------------------- | ----------------------------- |
 | `SAVE10` | 300 000            | 1                   | 350 000 / 500 000 / 1 000 000 |
-| `BIGBUY` | 500 000            | 1                   | 600 000 / 900 000      |
-| `VIP100` | 300 000            | 2                   | 400 000                |
+| `BIGBUY` | 500 000            | 1                   | 600 000 / 900 000             |
+| `VIP100` | 300 000            | 2                   | 400 000                       |
 
 Hai mã còn lại trong seed **cố ý không dùng**: `EXPIRED` hết hạn từ 2020 (`server.js:382` trả 400), và `TET2025` chỉ là ví dụ minh họa trong `api_spec.md` §6.4 chứ không tồn tại trong CSDL.
 
@@ -249,17 +285,17 @@ Hai mã còn lại trong seed **cố ý không dùng**: `EXPIRED` hết hạn t�
 
 > ⚠️ **Trạng thái hiện tại của ba file test plan.** Các tham số dưới đây là **thiết kế dự kiến**. Đợt rà soát ghi ở §3.6 (dòng 3–6) đã phát hiện bốn lỗi khiến cả ba file **chưa chạy đúng như thiết kế** — nghiêm trọng nhất là lỗi hết dữ liệu CSV khiến bài test tự dừng ở khoảng giây 30. Phải sửa xong bốn lỗi đó rồi mới chạy thật; sau khi chạy, đối chiếu lại bảng này với số liệu thực tế trong `.jtl`.
 
-|                        | Load                                  | Stress                                          | Spike                                             |
-| ---------------------- | ------------------------------------- | ----------------------------------------------- | ------------------------------------------------- |
-| File test plan         | `23127344_Load_20260812.jmx`          | `23127344_Stress_20260812.jmx`                  | `23127344_Spike_20260812.jmx`                     |
-| Số virtual user (đỉnh) | 50                                    | 100 (5 bậc × 20 VU, cộng dồn)                   | 100 (nền 10 VU → spike 100 VU)                    |
-| Ramp-up                | 60 giây (~1 VU/giây)                  | Theo bậc: +20 VU mỗi 120 giây, mỗi bậc ramp 30s | **5 giây cho 100 VU** (gần như tức thời)          |
-| Thời gian giữ tải      | 600 giây                              | 600 giây (bậc cuối chỉ giữ 120 giây)            | Spike giữ 60 giây; tổng bài test 420 giây         |
-| Ramp-down              | Không (kết thúc theo scheduler)       | Không (mọi bậc cùng dừng ở giây 600)            | Spike tắt đột ngột ở giây 180, nền tiếp tục 240s  |
-| Số vòng lặp mỗi VU     | Lặp vô hạn đến hết thời lượng         | Lặp vô hạn đến hết thời lượng                   | Lặp vô hạn đến hết thời lượng từng giai đoạn      |
-| Think time             | Uniform 1,5–4 giây tùy bước           | Giống Load (dùng chung thân workflow)           | Giống Load (dùng chung thân workflow)             |
-| Listener               | **Summary Report**                    | **Aggregate Report**                            | **View Results Tree** (chỉ ghi lỗi)               |
-| Mục tiêu               | Quan sát hành vi ở trạng thái ổn định | Tìm điểm gãy (knee) của hệ thống                | Chịu được và **phục hồi** sau cú tăng tải đột ngột |
+|                        | Load                                  | Stress                                          | Spike                                                                                   |
+| ---------------------- | ------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------- |
+| File test plan         | `23127344_Load_20260812.jmx`          | `23127344_Stress_20260812.jmx`                  | `23127344_Spike_20260812.jmx`                                                           |
+| Số virtual user (đỉnh) | 50                                    | 100 (5 bậc × 20 VU, cộng dồn)                   | 100 (nền 10 VU → spike 100 VU)                                                          |
+| Ramp-up                | 60 giây (~1 VU/giây)                  | Theo bậc: +20 VU mỗi 120 giây, mỗi bậc ramp 30s | **5 giây cho 100 VU** (gần như tức thời)                                                |
+| Thời gian giữ tải      | 600 giây                              | 600 giây (bậc cuối chỉ giữ 120 giây)            | Spike giữ 60 giây; tổng bài test 420 giây                                               |
+| Ramp-down              | Không (kết thúc theo scheduler)       | Không (mọi bậc cùng dừng ở giây 600)            | Spike tắt đột ngột ở giây 180, nền tiếp tục 240s                                        |
+| Số vòng lặp mỗi VU     | Lặp vô hạn đến hết thời lượng         | Lặp vô hạn đến hết thời lượng                   | Lặp vô hạn đến hết thời lượng từng giai đoạn                                            |
+| Think time             | Uniform 1,5–4 giây tùy bước           | Giống Load (dùng chung thân workflow)           | Giống Load (dùng chung thân workflow)                                                   |
+| Listener               | **Summary Report**                    | **Aggregate Report**                            | **View Results Tree** (chỉ ghi lỗi)                                                     |
+| Mục tiêu               | Quan sát hành vi ở trạng thái ổn định | Tìm điểm gãy (knee) của hệ thống                | Chịu được và **phục hồi** sau cú tăng tải đột ngột                                      |
 | Tiêu chí đạt           | _<p95 < X ms, error rate < Y%>_       | _<xác định điểm knee; không crash>_             | _<p95 giai đoạn 3 trở về ≈ p95 giai đoạn 1 trong vòng Z giây; không còn 5xx sau spike>_ |
 
 **Hồ sơ tải của kịch bản Stress (5 bậc).** JMeter bản chuẩn không có sẵn cơ chế tăng tải theo bậc, nên tôi dùng 5 Thread Group riêng với `delay` lệch nhau — cách này **không cần cài plugin**, giúp file mở được trên mọi bản JMeter 5.6.3 gốc. Các bậc cộng dồn lên nhau và cùng kết thúc tại giây 600:
@@ -276,11 +312,11 @@ Mỗi bậc giữ tải ít nhất 120 giây trước khi bậc kế tiếp vào
 
 **Hồ sơ tải của kịch bản Spike (3 giai đoạn).** Tổng thời lượng 420 giây:
 
-| Giai đoạn | Khoảng thời gian | VU  | Ramp-up | Vai trò                                                      |
-| --------- | ---------------- | --- | ------- | ------------------------------------------------------------ |
-| 1 — Nền trước | giây 0–120   | 10  | 20 giây | Lấy p95 tham chiếu ở mức tải bình thường                     |
-| 2 — Spike     | giây 120–180 | 100 | **5 giây** | Cú tăng tải đột ngột: gấp 10 lần mức nền trong 5 giây     |
-| 3 — Nền sau   | giây 180–420 | 10  | 20 giây | **Đo phục hồi** — dài 240 giây, gấp đôi giai đoạn 1        |
+| Giai đoạn     | Khoảng thời gian | VU  | Ramp-up    | Vai trò                                               |
+| ------------- | ---------------- | --- | ---------- | ----------------------------------------------------- |
+| 1 — Nền trước | giây 0–120       | 10  | 20 giây    | Lấy p95 tham chiếu ở mức tải bình thường              |
+| 2 — Spike     | giây 120–180     | 100 | **5 giây** | Cú tăng tải đột ngột: gấp 10 lần mức nền trong 5 giây |
+| 3 — Nền sau   | giây 180–420     | 10  | 20 giây    | **Đo phục hồi** — dài 240 giây, gấp đôi giai đoạn 1   |
 
 **Vì sao giai đoạn 3 là phần quan trọng nhất.** Mục tiêu của spike test không chỉ là "hệ thống có sập khi tải tăng đột ngột không", mà còn là "sau khi tải rút đi thì hệ thống có trở về bình thường không, và mất bao lâu". Nếu test plan kết thúc ngay sau spike thì nó không thể trả lời câu hỏi thứ hai. Giai đoạn 3 được thiết kế dài gấp đôi giai đoạn 1 để đủ dữ liệu quan sát: **so sánh p95 của giai đoạn 3 với p95 của giai đoạn 1 chính là thước đo phục hồi**. Nếu p95 giai đoạn 3 vẫn cao hơn hẳn giai đoạn 1 cho tới cuối bài test, đó là dấu hiệu hệ thống chưa hồi phục — ví dụ connection pool chưa được giải phóng, hàng đợi còn tồn đọng, hoặc bộ nhớ chưa được thu hồi.
 
@@ -297,11 +333,11 @@ Tham số override: `-Jbasevusers=20 -Jspikevusers=150`.
 
 Ba loại listener / output **khác nhau**, không lặp lại:
 
-| Kịch bản | Report view                          | Phần tử JMeter             | Sản phẩm             | Vì sao view này phù hợp với kịch bản đó                                                                                                   |
-| -------- | ------------------------------------ | -------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Load     | **Summary Report**                   | `SummaryReport`            | `reports/load/...`   | Tải giữ đều nên con số tổng hợp là đủ; view này cho throughput và error rate gọn gàng trên toàn bộ giai đoạn ổn định                       |
-| Stress   | **Aggregate Report**                 | `StatVisualizer`           | `reports/stress/...` | Khi tải tăng dần thì phần đuôi phân phối mới là thứ đáng xem; view này có sẵn cột p90 / p95 / p99 để xác định điểm knee — Summary Report không có |
-| Spike    | **View Results Tree** (chỉ ghi lỗi)  | `ViewResultsFullVisualizer` | `reports/spike/...`  | Cần xem **chi tiết từng request thất bại** trong lúc spike (mã lỗi, nội dung response) — điều mà hai view tổng hợp kia không thể cho thấy   |
+| Kịch bản | Report view                         | Phần tử JMeter              | Sản phẩm             | Vì sao view này phù hợp với kịch bản đó                                                                                                           |
+| -------- | ----------------------------------- | --------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Load     | **Summary Report**                  | `SummaryReport`             | `reports/load/...`   | Tải giữ đều nên con số tổng hợp là đủ; view này cho throughput và error rate gọn gàng trên toàn bộ giai đoạn ổn định                              |
+| Stress   | **Aggregate Report**                | `StatVisualizer`            | `reports/stress/...` | Khi tải tăng dần thì phần đuôi phân phối mới là thứ đáng xem; view này có sẵn cột p90 / p95 / p99 để xác định điểm knee — Summary Report không có |
+| Spike    | **View Results Tree** (chỉ ghi lỗi) | `ViewResultsFullVisualizer` | `reports/spike/...`  | Cần xem **chi tiết từng request thất bại** trong lúc spike (mã lỗi, nội dung response) — điều mà hai view tổng hợp kia không thể cho thấy         |
 
 Ba loại listener hoàn toàn khác nhau, không lặp lại, đúng yêu cầu của đề bài.
 
@@ -311,21 +347,21 @@ Cả ba lần chạy đều đồng thời sinh ra file `.jtl` thô và thư m�
 
 ### 3.6 Rà soát của con người — những điểm AI làm sai
 
-| #   | AI đã tạo ra gì                                                                | Vì sao sai                                                                                                                                     | Tôi đã sửa thế nào                                    | Nguyên nhân gốc                                                    |
-| --- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------ |
-| 1   | Đề xuất endpoint `GET /api/profile` và `PUT /api/profile`                      | Hai route này **không tồn tại** trong SUT; endpoint thật là `GET /api/users/me` và `PUT /api/users/me` (API spec §2.1, §2.2)                  | Cung cấp `api_spec.md` và yêu cầu mọi endpoint phải kèm số mục tham chiếu | AI suy đoán tên route bằng cách khớp mẫu từ tiêu đề FR-04 thay vì đọc test basis; tôi cũng chưa cung cấp tài liệu API ngay từ đầu |
-| 2   | `users.csv` chỉ có 60 dòng, trong khi kịch bản Stress cộng dồn tới 100 VU      | Với `recycle=false` + `stopThread=true`, bậc 4 và 5 sẽ tự tắt thread ngay khi khởi động vì hết dữ liệu. Bài test vẫn "chạy xong" và xuất `.jtl` bình thường nhưng chỉ đo được ~60 VU thay vì 100 — **sai số âm thầm, không có thông báo lỗi nào** | Mở rộng `users.csv` lên 120 dòng, `profiles.csv` lên 60 dòng; ghi nguyên tắc "tính theo kịch bản nặng nhất" vào §3.3 | AI sinh CSV ở thời điểm chỉ mới biết kịch bản Load (50 VU), sau đó dựng Stress (100 VU) mà không tự đối chiếu ngược lại số dòng đã tạo — thiếu kiểm tra tính nhất quán xuyên suốt các artifact |
-| 3   | _<ví dụ: think time = 0 / cố định 100 ms>_                                     | _<không giống người dùng thật; làm RPS tăng ảo>_                                                                                               | _<Gaussian 2000 ± 500 ms>_                            | _<prompt chưa mô tả mô hình hành vi người dùng>_                   |
-| 4   | _<ví dụ: 500 thread ramp trong 1 giây cho test plan "Load">_                   | _<đó là spike chứ không phải load; ngoài ra vượt quá năng lực phần cứng của tôi>_                                                              | _<...>_                                               | _<mô hình không biết gì về phần cứng của tôi>_                     |
-| 3   | **`recycle=false` + `stopThread=true` kết hợp với `LoopController.loops = -1` (lặp vô hạn)** trong cả ba test plan | JMeter đọc CSV theo **mỗi vòng lặp**, không phải mỗi thread. Với vòng lặp vô hạn, file 120 dòng cạn sau đúng 120 vòng lặp **tính trên toàn bộ thread**, rồi `stopThread=true` giết mọi thread. Ước tính Load cần ~2.264 vòng lặp, Stress ~4.528, Spike ~3.170 — nghĩa là **cả ba bài test sẽ chết ở khoảng giây 30 thay vì chạy đủ 600/420 giây**. Nghiêm trọng nhất: JMeter không báo lỗi, file `.jtl` vẫn được xuất ra bình thường, chỉ là ít dữ liệu — rất dễ bị hiểu nhầm là "test đã chạy xong" | Đổi `users.csv` sang `recycle=true` + `stopThread=false`. Việc dùng lại tài khoản qua các vòng lặp **vẫn an toàn với FR-02** vì mật khẩu luôn đúng, mà lockout chỉ đếm số lần **thất bại** — cần xác minh giả định này trong mã nguồn SUT trước khi áp dụng | Lỗi suy luận của tôi, không phải lỗi cú pháp: tôi lập luận ở §3.3 rằng "mỗi VU một tài khoản riêng để tránh khóa dây chuyền", lập luận đó **chỉ đúng nếu mỗi VU chạy đúng 1 vòng lặp**. Khi chuyển sang mô hình lặp vô hạn theo thời lượng, tôi không rà lại kết luận cũ |
-| 4   | **5 Uniform Random Timer đặt ngang hàng với các sampler** trong cùng thread group | Trong JMeter, timer áp dụng cho **mọi sampler trong cùng scope** chứ không phải chỉ sampler đứng liền trước nó, và fire trước mỗi sampler. Năm timer ngang hàng nghĩa là mỗi bước đều phải chờ tổng của cả năm: **~13,25 giây/bước** thay vì 1,5–4 giây. Một vòng lặp mất ~66 giây thay vì ~13 giây, throughput thấp hơn thiết kế khoảng **5 lần** — mọi con số RPS đo được sẽ vô nghĩa | Lồng mỗi timer **vào bên trong** hashTree của sampler tương ứng để giới hạn scope, hoặc dùng một timer duy nhất ở cấp thread group nếu muốn think time đồng đều | Đây là quy tắc scope đặc thù của JMeter, khác với trực giác "đặt sau phần tử nào thì áp dụng cho phần tử đó". AI sinh cấu trúc trông rất hợp lý về mặt hình thức nhưng sai về ngữ nghĩa thực thi |
-| 5   | **`userId` có giá trị mặc định là `0`** khi JSON Extractor không tìm thấy `$.user.id` | Số `0` là một user_id **hợp lệ về kiểu dữ liệu**, nên request `apply-coupon` vẫn được gửi đi với `"user_id": 0`. Server có thể trả HTTP 200 kèm dữ liệu sai, hoặc tệ hơn là ghi nhận nhầm — trong cả hai trường hợp assertion đều pass và lỗi bị che giấu hoàn toàn | Đổi giá trị mặc định thành chuỗi rõ ràng sai như `USERID_NOT_FOUND` để request thất bại dứt khoát và hiện lên trong báo cáo | AI chọn `0` theo thói quen "giá trị mặc định cho kiểu số", không cân nhắc rằng trong ngữ cảnh này giá trị mặc định cần phải **gây lỗi có thể quan sát được**, chứ không phải trông vô hại |
-| 6   | **Kịch bản Spike cần đúng 120 tài khoản** (10 + 100 + 10 qua ba giai đoạn) trong khi `users.csv` có đúng 120 dòng | Không còn biên an toàn nào. Chỉ cần một thread khởi động lại hoặc một vòng lặp phát sinh thêm là hết dữ liệu. (Sau khi sửa lỗi số 3 sang `recycle=true` thì vấn đề này tự hết, nhưng nếu giữ nguyên `recycle=false` thì đây là quả bom hẹn giờ) | Xử lý cùng lúc với lỗi số 3 | AI tính số dòng CSV theo **số VU đỉnh tại một thời điểm**, không cộng dồn nhu cầu qua các giai đoạn nối tiếp nhau |
-| 7   | _<ví dụ: sai schema JMX / phần tử listener mà JMeter <phiên bản> không nhận>_  | _<file không mở được>_                                                                                                                         | _<...>_                                               | _<kiến thức về JMX của mô hình đã lệch phiên bản>_                 |
-| 8   | **`users.csv` dùng 120 tài khoản `perf001…perf120@test.com` không hề tồn tại trong CSDL** | `backend/database.js:91-94` chỉ seed **đúng hai** tài khoản: `admin@eshop.com` và `test@eshop.com`. Truy vấn trực tiếp `database.sqlite` xác nhận `SELECT COUNT(*) FROM users WHERE email LIKE 'perf%'` trả về **0**. Nếu chạy test, `server.js:37-38` trả 401 cho mọi request đăng nhập, `$.token` không trích được, If Controller chặn toàn bộ 4 bước sau — file `.jtl` chỉ chứa endpoint login toàn lỗi. Đây là **lỗi nghiêm trọng nhất** trong toàn bộ đợt rà soát: nó vô hiệu hóa 100% bài test nhưng không nằm trong file `.jmx` nên mọi công cụ kiểm tra `.jmx` đều không thấy | Viết `data/seed_perf_users.py` seed 120 tài khoản vào CSDL. Script idempotent (chạy lại không tạo bản trùng) và có cờ `--reset` để mở khóa giữa các lần chạy Stress/Spike. Đã chạy và xác minh: 120/120 tài khoản tồn tại | AI thiết kế dữ liệu test **từ đặc tả API** mà không đối chiếu với **trạng thái thật của CSDL**. `api_spec.md` mô tả cấu trúc request/response nhưng không liệt kê dữ liệu đã seed, nên AI không có cách nào biết — và cũng không đặt câu hỏi. Bài học: đặc tả API không phải là đặc tả dữ liệu |
-| 9   | **`coupons.csv` dùng mã `TET2025` không tồn tại, và `SAVE10` với `total_amount=250000` dưới mức tối thiểu** | `database.js:107-110` seed đúng 4 mã: `SAVE10`, `BIGBUY`, `VIP100`, `EXPIRED`. Mã `TET2025` được AI lấy từ **ví dụ minh họa** trong `api_spec.md` §6.4 và tưởng là dữ liệu có thật → `server.js:373` trả **404**. Dòng `SAVE10,250000` cũng fail vì `server.js:379` yêu cầu `total_amount > min_order_amount` mà `SAVE10` có `min_order_amount = 300000` → trả **400**. Tổng cộng **4/5 dòng CSV sẽ fail**, trong khi assertion mong đợi HTTP 200 | Thay toàn bộ `coupons.csv` bằng 6 dòng đối chiếu trực tiếp với dữ liệu seed. Đã viết script kiểm chứng từng dòng theo đúng logic `server.js:363-441`: cả 6 dòng đều trả 200 | AI không phân biệt được **ví dụ minh họa trong tài liệu** với **dữ liệu thật trong hệ thống**. Đây là dạng nhầm lẫn đặc trưng khi tài liệu vừa mô tả schema vừa chứa sample values |
-| 10  | **Assertion `PUT /api/users/me` kiểm tra body chứa số điện thoại vừa ghi** | `server.js:131-134` chỉ trả `{"message": "Profile updated"}` — **không** trả lại giá trị vừa ghi. Assertion này sẽ fail **100%** ở mọi vòng lặp, biến một endpoint hoạt động bình thường thành lỗi giả trong báo cáo | Đổi thành assert body chứa `Profile updated`, rồi **thêm bước `04b GET /api/users/me`** assert `$.phone` khớp giá trị vừa ghi. Đây mới thật sự là bằng chứng lệnh UPDATE đã commit xuống CSDL | Chính tôi (AI) tạo ra lỗi này khi sinh file Spike, xuất phát từ một nguyên tắc **đúng** trong `workflows.md` ("assertion ghi dữ liệu phải kiểm server trả lại đúng giá trị vừa ghi") nhưng áp dụng **mà không kiểm chứng** endpoint cụ thể có hành xử như vậy không. Nguyên tắc tốt áp dụng mù vẫn tạo ra lỗi |
-| 11  | **`POST /api/apply-coupon` bị gán nhãn `[transactional]`** | Đọc `server.js:363-441`: endpoint chỉ `SELECT` từ bảng `coupons` và `coupon_usage` rồi tính toán, **không có lệnh INSERT/UPDATE nào**. Bảng `coupon_usage` chỉ được ghi bởi `POST /api/coupon-usage` (`server.js:444-454`) — một endpoint **khác**, không nằm trong luồng này. Vậy nhãn transactional là sai | Đổi nhãn thành `[read-only + compute]` trong cả ba test plan. Nhóm transactional vẫn được phủ bởi `PUT /api/users/me` §2.2 (`server.js:131` có `db.run` UPDATE thật) | Giả định này đã được đánh dấu ⚠️ "chưa xác minh" ngay trong Agent Skill từ đầu, vì `api_spec.md` §5.1 mô tả endpoint *tính toán* còn §6.4 lại định nghĩa `max_uses_per_user` — hai chi tiết mâu thuẫn nhau. Skill đã đúng khi **không tự quyết mà đánh dấu để hỏi**; chỉ có mã nguồn mới trả lời dứt khoát được |
+| #   | AI đã tạo ra gì                                                                                                    | Vì sao sai                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Tôi đã sửa thế nào                                                                                                                                                                                                                                          | Nguyên nhân gốc                                                                                                                                                                                                                                                                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Đề xuất endpoint `GET /api/profile` và `PUT /api/profile`                                                          | Hai route này **không tồn tại** trong SUT; endpoint thật là `GET /api/users/me` và `PUT /api/users/me` (API spec §2.1, §2.2)                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Cung cấp `api_spec.md` và yêu cầu mọi endpoint phải kèm số mục tham chiếu                                                                                                                                                                                   | AI suy đoán tên route bằng cách khớp mẫu từ tiêu đề FR-04 thay vì đọc test basis; tôi cũng chưa cung cấp tài liệu API ngay từ đầu                                                                                                                                                                               |
+| 2   | `users.csv` chỉ có 60 dòng, trong khi kịch bản Stress cộng dồn tới 100 VU                                          | Với `recycle=false` + `stopThread=true`, bậc 4 và 5 sẽ tự tắt thread ngay khi khởi động vì hết dữ liệu. Bài test vẫn "chạy xong" và xuất `.jtl` bình thường nhưng chỉ đo được ~60 VU thay vì 100 — **sai số âm thầm, không có thông báo lỗi nào**                                                                                                                                                                                                                                                                                                                                     | Mở rộng `users.csv` lên 120 dòng, `profiles.csv` lên 60 dòng; ghi nguyên tắc "tính theo kịch bản nặng nhất" vào §3.3                                                                                                                                        | AI sinh CSV ở thời điểm chỉ mới biết kịch bản Load (50 VU), sau đó dựng Stress (100 VU) mà không tự đối chiếu ngược lại số dòng đã tạo — thiếu kiểm tra tính nhất quán xuyên suốt các artifact                                                                                                                  |
+| 3   | _<ví dụ: think time = 0 / cố định 100 ms>_                                                                         | _<không giống người dùng thật; làm RPS tăng ảo>_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | _<Gaussian 2000 ± 500 ms>_                                                                                                                                                                                                                                  | _<prompt chưa mô tả mô hình hành vi người dùng>_                                                                                                                                                                                                                                                                |
+| 4   | _<ví dụ: 500 thread ramp trong 1 giây cho test plan "Load">_                                                       | _<đó là spike chứ không phải load; ngoài ra vượt quá năng lực phần cứng của tôi>_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | _<...>_                                                                                                                                                                                                                                                     | _<mô hình không biết gì về phần cứng của tôi>_                                                                                                                                                                                                                                                                  |
+| 3   | **`recycle=false` + `stopThread=true` kết hợp với `LoopController.loops = -1` (lặp vô hạn)** trong cả ba test plan | JMeter đọc CSV theo **mỗi vòng lặp**, không phải mỗi thread. Với vòng lặp vô hạn, file 120 dòng cạn sau đúng 120 vòng lặp **tính trên toàn bộ thread**, rồi `stopThread=true` giết mọi thread. Ước tính Load cần ~2.264 vòng lặp, Stress ~4.528, Spike ~3.170 — nghĩa là **cả ba bài test sẽ chết ở khoảng giây 30 thay vì chạy đủ 600/420 giây**. Nghiêm trọng nhất: JMeter không báo lỗi, file `.jtl` vẫn được xuất ra bình thường, chỉ là ít dữ liệu — rất dễ bị hiểu nhầm là "test đã chạy xong"                                                                                  | Đổi `users.csv` sang `recycle=true` + `stopThread=false`. Việc dùng lại tài khoản qua các vòng lặp **vẫn an toàn với FR-02** vì mật khẩu luôn đúng, mà lockout chỉ đếm số lần **thất bại** — cần xác minh giả định này trong mã nguồn SUT trước khi áp dụng | Lỗi suy luận của tôi, không phải lỗi cú pháp: tôi lập luận ở §3.3 rằng "mỗi VU một tài khoản riêng để tránh khóa dây chuyền", lập luận đó **chỉ đúng nếu mỗi VU chạy đúng 1 vòng lặp**. Khi chuyển sang mô hình lặp vô hạn theo thời lượng, tôi không rà lại kết luận cũ                                        |
+| 4   | **5 Uniform Random Timer đặt ngang hàng với các sampler** trong cùng thread group                                  | Trong JMeter, timer áp dụng cho **mọi sampler trong cùng scope** chứ không phải chỉ sampler đứng liền trước nó, và fire trước mỗi sampler. Năm timer ngang hàng nghĩa là mỗi bước đều phải chờ tổng của cả năm: **~13,25 giây/bước** thay vì 1,5–4 giây. Một vòng lặp mất ~66 giây thay vì ~13 giây, throughput thấp hơn thiết kế khoảng **5 lần** — mọi con số RPS đo được sẽ vô nghĩa                                                                                                                                                                                               | Lồng mỗi timer **vào bên trong** hashTree của sampler tương ứng để giới hạn scope, hoặc dùng một timer duy nhất ở cấp thread group nếu muốn think time đồng đều                                                                                             | Đây là quy tắc scope đặc thù của JMeter, khác với trực giác "đặt sau phần tử nào thì áp dụng cho phần tử đó". AI sinh cấu trúc trông rất hợp lý về mặt hình thức nhưng sai về ngữ nghĩa thực thi                                                                                                                |
+| 5   | **`userId` có giá trị mặc định là `0`** khi JSON Extractor không tìm thấy `$.user.id`                              | Số `0` là một user_id **hợp lệ về kiểu dữ liệu**, nên request `apply-coupon` vẫn được gửi đi với `"user_id": 0`. Server có thể trả HTTP 200 kèm dữ liệu sai, hoặc tệ hơn là ghi nhận nhầm — trong cả hai trường hợp assertion đều pass và lỗi bị che giấu hoàn toàn                                                                                                                                                                                                                                                                                                                   | Đổi giá trị mặc định thành chuỗi rõ ràng sai như `USERID_NOT_FOUND` để request thất bại dứt khoát và hiện lên trong báo cáo                                                                                                                                 | AI chọn `0` theo thói quen "giá trị mặc định cho kiểu số", không cân nhắc rằng trong ngữ cảnh này giá trị mặc định cần phải **gây lỗi có thể quan sát được**, chứ không phải trông vô hại                                                                                                                       |
+| 6   | **Kịch bản Spike cần đúng 120 tài khoản** (10 + 100 + 10 qua ba giai đoạn) trong khi `users.csv` có đúng 120 dòng  | Không còn biên an toàn nào. Chỉ cần một thread khởi động lại hoặc một vòng lặp phát sinh thêm là hết dữ liệu. (Sau khi sửa lỗi số 3 sang `recycle=true` thì vấn đề này tự hết, nhưng nếu giữ nguyên `recycle=false` thì đây là quả bom hẹn giờ)                                                                                                                                                                                                                                                                                                                                       | Xử lý cùng lúc với lỗi số 3                                                                                                                                                                                                                                 | AI tính số dòng CSV theo **số VU đỉnh tại một thời điểm**, không cộng dồn nhu cầu qua các giai đoạn nối tiếp nhau                                                                                                                                                                                               |
+| 7   | _<ví dụ: sai schema JMX / phần tử listener mà JMeter <phiên bản> không nhận>_                                      | _<file không mở được>_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | _<...>_                                                                                                                                                                                                                                                     | _<kiến thức về JMX của mô hình đã lệch phiên bản>_                                                                                                                                                                                                                                                              |
+| 8   | **`users.csv` dùng 120 tài khoản `perf001…perf120@test.com` không hề tồn tại trong CSDL**                          | `backend/database.js:91-94` chỉ seed **đúng hai** tài khoản: `admin@eshop.com` và `test@eshop.com`. Truy vấn trực tiếp `database.sqlite` xác nhận `SELECT COUNT(*) FROM users WHERE email LIKE 'perf%'` trả về **0**. Nếu chạy test, `server.js:37-38` trả 401 cho mọi request đăng nhập, `$.token` không trích được, If Controller chặn toàn bộ 4 bước sau — file `.jtl` chỉ chứa endpoint login toàn lỗi. Đây là **lỗi nghiêm trọng nhất** trong toàn bộ đợt rà soát: nó vô hiệu hóa 100% bài test nhưng không nằm trong file `.jmx` nên mọi công cụ kiểm tra `.jmx` đều không thấy | Viết `data/seed_perf_users.py` seed 120 tài khoản vào CSDL. Script idempotent (chạy lại không tạo bản trùng) và có cờ `--reset` để mở khóa giữa các lần chạy Stress/Spike. Đã chạy và xác minh: 120/120 tài khoản tồn tại                                   | AI thiết kế dữ liệu test **từ đặc tả API** mà không đối chiếu với **trạng thái thật của CSDL**. `api_spec.md` mô tả cấu trúc request/response nhưng không liệt kê dữ liệu đã seed, nên AI không có cách nào biết — và cũng không đặt câu hỏi. Bài học: đặc tả API không phải là đặc tả dữ liệu                  |
+| 9   | **`coupons.csv` dùng mã `TET2025` không tồn tại, và `SAVE10` với `total_amount=250000` dưới mức tối thiểu**        | `database.js:107-110` seed đúng 4 mã: `SAVE10`, `BIGBUY`, `VIP100`, `EXPIRED`. Mã `TET2025` được AI lấy từ **ví dụ minh họa** trong `api_spec.md` §6.4 và tưởng là dữ liệu có thật → `server.js:373` trả **404**. Dòng `SAVE10,250000` cũng fail vì `server.js:379` yêu cầu `total_amount > min_order_amount` mà `SAVE10` có `min_order_amount = 300000` → trả **400**. Tổng cộng **4/5 dòng CSV sẽ fail**, trong khi assertion mong đợi HTTP 200                                                                                                                                     | Thay toàn bộ `coupons.csv` bằng 6 dòng đối chiếu trực tiếp với dữ liệu seed. Đã viết script kiểm chứng từng dòng theo đúng logic `server.js:363-441`: cả 6 dòng đều trả 200                                                                                 | AI không phân biệt được **ví dụ minh họa trong tài liệu** với **dữ liệu thật trong hệ thống**. Đây là dạng nhầm lẫn đặc trưng khi tài liệu vừa mô tả schema vừa chứa sample values                                                                                                                              |
+| 10  | **Assertion `PUT /api/users/me` kiểm tra body chứa số điện thoại vừa ghi**                                         | `server.js:131-134` chỉ trả `{"message": "Profile updated"}` — **không** trả lại giá trị vừa ghi. Assertion này sẽ fail **100%** ở mọi vòng lặp, biến một endpoint hoạt động bình thường thành lỗi giả trong báo cáo                                                                                                                                                                                                                                                                                                                                                                  | Đổi thành assert body chứa `Profile updated`, rồi **thêm bước `04b GET /api/users/me`** assert `$.phone` khớp giá trị vừa ghi. Đây mới thật sự là bằng chứng lệnh UPDATE đã commit xuống CSDL                                                               | Chính tôi (AI) tạo ra lỗi này khi sinh file Spike, xuất phát từ một nguyên tắc **đúng** trong `workflows.md` ("assertion ghi dữ liệu phải kiểm server trả lại đúng giá trị vừa ghi") nhưng áp dụng **mà không kiểm chứng** endpoint cụ thể có hành xử như vậy không. Nguyên tắc tốt áp dụng mù vẫn tạo ra lỗi   |
+| 11  | **`POST /api/apply-coupon` bị gán nhãn `[transactional]`**                                                         | Đọc `server.js:363-441`: endpoint chỉ `SELECT` từ bảng `coupons` và `coupon_usage` rồi tính toán, **không có lệnh INSERT/UPDATE nào**. Bảng `coupon_usage` chỉ được ghi bởi `POST /api/coupon-usage` (`server.js:444-454`) — một endpoint **khác**, không nằm trong luồng này. Vậy nhãn transactional là sai                                                                                                                                                                                                                                                                          | Đổi nhãn thành `[read-only + compute]` trong cả ba test plan. Nhóm transactional vẫn được phủ bởi `PUT /api/users/me` §2.2 (`server.js:131` có `db.run` UPDATE thật)                                                                                        | Giả định này đã được đánh dấu ⚠️ "chưa xác minh" ngay trong Agent Skill từ đầu, vì `api_spec.md` §5.1 mô tả endpoint _tính toán_ còn §6.4 lại định nghĩa `max_uses_per_user` — hai chi tiết mâu thuẫn nhau. Skill đã đúng khi **không tự quyết mà đánh dấu để hỏi**; chỉ có mã nguồn mới trả lời dứt khoát được |
 
 > **Bối cảnh phát hiện lỗi 8–11.** Bốn lỗi này chỉ lộ ra khi tôi đưa **mã nguồn SUT** (`group05_eshop/backend/`) cho AI đối chiếu, sau khi cả ba test plan đã "đạt" mọi lần kiểm tra trước đó. Điểm đáng chú ý: lỗi 8 và 9 **không nằm trong file `.jmx`** mà nằm ở sự lệch pha giữa dữ liệu test và trạng thái CSDL — không một công cụ kiểm tra `.jmx` nào phát hiện được, kể cả script `validate_jmx.py` do chính tôi viết. Lỗi 10 còn đáng suy nghĩ hơn: nó do AI tạo ra **trong lúc đang sửa các lỗi khác**, tức là quá trình sửa lỗi tự nó cũng sinh lỗi mới.
 
@@ -335,11 +371,11 @@ Cả ba lần chạy đều đồng thời sinh ra file `.jtl` thô và thư m�
 
 ### 3.7 Thực thi và bằng chứng
 
-| Kịch bản | Bắt đầu (giờ địa phương) | Thời lượng | Số sample | Tỉ lệ lỗi % | TB (ms) | p90     | p95     | p99     | Throughput (req/s) | File log thô                          | Báo cáo HTML                |
-| -------- | ------------------------ | ---------- | --------- | ----------- | ------- | ------- | ------- | ------- | ------------------ | ------------------------------------- | --------------------------- |
-| Load     | _<...>_                  | _<...>_    | _<...>_   | _<...>_     | _<...>_ | _<...>_ | _<...>_ | _<...>_ | _<...>_            | `results/23127344_Load_<date>.jtl`    | `reports/load/index.html`   |
-| Stress   |                          |            |           |             |         |         |         |         |                    | `results/23127344_Stress_<date>.jtl`  | `reports/stress/index.html` |
-| Spike    |                          |            |           |             |         |         |         |         |                    | `results/23127344_Spike_<date>.jtl`   | `reports/spike/index.html`  |
+| Kịch bản | Bắt đầu (giờ địa phương) | Thời lượng | Số sample | Tỉ lệ lỗi % | TB (ms) | p90     | p95     | p99     | Throughput (req/s) | File log thô                         | Báo cáo HTML                |
+| -------- | ------------------------ | ---------- | --------- | ----------- | ------- | ------- | ------- | ------- | ------------------ | ------------------------------------ | --------------------------- |
+| Load     | _<...>_                  | _<...>_    | _<...>_   | _<...>_     | _<...>_ | _<...>_ | _<...>_ | _<...>_ | _<...>_            | `results/23127344_Load_<date>.jtl`   | `reports/load/index.html`   |
+| Stress   |                          |            |           |             |         |         |         |         |                    | `results/23127344_Stress_<date>.jtl` | `reports/stress/index.html` |
+| Spike    |                          |            |           |             |         |         |         |         |                    | `results/23127344_Spike_<date>.jtl`  | `reports/spike/index.html`  |
 
 > Toàn bộ số liệu ở trên được đọc từ file `.jtl` thô, không phải chép lại từ output của AI. _<Ghi rõ lệnh/công cụ đã dùng để tính, ví dụ một script nhỏ hoặc dashboard của JMeter.>_
 
@@ -362,34 +398,42 @@ Cả ba lần chạy đều đồng thời sinh ra file `.jtl` thô và thư m�
 
 ### 3.8 Xử lý khóa tài khoản và quy trình reset
 
-FR-02 khóa tài khoản sau _<3>_ lần đăng nhập thất bại.
+FR-02 khóa tài khoản sau 3 lần đăng nhập thất bại. **Cơ chế thật đã được xác minh trong mã nguồn**, không suy đoán từ đặc tả:
 
-- **Có bị kích hoạt không?** _<có/không, ở lần chạy nào, biểu hiện trong log ra sao — ví dụ HTTP <mã> kèm thông báo "<...>">_
-- **Cách tôi phòng tránh ngay từ thiết kế:** _<N tài khoản riêng biệt đã seed trong users.csv, mỗi thread một tài khoản; chỉ dùng mật khẩu đúng>_
+| Hành vi | Mã nguồn | Ý nghĩa với bài test |
+| --- | --- | --- |
+| Đăng nhập **thành công** → reset bộ đếm về 0 | `server.js:47-50` — `UPDATE users SET login_attempts = 0, locked_until = NULL` | **Quyết định:** `recycle=true` an toàn. Vì mọi lần đăng nhập trong luồng đều dùng mật khẩu đúng, bộ đếm luôn bị reset và không bao giờ tích lũy qua các vòng lặp |
+| Đăng nhập thất bại → `login_attempts + 2` | `server.js:54` | **Bug cố ý của SUT**: đề bài FR-02 nói 3 lần nhưng bộ đếm nhảy 2 đơn vị mỗi lần, nên thực tế khóa sau **2 lần sai** chứ không phải 3 |
+| Khóa 180 giây | `server.js:57` — `Date.now() + 180000` | Nếu bị khóa, chờ 3 phút là tự mở; không cần can thiệp CSDL |
+| Đang khóa → HTTP **403** | `server.js:40-44`, thông báo `"Tài khoản đã bị khóa. Vui lòng thử lại sau."` | Dấu hiệu nhận biết trong `.jtl`: mã 403 (không phải 401) kèm thông báo tiếng Việt này |
+
+- **Có bị kích hoạt không?** _<điền sau khi chạy: nếu thấy HTTP 403 kèm thông báo trên trong `.jtl` thì có; nếu chỉ thấy 401 thì là sai mật khẩu chứ chưa khóa>_
+- **Cách phòng tránh ngay từ thiết kế:** 120 tài khoản riêng biệt (`perf001`…`perf120`) đã seed sẵn, và **mọi request đăng nhập đều dùng mật khẩu đúng** `Password123!` — luồng này không cố tình test đường sai mật khẩu, nên về nguyên tắc lockout không thể kích hoạt. Kết hợp với `server.js:47-50` reset bộ đếm mỗi lần thành công, việc dùng lại tài khoản qua nhiều vòng lặp (`recycle=true`) là an toàn.
 - **Các bước reset (có ghi chép, tái lập được):**
-  1. _<dừng backend / chạy SQL: `UPDATE users SET failed_attempts = 0, locked_until = NULL;`>_
-  2. _<...>_
-  3. _<kiểm chứng bằng một lần đăng nhập thủ công>_
+  1. Chạy `python hw5/data/seed_perf_users.py --reset` — script thực thi `UPDATE users SET login_attempts = 0, locked_until = NULL WHERE email LIKE 'perf%'`
+  2. Script in ra số tài khoản đã reset và số tài khoản còn bộ đếm > 0 để xác nhận
+  3. Kiểm chứng bằng một lần đăng nhập thủ công: `curl -X POST http://localhost:3000/api/login -H "Content-Type: application/json" -d '{"email":"perf001@test.com","password":"Password123!"}'` — phải trả 200 kèm `token`
+- Chạy bước reset này **giữa mỗi lần chạy Stress và Spike**, theo yêu cầu đề bài mục 6 Task 1.
 - Bằng chứng: `evidence/lockout/*.png`
 
 ### 3.9 Kiểm thử endurance / soak và ngưỡng phần cứng
 
-| Hạng mục          | Giá trị                             |
-| ----------------- | ----------------------------------- |
-| File test plan    | `23127344_Endurance_<YYYYMMDD>.jmx` |
-| Số VU duy trì     | _<n>_                               |
-| Thời lượng        | _<10–15 phút>_                      |
-| Tổng số sample    | _<n>_                               |
+| Hạng mục       | Giá trị                             |
+| -------------- | ----------------------------------- |
+| File test plan | `23127344_Endurance_<YYYYMMDD>.jmx` |
+| Số VU duy trì  | _<n>_                               |
+| Thời lượng     | _<10–15 phút>_                      |
+| Tổng số sample | _<n>_                               |
 
 **Ngưỡng đo được trên phần cứng này:**
 
-| Chỉ số                                                | Giá trị                                            | Cách đo                                       |
-| ----------------------------------------------------- | -------------------------------------------------- | --------------------------------------------- |
-| RPS ổn định tối đa (lỗi < _<1>_ %, p95 < _<x>_ ms)   | **_<n>_ req/s**                                    | _<duy trì suốt toàn bộ cửa sổ soak>_          |
-| p95 tại mức RPS đó                                    | _<n>_ ms                                           | file `.jtl` thô                               |
-| Trần bộ nhớ của backend                               | _<n>_ MB (từ _<n>_ MB lúc bắt đầu)                 | Task Manager lấy mẫu mỗi _<n>_ giây           |
-| CPU backend tại mức RPS đó                            | _<n>_ %                                            | _<...>_                                       |
-| Kiểu hỏng đầu tiên khi vượt ngưỡng                    | _<connection refused / timeout / 5xx / khóa CSDL>_ | _<...>_                                       |
+| Chỉ số                                             | Giá trị                                            | Cách đo                              |
+| -------------------------------------------------- | -------------------------------------------------- | ------------------------------------ |
+| RPS ổn định tối đa (lỗi < _<1>_ %, p95 < _<x>_ ms) | **_<n>_ req/s**                                    | _<duy trì suốt toàn bộ cửa sổ soak>_ |
+| p95 tại mức RPS đó                                 | _<n>_ ms                                           | file `.jtl` thô                      |
+| Trần bộ nhớ của backend                            | _<n>_ MB (từ _<n>_ MB lúc bắt đầu)                 | Task Manager lấy mẫu mỗi _<n>_ giây  |
+| CPU backend tại mức RPS đó                         | _<n>_ %                                            | _<...>_                              |
+| Kiểu hỏng đầu tiên khi vượt ngưỡng                 | _<connection refused / timeout / 5xx / khóa CSDL>_ | _<...>_                              |
 
 **Xu hướng bộ nhớ / kiểm tra rò rỉ.** _<RSS có tăng đơn điệu suốt quá trình soak hay đi ngang? Nêu giá trị đầu/cuối và kết luận của bạn.>_
 
@@ -397,24 +441,35 @@ Bằng chứng: `evidence/endurance/*.png`, `results/23127344_Endurance_<date>.j
 
 ### 3.10 Video demo
 
-| Hạng mục                                        | Giá trị                                |
-| ----------------------------------------------- | -------------------------------------- |
-| URL (unlisted)                                  | _<...>_                                |
-| Tổng thời lượng                                 | _<≥ 6 phút>_                           |
-| Số clip                                         | _<1 clip cho mỗi kịch bản / quay liền>_ |
-| Thuyết minh                                     | Tiếng Việt, giọng của chính tôi        |
-| Có hiện công cụ + resource monitor cùng khung hình | Có                                   |
+| Hạng mục                                           | Giá trị                                 |
+| -------------------------------------------------- | --------------------------------------- |
+| URL (unlisted)                                     | _<...>_                                 |
+| Tổng thời lượng                                    | _<≥ 6 phút>_                            |
+| Số clip                                            | _<1 clip cho mỗi kịch bản / quay liền>_ |
+| Thuyết minh                                        | Tiếng Việt, giọng của chính tôi         |
+| Có hiện công cụ + resource monitor cùng khung hình | Có                                      |
 
 Dòng thời gian nội dung: _<00:00 giới thiệu · 00:xx chạy Load · 0x:xx Stress · ...>_
 
 ### 3.11 Các lỗi đã báo cáo
 
-| #   | Tiêu đề | Loại                                              | Mức độ  | Quan sát ở đâu       | GitHub Issue | Ảnh chụp                |
-| --- | ------- | ------------------------------------------------- | ------- | -------------------- | ------------ | ----------------------- |
-| 1   | _<...>_ | _<lỗi chức năng / response lỗi / crash>_          | _<...>_ | _<Stress @ N VU>_    | _<URL>_      | `evidence/issues/1.png` |
-| 2   | _<...>_ | _<vấn đề hiệu năng>_                              | _<...>_ | _<...>_              | _<URL>_      | _<...>_                 |
+| #   | Tiêu đề | Loại                                     | Mức độ  | Quan sát ở đâu    | GitHub Issue | Ảnh chụp                |
+| --- | ------- | ---------------------------------------- | ------- | ----------------- | ------------ | ----------------------- |
+| 1   | `POST /api/apply-coupon` tính sai giảm giá theo phần trăm | Lỗi chức năng (tính toán) | Cao | Đọc mã nguồn khi chuẩn bị `coupons.csv` (§3.3) | _<URL>_ | _<...>_ |
+| 2   | _<...>_ | _<vấn đề hiệu năng>_                     | _<...>_ | _<...>_           | _<URL>_      | _<...>_                 |
 
-_<Nếu không có: ghi rõ "Không tái hiện được lỗi chức năng thực sự nào; các vấn đề hiệu năng quan sát được đã liệt kê ở §4 nhưng chưa tạo issue vì ...".>_
+**Chi tiết lỗi \#1.** `server.js:399-401` tính `discount_amount = Math.floor(total_amount * (1 - coupon.discount_value))`. Với `SAVE10` (`discount_value = 10`, nghĩa là 10%), công thức cho `500000 * (1 - 10) = -4 500 000`, dẫn tới `final_amount = 500000 - (-4500000) = 5 000 000` — **giảm giá làm số tiền tăng gấp 10 lần**. Công thức đúng phải là `total_amount * discount_value / 100`.
+
+| Đầu vào | `final_amount` thực tế | Giá trị đúng |
+| --- | --- | --- |
+| `SAVE10`, 500 000 ₫ | 5 000 000 ₫ | 450 000 ₫ |
+| `SAVE10`, 1 000 000 ₫ | 10 000 000 ₫ | 900 000 ₫ |
+
+Lỗi chỉ ảnh hưởng mã loại `percent`; mã loại `fixed` (`BIGBUY`, `VIP100`) tính đúng.
+
+> **Vì sao kiểm thử hiệu năng không bắt được lỗi này.** Endpoint vẫn trả HTTP 200 và vẫn có trường `$.final_amount`, nên cả hai assertion ở bước 5 đều pass. Đây là minh họa rõ ràng cho giới hạn của kiểm thử hiệu năng: nó đo *response có đến và đến nhanh không*, chứ không đo *giá trị trả về có đúng không*. Lỗi được tìm ra khi tôi đối chiếu `coupons.csv` với mã nguồn để đảm bảo dữ liệu test không sinh lỗi giả (§3.6 dòng 9) — tức là một **sản phẩm phụ ngoài dự kiến** của việc rà soát dữ liệu test, không phải kết quả của bài kiểm thử hiệu năng.
+
+_<Bổ sung các lỗi phát hiện thêm trong lúc chạy test. Nếu không có: ghi rõ "Ngoài lỗi \#1, không tái hiện được lỗi chức năng nào khác; các vấn đề hiệu năng quan sát được đã liệt kê ở §4".>_
 
 ---
 
@@ -422,12 +477,12 @@ _<Nếu không có: ghi rõ "Không tái hiện được lỗi chức năng th�
 
 ### 4.1 Tôi đã yêu cầu AI phân tích những gì
 
-| Hạng mục                | Giá trị                                                                     |
-| ----------------------- | --------------------------------------------------------------------------- |
-| Công cụ AI + phiên bản  | _<...>_                                                                     |
-| Ngày / giờ              | _<...>_                                                                     |
-| Dữ liệu đầu vào đã đưa  | _<file .jtl thô / bản trích rút gọn — ghi rõ chính xác là gì và lớn cỡ nào>_ |
-| Prompt                  | _<nguyên văn; toàn văn ở Phụ lục A>_                                        |
+| Hạng mục               | Giá trị                                                                      |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| Công cụ AI + phiên bản | _<...>_                                                                      |
+| Ngày / giờ             | _<...>_                                                                      |
+| Dữ liệu đầu vào đã đưa | _<file .jtl thô / bản trích rút gọn — ghi rõ chính xác là gì và lớn cỡ nào>_ |
+| Prompt                 | _<nguyên văn; toàn văn ở Phụ lục A>_                                         |
 
 ### 4.2 Phần phân tích của AI (nguyên trạng)
 
@@ -435,44 +490,44 @@ _<Nếu không có: ghi rõ "Không tái hiện được lỗi chức năng th�
 
 **Các ngưỡng AI đề xuất:**
 
-| Chỉ số      | Ngưỡng AI đề xuất | Lý do AI đưa ra |
-| ----------- | ----------------- | --------------- |
-| Độ trễ p95  | _<...>_           | _<...>_         |
-| Tỉ lệ lỗi   | _<...>_           | _<...>_         |
-| Throughput  | _<...>_           | _<...>_         |
+| Chỉ số     | Ngưỡng AI đề xuất | Lý do AI đưa ra |
+| ---------- | ----------------- | --------------- |
+| Độ trễ p95 | _<...>_           | _<...>_         |
+| Tỉ lệ lỗi  | _<...>_           | _<...>_         |
+| Throughput | _<...>_           | _<...>_         |
 
 ### 4.3 Truy tìm điểm hiểu sai (rà soát của con người)
 
 Mỗi dòng đều dẫn ra **giá trị đúng đọc từ file `.jtl` thô**.
 
-| #   | AI khẳng định điều gì                                          | Giá trị đúng từ `.jtl` thô                                                                       | Kiểm chứng ở đâu / bằng cách nào                | Vì sao AI sai                                                          |
-| --- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------------- |
-| 1   | _<"thời gian phản hồi trung bình 120 ms, hiệu năng tốt">_      | _<trung bình = 120 ms nhưng p99 = 4.300 ms; 3,1% số sample vượt 2 giây>_                          | _<`results/...jtl`, tính bằng `<lệnh>`>_        | _<coi giá trị trung bình là đại diện cho một phân phối lệch phải>_     |
-| 2   | _<"không có lỗi nào">_                                         | _<`success=false` ở N sample; AI chỉ đếm HTTP != 200 và bỏ sót các assertion thất bại>_          | _<...>_                                         | _<đọc sai schema của .jtl: nhầm `success` với `responseCode`>_         |
-| 3   | _<"throughput duy trì 250 req/s">_                             | _<250 req/s chỉ là đỉnh của một cửa sổ 1 giây; giá trị duy trì trung bình là N req/s>_           | _<...>_                                         | _<lẫn lộn giữa đỉnh tức thời và trạng thái ổn định>_                   |
-| 4   | _<"độ trễ tăng vì CSDL chậm">_                                 | _<so sánh cột `Latency` và `elapsed` cho thấy N ms là thời gian kết nối/xếp hàng, không phải xử lý>_ | _<...>_                                      | _<bỏ qua sự khác biệt giữa Latency / Connect / elapsed>_               |
-| 5   | _<nêu ra một giá trị hoàn toàn không có trong log>_            | _<không tồn tại trường đó>_                                                                      | _<...>_                                         | _<ảo giác — điền một con số nghe hợp lý vào chỗ thiếu dữ liệu>_       |
+| #   | AI khẳng định điều gì                                     | Giá trị đúng từ `.jtl` thô                                                                           | Kiểm chứng ở đâu / bằng cách nào         | Vì sao AI sai                                                      |
+| --- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------ |
+| 1   | _<"thời gian phản hồi trung bình 120 ms, hiệu năng tốt">_ | _<trung bình = 120 ms nhưng p99 = 4.300 ms; 3,1% số sample vượt 2 giây>_                             | _<`results/...jtl`, tính bằng `<lệnh>`>_ | _<coi giá trị trung bình là đại diện cho một phân phối lệch phải>_ |
+| 2   | _<"không có lỗi nào">_                                    | _<`success=false` ở N sample; AI chỉ đếm HTTP != 200 và bỏ sót các assertion thất bại>_              | _<...>_                                  | _<đọc sai schema của .jtl: nhầm `success` với `responseCode`>_     |
+| 3   | _<"throughput duy trì 250 req/s">_                        | _<250 req/s chỉ là đỉnh của một cửa sổ 1 giây; giá trị duy trì trung bình là N req/s>_               | _<...>_                                  | _<lẫn lộn giữa đỉnh tức thời và trạng thái ổn định>_               |
+| 4   | _<"độ trễ tăng vì CSDL chậm">_                            | _<so sánh cột `Latency` và `elapsed` cho thấy N ms là thời gian kết nối/xếp hàng, không phải xử lý>_ | _<...>_                                  | _<bỏ qua sự khác biệt giữa Latency / Connect / elapsed>_           |
+| 5   | _<nêu ra một giá trị hoàn toàn không có trong log>_       | _<không tồn tại trường đó>_                                                                          | _<...>_                                  | _<ảo giác — điền một con số nghe hợp lý vào chỗ thiếu dữ liệu>_    |
 
 **Quy luật chung.** _<1–3 câu: kiểu sai lệch nào lặp lại — trung bình so với percentile, success so với status code, đỉnh so với duy trì, độ chính xác bịa đặt.>_
 
 ### 4.4 Ngưỡng do tôi hiệu chỉnh lại
 
-| Chỉ số                          | Ngưỡng của tôi | Căn cứ                                |
-| ------------------------------- | -------------- | ------------------------------------- |
-| Độ trễ p95 (read-heavy)         | _<...>_        | _<mức nền đo được + biên dự phòng>_   |
-| Độ trễ p95 (transactional)      | _<...>_        | _<...>_                               |
-| Tỉ lệ lỗi                       | _<...>_        | _<...>_                               |
-| RPS duy trì tối đa              | _<lấy từ §3.9>_ | lần chạy endurance                    |
+| Chỉ số                     | Ngưỡng của tôi  | Căn cứ                              |
+| -------------------------- | --------------- | ----------------------------------- |
+| Độ trễ p95 (read-heavy)    | _<...>_         | _<mức nền đo được + biên dự phòng>_ |
+| Độ trễ p95 (transactional) | _<...>_         | _<...>_                             |
+| Tỉ lệ lỗi                  | _<...>_         | _<...>_                             |
+| RPS duy trì tối đa         | _<lấy từ §3.9>_ | lần chạy endurance                  |
 
 ### 4.5 Đánh giá các khuyến nghị tối ưu của AI
 
-| #   | Khuyến nghị của AI                                     | Kết luận                          | Lập luận (dựa trên bằng chứng)                                                                                       | Nếu khả thi: hiệu quả kỳ vọng / cách kiểm chứng |
-| --- | ------------------------------------------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| 1   | _<"thêm index cho products(name) để phục vụ tìm kiếm">_ | **Khả thi**                       | _<endpoint tìm kiếm đang quét LIKE; bảng có N dòng; index áp dụng được>_                                             | _<chạy lại test plan read-heavy, so sánh p95>_  |
-| 2   | _<"bật chế độ WAL cho SQLite">_                        | **Khả thi**                       | _<các thao tác ghi bị tuần tự hóa trên CSDL lúc checkout; WAL cho phép đọc song song>_                               | _<...>_                                         |
-| 3   | _<"tăng connection pool của CSDL lên 200">_            | **Ảo giác / không áp dụng được**  | _<SUT dùng <SQLite/...> vốn không có pool như vậy; hoặc khóa cấu hình mà AI nêu tên không tồn tại trong mã nguồn này>_ | —                                               |
-| 4   | _<"thêm lớp cache Redis">_                             | **Ngoài phạm vi / thiếu căn cứ**  | _<không có bằng chứng nút thắt nằm ở các lượt đọc lặp lại; đồng thời thêm hạ tầng mà SUT không có>_                  | —                                               |
-| 5   | _<...>_                                                | _<...>_                           | _<...>_                                                                                                              | _<...>_                                         |
+| #   | Khuyến nghị của AI                                      | Kết luận                         | Lập luận (dựa trên bằng chứng)                                                                                         | Nếu khả thi: hiệu quả kỳ vọng / cách kiểm chứng |
+| --- | ------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| 1   | _<"thêm index cho products(name) để phục vụ tìm kiếm">_ | **Khả thi**                      | _<endpoint tìm kiếm đang quét LIKE; bảng có N dòng; index áp dụng được>_                                               | _<chạy lại test plan read-heavy, so sánh p95>_  |
+| 2   | _<"bật chế độ WAL cho SQLite">_                         | **Khả thi**                      | _<các thao tác ghi bị tuần tự hóa trên CSDL lúc checkout; WAL cho phép đọc song song>_                                 | _<...>_                                         |
+| 3   | _<"tăng connection pool của CSDL lên 200">_             | **Ảo giác / không áp dụng được** | _<SUT dùng <SQLite/...> vốn không có pool như vậy; hoặc khóa cấu hình mà AI nêu tên không tồn tại trong mã nguồn này>_ | —                                               |
+| 4   | _<"thêm lớp cache Redis">_                              | **Ngoài phạm vi / thiếu căn cứ** | _<không có bằng chứng nút thắt nằm ở các lượt đọc lặp lại; đồng thời thêm hạ tầng mà SUT không có>_                    | —                                               |
+| 5   | _<...>_                                                 | _<...>_                          | _<...>_                                                                                                                | _<...>_                                         |
 
 _<Tùy chọn: nếu bạn thực sự đã áp dụng một tối ưu và chạy lại, hãy đưa bảng so sánh trước/sau vào đây — đó là bằng chứng rất mạnh.>_
 
@@ -486,16 +541,16 @@ Tự động phát hiện hồi quy p95 trên SUT theo từng commit, mà không
 
 ### 5.2 Mô hình đề xuất
 
-| Lớp                            | Quyết định                                                                                              |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| Điều kiện kích hoạt            | _<push vào main / mở PR / chạy hằng đêm>_                                                               |
+| Lớp                             | Quyết định                                                                                                |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Điều kiện kích hoạt             | _<push vào main / mở PR / chạy hằng đêm>_                                                                 |
 | Cổng lọc ("có nên chạy không?") | _<lọc theo đường dẫn: chỉ chạy nếu backend/\*\*, package-lock, hoặc migration thay đổi; kèm nhãn ghi đè>_ |
-| Phân tầng kiểm thử             | Smoke (2 phút, cho PR) → Load (10 phút, cho main) → Soak (hằng đêm)                                     |
-| Môi trường                     | _<runner/container riêng với CPU-RAM cố định, để số liệu có thể so sánh được giữa các lần>_             |
-| Đường cơ sở (baseline)         | _<trung vị trượt của N lần chạy xanh gần nhất trên main, tính theo từng endpoint>_                      |
-| Quy tắc phát hiện hồi quy      | p95 > baseline × _<1,2>_ **và** nằm ngoài dải nhiễu _<±x%>_ trong _<2>_ lần chạy liên tiếp             |
-| Hành động khi có hồi quy       | _<bình luận vào PR + đánh trượt check / tạo issue + gửi thông báo>_                                     |
-| Lưu trữ                        | _<file .jtl + bảng số liệu/JSON commit vào nhánh kết quả>_                                             |
+| Phân tầng kiểm thử              | Smoke (2 phút, cho PR) → Load (10 phút, cho main) → Soak (hằng đêm)                                       |
+| Môi trường                      | _<runner/container riêng với CPU-RAM cố định, để số liệu có thể so sánh được giữa các lần>_               |
+| Đường cơ sở (baseline)          | _<trung vị trượt của N lần chạy xanh gần nhất trên main, tính theo từng endpoint>_                        |
+| Quy tắc phát hiện hồi quy       | p95 > baseline × _<1,2>_ **và** nằm ngoài dải nhiễu _<±x%>_ trong _<2>_ lần chạy liên tiếp                |
+| Hành động khi có hồi quy        | _<bình luận vào PR + đánh trượt check / tạo issue + gửi thông báo>_                                       |
+| Lưu trữ                         | _<file .jtl + bảng số liệu/JSON commit vào nhánh kết quả>_                                                |
 
 ### 5.3 Lưu đồ
 
@@ -520,23 +575,23 @@ flowchart TD
 
 ### 5.4 Đánh đổi (trade-offs)
 
-| Mối quan tâm                    | Rủi ro                                                                                | Cách giảm thiểu                                                                                |
-| ------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| **Chi phí**                     | _<mỗi commit tốn vài phút runner riêng>_                                              | _<cổng lọc theo đường dẫn; phân tầng bộ test; chỉ chạy soak đầy đủ vào ban đêm>_               |
-| **Báo động giả**                | _<runner CI dùng chung có nhiễu từ tiến trình khác; p95 dao động ±x% giữa các lần>_   | _<runner cố định, bỏ kết quả khởi động, chạy lại để xác nhận, dùng dải thay vì một ngưỡng cứng>_ |
-| **Bỏ sót hồi quy**              | _<smoke 2 phút không phát hiện được rò rỉ chậm và hồi quy ở phần đuôi>_               | _<soak hằng đêm bù đắp phần smoke không thấy>_                                                 |
-| **Trôi baseline**               | _<suy giảm dần 5% mỗi commit sẽ không bao giờ chạm ngưỡng 20%>_                       | _<cảnh báo thêm theo xu hướng 30 ngày, không chỉ so commit với commit>_                        |
-| **Trạng thái dữ liệu / lockout** | _<chạy lặp lại làm khóa tài khoản hoặc phình CSDL>_                                   | _<reset CSDL từ ảnh chụp seed trước mỗi lần chạy — xem §3.8>_                                  |
-| **Bảo trì**                     | _<test plan lạc hậu khi API thay đổi>_                                                | _<đặt test plan trong repo cạnh mã nguồn; PR nào đổi API thì cập nhật luôn test plan>_          |
+| Mối quan tâm                     | Rủi ro                                                                              | Cách giảm thiểu                                                                                  |
+| -------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Chi phí**                      | _<mỗi commit tốn vài phút runner riêng>_                                            | _<cổng lọc theo đường dẫn; phân tầng bộ test; chỉ chạy soak đầy đủ vào ban đêm>_                 |
+| **Báo động giả**                 | _<runner CI dùng chung có nhiễu từ tiến trình khác; p95 dao động ±x% giữa các lần>_ | _<runner cố định, bỏ kết quả khởi động, chạy lại để xác nhận, dùng dải thay vì một ngưỡng cứng>_ |
+| **Bỏ sót hồi quy**               | _<smoke 2 phút không phát hiện được rò rỉ chậm và hồi quy ở phần đuôi>_             | _<soak hằng đêm bù đắp phần smoke không thấy>_                                                   |
+| **Trôi baseline**                | _<suy giảm dần 5% mỗi commit sẽ không bao giờ chạm ngưỡng 20%>_                     | _<cảnh báo thêm theo xu hướng 30 ngày, không chỉ so commit với commit>_                          |
+| **Trạng thái dữ liệu / lockout** | _<chạy lặp lại làm khóa tài khoản hoặc phình CSDL>_                                 | _<reset CSDL từ ảnh chụp seed trước mỗi lần chạy — xem §3.8>_                                    |
+| **Bảo trì**                      | _<test plan lạc hậu khi API thay đổi>_                                              | _<đặt test plan trong repo cạnh mã nguồn; PR nào đổi API thì cập nhật luôn test plan>_           |
 
 ---
 
 ## 6. Agent Skill
 
-| Hạng mục                  | Giá trị                                                                              |
-| ------------------------- | ------------------------------------------------------------------------------------ |
-| Tên skill                 | _<...>_                                                                              |
-| Vị trí                    | _<đường dẫn trong repo, ví dụ `.claude/skills/<tên>/SKILL.md`>_                      |
+| Hạng mục                  | Giá trị                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| Tên skill                 | _<...>_                                                                               |
+| Vị trí                    | _<đường dẫn trong repo, ví dụ `.claude/skills/<tên>/SKILL.md`>_                       |
 | Skill tự động hóa việc gì | _<thiết kế → sinh test plan → chạy → phân tích .jtl → phân tích → soạn phần báo cáo>_ |
 | Có thể tái dùng cho       | _<bất kỳ nhóm endpoint nào của SUT, bằng cách truyền vào ...>_                        |
 | Video demo (YouTube)      | https://youtu.be/MJwC7o_ab_g                                                          |
@@ -567,29 +622,29 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso > git_commit_log.txt
 
 **Đã hoàn thành** (giai đoạn thiết kế):
 
-| Bước                                  | Commit    | Nội dung commit                                                    |
-| ------------------------------------- | --------- | ------------------------------------------------------------------ |
-| Đưa API spec vào làm test basis       | `e1960bd` | docs(hw5): add EShop API specification as the test basis           |
-| Khung báo cáo chính                   | `5cb31df` | docs(hw5): add main report skeleton mapped to the HW05 spec        |
-| Khung AI audit report                 | `081af2d` | docs(hw5): fill AI audit report template with artifact scaffold    |
+| Bước                                   | Commit    | Nội dung commit                                                    |
+| -------------------------------------- | --------- | ------------------------------------------------------------------ |
+| Đưa API spec vào làm test basis        | `e1960bd` | docs(hw5): add EShop API specification as the test basis           |
+| Khung báo cáo chính                    | `5cb31df` | docs(hw5): add main report skeleton mapped to the HW05 spec        |
+| Khung AI audit report                  | `081af2d` | docs(hw5): fill AI audit report template with artifact scaffold    |
 | Thiết kế luồng (đã đối chiếu API spec) | `9900816` | design(hw5): select spec-verified profile + order-history workflow |
-| Xuất nhật ký commit                   | `5aaf3ec` | chore(hw5): export git commit log and record SHAs in the report    |
-| Cập nhật lại nhật ký commit           | `abe3dd6` | chore(hw5): refresh commit log to include the export commit itself |
-| Dịch tài liệu sang tiếng Việt         | `b564656` | docs(hw5): dịch báo cáo chính và AI audit report sang tiếng Việt   |
+| Xuất nhật ký commit                    | `5aaf3ec` | chore(hw5): export git commit log and record SHAs in the report    |
+| Cập nhật lại nhật ký commit            | `abe3dd6` | chore(hw5): refresh commit log to include the export commit itself |
+| Dịch tài liệu sang tiếng Việt          | `b564656` | docs(hw5): dịch báo cáo chính và AI audit report sang tiếng Việt   |
 
 **Còn phải làm** (giai đoạn thực thi — điền dần khi commit):
 
-| Bước                              | Commit  | Nội dung commit |
-| --------------------------------- | ------- | --------------- |
-| Dữ liệu CSV                       | _<sha>_ | _<...>_         |
-| Test plan Load                    | _<sha>_ | _<...>_         |
-| Test plan Stress                  | _<sha>_ | _<...>_         |
-| Test plan Spike                   | _<sha>_ | _<...>_         |
-| Kết quả chạy (.jtl + report)      | _<sha>_ | _<...>_         |
-| Lần chạy endurance                | _<sha>_ | _<...>_         |
-| Phân tích bằng AI                 | _<sha>_ | _<...>_         |
-| Đề xuất CPT                       | _<sha>_ | _<...>_         |
-| Agent skill                       | _<sha>_ | _<...>_         |
+| Bước                         | Commit  | Nội dung commit |
+| ---------------------------- | ------- | --------------- |
+| Dữ liệu CSV                  | _<sha>_ | _<...>_         |
+| Test plan Load               | _<sha>_ | _<...>_         |
+| Test plan Stress             | _<sha>_ | _<...>_         |
+| Test plan Spike              | _<sha>_ | _<...>_         |
+| Kết quả chạy (.jtl + report) | _<sha>_ | _<...>_         |
+| Lần chạy endurance           | _<sha>_ | _<...>_         |
+| Phân tích bằng AI            | _<sha>_ | _<...>_         |
+| Đề xuất CPT                  | _<sha>_ | _<...>_         |
+| Agent skill                  | _<sha>_ | _<...>_         |
 
 Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp luôn cập nhật.
 
@@ -597,39 +652,39 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 
 ## 9. Danh sách kiểm tra sản phẩm nộp
 
-| Hạng mục bắt buộc                              | File / liên kết                          | Xong |
-| ---------------------------------------------- | ---------------------------------------- | ---- |
-| Báo cáo chính (Markdown + PDF)                 | `Main_Report.md` / `.pdf`                | ☐    |
-| Liên kết repo GitHub công khai                 | _<URL>_                                  | ☐    |
-| Test plan Load                                 | `plans/23127344_Load_20260812.jmx`       | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
-| Test plan Stress                               | `plans/23127344_Stress_20260812.jmx`     | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
-| Test plan Spike                                | `plans/23127344_Spike_20260813.jmx`      | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
-| Script seed dữ liệu                            | `data/seed_perf_users.py`                | ☑ đã chạy, 120/120 tài khoản (lỗi \#8 §3.6) |
-| 3 file log `.jtl` thô (đầy đủ)                 | `results/`                               | ☐    |
-| 3 thư mục báo cáo HTML                         | `reports/`                               | ☐    |
-| Ảnh chụp resource monitor                      | `evidence/*/tool+monitor.png`            | ☐    |
-| Ảnh chụp + bảng cấu hình phần cứng             | `evidence/hardware/`, §2.1               | ☐    |
-| Video demo YouTube unlisted (≥ 6 phút)         | _<URL>_                                  | ☐    |
-| Phê bình AI (Md + PDF)                         | §7 / `AI_Critique.*`                     | ☐    |
-| AI Audit Report (Md + PDF)                     | `AI_Audit_Report.*`                      | ☐    |
-| Nhật ký git commit (file văn bản)              | `git_commit_log.txt`                     | ☐    |
-| Báo cáo lỗi + ảnh chụp Issue                   | `evidence/issues/`                       | ☐    |
-| `README.md` (bảng tự đánh giá + tóm tắt test)  | `README.md`                              | ☐    |
-| File zip đặt tên đúng quy định                 | `23127344_HW05_AI_Performance_<NNN>.zip` | ☐    |
+| Hạng mục bắt buộc                             | File / liên kết                          | Xong                                                    |
+| --------------------------------------------- | ---------------------------------------- | ------------------------------------------------------- |
+| Báo cáo chính (Markdown + PDF)                | `Main_Report.md` / `.pdf`                | ☐                                                       |
+| Liên kết repo GitHub công khai                | _<URL>_                                  | ☐                                                       |
+| Test plan Load                                | `plans/23127344_Load_20260812.jmx`       | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
+| Test plan Stress                              | `plans/23127344_Stress_20260812.jmx`     | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
+| Test plan Spike                               | `plans/23127344_Spike_20260813.jmx`      | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); chưa mở bằng JMeter thật |
+| Script seed dữ liệu                           | `data/seed_perf_users.py`                | ☑ đã chạy, 120/120 tài khoản (lỗi \#8 §3.6)             |
+| 3 file log `.jtl` thô (đầy đủ)                | `results/`                               | ☐                                                       |
+| 3 thư mục báo cáo HTML                        | `reports/`                               | ☐                                                       |
+| Ảnh chụp resource monitor                     | `evidence/*/tool+monitor.png`            | ☐                                                       |
+| Ảnh chụp + bảng cấu hình phần cứng            | `evidence/hardware/`, §2.1               | ☐                                                       |
+| Video demo YouTube unlisted (≥ 6 phút)        | _<URL>_                                  | ☐                                                       |
+| Phê bình AI (Md + PDF)                        | §7 / `AI_Critique.*`                     | ☐                                                       |
+| AI Audit Report (Md + PDF)                    | `AI_Audit_Report.*`                      | ☐                                                       |
+| Nhật ký git commit (file văn bản)             | `git_commit_log.txt`                     | ☐                                                       |
+| Báo cáo lỗi + ảnh chụp Issue                  | `evidence/issues/`                       | ☐                                                       |
+| `README.md` (bảng tự đánh giá + tóm tắt test) | `README.md`                              | ☐                                                       |
+| File zip đặt tên đúng quy định                | `23127344_HW05_AI_Performance_<NNN>.zip` | ☐                                                       |
 
 ---
 
 ## 10. Tự đánh giá
 
-| STT | Tiêu chí                                                                            | Điểm    | Điểm tự đánh giá | Lý giải  |
-| --- | ----------------------------------------------------------------------------------- | ------- | ---------------- | -------- |
-| 1   | Task 1 — Load testing                                                               | 20      | _<n>_            | _<...>_  |
-| 2   | Task 1 — Stress testing                                                             | 20      | _<n>_            | _<...>_  |
-| 3   | Task 1 — Spike testing                                                              | 20      | _<n>_            | _<...>_  |
-| 4   | Task 2 — Phân tích bằng AI + truy tìm điểm hiểu sai (kèm giá trị đúng từ log thô)   | 10      | _<n>_            | _<...>_  |
-| 5   | Task 3 — Đề xuất Continuous Performance Testing (G9.6)                              | 10      | _<n>_            | _<...>_  |
-| 6   | Agent Skills                                                                        | 10      | _<n>_            | _<...>_  |
-|     | **Tổng cộng**                                                                       | **100** | **_<n>_**        |          |
+| STT | Tiêu chí                                                                          | Điểm    | Điểm tự đánh giá | Lý giải |
+| --- | --------------------------------------------------------------------------------- | ------- | ---------------- | ------- |
+| 1   | Task 1 — Load testing                                                             | 20      | _<n>_            | _<...>_ |
+| 2   | Task 1 — Stress testing                                                           | 20      | _<n>_            | _<...>_ |
+| 3   | Task 1 — Spike testing                                                            | 20      | _<n>_            | _<...>_ |
+| 4   | Task 2 — Phân tích bằng AI + truy tìm điểm hiểu sai (kèm giá trị đúng từ log thô) | 10      | _<n>_            | _<...>_ |
+| 5   | Task 3 — Đề xuất Continuous Performance Testing (G9.6)                            | 10      | _<n>_            | _<...>_ |
+| 6   | Agent Skills                                                                      | 10      | _<n>_            | _<...>_ |
+|     | **Tổng cộng**                                                                     | **100** | **_<n>_**        |         |
 
 ---
 
@@ -653,10 +708,10 @@ Nhật ký đầy đủ nằm trong `AI_Audit_Report.md`. Phần khai báo và c
 
 > **Tôi có sử dụng công cụ AI cho các công việc sau:** _<liệt kê>_
 
-| #   | Công cụ AI | Ngày & giờ           | Prompt                | Output của AI                                                      | Hành động của tôi                       |
-| --- | ---------- | -------------------- | --------------------- | ------------------------------------------------------------------ | --------------------------------------- |
-| 1   | _<...>_    | _<YYYY-MM-DD HH:MM>_ | _<prompt nguyên văn>_ | _<nguyên văn hoặc tóm tắt trung thực + chỉ dẫn tới file log gốc>_  | _<chấp nhận / đã sửa — xem §3.6 mục n>_ |
-| 2   |            |                      |                       |                                                                    |                                         |
+| #   | Công cụ AI | Ngày & giờ           | Prompt                | Output của AI                                                     | Hành động của tôi                       |
+| --- | ---------- | -------------------- | --------------------- | ----------------------------------------------------------------- | --------------------------------------- |
+| 1   | _<...>_    | _<YYYY-MM-DD HH:MM>_ | _<prompt nguyên văn>_ | _<nguyên văn hoặc tóm tắt trung thực + chỉ dẫn tới file log gốc>_ | _<chấp nhận / đã sửa — xem §3.6 mục n>_ |
+| 2   |            |                      |                       |                                                                   |                                         |
 
 ---
 
