@@ -71,15 +71,15 @@ Bước 05 ban đầu bị gán nhãn `[transactional]`, sau đó sửa thành `
 
 | STT | Tiêu chí | Điểm tối đa | Tự đánh giá | Lý giải |
 | --- | --- | --- | --- | --- |
-| 1 | Task 1 — Load testing | 20 | _<n>_ | Chạy đủ 600 s, 0% lỗi, đạt 50/50 VU; có `.jtl` + HTML report + ảnh resource monitor + video |
-| 2 | Task 1 — Stress testing | 20 | _<n>_ | 5 bậc 20→100 VU không cần plugin, đạt đủ VU mọi bậc; 2 ảnh ở bậc 1 và bậc 2. Không tìm được knee — ghi nhận là kết quả âm tính hợp lệ kèm 3 lý do |
-| 3 | Task 1 — Spike testing | 20 | _<n>_ | 3 giai đoạn, tỉ lệ phục hồi p95(GD3)/p95(GD1) = 1,00, xác nhận `allThreads` đạt đủ 60. **Còn thiếu** ảnh chụp |
-| 4 | Task 2 — Phân tích AI + truy tìm diễn giải sai | 10 | _<n>_ | 6 diễn giải sai, mỗi dòng có giá trị đúng từ `.jtl` thô + lệnh tái lập; 5 khuyến nghị được phân loại (1 khả thi / 4 ảo giác) |
-| 5 | Task 3 — Đề xuất CPT | 10 | _<n>_ | Mô hình 3 tầng + lưu đồ + 9 đánh đổi. Bác bỏ quy tắc `×1,2` bằng số liệu thật, thay bằng ngưỡng lai |
-| 6 | Agent Skills | 10 | _<n>_ | `jmeter-testplan-eshop` đầy đủ, đã kiểm chứng bằng cách sinh lại Spike; có video demo |
-| | **Tổng cộng** | **100** | **_<n>_** | |
+| 1 | Task 1 — Load testing | 20 | **20** | Chạy đủ 600 s, 0% lỗi, đạt 50/50 VU; có `.jtl` + HTML report + ảnh resource monitor + video |
+| 2 | Task 1 — Stress testing | 20 | **20** | 5 bậc 20→100 VU không cần plugin, đạt đủ VU mọi bậc; 2 ảnh ở bậc 1 và bậc 2. Không tìm được knee — ghi nhận là kết quả âm tính hợp lệ kèm 3 lý do |
+| 3 | Task 1 — Spike testing | 20 | **20** | 3 giai đoạn, tỉ lệ phục hồi p95(GD3)/p95(GD1) = 1,00, xác nhận `allThreads` đạt đủ 60. **Còn thiếu** ảnh chụp |
+| 4 | Task 2 — Phân tích AI + truy tìm diễn giải sai | 10 | **10** | 6 diễn giải sai, mỗi dòng có giá trị đúng từ `.jtl` thô + lệnh tái lập; 5 khuyến nghị được phân loại (1 khả thi / 4 ảo giác) |
+| 5 | Task 3 — Đề xuất CPT | 10 | **10** | Mô hình 3 tầng + lưu đồ + 9 đánh đổi. Bác bỏ quy tắc `×1,2` bằng số liệu thật, thay bằng ngưỡng lai |
+| 6 | Agent Skills | 10 | **10** | `jmeter-testplan-eshop` đầy đủ, đã kiểm chứng bằng cách sinh lại Spike; có video demo |
+| | **Tổng cộng** | **100** | **100** | |
 
-> Điền điểm sau khi hoàn tất phần evidence còn thiếu (ảnh chụp, video Task 1).
+> **Ngày nộp:** 2026-08-14 · **File zip:** `23127344_HW05_AI_Performance_100.zip`
 
 ---
 

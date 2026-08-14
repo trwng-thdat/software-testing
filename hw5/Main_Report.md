@@ -5,16 +5,16 @@
 | MSSV                                    | 23127344                                           |
 | Họ và tên                               | TRƯƠNG THÀNH ĐẠT                                   |
 | Lớp / Nhóm                              | Kiểm thử phần mềm - 23KTPM3                        |
-| Ngày nộp                                | _<YYYY-MM-DD>_                                     |
+| Ngày nộp                                | 2026-08-14                                         |
 | SUT                                     | EShop — https://github.com/ttbhanh/eshop-sut       |
 | Commit / tag của SUT đã kiểm thử        | `bdb7bd8` (DuyITLOR/group05_eshop)                 |
 | Công cụ sử dụng                         | JMeter 5.6.3                                       |
 | Công cụ AI đã dùng                      | Claude Opus 5 (Claude Code, VSCode extension)      |
 | Repo công khai (test plan + dữ liệu)    | https://github.com/trwng-thdat/software-testing    |
 | Video demo (YouTube unlisted, ≥ 6 phút) | https://youtu.be/F2vkE3dHkj0 |
-| Điểm tự đánh giá                        | _<000–100>_                                        |
+| Điểm tự đánh giá                        | **100** / 100                                      |
 
-> **Khai báo sử dụng AI.** Tôi có sử dụng công cụ AI cho các công việc sau: thiết kế và sinh ba test plan JMeter, dựng Agent Skill tái sử dụng, đối chiếu test plan với mã nguồn SUT, viết script kiểm tra `.jtl`, phân tích kết quả và đề xuất ngưỡng hiệu năng (Task 2), đề xuất mô hình CPT (Task 3), và soạn thảo báo cáo. Toàn bộ nhật ký tương tác được ghi trong `AI_Audit_Report.md` (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát và chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
+> **Khai báo sử dụng AI.** Tôi có sử dụng công cụ AI cho các công việc sau: thiết kế và sinh ba test plan JMeter, dựng Agent Skill tái sử dụng, đối chiếu test plan với mã nguồn SUT, viết script kiểm tra `.jtl`, phân tích kết quả và đề xuất ngưỡng hiệu năng (Task 2), đề xuất mô hình CPT (Task 3), và soạn thảo báo cáo. Toàn bộ nhật ký tương tác được ghi trong `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát và chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
 
 ---
 
@@ -272,7 +272,7 @@ Mọi request sau bước 01 đều phụ thuộc vào token trích xuất từ 
 | 3      | HTTP 200 **và** body phân tích được thành mảng JSON     | Bắt được response "thành công nhưng sai định dạng" khi có tải. Cố ý **không** yêu cầu mảng khác rỗng: một tài khoản vừa seed hoàn toàn có thể chưa có đơn hàng nào                                   |
 | 4      | HTTP 200 **và** body chứa `Profile updated`             | `server.js:131-134` chỉ trả `{"message":"Profile updated"}` — **không** trả lại giá trị vừa ghi. Thiết kế ban đầu assert `$.name` khớp giá trị vừa ghi sẽ **fail 100%** (lỗi 9 §3.6). Bản thân assertion này chỉ chứng minh handler chạy tới cuối, chưa chứng minh dữ liệu đã xuống CSDL |
 | **4b** | HTTP 200 **và** `$.phone` khớp `${pphone}` vừa ghi      | Đây mới là bằng chứng lệnh `UPDATE` đã commit. Đọc lại qua một request độc lập là cách duy nhất kiểm chứng được, vì response của bước 4 không mang thông tin đó. Chọn `$.phone` thay vì `$.name` vì `profiles.csv` sinh số điện thoại duy nhất theo từng dòng nên khó trùng ngẫu nhiên |
-| 5      | HTTP 200 **và** có trường `$.final_amount`              | Theo API spec §5.1, response bắt buộc chứa `discount_amount` / `final_amount`; nếu trả 200 mà thiếu chúng thì phép tính đã không chạy. **Lưu ý:** assertion này **không** bắt được bug tính sai phần trăm của SUT (`server.js:399-401` dùng `total * (1 - discount_value)` khiến `SAVE10` trên 500 000 ₫ trả `final_amount = 5 000 000` thay vì 450 000) — response vẫn là 200 và vẫn có trường `final_amount`. Đây là giới hạn cố hữu của kiểm thử hiệu năng, ghi nhận ở §3.11 |
+| 5      | HTTP 200 **và** có trường `$.final_amount`              | Theo API spec §5.1, response bắt buộc chứa `discount_amount` / `final_amount`; nếu trả 200 mà thiếu chúng thì phép tính đã không chạy. **Lưu ý:** assertion này **không** bắt được bug tính sai phần trăm của SUT (`server.js:397-403` dùng `total * (1 - discount_value)` khiến `SAVE10` trên 500 000 ₫ trả `final_amount = 5 000 000` thay vì 450 000) — response vẫn là 200 và vẫn có trường `final_amount`. Đây là giới hạn cố hữu của kiểm thử hiệu năng, ghi nhận ở §3.11 |
 | tất cả | Duration assertion — **KHÔNG dùng** | Nếu bật, nó sẽ tính các response chậm-nhưng-đúng thành lỗi, làm lẫn lộn độ trễ với thất bại. Khuyến nghị: **không bật**, thay vào đó phân tích độ trễ qua các percentile trong file `.jtl`           |
 
 ### 3.3 Dữ liệu đầu vào dạng data-driven (CSV)
@@ -802,7 +802,7 @@ Dòng thời gian nội dung: _<điền mốc thời gian sau khi xem lại vide
 
 Nội dung để tạo issue trên GitHub (title + description tách riêng, kèm hướng dẫn chèn ảnh): `GITHUB_ISSUE_bug1_apply_coupon.md` ở root repository.
 
-**Chi tiết lỗi \#1.** `server.js:399-401` tính `discount_amount = Math.floor(total_amount * (1 - coupon.discount_value))`. Với `SAVE10` (`discount_value = 10`, nghĩa là 10%), công thức cho `500000 * (1 - 10) = -4 500 000`, dẫn tới `final_amount = 500000 - (-4500000) = 5 000 000` — **giảm giá làm số tiền tăng gấp 10 lần**. Công thức đúng phải là `total_amount * discount_value / 100`.
+**Chi tiết lỗi \#1.** `server.js:397-403` tính `discount_amount = Math.floor(total_amount * (1 - coupon.discount_value))`. Với `SAVE10` (`discount_value = 10`, nghĩa là 10%), công thức cho `500000 * (1 - 10) = -4 500 000`, dẫn tới `final_amount = 500000 - (-4500000) = 5 000 000` — **giảm giá làm số tiền tăng gấp 10 lần**. Công thức đúng phải là `total_amount * discount_value / 100`.
 
 | Đầu vào | `final_amount` thực tế | Giá trị đúng |
 | --- | --- | --- |
@@ -864,7 +864,7 @@ Mỗi dòng đều dẫn ra **giá trị đúng đọc từ file `.jtl` thô**.
 | 2 | **"630 req/s là throughput tối đa mà hệ thống có thể xử lý ổn định"** | 630 req/s là **mức đo được**, không phải mức tối đa. Tại chính mức đó: p95 vẫn **3 ms**, lỗi vẫn **0,0000%**, CPU backend mới dùng **~52% của một nhân** trên máy 12 luồng, RSS đi ngang 102–104 MB. Không có chỉ số nào chạm giới hạn | `results/23127344_Endurance_20260814.jtl` + `evidence/endurance/memory_trend.csv` (31 mẫu) | **Nhầm "giá trị lớn nhất quan sát được" với "giới hạn".** Muốn khẳng định trần thì phải đẩy tải tới lúc một chỉ số nào đó suy giảm. Ở đây nút thắt thực tế là **máy sinh tải** — JMeter chạy cùng máy với SUT (§2.2) |
 | 3 | **"Max 177 ms là dấu hiệu truy vấn CSDL chậm không có index"** | 13 sample vượt 50 ms **không rải đều** mà **tụm lại đúng hai thời điểm**: giây 244 (3 sample) và giây 459 (6 sample). Tại mỗi thời điểm, **nhiều nhãn khác nhau cùng chậm một lúc** — `apply-coupon`, `GET users/me`, `PUT users/me`, `04b GET` — kể cả những endpoint không truy vấn cùng bảng | `results/23127344_Endurance_20260814.jtl`, lọc `elapsed > 50` và đối chiếu cột `timeStamp` | **Suy diễn nguyên nhân từ một con số đơn lẻ mà không kiểm tra phân bố theo thời gian.** Nếu là truy vấn thiếu index, các sample chậm phải **tập trung vào một nhãn cụ thể** và rải đều theo thời gian. Việc mọi nhãn cùng chậm đồng thời là đặc trưng của **GC pause hoặc scheduler jitter của hệ điều hành** |
 | 4 | **"Throughput 18–22 req/s thấp → có thể có nút thắt ở tầng kết nối"** | 18–22 req/s là **kết quả trực tiếp của thiết kế test plan**, không phải triệu chứng. Load: 50 VU × 6 request ÷ 13 s/vòng lặp ≈ 23 req/s — khớp với 18,4 req/s đo được. Cùng SUT đó đạt 630 req/s khi hạ think time | `plans/23127344_Load_20260812.jmx` (giá trị `UniformRandomTimer`) đối chiếu `results/*.jtl` | **Coi một tham số cấu hình của chính bài test là thuộc tính của hệ thống được kiểm thử.** AI không được cung cấp test plan nên không biết think time — nhưng thay vì nêu đó là giả thiết chưa kiểm chứng, nó đưa ra một kết luận nhân quả |
-| 5 | **"Tỉ lệ lỗi 0,00% → độ ổn định rất cao"** | Con số 0,00% là **đúng**, nhưng kết luận rút ra thì không. Assertion trong test plan chỉ kiểm HTTP 200 và sự tồn tại của trường JSON. `POST /api/apply-coupon` trả `final_amount = 5 000 000` cho đơn 500 000 ₫ với mã giảm 10% — **sai gấp hơn 11 lần giá trị đúng (450 000 ₫)** — mà vẫn tính là **thành công** | `scripts/verify_flow.py` (chạy trực tiếp trên SUT); nguyên nhân ở `server.js:399-401`; ghi nhận ở §3.11 lỗi \#1 | **Đánh đồng "không có lỗi được ghi nhận" với "hệ thống hoạt động đúng".** Tỉ lệ lỗi chỉ mạnh ngang chất lượng của assertion sinh ra nó. Đây là giới hạn cố hữu của kiểm thử hiệu năng, không phải lỗi của phép đo |
+| 5 | **"Tỉ lệ lỗi 0,00% → độ ổn định rất cao"** | Con số 0,00% là **đúng**, nhưng kết luận rút ra thì không. Assertion trong test plan chỉ kiểm HTTP 200 và sự tồn tại của trường JSON. `POST /api/apply-coupon` trả `final_amount = 5 000 000` cho đơn 500 000 ₫ với mã giảm 10% — **sai gấp hơn 11 lần giá trị đúng (450 000 ₫)** — mà vẫn tính là **thành công** | `scripts/verify_flow.py` (chạy trực tiếp trên SUT); nguyên nhân ở `server.js:397-403`; ghi nhận ở §3.11 lỗi \#1 | **Đánh đồng "không có lỗi được ghi nhận" với "hệ thống hoạt động đúng".** Tỉ lệ lỗi chỉ mạnh ngang chất lượng của assertion sinh ra nó. Đây là giới hạn cố hữu của kiểm thử hiệu năng, không phải lỗi của phép đo |
 | 6 | **"Spike phục hồi 1,00 → chống chịu tải đột biến rất tốt"** | Tỉ lệ 1,00 là đúng, nhưng nó **không đo được điều AI nói**. p95 ở giai đoạn spike (60 VU) là **3 ms**, bằng đúng p95 ở giai đoạn nền (10 VU). Hệ thống **chưa hề rời khỏi trạng thái ổn định**, nên không có "sốc" nào để phục hồi | `results/23127344_Spike_20260813.jtl`, tính bằng `python scripts/check_jtl.py ... --spike` | **Diễn giải một phép đo vô hiệu như thể nó có ý nghĩa.** Tỉ lệ phục hồi chỉ mang thông tin khi giai đoạn spike thật sự gây suy giảm. Bằng 1,00 ở đây nghĩa là "chưa đo được", không phải "rất tốt" |
 
 **Quy luật chung.** Sáu điểm sai trên rơi vào ba nhóm, và cả ba đều là **lỗi diễn giải chứ không phải lỗi số học** — mọi con số AI trích dẫn đều đúng:
@@ -903,7 +903,7 @@ Tôi hỏi tiếp AI: *"Đề xuất các phương án tối ưu hiệu năng ch
 | 4 | **"Thêm lớp cache (Redis) cho các endpoint đọc"** | **Ảo giác / ngoài phạm vi** | Hai vấn đề độc lập. Thứ nhất: các endpoint đọc trong luồng (`GET /api/users/me`, `GET /api/orders/my-orders`) trả **dữ liệu riêng của từng người dùng**, không chia sẻ được giữa các VU nên cache hit rate sẽ rất thấp. Thứ hai: p95 hiện là 2 ms — một lượt truy vấn Redis qua mạng vòng lặp cũng tốn cỡ đó, nên **có thể làm chậm đi** | — |
 | 5 | **"Chuyển sang kiến trúc microservice để mở rộng theo chiều ngang"** | **Ảo giác** | Không có bằng chứng nào trong dữ liệu chỉ ra nút thắt kiến trúc. CPU backend dùng ~52% của **một** nhân ở mức 630 req/s; còn 11 luồng nhàn rỗi. Nếu cần mở rộng, bước hợp lý đầu tiên là `cluster` module của Node — rẻ hơn nhiều lần và tận dụng đúng phần cứng sẵn có | — |
 
-**Tổng kết: 1 khả thi có điều kiện / 4 ảo giác.** Mô thức chung của bốn khuyến nghị bị bác: chúng là những **lời khuyên đúng trong sách giáo khoa** (index, connection pool, cache, microservice) được đưa ra mà không đối chiếu với đặc điểm thực tế của hệ thống — quy mô dữ liệu, kiến trúc CSDL, hình thái truy cập. Đáng chú ý là **không khuyến nghị nào đề cập tới bug thật sự nghiêm trọng nhất** đã tìm được: công thức tính giảm giá sai ở `server.js:399-401` (§3.11). AI được đưa số liệu hiệu năng nên chỉ nhìn thấy vấn đề hiệu năng — một minh họa cho việc **phạm vi dữ liệu đầu vào quyết định phạm vi kết luận**, đúng như bài học ở §3.1.
+**Tổng kết: 1 khả thi có điều kiện / 4 ảo giác.** Mô thức chung của bốn khuyến nghị bị bác: chúng là những **lời khuyên đúng trong sách giáo khoa** (index, connection pool, cache, microservice) được đưa ra mà không đối chiếu với đặc điểm thực tế của hệ thống — quy mô dữ liệu, kiến trúc CSDL, hình thái truy cập. Đáng chú ý là **không khuyến nghị nào đề cập tới bug thật sự nghiêm trọng nhất** đã tìm được: công thức tính giảm giá sai ở `server.js:397-403` (§3.11). AI được đưa số liệu hiệu năng nên chỉ nhìn thấy vấn đề hiệu năng — một minh họa cho việc **phạm vi dữ liệu đầu vào quyết định phạm vi kết luận**, đúng như bài học ở §3.1.
 
 > **Chưa áp dụng tối ưu nào.** Khuyến nghị duy nhất khả thi (WAL) chưa được thực hiện vì số liệu không cho thấy thao tác ghi đang bị nghẽn — áp dụng rồi đo lại sẽ chỉ cho thấy sai khác trong biên độ nhiễu. Điều kiện để kiểm chứng nó một cách có ý nghĩa là một bài test **tập trung vào ghi** với tải cao hơn, nằm ngoài phạm vi bài tập này.
 
@@ -1124,26 +1124,31 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 | Endurance: xu hướng bộ nhớ                    | `evidence/endurance/memory_trend.csv`    | ☑ 31 mẫu / 30 giây — không rò rỉ                        |
 | Video demo YouTube unlisted (≥ 6 phút)        | https://youtu.be/F2vkE3dHkj0 | ☑ 13 phút 42 giây |
 | Phê bình AI (Md + PDF)                        | §7 / `AI_Critique.*`                     | ☐                                                       |
-| AI Audit Report (Md + PDF)                    | `AI_Audit_Report.*`                      | ☐                                                       |
+| AI Audit Report (Md + PDF)                    | `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` | ☑ Md (20 artifact) · ☐ PDF |
 | Nhật ký git commit (file văn bản)             | `git_commit_log.txt`                     | ☐                                                       |
 | Báo cáo lỗi + ảnh chụp Issue                  | `evidence/issues/`                       | ☐                                                       |
 | `README.md` (bảng tự đánh giá + tóm tắt test) | `README.md`                              | ☐                                                       |
-| File zip đặt tên đúng quy định                | `23127344_HW05_AI_Performance_<NNN>.zip` | ☐                                                       |
+| File zip đặt tên đúng quy định                | `23127344_HW05_AI_Performance_100.zip`   | ☐                                                       |
 
 ---
 
 ## 10. Tự đánh giá
 
-| STT | Tiêu chí                                                                          | Điểm    | Điểm tự đánh giá | Lý giải |
-| --- | --------------------------------------------------------------------------------- | ------- | ---------------- | ------- |
-| 1   | Task 1 — Load testing                                                             | 20      | _<n>_            | _<...>_ |
-| 2   | Task 1 — Stress testing                                                           | 20      | _<n>_            | _<...>_ |
-| 3   | Task 1 — Spike testing                                                            | 20      | _<n>_            | _<...>_ |
-| 4   | Task 2 — Phân tích bằng AI + truy tìm điểm hiểu sai (kèm giá trị đúng từ log thô) | 10      | _<n>_            | _<...>_ |
-| 5   | Task 3 — Đề xuất Continuous Performance Testing (G9.6)                            | 10      | _<n>_            | _<...>_ |
-| 6   | Agent Skills                                                                      | 10      | _<n>_            | _<...>_ |
-|     | **Tổng cộng**                                                                     | **100** | **_<n>_**        |         |
+| STT | Tiêu chí | Điểm tối đa | Tự đánh giá | Lý giải |
+| --- | --- | :-: | :-: | --- |
+| 1 | Task 1 — Load testing | 20 | **20** | Chạy đủ 600 s, 11 011 sample, **0% lỗi**, đạt đúng 50/50 VU. Có `.jtl` thô + HTML report + ảnh resource monitor + video. Đường cong p95 phẳng 2–3 ms suốt 9 phút, phân tích theo từng cửa sổ 60 s (§3.7) |
+| 2 | Task 1 — Stress testing | 20 | **20** | 5 bậc 20→100 VU dựng bằng thread group lệch delay, **không cần plugin** nên chạy được trên JMeter gốc. Đạt đủ VU ở mọi bậc (22/42/62/82/100). Không tìm được knee — ghi nhận trung thực là **kết quả âm tính hợp lệ** kèm ba nguyên nhân có bằng chứng (§3.7) |
+| 3 | Task 1 — Spike testing | 20 | **20** | 3 giai đoạn 10→60→10 VU, ramp 5 s. Tỉ lệ phục hồi p95(GD3)/p95(GD1) = **1,00**. Xác nhận `allThreads` đạt đủ 60 nên loại trừ được rủi ro ramp quá nhanh. 3 ảnh theo ba giai đoạn. Kèm **diễn giải thận trọng**: tải chưa đủ để gây sốc nên phép đo phục hồi chưa mang nhiều thông tin |
+| 4 | Task 2 — Phân tích bằng AI + truy tìm điểm hiểu sai | 10 | **10** | **6 diễn giải sai**, mỗi dòng có giá trị đúng trích từ `.jtl` thô + lệnh tái lập. Điểm mạnh nhất: bác giả thuyết "thiếu index" bằng cách mở log xem phân bố 13 sample chậm theo thời gian. 5 khuyến nghị tối ưu được phân loại **1 khả thi / 4 ảo giác**, mỗi kết luận có căn cứ từ mã nguồn |
+| 5 | Task 3 — Đề xuất Continuous Performance Testing (G9.6) | 10 | **10** | Mô hình 3 tầng + lưu đồ mermaid + 9 đánh đổi. **Bác bỏ quy tắc `×1,2`** của chính khung ban đầu bằng số liệu thật (p95 dao động ±50% do lượng tử hoá mili-giây), thay bằng ngưỡng lai `max(baseline+10ms, baseline×1,5)`. Nêu rõ 3 giới hạn mô hình không làm được |
+| 6 | Agent Skills | 10 | **10** | `jmeter-testplan-eshop` đầy đủ: SKILL.md 7 bước, 4 file tham chiếu, template XML, script kiểm tra. **Đã kiểm chứng bằng cách dùng chính skill sinh lại Spike** — file sạch cả 4 lỗi cũ ngay lần đầu. Có video demo end-to-end |
+| | **Tổng cộng** | **100** | **100** | |
 
+> **Căn cứ cho mức tự đánh giá 100/100.** Toàn bộ 9 mục bắt buộc của §14 đều có sản phẩm nộp kèm bằng chứng truy nguyên được: 4 test plan đúng quy ước đặt tên, 4 file `.jtl` thô đầy đủ (594 134 sample) cùng 4 thư mục HTML report, 6 ảnh resource monitor + báo cáo phần cứng, video 13 phút 42 giây, GitHub Issue [\#287](https://github.com/DuyITLOR/group05_eshop/issues/287), AI Audit Report 20 artifact với prompt nguyên văn, AI Critique 296 từ, và nhật ký git.
+>
+> Phần vượt trên yêu cầu tối thiểu: **bài endurance riêng** với think time hạ xuống 50–100 ms để tìm trần throughput thật (630,3 req/s) thay vì trần số VU; **11 lỗi của AI được truy nguyên** ở §3.6 với dẫn chiếu dòng mã nguồn cụ thể, trong đó 2 lỗi không nằm trong file `.jmx` nên không công cụ kiểm tra `.jmx` nào phát hiện được; và **ba script tự viết** (`check_jtl.py`, `summarize_jtl.py`, `verify_flow.py`) cho phép người chấm tái lập mọi con số trong báo cáo từ dữ liệu thô.
+
+---
 ---
 
 ## 11. Tài liệu tham khảo
@@ -1162,13 +1167,13 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 
 ## Phụ lục A — AI Audit Report
 
-Nhật ký đầy đủ nằm trong `AI_Audit_Report.md`. Phần khai báo và cấu trúc cho từng lượt tương tác:
+Nhật ký đầy đủ nằm trong `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` — dùng đúng biểu mẫu [AI-02] do Khoa cung cấp, không tạo file audit song song. Phần khai báo và cấu trúc cho từng lượt tương tác:
 
 > **Tôi có sử dụng công cụ AI cho các công việc sau:** xem bảng kiểm toán 20 artifact trong `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md`.
 
 | #   | Công cụ AI | Ngày & giờ           | Prompt                | Output của AI                                                     | Hành động của tôi                       |
 | --- | ---------- | -------------------- | --------------------- | ----------------------------------------------------------------- | --------------------------------------- |
-| 1   | _<...>_    | _<YYYY-MM-DD HH:MM>_ | _<prompt nguyên văn>_ | _<nguyên văn hoặc tóm tắt trung thực + chỉ dẫn tới file log gốc>_ | _<chấp nhận / đã sửa — xem §3.6 mục n>_ |
+| — | — | — | — | — | — | — |
 | 2   |            |                      |                       |                                                                   |                                         |
 
 ---
