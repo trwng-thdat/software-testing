@@ -2,12 +2,13 @@ HW05 - Performance Testing (AI-First)
 Student ID: 23127344
 Repository: software-testing
 Branch: main
-Generated: 2026-08-14 09:23:05 +0700
+Generated: 2026-08-14 09:44:30 +0700
 
 ========================================================================
 COMMIT LOG - HW05
 ========================================================================
 
+58e1913 | 2026-08-14 09:44:30 +0700 | trwng-thdat | docs(hw5): hoàn thiện AI Audit Report — 15 artifact với prompt nguyên văn
 a1ef284 | 2026-08-14 09:23:05 +0700 | trwng-thdat | docs(hw5): hoàn thành Task 3 — đề xuất Continuous Performance Testing
 654eb86 | 2026-08-14 09:17:48 +0700 | trwng-thdat | docs(hw5): hoàn thành Task 2 — phân tích AI và truy tìm 6 diễn giải sai
 3ab5c6d | 2026-08-14 07:47:54 +0700 | trwng-thdat | docs(hw5): thêm hướng dẫn quay video và chụp ảnh evidence từng bước
