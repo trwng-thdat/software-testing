@@ -451,19 +451,81 @@ Hai giá trị **hiển thị giống hệt nhau** nhưng assertion vẫn fail �
 
 | Kịch bản | Bắt đầu (giờ địa phương) | Thời lượng | Số sample | Tỉ lệ lỗi % | TB (ms) | p90     | p95     | p99     | Throughput (req/s) | File log thô                         | Báo cáo HTML                |
 | -------- | ------------------------ | ---------- | --------- | ----------- | ------- | ------- | ------- | ------- | ------------------ | ------------------------------------ | --------------------------- |
-| Load     | _<...>_                  | _<...>_    | _<...>_   | _<...>_     | _<...>_ | _<...>_ | _<...>_ | _<...>_ | _<...>_            | `results/23127344_Load_<date>.jtl`   | `reports/load/index.html`   |
-| Stress   |                          |            |           |             |         |         |         |         |                    | `results/23127344_Stress_<date>.jtl` | `reports/stress/index.html` |
-| Spike    |                          |            |           |             |         |         |         |         |                    | `results/23127344_Spike_<date>.jtl`  | `reports/spike/index.html`  |
+| Load     | 06:52:31 | 597 s | 11 011 | **0,00** | 2 | 2 | 3 | 4 | 18,4 | `results/23127344_Load_20260812.jtl` | `reports/load/index.html` |
+| Stress   | 07:02:54 | 598 s | 13 329 | **0,00** | 2 | 2 | 3 | 3 | 22,3 | `results/23127344_Stress_20260812.jtl` | `reports/stress/index.html` |
+| Spike    | 07:13:18 | 418 s | 2 620 | **0,00** | 2 | 2 | 3 | 3 | 6,3 | `results/23127344_Spike_20260813.jtl` | `reports/spike/index.html` |
+
+**VU thực tế đạt được** (đọc từ cột `allThreads`, không phải con số khai báo):
+
+| Kịch bản | VU thiết kế | VU thực tế | Kết luận |
+| --- | --- | --- | --- |
+| Load | 50 | **50** | Đạt đủ |
+| Stress | 100 (bậc 5) | **100** | Đạt đủ ở mọi bậc: 22/42/62/82/100 |
+| Spike | 60 (ramp 5 s) | **60** | Đạt đủ — rủi ro ramp quá nhanh đã được loại trừ |
+
+> Cả ba kịch bản đều **đạt đúng số VU thiết kế**, nghĩa là máy sinh tải không phải nút thắt và mọi số liệu trên đều phản ánh hành vi thật của SUT. Đây là điều kiện tiên quyết để diễn giải kết quả, và là lý do `threadCounts=true` được bật trong cả ba test plan (§3.5).
 
 > Toàn bộ số liệu ở trên được đọc từ file `.jtl` thô, không phải chép lại từ output của AI. _<Ghi rõ lệnh/công cụ đã dùng để tính, ví dụ một script nhỏ hoặc dashboard của JMeter.>_
 
 **Nhận xét theo từng kịch bản.**
 
-- **Load —** _<đường cong thời gian phản hồi diễn biến ra sao, có giữ phẳng không, lỗi xuất hiện ở đâu>_
+- **Load — đường cong hoàn toàn phẳng, không có lỗi nào.** p95 khởi đầu ở 13 ms trong cửa sổ ramp-up (0–60 s), sau đó **ổn định ở 2–3 ms và giữ nguyên suốt 9 phút còn lại**. Giá trị lớn nhất trong toàn bài chỉ 28 ms, và cũng rơi vào giai đoạn ramp-up. Không có xu hướng tăng theo thời gian → không có dấu hiệu tích lũy tài nguyên (connection pool cạn, hàng đợi tồn đọng, rò rỉ bộ nhớ) ở mức 50 VU.
+
+  | Cửa sổ 60 s | Số sample | p95 (ms) | max (ms) |
+  | --- | --- | --- | --- |
+  | 0–60 (ramp-up) | 627 | 13 | 28 |
+  | 60–120 | 1 157 | 3 | 15 |
+  | 120–600 (8 cửa sổ) | ~1 160/cửa sổ | **2–3** | 4–7 |
+
+  Response time theo từng bước cũng đồng đều, không bước nào là điểm nghẽn:
+
+  | Bước | TB (ms) | max (ms) |
+  | --- | --- | --- |
+  | 01 `POST /api/login` [auth-heavy] | 2,2 | 28 |
+  | 02 `GET /api/users/me` [read-heavy] | 1,5 | 11 |
+  | 03 `GET /api/orders/my-orders` [read-heavy] | 1,5 | 7 |
+  | 04 `PUT /api/users/me` [transactional] | 1,5 | 15 |
+  | 04b `GET /api/users/me` [verify ghi] | 1,7 | 13 |
+  | 05 `POST /api/apply-coupon` [read-only + compute] | 1,8 | 18 |
+
+  **Nhận xét quan trọng:** bước login — vốn được kỳ vọng là nặng CPU nhất vì phải hash mật khẩu và ký JWT — chỉ mất trung bình 2,2 ms. Lý do là SUT **lưu mật khẩu dạng plaintext** và so sánh bằng `user.password === password` (`server.js:46`), **không hề hash**. Đây là một bug bảo mật cố ý của SUT (xem CLAUDE.md, mục Intentional Bugs), và nó khiến giả định "auth-heavy = nặng CPU" ở §3.2 **không đúng với SUT này**. Trên một hệ thống dùng bcrypt thật, bước này sẽ tốn hàng chục tới hàng trăm mili-giây và trở thành nút thắt rõ rệt.
   - Bằng chứng: `evidence/load/tool+monitor.png` (JMeter và Task Manager trong cùng một khung hình)
-- **Stress —** _<điểm knee ở đâu: tại N VU thì p95 vượt X ms và tỉ lệ lỗi đạt Y%>_
+- **Stress — KHÔNG tìm được điểm gãy (knee) trong dải 20–100 VU.** Đây là kết quả âm tính, và nó là một kết luận hợp lệ chứ không phải bài test thất bại.
+
+  | Bậc | VU thực tế đạt | Số sample | p95 (ms) | p99 (ms) | max (ms) | Tỉ lệ lỗi |
+  | --- | --- | --- | --- | --- | --- | --- |
+  | 1 | 22 | 827 | 3 | 3 | 38 | 0% |
+  | 2 | 42 | 1 752 | 3 | 3 | 5 | 0% |
+  | 3 | 62 | 2 669 | 3 | 3 | 5 | 0% |
+  | 4 | 82 | 3 626 | 3 | 3 | 5 | 0% |
+  | 5 | **100** | 4 455 | **2** | 3 | 4 | 0% |
+
+  **p95 giữ nguyên 2–3 ms từ 20 VU tới 100 VU** — tăng tải gấp 5 lần mà thời gian phản hồi không nhúc nhích. Giá trị max 38 ms ở bậc 1 là chi phí thiết lập kết nối lúc khởi động, không phải tín hiệu quá tải. Cột `allThreads` xác nhận JMeter khởi tạo đủ thread ở mọi bậc (22/42/62/82/100), nên đây **không phải** trường hợp máy sinh tải không đủ sức.
+
+  **Diễn giải.** Điểm gãy nằm **ngoài** dải đã kiểm thử. Có ba lý do khiến SUT chịu tải tốt bất thường ở mức này:
+
+  1. **Không có thao tác nặng CPU nào.** Mật khẩu lưu plaintext, so sánh bằng `===` (`server.js:46`) — không hash. Ký JWT bằng HS256 là phép toán đối xứng, rất rẻ.
+  2. **Dữ liệu quá nhỏ.** Bảng `users` chỉ 122 dòng, `products` 5 dòng, `orders` gần như rỗng. Mọi truy vấn SQLite đều nằm gọn trong bộ nhớ đệm, không chạm đĩa.
+  3. **Think time chi phối throughput.** Mỗi vòng lặp có ~11,5 s think time trên ~13 ms xử lý thật, nên 100 VU chỉ tạo ra ~22 req/s — mức tải mà một tiến trình Node đơn luồng xử lý thoải mái.
+
+  **Hệ quả:** để tìm knee thật cần **giảm think time** hoặc **tăng VU lên hàng trăm**, nhưng cả hai đều vướng giới hạn của máy sinh tải chạy cùng máy với SUT (§2.3). Bài endurance ở §3.9 tiếp cận vấn đề này từ hướng khác — tìm trần throughput thay vì trần VU.
   - Bằng chứng: `evidence/stress/tool+monitor.png`
-- **Spike —** _<đỉnh bùng lỗi, thời gian phục hồi về mức p95 nền>_
+- **Spike — không có đỉnh bùng lỗi, phục hồi tức thì và hoàn toàn.**
+
+  | Giai đoạn | VU thiết kế | VU thực tế đạt | Số sample | p95 (ms) | Tỉ lệ lỗi |
+  | --- | --- | --- | --- | --- | --- |
+  | GD1 — Nền trước (0–120 s) | 10 | 10 | 425 | 3 | 0% |
+  | GD2 — Spike (120–180 s, ramp 5 s) | 60 | **60** | 1 311 | 3 | 0% |
+  | GD3 — Nền sau (180–420 s) | 10 | 10 | 884 | 3 | 0% |
+
+  **Thước đo phục hồi: p95(GD3) / p95(GD1) = 1,00** → hệ thống trở về đúng mức nền ban đầu, không có độ trễ tồn dư.
+
+  **Hai điều được xác nhận từ lần chạy này:**
+
+  1. **Ramp 5 giây cho 60 VU KHÔNG vượt khả năng khởi tạo thread của JMeter.** Cột `allThreads` đạt đúng 60 trong cửa sổ spike. Rủi ro nêu ở `scenario-profiles.md` và §3.4 đã được loại trừ bằng số liệu thật — **không cần** nới ramp lên 10 giây. Đây là lý do phải kiểm `allThreads` thay vì tin vào con số khai báo.
+  2. **Tăng tải gấp 6 lần trong 5 giây không gây bất kỳ suy giảm nào.** p95 giữ nguyên 3 ms ở cả ba giai đoạn. Không có lỗi timeout, không có 5xx, không có connection refused.
+
+  **Diễn giải thận trọng.** Kết quả "phục hồi hoàn hảo" ở đây **không chứng minh SUT có khả năng chịu sốc tốt** — nó chỉ chứng minh mức tải 60 VU chưa đủ để gây sốc. Vì p95 ở GD2 bằng đúng p95 ở GD1, hệ thống thậm chí chưa hề rời khỏi trạng thái ổn định, nên phép đo "thời gian phục hồi" không có gì để đo. Muốn có một bài spike test thực sự có ý nghĩa trên SUT này thì phải đẩy tải cao hơn nhiều — xem §3.9 để biết trần thật nằm ở đâu.
   - Bằng chứng: `evidence/spike/tool+monitor.png`
 
 **Mức tiêu thụ tài nguyên của tiến trình backend trong từng lần chạy.**
@@ -496,26 +558,47 @@ FR-02 khóa tài khoản sau 3 lần đăng nhập thất bại. **Cơ chế th�
 
 ### 3.9 Kiểm thử endurance / soak và ngưỡng phần cứng
 
-| Hạng mục       | Giá trị                             |
+| Hạng mục | Giá trị |
 | -------------- | ----------------------------------- |
-| File test plan | `23127344_Endurance_<YYYYMMDD>.jmx` |
-| Số VU duy trì  | _<n>_                               |
-| Thời lượng     | _<10–15 phút>_                      |
-| Tổng số sample | _<n>_                               |
+| File test plan | `plans/23127344_Endurance_20260814.jmx` |
+| Số VU duy trì | 50 |
+| Thời lượng | 900 giây (15 phút) |
+| Tổng số sample | **567 174** |
+| Think time | **50–100 ms** (thay vì 1,5–4 s của ba kịch bản chính) |
+
+**Vì sao phải hạ think time.** Ba kịch bản chính đều cho p95 = 3 ms và 0% lỗi, kể cả Stress ở 100 VU (§3.7). Nguyên nhân là think time ~11,5 s chi phối hoàn toàn: mỗi VU dành 99,9% thời gian để *chờ*, nên 100 VU chỉ tạo ra 22 req/s. Ở mức đó SUT chưa hề bị thử thách, và câu hỏi "ngưỡng chịu tải của phần cứng này ở đâu" vẫn chưa được trả lời.
+
+Bài endurance vì vậy dùng một biến thể của test plan Load với **think time hạ xuống 50–100 ms**, giữ nguyên mọi thứ khác. Cùng 50 VU nhưng tải tăng khoảng 34 lần. Đây là cách tìm **trần throughput** thay vì trần số VU — phù hợp hơn với một SUT mà nút thắt không nằm ở số kết nối đồng thời.
 
 **Ngưỡng đo được trên phần cứng này:**
 
-| Chỉ số                                             | Giá trị                                            | Cách đo                              |
+| Chỉ số | Giá trị | Cách đo |
 | -------------------------------------------------- | -------------------------------------------------- | ------------------------------------ |
-| RPS ổn định tối đa (lỗi < _<1>_ %, p95 < _<x>_ ms) | **_<n>_ req/s**                                    | _<duy trì suốt toàn bộ cửa sổ soak>_ |
-| p95 tại mức RPS đó                                 | _<n>_ ms                                           | file `.jtl` thô                      |
-| Trần bộ nhớ của backend                            | _<n>_ MB (từ _<n>_ MB lúc bắt đầu)                 | Task Manager lấy mẫu mỗi _<n>_ giây  |
-| CPU backend tại mức RPS đó                         | _<n>_ %                                            | _<...>_                              |
-| Kiểu hỏng đầu tiên khi vượt ngưỡng                 | _<connection refused / timeout / 5xx / khóa CSDL>_ | _<...>_                              |
+| **RPS ổn định tối đa** (lỗi 0%, p95 = 3 ms) | **630,3 req/s** | Duy trì suốt toàn bộ 900 giây, không suy giảm |
+| p95 tại mức RPS đó | **3 ms** | Tính trực tiếp từ `.jtl` thô |
+| p99 tại mức RPS đó | 4 ms | Tính trực tiếp từ `.jtl` thô |
+| Trần bộ nhớ của backend | **105,1 MB** (từ 95,9 MB lúc bắt đầu) | Lấy mẫu `WorkingSet64` mỗi 30 giây |
+| CPU backend tại mức RPS đó | ~52% của một nhân (~4,3% của 12 luồng) | CPU tích lũy tăng ~31 s mỗi phút |
+| Kiểu hỏng đầu tiên khi vượt ngưỡng | **Chưa quan sát được** — SUT không hỏng ở mức tải này | — |
 
-**Xu hướng bộ nhớ / kiểm tra rò rỉ.** _<RSS có tăng đơn điệu suốt quá trình soak hay đi ngang? Nêu giá trị đầu/cuối và kết luận của bạn.>_
+**Xu hướng bộ nhớ / kiểm tra rò rỉ.** RSS của tiến trình `node.exe` **đi ngang** trong suốt bài test: 95,9 MB lúc bắt đầu, tăng lên ~103 MB trong 2 phút đầu (giai đoạn khởi động và cấp phát buffer), rồi giữ ổn định 102–104 MB suốt 13 phút còn lại. Mẫu cuối cùng lúc 07:35:52 tụt xuống 59,7 MB — đây là lúc tải đã dừng và bộ thu gom rác của V8 giải phóng bộ nhớ.
 
-Bằng chứng: `evidence/endurance/*.png`, `results/23127344_Endurance_<date>.jtl`.
+| Thời điểm | RSS (MB) |
+| --- | --- |
+| 07:20:52 (bắt đầu) | 95,9 |
+| 07:22:52 | 102,9 |
+| 07:26:52 | 102,2 |
+| 07:30:52 | 102,9 |
+| 07:34:52 | 104,0 |
+| 07:35:52 (sau khi tải dừng) | 59,7 |
+
+**Kết luận: không có dấu hiệu rò rỉ bộ nhớ.** Biên độ dao động trong toàn bộ cửa sổ soak chỉ ~2 MB trên nền 103 MB, và bộ nhớ được giải phóng bình thường khi tải kết thúc. Nếu có rò rỉ, RSS sẽ tăng đơn điệu theo thời gian và **không** giảm sau khi tải dừng.
+
+**Ngưỡng thật vẫn chưa chạm tới.** 630 req/s là con số **đo được**, không phải giới hạn của SUT — vì ở mức đó p95 vẫn là 3 ms, lỗi vẫn 0%, CPU backend mới dùng khoảng nửa nhân. Nút thắt nằm ở **máy sinh tải**: JMeter chạy cùng máy (§2.3), và 50 thread Java gửi request liên tục đã tiêu tốn phần CPU đáng kể. Muốn tìm giới hạn thật của SUT cần một máy sinh tải riêng, hoặc dữ liệu lớn hơn nhiều để các truy vấn SQLite thực sự phải chạm đĩa thay vì nằm gọn trong cache.
+
+> **Diễn giải trung thực.** Đề bài yêu cầu "tự xác định ngưỡng chịu tải bằng thực nghiệm". Kết quả trung thực ở đây là: **trên cấu hình này, cụm JMeter + SUT đạt 630 req/s ổn định với p95 = 3 ms và 0% lỗi trong 15 phút, không rò rỉ bộ nhớ.** Đây là ngưỡng của **cả cụm**, và SUT còn dư địa — nói rằng "SUT chịu được tối đa 630 req/s" sẽ là một kết luận sai.
+
+Bằng chứng: `evidence/endurance/memory_trend.csv` (31 mẫu, mỗi 30 giây), `results/23127344_Endurance_20260814.jtl` (567 174 sample), `reports/endurance/index.html`.
 
 ### 3.10 Video demo
 
@@ -738,10 +821,11 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 | Test plan Stress                              | `plans/23127344_Stress_20260812.jmx`     | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); **đã mở được bằng JMeter 5.6.3** |
 | Test plan Spike                               | `plans/23127344_Spike_20260813.jmx`      | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); **đã mở được bằng JMeter 5.6.3** |
 | Script seed dữ liệu                           | `data/seed_perf_users.py`                | ☑ đã chạy, 120/120 tài khoản (lỗi \#8 §3.6)             |
-| 3 file log `.jtl` thô (đầy đủ)                | `results/`                               | ☐                                                       |
-| 3 thư mục báo cáo HTML                        | `reports/`                               | ☐                                                       |
-| Ảnh chụp resource monitor                     | `evidence/*/tool+monitor.png`            | ☐                                                       |
-| Ảnh chụp + bảng cấu hình phần cứng            | `evidence/hardware/`, §2.1               | ☐                                                       |
+| 3 file log `.jtl` thô (đầy đủ)                | `results/`                               | ☑ Load 1,6 MB / Stress 2,3 MB / Spike 434 KB; Endurance 4,2 MB (`.gz`, 567 174 sample) |
+| 3 thư mục báo cáo HTML                        | `reports/`                               | ☑ `load` / `stress` / `spike` / `endurance`             |
+| Ảnh chụp resource monitor                     | `evidence/*/tool+monitor.png`            | ☐ **cần chụp khi quay video**                           |
+| Ảnh chụp + bảng cấu hình phần cứng            | `evidence/hardware/`, §2.1               | ☑ `dxdiag.txt` + bảng §2.1; ☐ còn thiếu ảnh cửa sổ dxdiag |
+| Endurance: xu hướng bộ nhớ                    | `evidence/endurance/memory_trend.csv`    | ☑ 31 mẫu / 30 giây — không rò rỉ                        |
 | Video demo YouTube unlisted (≥ 6 phút)        | _<URL>_                                  | ☐                                                       |
 | Phê bình AI (Md + PDF)                        | §7 / `AI_Critique.*`                     | ☐                                                       |
 | AI Audit Report (Md + PDF)                    | `AI_Audit_Report.*`                      | ☐                                                       |

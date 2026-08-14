@@ -21,3 +21,14 @@ Thumbs.db
 *.mp4
 *.mov
 *.mkv
+
+# JMeter runtime log (sinh lai moi lan chay, khong phai bang chung)
+jmeter.log
+
+# Ma nguon SUT (repo rieng: https://github.com/ttbhanh/eshop-sut)
+# Duoc tha vao de doi chieu khi ra soat test plan, khong thuoc bai nop
+group05_eshop/
+
+# .jtl endurance 82 MB (567k sample) -> commit ban .gz 4.2 MB thay the.
+# Giai nen: gunzip -k hw5/results/23127344_Endurance_20260814.jtl.gz
+hw5/results/23127344_Endurance_20260814.jtl

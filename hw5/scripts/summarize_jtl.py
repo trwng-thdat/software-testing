@@ -14,6 +14,10 @@ import os
 import sys
 from datetime import datetime
 
+# Console Windows mac dinh cp1252, khong in duoc tieng Viet -> ep UTF-8.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 
 def pct(vals, p):
     if not vals:
@@ -34,11 +38,22 @@ def summarize(path):
     if not rows:
         return None
 
-    el = sorted(int(r["elapsed"]) for r in rows if r.get("elapsed", "").isdigit())
-    ts = [int(r["timeStamp"]) for r in rows if r.get("timeStamp", "").isdigit()]
-    nerr = sum(1 for r in rows if r.get("success", "").lower() != "true")
+    def ints(key):
+        """Bo qua dong hong: file .jtl dang duoc JMeter ghi co the cut giua chung."""
+        out = []
+        for r in rows:
+            v = r.get(key)
+            if isinstance(v, str) and v.isdigit():
+                out.append(int(v))
+        return out
+
+    el = sorted(ints("elapsed"))
+    ts = ints("timeStamp")
+    nerr = sum(1 for r in rows if (r.get("success") or "").lower() != "true")
     dur = (max(ts) - min(ts)) / 1000.0 if len(ts) > 1 else 0
-    at = [int(r["allThreads"]) for r in rows if r.get("allThreads", "").isdigit()]
+    at = ints("allThreads")
+    if not el or not ts:
+        return None
 
     return {
         "start": datetime.fromtimestamp(min(ts) / 1000).strftime("%H:%M:%S"),
