@@ -70,7 +70,7 @@ Khối kết quả coupon (phóng to):
 
 ## Nguyên nhân gốc
 
-`backend/server.js:398-401`
+`backend/server.js:397-403`
 
 ```js
 let discount_amount = 0;
