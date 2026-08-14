@@ -2,16 +2,15 @@
 
 | Trường thông tin                        | Giá trị                                            |
 | --------------------------------------- | -------------------------------------------------- |
-| Mã bài tập                              | HW05-AI                                            |
 | MSSV                                    | 23127344                                           |
-| Họ và tên                               | _<điền vào>_                                       |
-| Lớp / Nhóm                              | _<điền vào>_                                       |
+| Họ và tên                               | TRƯƠNG THÀNH ĐẠT                                   |
+| Lớp / Nhóm                              | Kiểm thử phần mềm - 23KTPM3                        |
 | Ngày nộp                                | _<YYYY-MM-DD>_                                     |
 | SUT                                     | EShop — https://github.com/ttbhanh/eshop-sut       |
 | Commit / tag của SUT đã kiểm thử        | _<git SHA>_                                        |
-| Công cụ sử dụng                         | JMeter _<phiên bản>_ / k6 _<phiên bản>_            |
-| Công cụ AI đã dùng                      | _<ví dụ: Claude Opus 5 (Claude Code), ChatGPT...>_ |
-| Repo công khai (test plan + dữ liệu)    | _<GitHub URL>_                                     |
+| Công cụ sử dụng                         | JMeter 5.6.3                                       |
+| Công cụ AI đã dùng                      | Claude Opus 5 (Claude Code, VSCode extension)      |
+| Repo công khai (test plan + dữ liệu)    | https://github.com/trwng-thdat/software-testing    |
 | Video demo (YouTube unlisted, ≥ 6 phút) | _<URL>_                                            |
 | Điểm tự đánh giá                        | _<000–100>_                                        |
 
@@ -93,23 +92,6 @@ Ba nhóm endpoint được bao phủ bởi **một** luồng nghiệp vụ end-t
 
 **Base URL:** `http://localhost:3000` (theo tài liệu API spec).
 
-**Cam kết không trùng lặp.** Luồng của tôi là **hành trình hồ sơ cá nhân + lịch sử đơn hàng** (FR-04 / FR-11 / FR-09). Không thành viên nào khác kiểm thử FR-04 (quản lý hồ sơ cá nhân). Các thành viên trong nhóm kiểm thử:
-
-| Thành viên | Luồng nghiệp vụ của họ                                                                           | Phần trùng với tôi            |
-| ---------- | ------------------------------------------------------------------------------------------------ | ----------------------------- |
-| _<tên>_    | Hành trình mua sắm: login → tìm sản phẩm → chi tiết sản phẩm → giỏ hàng → checkout               | Chỉ `POST /api/login`         |
-| _<tên>_    | _<nhóm categories / forgot-password / coupon / cancel-order>_                                    | _<xem mục tồn đọng bên dưới>_ |
-| _<tên>_    | Hành trình admin danh mục: login → danh sách categories → tạo category                           | Chỉ `POST /api/login`         |
-| _<tên>_    | Hành trình admin: login → admin orders → admin users → import products → cập nhật trạng thái đơn | Chỉ `POST /api/login`         |
-
-`POST /api/login` được dùng chung bởi tất cả thành viên vì mọi hành trình auth-heavy đều cần token; tuy nhiên các _luồng nghiệp vụ_ vẫn khác biệt, và đó mới là điều đề bài yêu cầu. Các bước read-heavy và transactional của tôi không trùng với bất kỳ thành viên nào.
-
-> **Các vấn đề cần chốt trước khi dựng test plan** — _<xóa khối này sau khi đã giải quyết>_
->
-> 1. **Kiểm tra trùng lặp.** Danh sách endpoint của một bạn trong nhóm có `GET /api/orders/my-orders` và `POST /api/apply-coupon` (bước 3 và 5 của tôi). Nếu đó là luồng chính thức của bạn ấy, cần thay: bước 3 → `GET /api/orders/:id` (§4.5) và bước 5 → `PUT /api/orders/:id/cancel` (§4.6). Hãy xác nhận với nhóm và ghi lại kết quả tại đây.
-> 2. **`apply-coupon` có thật sự là transactional không?** API spec §5.1 mô tả endpoint này trả về `discount_amount` / `final_amount` đã tính toán, nghĩa là có thể chỉ thuần tính toán mà không ghi xuống CSDL — nhưng §6.4 lại định nghĩa `max_uses_per_user`, hàm ý số lần dùng có được lưu ở đâu đó. Cần kiểm tra thủ công xem có bản ghi nào được lưu lại hay không. Nếu không, bước này thuộc nhóm read-heavy, và `PUT /api/orders/:id/cancel` sẽ trở thành bước transactional thứ hai.
-> 3. **Cách reset lockout.** API spec không mô tả response khi bị khóa và cũng không có endpoint reset, nên cơ chế khóa 3 lần của FR-02 phải được reset trực tiếp trong cơ sở dữ liệu. Cần xác định file CSDL và các cột tương ứng trong bảng users; ghi lại quy trình vào §3.8.
-
 ---
 
 ## 2. Môi trường Kiểm thử và Phần cứng
@@ -131,19 +113,11 @@ Ba nhóm endpoint được bao phủ bởi **một** luồng nghiệp vụ end-t
 
 > **Hệ quả của cấu hình 6 nhân / 12 luồng.** JMeter và SUT chia nhau cùng bộ CPU này. Ở kịch bản Spike, 60 VU đồng thời nghĩa là 60 thread JMeter cộng với event loop của Node.js cùng tranh 12 luồng logic — đây là lý do VU đỉnh được giảm từ 100 xuống 60 (§3.4), và là lý do phải kiểm cột `allThreads` trong `.jtl` trước khi kết luận bất cứ điều gì về giới hạn của SUT.
 
-**Bằng chứng:** `evidence/hardware/dxdiag.png` (ảnh chụp màn hình), `evidence/hardware/dxdiag.txt`.
+![DirectX Diagnostic Tool — tab System, Computer Name: THANHDAT](evidence/hardware/dxdiag.png)
 
-### 2.2 Triển khai SUT
+**Bằng chứng:** `evidence/hardware/dxdiag.png` (ảnh chụp màn hình, hostname `THANHDAT` khớp với bảng trên và với các lần triển khai ở HW04), `evidence/hardware/dxdiag.txt` (bản text đầy đủ).
 
-| Hạng mục                         | Giá trị                                   |
-| -------------------------------- | ----------------------------------------- |
-| Cách khởi chạy                   | _<docker compose / npm start / ...>_      |
-| URL:port của backend             | _<http://localhost:PORT>_                 |
-| Cơ sở dữ liệu                    | _<SQLite / ...>_ , file tại _<đường dẫn>_ |
-| Dữ liệu seed                     | _<cách seed CSDL / số dòng>_              |
-| Có reset CSDL giữa các lần chạy? | _<có/không — bằng cách nào>_              |
-
-### 2.3 Máy sinh tải (load generator)
+### 2.2 Máy sinh tải (load generator)
 
 Chạy trên **cùng máy** với SUT.
 
@@ -398,7 +372,7 @@ Tham số override: `-Jbasevusers=20 -Jspikevusers=150`.
 
 - **Think time.** AI đề xuất _<giá trị>_; tôi chọn _<giá trị>_ vì _<người dùng thật đọc một trang sản phẩm mất vài giây; think-time bằng 0 sẽ biến load test thành stress test>_.
 - **Ramp-up.** AI đề xuất _<giá trị>_; tôi chọn _<giá trị>_ vì _<ramp-up quá ngắn chỉ đo được chi phí thiết lập kết nối chứ không đo được trạng thái ổn định>_.
-- **Số VU.** AI đề xuất _<giá trị>_; tôi chọn _<giá trị>_ vì _<load generator và SUT dùng chung phần cứng này; xem §2.3>_.
+- **Số VU.** AI đề xuất _<giá trị>_; tôi chọn _<giá trị>_ vì _<load generator và SUT dùng chung phần cứng này; xem §2.2>_.
 - **Hình dạng spike.** _<...>_
 
 ### 3.5 Các loại report view đã dùng
@@ -688,7 +662,7 @@ Hai giá trị **hiển thị giống hệt nhau** nhưng assertion vẫn fail �
   2. **Dữ liệu quá nhỏ.** Bảng `users` chỉ 122 dòng, `products` 5 dòng, `orders` gần như rỗng. Mọi truy vấn SQLite đều nằm gọn trong bộ nhớ đệm, không chạm đĩa.
   3. **Think time chi phối throughput.** Mỗi vòng lặp có ~11,5 s think time trên ~13 ms xử lý thật, nên 100 VU chỉ tạo ra ~22 req/s — mức tải mà một tiến trình Node đơn luồng xử lý thoải mái.
 
-  **Hệ quả:** để tìm knee thật cần **giảm think time** hoặc **tăng VU lên hàng trăm**, nhưng cả hai đều vướng giới hạn của máy sinh tải chạy cùng máy với SUT (§2.3). Bài endurance ở §3.9 tiếp cận vấn đề này từ hướng khác — tìm trần throughput thay vì trần VU.
+  **Hệ quả:** để tìm knee thật cần **giảm think time** hoặc **tăng VU lên hàng trăm**, nhưng cả hai đều vướng giới hạn của máy sinh tải chạy cùng máy với SUT (§2.2). Bài endurance ở §3.9 tiếp cận vấn đề này từ hướng khác — tìm trần throughput thay vì trần VU.
   - Bằng chứng: `evidence/stress/tool+monitor.png`
 - **Spike — không có đỉnh bùng lỗi, phục hồi tức thì và hoàn toàn.**
 
@@ -774,7 +748,7 @@ Bài endurance vì vậy dùng một biến thể của test plan Load với **t
 
 **Kết luận: không có dấu hiệu rò rỉ bộ nhớ.** Biên độ dao động trong toàn bộ cửa sổ soak chỉ ~2 MB trên nền 103 MB, và bộ nhớ được giải phóng bình thường khi tải kết thúc. Nếu có rò rỉ, RSS sẽ tăng đơn điệu theo thời gian và **không** giảm sau khi tải dừng.
 
-**Ngưỡng thật vẫn chưa chạm tới.** 630 req/s là con số **đo được**, không phải giới hạn của SUT — vì ở mức đó p95 vẫn là 3 ms, lỗi vẫn 0%, CPU backend mới dùng khoảng nửa nhân. Nút thắt nằm ở **máy sinh tải**: JMeter chạy cùng máy (§2.3), và 50 thread Java gửi request liên tục đã tiêu tốn phần CPU đáng kể. Muốn tìm giới hạn thật của SUT cần một máy sinh tải riêng, hoặc dữ liệu lớn hơn nhiều để các truy vấn SQLite thực sự phải chạm đĩa thay vì nằm gọn trong cache.
+**Ngưỡng thật vẫn chưa chạm tới.** 630 req/s là con số **đo được**, không phải giới hạn của SUT — vì ở mức đó p95 vẫn là 3 ms, lỗi vẫn 0%, CPU backend mới dùng khoảng nửa nhân. Nút thắt nằm ở **máy sinh tải**: JMeter chạy cùng máy (§2.2), và 50 thread Java gửi request liên tục đã tiêu tốn phần CPU đáng kể. Muốn tìm giới hạn thật của SUT cần một máy sinh tải riêng, hoặc dữ liệu lớn hơn nhiều để các truy vấn SQLite thực sự phải chạm đĩa thay vì nằm gọn trong cache.
 
 > **Diễn giải trung thực.** Đề bài yêu cầu "tự xác định ngưỡng chịu tải bằng thực nghiệm". Kết quả trung thực ở đây là: **trên cấu hình này, cụm JMeter + SUT đạt 630 req/s ổn định với p95 = 3 ms và 0% lỗi trong 15 phút, không rò rỉ bộ nhớ.** Đây là ngưỡng của **cả cụm**, và SUT còn dư địa — nói rằng "SUT chịu được tối đa 630 req/s" sẽ là một kết luận sai.
 
@@ -858,7 +832,7 @@ Mỗi dòng đều dẫn ra **giá trị đúng đọc từ file `.jtl` thô**.
 | # | AI khẳng định điều gì | Giá trị đúng từ `.jtl` thô | Kiểm chứng ở đâu / bằng cách nào | Vì sao AI sai |
 | --- | --- | --- | --- | --- |
 | 1 | **"Chịu được 100 người dùng đồng thời mà không suy giảm → kiến trúc mở rộng tốt"** | Đúng là p95 giữ 3 ms ở 100 VU, nhưng **throughput chỉ 22,3 req/s**. Với think time 11,5 s trên ~13 ms xử lý, mỗi VU dành **99,89%** thời gian để *chờ*. Bài Endurance chứng minh điều này: cùng **50 VU** nhưng think time 50–100 ms cho **630,3 req/s** — gấp 28 lần | `results/23127344_Stress_20260812.jtl` và `..._Endurance_20260814.jtl`, tính bằng `python scripts/summarize_jtl.py --all` | **Nhầm số VU với mức tải thực tế.** VU chỉ là số luồng, không phải cường độ tải. Một kết luận về khả năng mở rộng phải dựa trên throughput, không dựa trên số VU |
-| 2 | **"630 req/s là throughput tối đa mà hệ thống có thể xử lý ổn định"** | 630 req/s là **mức đo được**, không phải mức tối đa. Tại chính mức đó: p95 vẫn **3 ms**, lỗi vẫn **0,0000%**, CPU backend mới dùng **~52% của một nhân** trên máy 12 luồng, RSS đi ngang 102–104 MB. Không có chỉ số nào chạm giới hạn | `results/23127344_Endurance_20260814.jtl` + `evidence/endurance/memory_trend.csv` (31 mẫu) | **Nhầm "giá trị lớn nhất quan sát được" với "giới hạn".** Muốn khẳng định trần thì phải đẩy tải tới lúc một chỉ số nào đó suy giảm. Ở đây nút thắt thực tế là **máy sinh tải** — JMeter chạy cùng máy với SUT (§2.3) |
+| 2 | **"630 req/s là throughput tối đa mà hệ thống có thể xử lý ổn định"** | 630 req/s là **mức đo được**, không phải mức tối đa. Tại chính mức đó: p95 vẫn **3 ms**, lỗi vẫn **0,0000%**, CPU backend mới dùng **~52% của một nhân** trên máy 12 luồng, RSS đi ngang 102–104 MB. Không có chỉ số nào chạm giới hạn | `results/23127344_Endurance_20260814.jtl` + `evidence/endurance/memory_trend.csv` (31 mẫu) | **Nhầm "giá trị lớn nhất quan sát được" với "giới hạn".** Muốn khẳng định trần thì phải đẩy tải tới lúc một chỉ số nào đó suy giảm. Ở đây nút thắt thực tế là **máy sinh tải** — JMeter chạy cùng máy với SUT (§2.2) |
 | 3 | **"Max 177 ms là dấu hiệu truy vấn CSDL chậm không có index"** | 13 sample vượt 50 ms **không rải đều** mà **tụm lại đúng hai thời điểm**: giây 244 (3 sample) và giây 459 (6 sample). Tại mỗi thời điểm, **nhiều nhãn khác nhau cùng chậm một lúc** — `apply-coupon`, `GET users/me`, `PUT users/me`, `04b GET` — kể cả những endpoint không truy vấn cùng bảng | `results/23127344_Endurance_20260814.jtl`, lọc `elapsed > 50` và đối chiếu cột `timeStamp` | **Suy diễn nguyên nhân từ một con số đơn lẻ mà không kiểm tra phân bố theo thời gian.** Nếu là truy vấn thiếu index, các sample chậm phải **tập trung vào một nhãn cụ thể** và rải đều theo thời gian. Việc mọi nhãn cùng chậm đồng thời là đặc trưng của **GC pause hoặc scheduler jitter của hệ điều hành** |
 | 4 | **"Throughput 18–22 req/s thấp → có thể có nút thắt ở tầng kết nối"** | 18–22 req/s là **kết quả trực tiếp của thiết kế test plan**, không phải triệu chứng. Load: 50 VU × 6 request ÷ 13 s/vòng lặp ≈ 23 req/s — khớp với 18,4 req/s đo được. Cùng SUT đó đạt 630 req/s khi hạ think time | `plans/23127344_Load_20260812.jmx` (giá trị `UniformRandomTimer`) đối chiếu `results/*.jtl` | **Coi một tham số cấu hình của chính bài test là thuộc tính của hệ thống được kiểm thử.** AI không được cung cấp test plan nên không biết think time — nhưng thay vì nêu đó là giả thiết chưa kiểm chứng, nó đưa ra một kết luận nhân quả |
 | 5 | **"Tỉ lệ lỗi 0,00% → độ ổn định rất cao"** | Con số 0,00% là **đúng**, nhưng kết luận rút ra thì không. Assertion trong test plan chỉ kiểm HTTP 200 và sự tồn tại của trường JSON. `POST /api/apply-coupon` trả `final_amount = 5 000 000` cho đơn 500 000 ₫ với mã giảm 10% — **sai gấp hơn 11 lần giá trị đúng (450 000 ₫)** — mà vẫn tính là **thành công** | `scripts/verify_flow.py` (chạy trực tiếp trên SUT); nguyên nhân ở `server.js:399-401`; ghi nhận ở §3.11 lỗi \#1 | **Đánh đồng "không có lỗi được ghi nhận" với "hệ thống hoạt động đúng".** Tỉ lệ lỗi chỉ mạnh ngang chất lượng của assertion sinh ra nó. Đây là giới hạn cố hữu của kiểm thử hiệu năng, không phải lỗi của phép đo |
@@ -1121,7 +1095,7 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 | 3 file log `.jtl` thô (đầy đủ)                | `results/`                               | ☑ Load 1,6 MB / Stress 2,3 MB / Spike 434 KB; Endurance 4,2 MB (`.gz`, 567 174 sample) |
 | 3 thư mục báo cáo HTML                        | `reports/`                               | ☑ `load` / `stress` / `spike` / `endurance`             |
 | Ảnh chụp resource monitor                     | `evidence/*/tool+monitor.png`            | ☐ **cần chụp khi quay video**                           |
-| Ảnh chụp + bảng cấu hình phần cứng            | `evidence/hardware/`, §2.1               | ☑ `dxdiag.txt` + bảng §2.1; ☐ còn thiếu ảnh cửa sổ dxdiag |
+| Ảnh chụp + bảng cấu hình phần cứng            | `evidence/hardware/`, §2.1               | ☑ `dxdiag.txt` + `dxdiag.png` + bảng §2.1 (hostname `THANHDAT` khớp HW04) |
 | Endurance: xu hướng bộ nhớ                    | `evidence/endurance/memory_trend.csv`    | ☑ 31 mẫu / 30 giây — không rò rỉ                        |
 | Video demo YouTube unlisted (≥ 6 phút)        | _<URL>_                                  | ☐                                                       |
 | Phê bình AI (Md + PDF)                        | §7 / `AI_Critique.*`                     | ☐                                                       |
