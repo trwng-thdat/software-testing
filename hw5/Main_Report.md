@@ -732,18 +732,72 @@ Tôi hỏi tiếp AI: *"Đề xuất các phương án tối ưu hiệu năng ch
 
 Tự động phát hiện hồi quy p95 trên SUT theo từng commit, mà không phải chạy toàn bộ bộ kiểm thử hiệu năng cho mọi lần push.
 
+> **Mô hình dưới đây được neo vào số liệu thật đo được ở §3.7 và §3.9**, không phải khuôn mẫu chung. Điều đó tạo ra một khác biệt quan trọng so với thiết kế CPT thông thường — xem §5.2.1.
+
 ### 5.2 Mô hình đề xuất
 
-| Lớp                             | Quyết định                                                                                                |
+| Lớp | Quyết định |
 | ------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Điều kiện kích hoạt             | _<push vào main / mở PR / chạy hằng đêm>_                                                                 |
-| Cổng lọc ("có nên chạy không?") | _<lọc theo đường dẫn: chỉ chạy nếu backend/\*\*, package-lock, hoặc migration thay đổi; kèm nhãn ghi đè>_ |
-| Phân tầng kiểm thử              | Smoke (2 phút, cho PR) → Load (10 phút, cho main) → Soak (hằng đêm)                                       |
-| Môi trường                      | _<runner/container riêng với CPU-RAM cố định, để số liệu có thể so sánh được giữa các lần>_               |
-| Đường cơ sở (baseline)          | _<trung vị trượt của N lần chạy xanh gần nhất trên main, tính theo từng endpoint>_                        |
-| Quy tắc phát hiện hồi quy       | p95 > baseline × _<1,2>_ **và** nằm ngoài dải nhiễu _<±x%>_ trong _<2>_ lần chạy liên tiếp                |
-| Hành động khi có hồi quy        | _<bình luận vào PR + đánh trượt check / tạo issue + gửi thông báo>_                                       |
-| Lưu trữ                         | _<file .jtl + bảng số liệu/JSON commit vào nhánh kết quả>_                                                |
+| Điều kiện kích hoạt | PR mở/cập nhật → smoke; push vào `main` → load; lịch 02:00 hằng đêm → soak |
+| Cổng lọc ("có nên chạy không?") | Chỉ chạy nếu thay đổi chạm `backend/**`, `package-lock.json`, hoặc `database.js`. Nhãn `perf-force` để ghi đè khi cần |
+| Phân tầng kiểm thử | Smoke 2 phút (PR) → Load 10 phút (`main`) → Soak 15 phút (hằng đêm) |
+| Môi trường | Runner tự quản với CPU/RAM cố định. **Không dùng runner dùng chung** — xem §5.4 |
+| Đường cơ sở (baseline) | Trung vị trượt của **5 lần chạy xanh gần nhất** trên `main`, tính **riêng theo từng nhãn sampler** |
+| Quy tắc phát hiện hồi quy | **Ngưỡng tuyệt đối + tỉ lệ, lấy giá trị lớn hơn** — xem §5.2.1 |
+| Hành động khi có hồi quy | Chạy lại 1 lần để xác nhận → nếu vẫn hồi quy: đánh trượt check, bình luận vào PR kèm bảng so sánh, tạo GitHub Issue |
+| Lưu trữ | `.jtl` nén `.gz` + JSON tóm tắt, commit vào nhánh `perf-results`; giữ 90 ngày |
+
+#### 5.2.1 Vì sao KHÔNG dùng ngưỡng theo tỉ lệ phần trăm
+
+Đây là điều chỉnh quan trọng nhất so với thiết kế CPT mặc định, và nó chỉ lộ ra khi có số liệu thật.
+
+Khung ban đầu đề xuất quy tắc `p95 > baseline × 1,2`. Nhưng đo trên `.jtl` của bài Endurance, p95 tính theo từng cửa sổ 60 giây trong **cùng một lần chạy** cho kết quả:
+
+```
+[2, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3]  (ms)
+```
+
+**Dao động 2–3 ms, tức ±50%, hoàn toàn do làm tròn số nguyên** — không có bất kỳ thay đổi nào về mã nguồn hay tải. Với baseline = 2 ms, ngưỡng `× 1,2` là 2,4 ms, nên **bất kỳ cửa sổ nào cho 3 ms cũng bị báo hồi quy**. Quy tắc phần trăm ở đây sẽ tạo ra báo động giả gần như mỗi lần chạy.
+
+Nguyên nhân: JMeter ghi `elapsed` theo mili-giây nguyên. Khi giá trị thật nằm trong khoảng 2–3 ms, sai số lượng tử hóa chiếm tới một phần ba giá trị. **Ngưỡng tương đối chỉ có ý nghĩa khi giá trị đủ lớn so với độ phân giải của phép đo.**
+
+**Quy tắc thay thế:**
+
+```
+Coi là hồi quy khi:  p95 > max(baseline + 10 ms, baseline × 1,5)
+                     VÀ lặp lại ở 2 lần chạy liên tiếp
+```
+
+| Baseline | Ngưỡng tuyệt đối (+10 ms) | Ngưỡng tỉ lệ (× 1,5) | Ngưỡng áp dụng |
+| --- | --- | --- | --- |
+| 3 ms (hiện tại) | 13 ms | 4,5 ms | **13 ms** — tuyệt đối thắng |
+| 20 ms | 30 ms | 30 ms | 30 ms — hai bên bằng nhau |
+| 100 ms | 110 ms | 150 ms | **150 ms** — tỉ lệ thắng |
+
+Thiết kế này tự thích ứng: khi SUT còn nhanh, ngưỡng tuyệt đối chống nhiễu lượng tử hóa; khi SUT chậm đi (do dữ liệu lớn dần hoặc tính năng phức tạp hơn), ngưỡng tỉ lệ tiếp quản. Ngưỡng `+10 ms` lấy từ §4.4 — cao hơn mọi GC pause đã quan sát trừ 13/567 174 sample cá biệt.
+
+#### 5.2.2 Ba tầng kiểm thử
+
+| Tầng | Khi nào | Cấu hình | Thời lượng | Bắt được gì |
+| --- | --- | --- | --- | --- |
+| **Smoke** | Mỗi PR chạm backend | 5 VU, think time 50–100 ms | 2 phút | Hồi quy thô (endpoint hỏng, chậm gấp nhiều lần), lỗi assertion |
+| **Load** | Push vào `main` | 50 VU, think time thật 1,5–4 s | 10 phút | Hồi quy p95 ở tải thực tế, tỉ lệ lỗi |
+| **Soak** | 02:00 hằng đêm | 50 VU, think time 50–100 ms | 15 phút | Rò rỉ bộ nhớ, suy giảm theo thời gian, trần throughput |
+
+> **Vì sao smoke dùng think time ngắn còn load dùng think time thật.** Bài học từ §4.3 dòng 1: think time 11,5 s khiến 100 VU chỉ tạo 22 req/s, tức bài test hầu như không chạm tới SUT. Smoke có 2 phút nên phải dồn tải để kịp phát hiện vấn đề — dùng think time thật sẽ chỉ sinh ra ~230 request, quá ít để p95 có ý nghĩa thống kê. Ngược lại Load mô phỏng hành vi người dùng thật nên giữ think time thật.
+
+#### 5.2.3 Tái lập môi trường dữ liệu
+
+Đây là phần mà bài tập này cho một bài học trực tiếp: SUT **xóa sạch CSDL mỗi lần khởi động lại** (`database.js:117`, xem §3.7.0 sự cố \#2). Trong CI điều đó vừa là rủi ro vừa là cơ hội.
+
+```yaml
+# Trước mỗi lần chạy
+- node backend/database.js                      # DROP + seed lại — trạng thái sạch, xác định
+- python hw5/data/seed_perf_users.py --db ...   # thêm 120 tài khoản perf
+- python hw5/scripts/verify_flow.py             # cổng chặn: 13/13 assertion phải PASS
+```
+
+Bước `verify_flow.py` là **cổng chặn bắt buộc**. Nếu nó fail, dừng pipeline và báo lỗi môi trường — **không** chạy tiếp rồi báo hồi quy hiệu năng. Lý do: một lần chạy với tài khoản chưa seed cho 100% lỗi trên 14 229 sample (§3.7.0), và nếu không có cổng này thì CI sẽ báo "hồi quy nghiêm trọng" trong khi thực chất là hỏng môi trường.
 
 ### 5.3 Lưu đồ
 
@@ -751,31 +805,50 @@ Tự động phát hiện hồi quy p95 trên SUT theo từng commit, mà không
 flowchart TD
     A[Commit / PR vào eshop-sut] --> B{Lọc đường dẫn:<br/>backend, dependency hay migration có đổi?}
     B -- Không --> Z[Bỏ qua kiểm thử hiệu năng<br/>báo check trung tính]
-    B -- Có --> C[Build + triển khai SUT lên<br/>môi trường perf cố định]
-    C --> D[Chạy khởi động — bỏ kết quả]
-    D --> E[Chạy test plan smoke<br/>data-driven, ~2 phút]
-    E --> F[Phân tích .jtl → p95, tỉ lệ lỗi, RPS]
-    F --> G{p95 > baseline × 1,2<br/>và ngoài dải nhiễu?}
-    G -- Không --> H[Cập nhật baseline trượt<br/>check xanh]
+    B -- Có --> C[Build + triển khai SUT lên<br/>runner perf tự quản, CPU/RAM cố định]
+    C --> C2[Reset CSDL: database.js + seed 120 tài khoản perf]
+    C2 --> C3{verify_flow.py<br/>13/13 assertion PASS?}
+    C3 -- Không --> Y[DỪNG: lỗi môi trường<br/>KHÔNG báo hồi quy hiệu năng]
+    C3 -- Có --> D[Chạy khởi động 30 giây — bỏ kết quả]
+    D --> E[Chọn tầng theo sự kiện:<br/>PR → smoke 2 phút<br/>main → load 10 phút<br/>đêm → soak 15 phút]
+    E --> F[Phân tích .jtl → p95, p99, tỉ lệ lỗi, RPS<br/>tính riêng theo từng nhãn sampler]
+    F --> G{p95 > max baseline+10ms, baseline×1,5?<br/>hoặc tỉ lệ lỗi > 0,1%?}
+    G -- Không --> H[Cập nhật baseline trượt<br/>trung vị 5 lần xanh gần nhất<br/>check xanh]
     G -- Có --> I[Chạy lại một lần<br/>xác nhận không phải nhiễu]
-    I --> J{Vẫn hồi quy?}
+    I --> J{Vẫn vượt ngưỡng?}
     J -- Không --> H
-    J -- Có --> K[Đánh trượt check<br/>bình luận độ lệch p95 + đính kèm artefact<br/>tạo GitHub Issue]
+    J -- Có --> K[Đánh trượt check<br/>bình luận bảng so sánh theo nhãn<br/>đính kèm .jtl.gz + tạo Issue]
     K --> L[Con người phân loại:<br/>hồi quy thật hay nhiễu môi trường?]
     L -- Thật --> M[Chặn merge / revert]
-    L -- Nhiễu --> N[Điều chỉnh baseline hoặc dải nhiễu]
+    L -- Nhiễu --> N[Điều chỉnh baseline hoặc ngưỡng]
+    H --> O{Chạy soak hằng đêm?}
+    O -- Có --> P[Kiểm xu hướng RSS 15 phút<br/>và so p95 với 30 ngày trước]
+    P --> Q{RSS tăng đơn điệu<br/>hoặc p95 trôi > 30 ngày?}
+    Q -- Có --> K
+    Q -- Không --> R[Ghi vào lịch sử baseline]
 ```
 
 ### 5.4 Đánh đổi (trade-offs)
 
-| Mối quan tâm                     | Rủi ro                                                                              | Cách giảm thiểu                                                                                  |
+| Mối quan tâm | Rủi ro | Cách giảm thiểu |
 | -------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **Chi phí**                      | _<mỗi commit tốn vài phút runner riêng>_                                            | _<cổng lọc theo đường dẫn; phân tầng bộ test; chỉ chạy soak đầy đủ vào ban đêm>_                 |
-| **Báo động giả**                 | _<runner CI dùng chung có nhiễu từ tiến trình khác; p95 dao động ±x% giữa các lần>_ | _<runner cố định, bỏ kết quả khởi động, chạy lại để xác nhận, dùng dải thay vì một ngưỡng cứng>_ |
-| **Bỏ sót hồi quy**               | _<smoke 2 phút không phát hiện được rò rỉ chậm và hồi quy ở phần đuôi>_             | _<soak hằng đêm bù đắp phần smoke không thấy>_                                                   |
-| **Trôi baseline**                | _<suy giảm dần 5% mỗi commit sẽ không bao giờ chạm ngưỡng 20%>_                     | _<cảnh báo thêm theo xu hướng 30 ngày, không chỉ so commit với commit>_                          |
-| **Trạng thái dữ liệu / lockout** | _<chạy lặp lại làm khóa tài khoản hoặc phình CSDL>_                                 | _<reset CSDL từ ảnh chụp seed trước mỗi lần chạy — xem §3.8>_                                    |
-| **Bảo trì**                      | _<test plan lạc hậu khi API thay đổi>_                                              | _<đặt test plan trong repo cạnh mã nguồn; PR nào đổi API thì cập nhật luôn test plan>_           |
+| **Chi phí** | Mỗi PR chạm backend tốn ~4 phút runner (2 phút test + build/seed). Với 20 PR/tuần ≈ 80 phút/tuần. Soak hằng đêm thêm ~20 phút × 30 = 10 giờ/tháng | Cổng lọc đường dẫn cắt phần lớn PR (thay đổi frontend/docs không kích hoạt). Phân tầng: chỉ `main` mới chạy load 10 phút. Runner tự quản trên máy có sẵn thì chi phí biên gần bằng 0 |
+| **Báo động giả — lượng tử hóa** | p95 dao động 2–3 ms (**±50%**) chỉ do làm tròn số nguyên, không do thay đổi mã. Ngưỡng `×1,2` sẽ báo động gần như mỗi lần | Ngưỡng lai `max(baseline+10ms, baseline×1,5)` (§5.2.1). Đây là rủi ro **lớn nhất** của CPT trên SUT nhanh, và là lý do không dùng khuôn mẫu phần trăm thông thường |
+| **Báo động giả — GC pause** | 13/567 174 sample vượt 50 ms, tụm vào 2 thời điểm ngẫu nhiên (§4.3 dòng 3). Nếu chấm theo `max` thay vì percentile sẽ báo động vô cớ | Dùng p95/p99, **không bao giờ** dùng `max` làm tiêu chí chặn. Yêu cầu lặp lại ở 2 lần chạy liên tiếp |
+| **Báo động giả — môi trường** | Một lần chạy với CSDL chưa seed cho 100% lỗi (§3.7.0). CI sẽ đọc đó là "hồi quy nghiêm trọng" | Cổng `verify_flow.py` chặn trước khi chạy tải. Lỗi môi trường và hồi quy hiệu năng là **hai loại thất bại khác nhau**, phải báo khác nhau |
+| **Bỏ sót hồi quy** | Smoke 2 phút không thấy rò rỉ chậm hay suy giảm ở phần đuôi phân phối | Soak hằng đêm bù đắp: theo dõi RSS 15 phút và p95 so với 30 ngày trước |
+| **Trôi baseline** | Suy giảm 5% mỗi commit không bao giờ chạm ngưỡng 50%, nhưng sau 20 commit thì p95 đã gấp 2,6 lần | Cảnh báo xu hướng riêng: so p95 hiện tại với trung vị **30 ngày trước**, ngưỡng `× 2`. Chạy trong soak hằng đêm, không chặn merge mà tạo issue |
+| **Trạng thái dữ liệu / lockout** | Chạy lặp làm khóa tài khoản (FR-02) hoặc phình CSDL | `database.js` tự DROP+seed mỗi lần khởi động — biến nhược điểm của SUT thành ưu điểm cho CI. Kèm `seed_perf_users.py --reset` |
+| **Bảo trì** | Test plan lạc hậu khi API đổi; assertion yếu dần | Test plan nằm cùng repo với mã nguồn; PR đổi API bắt buộc cập nhật test plan. Định kỳ rà lại assertion — §4.3 dòng 5 cho thấy 0% lỗi vẫn có thể che giấu bug tính toán |
+| **Giới hạn của phép đo** | CPT chỉ đo được điều assertion kiểm. Bug `apply-coupon` trả sai gấp 11 lần vẫn "xanh" (§3.11) | CPT **không thay thế** kiểm thử chức năng. Cần nêu rõ phạm vi: pipeline này bảo vệ *hiệu năng*, không bảo vệ *tính đúng đắn* |
+
+### 5.5 Ba điều mô hình này KHÔNG làm được
+
+Nêu rõ giới hạn quan trọng ngang việc nêu năng lực:
+
+1. **Không phát hiện được lỗi tính đúng đắn.** Toàn bộ 594 134 sample đều "thành công" trong khi `apply-coupon` trả kết quả sai gấp 11 lần. Một pipeline CPT xanh **không** có nghĩa hệ thống đúng.
+2. **Không đo được giới hạn thật của SUT khi runner chạy chung máy.** 630 req/s là trần của *cụm*, không phải của SUT (§4.3 dòng 2). Muốn số liệu phản ánh SUT thì load generator phải nằm ở máy khác — điều này làm tăng chi phí hạ tầng và cần cân nhắc riêng.
+3. **Không thay thế được phán đoán của con người.** Bước "con người phân loại" trong lưu đồ là bắt buộc, không phải tùy chọn. Trong bài tập này, cả bốn lần chạy đều cho kết quả "hoàn hảo" mà thực chất là **tải quá nhẹ để có ý nghĩa** — một pipeline tự động sẽ báo xanh và không ai biết bài test vô hiệu.
 
 ---
 
