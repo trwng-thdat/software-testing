@@ -868,13 +868,19 @@ Nêu rõ giới hạn quan trọng ngang việc nêu năng lực:
 
 ## 7. Phê bình AI (200–300 từ)
 
-> **Số từ: _<n>_** — bắt buộc trong khoảng 200–300.
+> **Số từ: 299** — nằm trong khoảng 200–300 bắt buộc. Bản độc lập (296 từ): `AI_Critique.md`.
 
-_<Viết một đoạn văn tại đây. Trình bày cụ thể, có dẫn chiếu tới §3.6 và §4.3:_
+AI sai theo một mô thức nhất quán qua 15 lượt tương tác: nó tạo ra **cấu trúc trông đúng nhưng chưa được neo vào hành vi thật** của hệ thống. Ba dạng lỗi lặp lại.
 
-- _Chỗ nào AI sai, thiên lệch hoặc thiếu sót (nêu đích danh lỗi cụ thể, không viết chung chung kiểu "AI có mắc lỗi"). Ví dụ đã có sẵn: AI đề xuất `GET /api/profile` và `PUT /api/profile` — hai route không tồn tại trong SUT._
-- _Vì sao AI thất bại — không truy cập được phần cứng của bạn, chưa đọc FR-02, hiểu sai về thống kê với phân phối lệch, kiến thức JMX lệch phiên bản, hoặc do chính prompt của bạn chưa đủ cụ thể._
-- _Bạn rút ra nguyên tắc gì khi cộng tác với AI trong công việc kiểm thử hiệu năng — ví dụ: AI mạnh ở việc sinh ra cấu trúc nhưng yếu ở việc neo cấu trúc đó vào hệ thống thật, nên mọi con số do AI đưa ra đều phải truy ngược được về một phép đo do chính bạn thực hiện.>_
+Thứ nhất là **bịa dữ kiện khi thiếu thông tin**. AI đề xuất endpoint `/api/profile` không tồn tại (§3.6 dòng 1), và đưa mã giảm giá `TET2025` vốn chỉ là ví dụ trong tài liệu vào file dữ liệu thật (§3.6 dòng 9) — không phân biệt được *mô tả schema* với *dữ liệu đã seed*.
+
+Thứ hai là **hiểu sai ngữ nghĩa runtime**. Bốn lỗi JMeter (§3.6 dòng 3–6) — CSV đọc theo vòng lặp chứ không theo thread, timer áp dụng cho toàn scope, giá trị mặc định `0` che giấu lỗi — đều lọt qua kiểm tra XML. File hợp lệ, test chạy được, xuất `.jtl` bình thường, nhưng đo sai.
+
+Thứ ba là **nhầm thước đo với thứ được đo**. Ở Task 2, AI kết luận "chịu được 100 VU nên mở rộng tốt" (§4.3 dòng 1), trong khi think time chiếm 99,89% thời gian khiến 100 VU chỉ tạo 22 req/s.
+
+Vì sao AI không tự phát hiện? Vì mỗi công cụ chỉ thấy loại lỗi nằm trong **phạm vi dữ liệu nó được nhìn**. Script `validate_jmx.py` do chính AI viết chạy sạch cả ba file, nhưng không thể biết 120 tài khoản trong CSV không tồn tại trong CSDL.
+
+Nguyên tắc tôi rút ra: **AI mạnh khi kiểm chứng, yếu khi phán đoán thiếu thông tin.** Năm trong sáu artifact đạt VALID là lượt rà soát; bảy artifact cần sửa đều là lượt sinh mới. Đáng chú ý hơn, hai lỗi phát sinh ngay trong lúc sửa lỗi khác — nên mỗi bản sửa cũng cần kiểm chứng riêng.
 
 ---
 
