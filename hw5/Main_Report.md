@@ -11,7 +11,7 @@
 | Công cụ sử dụng                         | JMeter 5.6.3                                       |
 | Công cụ AI đã dùng                      | Claude Opus 5 (Claude Code, VSCode extension)      |
 | Repo công khai (test plan + dữ liệu)    | https://github.com/trwng-thdat/software-testing    |
-| Video demo (YouTube unlisted, ≥ 6 phút) | _<URL>_                                            |
+| Video demo (YouTube unlisted, ≥ 6 phút) | https://youtu.be/F2vkE3dHkj0 |
 | Điểm tự đánh giá                        | _<000–100>_                                        |
 
 > **Khai báo sử dụng AI.** Tôi có sử dụng công cụ AI cho các công việc sau: _<liệt kê ngắn gọn — thiết kế test plan, phân tích .jtl, đề xuất CPT, ...>_. Toàn bộ nhật ký tương tác được ghi trong `AI_Audit_Report.md` (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát và chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
@@ -758,9 +758,9 @@ Bằng chứng: `evidence/endurance/memory_trend.csv` (31 mẫu, mỗi 30 giây)
 
 | Hạng mục                                           | Giá trị                                 |
 | -------------------------------------------------- | --------------------------------------- |
-| URL (unlisted)                                     | _<...>_                                 |
-| Tổng thời lượng                                    | _<≥ 6 phút>_                            |
-| Số clip                                            | _<1 clip cho mỗi kịch bản / quay liền>_ |
+| URL (unlisted)                                     | https://youtu.be/F2vkE3dHkj0 |
+| Tổng thời lượng                                    | **13 phút 42 giây** (yêu cầu tối thiểu 6 phút) |
+| Số clip                                            | 1 clip liền, gồm cả ba kịch bản |
 | Thuyết minh                                        | Tiếng Việt, giọng của chính tôi         |
 | Có hiện công cụ + resource monitor cùng khung hình | Có                                      |
 
@@ -1111,7 +1111,7 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 | Ảnh chụp resource monitor                     | `evidence/*/tool+monitor.png`            | ☐ **cần chụp khi quay video**                           |
 | Ảnh chụp + bảng cấu hình phần cứng            | `evidence/hardware/`, §2.1               | ☑ `dxdiag.txt` + `dxdiag.png` + bảng §2.1 (hostname `THANHDAT` khớp HW04) |
 | Endurance: xu hướng bộ nhớ                    | `evidence/endurance/memory_trend.csv`    | ☑ 31 mẫu / 30 giây — không rò rỉ                        |
-| Video demo YouTube unlisted (≥ 6 phút)        | _<URL>_                                  | ☐                                                       |
+| Video demo YouTube unlisted (≥ 6 phút)        | https://youtu.be/F2vkE3dHkj0 | ☑ 13 phút 42 giây |
 | Phê bình AI (Md + PDF)                        | §7 / `AI_Critique.*`                     | ☐                                                       |
 | AI Audit Report (Md + PDF)                    | `AI_Audit_Report.*`                      | ☐                                                       |
 | Nhật ký git commit (file văn bản)             | `git_commit_log.txt`                     | ☐                                                       |
