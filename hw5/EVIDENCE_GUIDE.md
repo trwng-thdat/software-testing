@@ -10,12 +10,12 @@
 
 Bốn kịch bản **đã chạy xong** và kết quả đã commit:
 
-| Kịch bản | `.jtl` đã có | Thời lượng |
-| --- | --- | --- |
-| Load | ✅ 11 011 sample | 597 s (~10 phút) |
-| Stress | ✅ 13 329 sample | 598 s (~10 phút) |
-| Spike | ✅ 2 620 sample | 417 s (~7 phút) |
-| Endurance | ✅ 567 174 sample | 899 s (15 phút) |
+| Kịch bản  | `.jtl` đã có      | Thời lượng       |
+| --------- | ----------------- | ---------------- |
+| Load      | ✅ 11 011 sample  | 597 s (~10 phút) |
+| Stress    | ✅ 13 329 sample  | 598 s (~10 phút) |
+| Spike     | ✅ 2 620 sample   | 417 s (~7 phút)  |
+| Endurance | ✅ 567 174 sample | 899 s (15 phút)  |
 
 Nhưng đề bài (dòng 133, 137) yêu cầu **ảnh chụp và video có JMeter + Task Manager trong cùng khung hình**. Muốn có thứ đó thì phải **chạy lại và quay màn hình trong lúc chạy**.
 
@@ -78,7 +78,7 @@ python hw5\scripts\verify_flow.py
 1. Mở PowerShell → bấm `Win + ←` (chiếm nửa trái màn hình)
 2. Mở Task Manager (`Ctrl + Shift + Esc`) → bấm `Win + →` (nửa phải)
 3. Trong Task Manager: chọn tab **Details** (KHÔNG phải Performance — đề bài
-   yêu cầu thấy *tiến trình backend*, không phải biểu đồ CPU tổng)
+   yêu cầu thấy _tiến trình backend_, không phải biểu đồ CPU tổng)
 4. Chuột phải vào thanh tiêu đề cột → **Select columns** → tick **CPU** và
    **Memory (active private working set)**
 5. Bấm vào cột **CPU** để sắp xếp giảm dần → `node.exe` sẽ nổi lên đầu khi chạy test
@@ -115,6 +115,27 @@ hw5\evidence\hardware\dxdiag.png
 ---
 
 ## Phần 2 — Quay video và chụp ảnh cho từng kịch bản
+
+### Cần làm gì cho kịch bản nào
+
+| Kịch bản | Ảnh chụp | Quay video | Thời lượng quay gợi ý |
+| --- | :-: | :-: | --- |
+| **Load** | ✅ **bắt buộc** (1 ảnh) | Nên có | ~90 giây |
+| **Stress** | ✅ **bắt buộc** (2 ảnh) | Nên có | ~90 giây |
+| **Spike** | ✅ **bắt buộc** (3 ảnh) | Nên có | ~2 phút (quay trọn 7 phút cũng được) |
+| **Endurance** | Tùy chọn | Tùy chọn | ~60 giây |
+| *Mở HTML report* | — | Nên có | ~60 giây |
+
+**Tổng thời lượng ước tính: 6–7 phút** → vừa đủ ngưỡng tối thiểu của đề bài.
+
+> **Vì sao ảnh bắt buộc cho ba kịch bản chính mà không bắt buộc cho endurance:**
+> đề bài dòng 133 ghi *"Chạy **cả ba kịch bản** và với mỗi lần chạy, chụp ảnh màn hình..."*.
+> Endurance nằm ở dòng 135 — một gạch đầu dòng riêng, chỉ yêu cầu *"báo cáo kèm số liệu
+> cụ thể"*, không nhắc tới ảnh hay video.
+>
+> **Vì sao vẫn nên quay đủ ba kịch bản chính:** §15 chấm Load / Stress / Spike thành
+> **ba mục 20 điểm riêng biệt**. Nếu video chỉ có một kịch bản, người chấm khó xác nhận
+> hai kịch bản kia đã thật sự chạy trên máy bạn.
 
 ### Kịch bản chung cho mỗi lần quay
 
@@ -166,6 +187,7 @@ jmeter -n -t 23127344_Stress_20260812.jmx -l ..\results\demo_stress.jtl
 ```
 
 **Ảnh cần chụp:** 2 ảnh (để thấy CPU tăng theo tải)
+
 - Phút đầu (~20 VU) → `hw5\evidence\stress\tool+monitor_bac1.png`
 - Sau 2 phút (~40 VU) → `hw5\evidence\stress\tool+monitor_bac2.png`
 
@@ -190,6 +212,7 @@ jmeter -n -t 23127344_Spike_20260813.jmx -l ..\results\demo_spike.jtl
 ```
 
 **Ảnh cần chụp:** 3 ảnh theo mốc thời gian
+
 - Giây ~60 (nền trước, 10 VU) → `hw5\evidence\spike\tool+monitor_gd1.png`
 - Giây ~150 (đang spike, 60 VU) → `hw5\evidence\spike\tool+monitor_gd2.png`
 - Giây ~250 (phục hồi, 10 VU) → `hw5\evidence\spike\tool+monitor_gd3.png`
@@ -214,13 +237,23 @@ jmeter -n -t 23127344_Spike_20260813.jmx -l ..\results\demo_spike.jtl
 > nhận JMeter thật sự khởi tạo đủ 60 thread trong 5 giây, nên rủi ro ramp quá
 > nhanh đã được loại trừ bằng số liệu chứ không phải phỏng đoán."
 
-### 2.4 Endurance (tùy chọn, nếu cần thêm thời lượng video)
+### 2.4 Endurance — KHÔNG bắt buộc, nhưng nên có
+
+**Đề bài không yêu cầu ảnh hay video cho endurance.** Ba yêu cầu nằm ở ba gạch đầu dòng riêng biệt:
+
+| Dòng | Yêu cầu | Áp dụng cho |
+| :-: | --- | --- |
+| 133 | Ảnh chụp công cụ + resource monitor | *"Chạy **cả ba kịch bản**..."* → Load, Stress, Spike |
+| 135 | Endurance / soak 10–15 phút | Chỉ yêu cầu *"báo cáo kèm số liệu cụ thể"* — **không** nhắc ảnh hay video |
+| 137 | Video ≥ 6 phút | Không nêu kịch bản cụ thể, chỉ ràng buộc thời lượng + cùng khung hình |
+
+**Vì sao vẫn nên quay ~60 giây cho endurance:** đây là chỗ có số liệu ấn tượng nhất (630 req/s, 567 174 sample, biểu đồ RAM đi ngang), và quan trọng hơn — nó **giải thích được vì sao ba kịch bản kia đều cho p95 = 3 ms**. Nếu chỉ quay ba kịch bản chính, người xem sẽ thấy ba lần "0% lỗi, 3 ms" mà không hiểu tại sao SUT nhàn đến vậy.
 
 ```powershell
 jmeter -n -t 23127344_Endurance_20260814.jmx -Jvusers=50 -Jrampup=60 -Jduration=900 -l ..\results\demo_endurance.jtl
 ```
 
-**Ảnh cần chụp:** 1 ảnh → `hw5\evidence\endurance\tool+monitor.png`
+**Ảnh cần chụp:** 1 ảnh (tùy chọn) → `hw5\evidence\endurance\tool+monitor.png`
 
 **Thuyết minh gợi ý (~60 giây):**
 
@@ -277,10 +310,10 @@ Remove-Item hw5\results\demo_*.jtl -ErrorAction SilentlyContinue
 
 Mở `hw5\Main_Report.md`, điền link vào **2 chỗ**:
 
-| Dòng | Nội dung cần thay `_<URL>_` |
-| --- | --- |
-| **15** | `\| Video demo (YouTube unlisted, ≥ 6 phút) \| _<URL>_ \|` — bảng thông tin đầu báo cáo |
-| **835** | `\| Video demo YouTube unlisted (≥ 6 phút) \| _<URL>_ \| ☐ \|` — checklist §9 |
+| Dòng    | Nội dung cần thay `_<URL>_`                                                             |
+| ------- | --------------------------------------------------------------------------------------- |
+| **15**  | `\| Video demo (YouTube unlisted, ≥ 6 phút) \| _<URL>_ \|` — bảng thông tin đầu báo cáo |
+| **835** | `\| Video demo YouTube unlisted (≥ 6 phút) \| _<URL>_ \| ☐ \|` — checklist §9           |
 
 Tìm nhanh bằng lệnh:
 
@@ -327,6 +360,7 @@ tính đúng.
 ```
 
 Sau khi tạo issue:
+
 1. Chụp màn hình → `hw5\evidence\issues\bug01_apply_coupon.png`
 2. Copy URL issue → điền vào bảng §3.11 của `Main_Report.md`
 
@@ -343,6 +377,8 @@ Get-ChildItem hw5\evidence -Recurse -File | Select-Object FullName, Length
 
 Phải thấy đủ:
 
+**Bắt buộc:**
+
 - [ ] `evidence\hardware\dxdiag.txt` ✅ (đã có)
 - [ ] `evidence\hardware\dxdiag.png` ← Phần 1
 - [ ] `evidence\load\tool+monitor.png` ← Phần 2.1
@@ -356,9 +392,16 @@ Phải thấy đủ:
 - [ ] Link video điền vào 2 chỗ trong `Main_Report.md` ← Phần 4.3
 - [ ] URL GitHub Issue điền vào §3.11 ← Phần 5
 
-Thư mục `evidence\lockout\` để trống là **hợp lệ** — cơ chế khóa tài khoản
-không kích hoạt lần nào vì mọi request đăng nhập đều dùng mật khẩu đúng
-(giải thích ở §3.8).
+**Tùy chọn (không bắt buộc theo đề bài):**
+
+- [ ] `evidence\endurance\tool+monitor.png` ← Phần 2.4
+
+**Hai thư mục để trống là hợp lệ:**
+
+- `evidence\lockout\` — cơ chế khóa tài khoản không kích hoạt lần nào vì mọi
+  request đăng nhập đều dùng mật khẩu đúng (giải thích ở §3.8). Đề bài dòng 133
+  chỉ yêu cầu tài liệu hóa quy trình reset **khi** lockout bị kích hoạt.
+- `evidence\endurance\` — chỉ cần `memory_trend.csv` đã có; ảnh là tùy chọn.
 
 Cuối cùng, commit:
 
