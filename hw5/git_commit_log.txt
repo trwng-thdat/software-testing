@@ -2,12 +2,14 @@ HW05 - Performance Testing (AI-First)
 Student ID: 23127344
 Repository: software-testing
 Branch: main
-Generated: 2026-08-14 00:26:45 +0700
+Generated: 2026-08-14 07:38:53 +0700
 
 ========================================================================
 COMMIT LOG - HW05
 ========================================================================
 
+b210365 | 2026-08-14 07:38:53 +0700 | trwng-thdat | test(hw5): chạy 4 kịch bản trên SUT thật, thu thập .jtl + HTML report
+ab2b875 | 2026-08-14 06:53:53 +0700 | trwng-thdat | docs(hw5): ghi sự cố SUT xóa CSDL mỗi lần khởi động lại
 b95207e | 2026-08-14 00:26:45 +0700 | trwng-thdat | fix(hw5): sửa assertion $.phone so sánh sai kiểu, verify 3 plan trên SUT thật
 f6cf219 | 2026-08-14 00:12:59 +0700 | trwng-thdat | chore(hw5): cài JMeter 5.6.3, xác nhận 3 test plan mở được, thu thập phần cứng
 6d0f594 | 2026-08-13 23:55:51 +0700 | trwng-thdat | docs(hw5): thêm RUNBOOK và script kiểm tra .jtl cho các bước còn lại Task 1

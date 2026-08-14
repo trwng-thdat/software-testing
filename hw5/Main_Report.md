@@ -783,15 +783,21 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso > git_commit_log.txt
 
 **Đã hoàn thành** (giai đoạn thiết kế):
 
-| Bước                                   | Commit    | Nội dung commit                                                    |
-| -------------------------------------- | --------- | ------------------------------------------------------------------ |
-| Đưa API spec vào làm test basis        | `e1960bd` | docs(hw5): add EShop API specification as the test basis           |
-| Khung báo cáo chính                    | `5cb31df` | docs(hw5): add main report skeleton mapped to the HW05 spec        |
-| Khung AI audit report                  | `081af2d` | docs(hw5): fill AI audit report template with artifact scaffold    |
-| Thiết kế luồng (đã đối chiếu API spec) | `9900816` | design(hw5): select spec-verified profile + order-history workflow |
-| Xuất nhật ký commit                    | `5aaf3ec` | chore(hw5): export git commit log and record SHAs in the report    |
-| Cập nhật lại nhật ký commit            | `abe3dd6` | chore(hw5): refresh commit log to include the export commit itself |
-| Dịch tài liệu sang tiếng Việt          | `b564656` | docs(hw5): dịch báo cáo chính và AI audit report sang tiếng Việt   |
+| Bước | Commit | Nội dung commit |
+| ---------------------------- | ------- | --------------- |
+| Dữ liệu CSV | `a849e2e` | Thêm dữ liệu CSV data-driven cho luồng E2E |
+| Test plan Load | `471777c` | Thêm test plan Load 23127344_Load_20260812.jmx |
+| Test plan Stress | `5ca02f7` | Thêm test plan Stress + mở rộng users.csv lên 120 dòng |
+| Test plan Spike | `01e70d9` | Thay bằng bản 20260813 sinh từ agent skill |
+| Agent skill | `60b9af1` | Thêm agent skill sinh test plan JMeter cho EShop |
+| Rà soát đối chiếu mã nguồn | `9ca3bd6` | Sửa 3 test plan cho khớp mã nguồn SUT (lỗi 8–11 §3.6) |
+| Cài JMeter + phần cứng | `f6cf219` | JMeter 5.6.3, xác nhận 3 plan mở được, thu thập §2.1 |
+| Sửa assertion `$.phone` | `b95207e` | Lỗi 12 §3.6 — verify 13/13 trên SUT thật |
+| Sự cố CSDL bị xóa | `ab2b875` | `database.js:117` DROP TABLE mỗi lần backend restart |
+| **Kết quả chạy (.jtl + report)** | `b210365` | 4 kịch bản, 0% lỗi, đều đạt đủ VU thiết kế |
+| **Lần chạy endurance** | `b210365` | 630 req/s trong 15 phút, không rò rỉ bộ nhớ |
+| Phân tích bằng AI (Task 2) | _<sha>_ | _<chưa làm>_ |
+| Đề xuất CPT (Task 3) | _<sha>_ | _<chưa làm>_ |
 
 **Còn phải làm** (giai đoạn thực thi — điền dần khi commit):
 
