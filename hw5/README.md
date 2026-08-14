@@ -121,7 +121,11 @@ jmeter -n -t 23127344_Load_20260812.jmx -l ../results/load.jtl -e -o ../reports/
 python ../scripts/check_jtl.py ../results/load.jtl
 ```
 
-> `.jtl` của Endurance được commit dạng `.gz` (82 MB → 4,2 MB). Giải nén: `gunzip -k hw5/results/23127344_Endurance_20260814.jtl.gz`
+> **Về file `.jtl` của Endurance.** File thô nặng 82 MB (567 174 sample) nên được nộp dạng nén `.gz` 4,2 MB. Giải nén để đối chiếu:
+> ```bash
+> gunzip -k hw5/results/23127344_Endurance_20260814.jtl.gz
+> ```
+> Đã kiểm chứng bản nén giải ra đúng 567 175 dòng (567 174 sample + header), không mất dữ liệu. Ba file `.jtl` còn lại nộp nguyên bản không nén.
 
 ---
 

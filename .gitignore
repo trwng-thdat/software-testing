@@ -32,3 +32,6 @@ group05_eshop/
 # .jtl endurance 82 MB (567k sample) -> commit ban .gz 4.2 MB thay the.
 # Giai nen: gunzip -k hw5/results/23127344_Endurance_20260814.jtl.gz
 hw5/results/23127344_Endurance_20260814.jtl
+
+# File .jtl chay lai chi de quay video, khong thuoc bai nop
+hw5/results/demo_*.jtl
