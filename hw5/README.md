@@ -52,7 +52,7 @@ Bước 05 ban đầu bị gán nhãn `[transactional]`, sau đó sửa thành `
 
 | Loại | Số lượng | Chi tiết |
 | --- | --- | --- |
-| **Bug chức năng** | **1** | `POST /api/apply-coupon` tính sai giảm giá phần trăm — `SAVE10` trên đơn 500 000 ₫ trả `final_amount = 5 000 000` thay vì 450 000 (`server.js:399-401`) |
+| **Bug chức năng** | **1** | [#287](https://github.com/DuyITLOR/group05_eshop/issues/287) — `POST /api/apply-coupon` tính sai giảm giá phần trăm: `SAVE10` trên đơn 500 000 ₫ trả `final_amount = 5 000 000` thay vì 450 000 (`server.js:397-403`) |
 | **Vấn đề hiệu năng** | **0** | Không phát hiện được trong dải tải đã kiểm thử |
 | **Lỗi test plan do AI sinh** | **12** | Ghi đầy đủ ở §3.6 của báo cáo chính |
 
@@ -149,7 +149,7 @@ python ../scripts/check_jtl.py ../results/load.jtl
 | AI Critique (296 từ) | ✅ |
 | Git commit log | ✅ |
 | Báo cáo phần cứng (`dxdiag.txt` + `dxdiag.png` + §2.1) | ✅ |
-| Ảnh chụp resource monitor | ⚠️ Load ✅ · Stress ✅ (2 ảnh) · **Spike còn thiếu** |
+| Ảnh chụp resource monitor | ✅ Load (1) · Stress (2) · Spike (3) |
 | Video demo Task 1 (≥ 6 phút) | ✅ 13 phút 42 giây |
-| GitHub Issue cho bug \#1 | ⚠️ Đã soạn `evidence/issues/ISSUE_bug1_apply_coupon.md` + 3 ảnh; **chưa tạo issue trên GitHub** |
+| GitHub Issue cho bug \#1 | ✅ [DuyITLOR/group05_eshop#287](https://github.com/DuyITLOR/group05_eshop/issues/287) |
 | **Bản PDF của báo cáo** | ❌ |

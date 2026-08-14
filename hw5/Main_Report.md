@@ -770,7 +770,7 @@ Dòng thời gian nội dung: _<00:00 giới thiệu · 00:xx chạy Load · 0x:
 
 | #   | Tiêu đề | Loại                                     | Mức độ  | Quan sát ở đâu    | GitHub Issue | Ảnh chụp                |
 | --- | ------- | ---------------------------------------- | ------- | ----------------- | ------------ | ----------------------- |
-| 1   | `POST /api/apply-coupon` tính sai giảm giá theo phần trăm | Lỗi chức năng (tính toán) | **Cao** | Đọc mã nguồn khi chuẩn bị `coupons.csv` (§3.3); tái hiện trên SUT đang chạy bằng Selenium | _<URL — xem `GITHUB_ISSUE_bug1_apply_coupon.md` ở root repo>_ | 3 ảnh + JSON response trong `evidence/issues/` |
+| 1   | `POST /api/apply-coupon` tính sai giảm giá theo phần trăm | Lỗi chức năng (tính toán) | **Cao** | Đọc mã nguồn khi chuẩn bị `coupons.csv` (§3.3); tái hiện trên SUT đang chạy bằng Selenium | [#287](https://github.com/DuyITLOR/group05_eshop/issues/287) | 3 ảnh + JSON response trong `evidence/issues/` |
 
 **Tái hiện tự động bằng Selenium.** Script `scripts/capture_bug_coupon.js` chạy trên SUT thật (không mock) để chụp bằng chứng: đăng nhập → thêm sản phẩm vào giỏ → vào `/checkout` → đặt tổng tiền 500 000 ₫ → áp mã `SAVE10`. Nội dung Issue đã soạn sẵn ở `evidence/issues/ISSUE_bug1_apply_coupon.md`.
 
@@ -786,6 +786,8 @@ Dòng thời gian nội dung: _<00:00 giới thiệu · 00:xx chạy Load · 0x:
 Ảnh chụp cho thấy ba thông tin **mâu thuẫn nhau trong cùng một khung hình**: dòng xanh báo "Áp dụng thành công! Giảm 10%", nhưng "Tiết kiệm" là **−4 500 000 ₫** (số âm) và "Tổng thanh toán" **tăng lên 5 000 000 ₫** trong khi đơn gốc chỉ 500 000 ₫.
 
 > **Hai lần bấm "Thêm vào giỏ hàng".** Script phải bấm nút này **hai lần** mới thêm được sản phẩm. Đây không phải lỗi của script mà là một bug cố ý khác của SUT: `ProductDetail.jsx:22-26` bỏ qua hoàn toàn lần bấm đầu tiên (`if (clickCount === 0) { setClickCount(1); return; }`). Bấm một lần thì giỏ vẫn rỗng và không vào được trang thanh toán.
+
+> **Ghi chú về nơi đặt issue.** Issue được tạo trên [`DuyITLOR/group05_eshop`](https://github.com/DuyITLOR/group05_eshop/issues/287) — repository của **SUT**, không phải repo bài tập. Đây là nơi đúng: bug nằm ở mã nguồn EShop (`server.js:397-403`), nên người có thể sửa nó là nhóm phát triển SUT. Báo lỗi vào repo bài tập cá nhân sẽ không đến được ai.
 
 **Bộ bằng chứng đầy đủ** (`hw5/evidence/issues/`):
 

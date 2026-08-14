@@ -1,5 +1,10 @@
 # Nội dung để tạo GitHub Issue — Bug #1
 
+> ✅ **ĐÃ TẠO:** https://github.com/DuyITLOR/group05_eshop/issues/287
+> (repo của SUT, không phải repo bài tập — vì bug nằm ở mã nguồn EShop)
+>
+> File này giữ lại làm bản gốc có thể tái sử dụng.
+
 > File này dùng để **copy-paste lên GitHub Issues**.
 > Repo: https://github.com/trwng-thdat/software-testing/issues/new
 >
