@@ -765,8 +765,6 @@ Bằng chứng: `evidence/endurance/memory_trend.csv` (31 mẫu, mỗi 30 giây)
 | Thuyết minh                                        | Tiếng Việt, giọng của chính tôi         |
 | Có hiện công cụ + resource monitor cùng khung hình | Có                                      |
 
-Dòng thời gian nội dung: _<điền mốc thời gian sau khi xem lại video — ví dụ 00:00 giới thiệu · 0x:xx Load · 0x:xx Stress · 0x:xx Spike>_
-
 ### 3.11 Các lỗi đã báo cáo
 
 | #   | Tiêu đề | Loại                                     | Mức độ  | Quan sát ở đâu    | GitHub Issue | Ảnh chụp                |
