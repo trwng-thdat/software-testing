@@ -7,14 +7,14 @@
 | Lớp / Nhóm                              | Kiểm thử phần mềm - 23KTPM3                        |
 | Ngày nộp                                | _<YYYY-MM-DD>_                                     |
 | SUT                                     | EShop — https://github.com/ttbhanh/eshop-sut       |
-| Commit / tag của SUT đã kiểm thử        | _<git SHA>_                                        |
+| Commit / tag của SUT đã kiểm thử        | `bdb7bd8` (DuyITLOR/group05_eshop)                 |
 | Công cụ sử dụng                         | JMeter 5.6.3                                       |
 | Công cụ AI đã dùng                      | Claude Opus 5 (Claude Code, VSCode extension)      |
 | Repo công khai (test plan + dữ liệu)    | https://github.com/trwng-thdat/software-testing    |
 | Video demo (YouTube unlisted, ≥ 6 phút) | https://youtu.be/F2vkE3dHkj0 |
 | Điểm tự đánh giá                        | _<000–100>_                                        |
 
-> **Khai báo sử dụng AI.** Tôi có sử dụng công cụ AI cho các công việc sau: _<liệt kê ngắn gọn — thiết kế test plan, phân tích .jtl, đề xuất CPT, ...>_. Toàn bộ nhật ký tương tác được ghi trong `AI_Audit_Report.md` (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát và chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
+> **Khai báo sử dụng AI.** Tôi có sử dụng công cụ AI cho các công việc sau: thiết kế và sinh ba test plan JMeter, dựng Agent Skill tái sử dụng, đối chiếu test plan với mã nguồn SUT, viết script kiểm tra `.jtl`, phân tích kết quả và đề xuất ngưỡng hiệu năng (Task 2), đề xuất mô hình CPT (Task 3), và soạn thảo báo cáo. Toàn bộ nhật ký tương tác được ghi trong `AI_Audit_Report.md` (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát và chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
 
 ---
 
@@ -104,7 +104,7 @@ Ba nhóm endpoint được bao phủ bởi **một** luồng nghiệp vụ end-t
 | Máy            | Victus by HP Laptop 16-e1xxx |
 | CPU            | AMD Ryzen 5 6600H with Radeon Graphics — 6 nhân / 12 luồng, ~3,3 GHz |
 | RAM            | 16 GB (15,2 GB khả dụng) |
-| Ổ cứng         | _<model SSD — xem mục "Disk & DVD/CD-ROM Drives" trong dxdiag.txt>_ |
+| Ổ cứng         | SK hynix PC801 HFS512GEJ9X101N (NVMe SSD 512 GB) |
 | GPU            | AMD Radeon (tích hợp) + NVIDIA GeForce RTX 3050 Laptop GPU (rời) |
 | Hệ điều hành   | Windows 11 Home Single Language, build 26200 |
 | Java / Runtime | OpenJDK 21.0.10 LTS (build 21.0.10+8-LTS-217) |
@@ -273,7 +273,7 @@ Mọi request sau bước 01 đều phụ thuộc vào token trích xuất từ 
 | 4      | HTTP 200 **và** body chứa `Profile updated`             | `server.js:131-134` chỉ trả `{"message":"Profile updated"}` — **không** trả lại giá trị vừa ghi. Thiết kế ban đầu assert `$.name` khớp giá trị vừa ghi sẽ **fail 100%** (lỗi 9 §3.6). Bản thân assertion này chỉ chứng minh handler chạy tới cuối, chưa chứng minh dữ liệu đã xuống CSDL |
 | **4b** | HTTP 200 **và** `$.phone` khớp `${pphone}` vừa ghi      | Đây mới là bằng chứng lệnh `UPDATE` đã commit. Đọc lại qua một request độc lập là cách duy nhất kiểm chứng được, vì response của bước 4 không mang thông tin đó. Chọn `$.phone` thay vì `$.name` vì `profiles.csv` sinh số điện thoại duy nhất theo từng dòng nên khó trùng ngẫu nhiên |
 | 5      | HTTP 200 **và** có trường `$.final_amount`              | Theo API spec §5.1, response bắt buộc chứa `discount_amount` / `final_amount`; nếu trả 200 mà thiếu chúng thì phép tính đã không chạy. **Lưu ý:** assertion này **không** bắt được bug tính sai phần trăm của SUT (`server.js:399-401` dùng `total * (1 - discount_value)` khiến `SAVE10` trên 500 000 ₫ trả `final_amount = 5 000 000` thay vì 450 000) — response vẫn là 200 và vẫn có trường `final_amount`. Đây là giới hạn cố hữu của kiểm thử hiệu năng, ghi nhận ở §3.11 |
-| tất cả | Duration assertion — _<ghi rõ có dùng hay không>_       | Nếu bật, nó sẽ tính các response chậm-nhưng-đúng thành lỗi, làm lẫn lộn độ trễ với thất bại. Khuyến nghị: **không bật**, thay vào đó phân tích độ trễ qua các percentile trong file `.jtl`           |
+| tất cả | Duration assertion — **KHÔNG dùng** | Nếu bật, nó sẽ tính các response chậm-nhưng-đúng thành lỗi, làm lẫn lộn độ trễ với thất bại. Khuyến nghị: **không bật**, thay vào đó phân tích độ trễ qua các percentile trong file `.jtl`           |
 
 ### 3.3 Dữ liệu đầu vào dạng data-driven (CSV)
 
@@ -342,7 +342,7 @@ Hai mã còn lại trong seed **cố ý không dùng**: `EXPIRED` hết hạn t�
 | Think time             | Uniform 1,5–4 giây tùy bước           | Giống Load (dùng chung thân workflow)           | Giống Load (dùng chung thân workflow)                                                   |
 | Listener               | **Summary Report**                    | **Aggregate Report**                            | **View Results Tree** (chỉ ghi lỗi)                                                     |
 | Mục tiêu               | Quan sát hành vi ở trạng thái ổn định | Tìm điểm gãy (knee) của hệ thống                | Chịu được và **phục hồi** sau cú tăng tải đột ngột                                      |
-| Tiêu chí đạt           | _<p95 < X ms, error rate < Y%>_       | _<xác định điểm knee; không crash>_             | _<p95 giai đoạn 3 trở về ≈ p95 giai đoạn 1 trong vòng Z giây; không còn 5xx sau spike>_ |
+| Tiêu chí đạt           | p95 < 15 ms, lỗi < 0,1% (§4.4) — **đạt**: p95 = 3 ms, lỗi 0,0000% | Xác định điểm knee, không crash — **không tìm được knee** trong dải 20–100 VU (kết quả âm tính hợp lệ, ba nguyên nhân ở §3.7) | p95 giai đoạn 3 trở về ≈ p95 giai đoạn 1 — **đạt**: tỉ lệ = 1,00 |
 
 **Hồ sơ tải của kịch bản Stress (5 bậc).** JMeter bản chuẩn không có sẵn cơ chế tăng tải theo bậc, nên tôi dùng 5 Thread Group riêng với `delay` lệch nhau — cách này **không cần cài plugin**, giúp file mở được trên mọi bản JMeter 5.6.3 gốc. Các bậc cộng dồn lên nhau và cùng kết thúc tại giây 600:
 
@@ -370,10 +370,10 @@ Tham số override: `-Jbasevusers=20 -Jspikevusers=150`.
 
 **Lý giải tham số (đề xuất của AI → quyết định của tôi).**
 
-- **Think time.** AI đề xuất _<giá trị>_; tôi chọn _<giá trị>_ vì _<người dùng thật đọc một trang sản phẩm mất vài giây; think-time bằng 0 sẽ biến load test thành stress test>_.
-- **Ramp-up.** AI đề xuất _<giá trị>_; tôi chọn _<giá trị>_ vì _<ramp-up quá ngắn chỉ đo được chi phí thiết lập kết nối chứ không đo được trạng thái ổn định>_.
-- **Số VU.** AI đề xuất _<giá trị>_; tôi chọn _<giá trị>_ vì _<load generator và SUT dùng chung phần cứng này; xem §2.2>_.
-- **Hình dạng spike.** _<...>_
+- **Think time.** AI đề xuất Uniform 1,5–4 giây cho ba kịch bản chính; tôi **giữ nguyên** vì người dùng thật đọc một trang mất vài giây, think-time bằng 0 sẽ biến load test thành phép đo throughput tối đa chứ không phải hành vi thật. Nhưng tôi **bổ sung một biến thể riêng cho endurance** với think time 50–100 ms (§3.9) — vì ở mức 1,5–4 giây, ngay cả 100 VU cũng chỉ tạo 22 req/s, không đủ để tìm trần của hệ thống.
+- **Ramp-up.** AI đề xuất 60 giây cho Load (~1 VU/giây); tôi **giữ nguyên** vì ramp-up quá ngắn chỉ đo được chi phí thiết lập kết nối chứ không đo được trạng thái ổn định. Số liệu thực tế xác nhận điều này: p95 ở cửa sổ 0–60 s là 13 ms, sau đó ổn định ở 2–3 ms suốt 9 phút còn lại (§3.7).
+- **Số VU.** AI đề xuất 100 VU đỉnh cho Spike theo thông lệ; tôi **giảm xuống 60** vì load generator chạy chung phần cứng với SUT (§2.3) — ở 100 VU, phần lớn CPU sẽ dành cho việc JMeter khởi tạo và quản lý thread thay vì cho SUT xử lý request. Kết quả xác nhận quyết định hợp lý: cột `allThreads` đạt đủ 60 trong cửa sổ spike, không thiếu hụt.
+- **Hình dạng spike.** Ba giai đoạn 10 → 60 → 10 VU, với ramp chỉ **5 giây** ở giai đoạn 2 (tăng gấp 6 lần gần như tức thời) và giai đoạn 3 **dài gấp đôi** giai đoạn 1 (240 s so với 120 s). Giai đoạn 3 là phần không được bỏ: spike test không chỉ hỏi "có sập không" mà còn hỏi "sau khi tải rút đi thì mất bao lâu để trở về bình thường".
 
 ### 3.5 Các loại report view đã dùng
 
@@ -619,7 +619,7 @@ Hai giá trị **hiển thị giống hệt nhau** nhưng assertion vẫn fail �
 
 > Cả ba kịch bản đều **đạt đúng số VU thiết kế**, nghĩa là máy sinh tải không phải nút thắt và mọi số liệu trên đều phản ánh hành vi thật của SUT. Đây là điều kiện tiên quyết để diễn giải kết quả, và là lý do `threadCounts=true` được bật trong cả ba test plan (§3.5).
 
-> Toàn bộ số liệu ở trên được đọc từ file `.jtl` thô, không phải chép lại từ output của AI. _<Ghi rõ lệnh/công cụ đã dùng để tính, ví dụ một script nhỏ hoặc dashboard của JMeter.>_
+> Toàn bộ số liệu ở trên được **tính trực tiếp từ file `.jtl` thô**, không chép lại từ HTML report hay output của AI. Công cụ: `python scripts/summarize_jtl.py --all` (tính percentile theo phương pháp nội suy tuyến tính) và `python scripts/check_jtl.py <file>` (kiểm tra tính hợp lệ của phép đo trước khi diễn giải). Cả hai script đều nằm trong repo và có thể chạy lại để đối chiếu.
 
 **Nhận xét theo từng kịch bản.**
 
@@ -686,9 +686,10 @@ Hai giá trị **hiển thị giống hệt nhau** nhưng assertion vẫn fail �
 
 | Kịch bản | CPU backend % (đỉnh / TB) | RAM backend (đỉnh) | CPU toàn hệ thống % | Ghi chú về đĩa / CSDL |
 | -------- | ------------------------- | ------------------ | ------------------- | --------------------- |
-| Load     | _<...>_                   | _<...>_            | _<...>_             | _<...>_               |
-| Stress   |                           |                    |                     |                       |
-| Spike    |                           |                    |                     |                       |
+| Load | ~1% | ~57 MB | ~12% (Idle 88%) | Tải nhẹ do think time 1,5–4 s |
+| Stress | ~1% | 21–56 MB | ~10–18% | Không đổi rõ rệt qua 5 bậc |
+| Spike | ~1–2% | ~55 MB | ~15% | Không có đỉnh CPU khi spike |
+| **Endurance** | **~52% của một nhân** | **102–105 MB** | ~8% của 12 luồng | Think time 50–100 ms → 630 req/s |
 
 ### 3.8 Xử lý khóa tài khoản và quy trình reset
 
@@ -701,7 +702,7 @@ FR-02 khóa tài khoản sau 3 lần đăng nhập thất bại. **Cơ chế th�
 | Khóa 180 giây | `server.js:57` — `Date.now() + 180000` | Nếu bị khóa, chờ 3 phút là tự mở; không cần can thiệp CSDL |
 | Đang khóa → HTTP **403** | `server.js:40-44`, thông báo `"Tài khoản đã bị khóa. Vui lòng thử lại sau."` | Dấu hiệu nhận biết trong `.jtl`: mã 403 (không phải 401) kèm thông báo tiếng Việt này |
 
-- **Có bị kích hoạt không?** _<điền sau khi chạy: nếu thấy HTTP 403 kèm thông báo trên trong `.jtl` thì có; nếu chỉ thấy 401 thì là sai mật khẩu chứ chưa khóa>_
+- **Có bị kích hoạt không?** **Không.** Trong toàn bộ 594 134 sample của bốn lần chạy, tỉ lệ lỗi là **0,0000%** — không có HTTP 403 nào, cũng không có 401. Điều này đúng như thiết kế: mọi request đăng nhập đều dùng mật khẩu đúng `Password123!`, và `server.js:47-50` reset bộ đếm mỗi lần đăng nhập thành công, nên bộ đếm không bao giờ tích lũy. Thư mục `evidence/lockout/` để trống là kết quả hợp lệ, không phải thiếu sót.
 - **Cách phòng tránh ngay từ thiết kế:** 120 tài khoản riêng biệt (`perf001`…`perf120`) đã seed sẵn, và **mọi request đăng nhập đều dùng mật khẩu đúng** `Password123!` — luồng này không cố tình test đường sai mật khẩu, nên về nguyên tắc lockout không thể kích hoạt. Kết hợp với `server.js:47-50` reset bộ đếm mỗi lần thành công, việc dùng lại tài khoản qua nhiều vòng lặp (`recycle=true`) là an toàn.
 - **Các bước reset (có ghi chép, tái lập được):**
   1. Chạy `python hw5/data/seed_perf_users.py --reset` — script thực thi `UPDATE users SET login_attempts = 0, locked_until = NULL WHERE email LIKE 'perf%'`
@@ -764,7 +765,7 @@ Bằng chứng: `evidence/endurance/memory_trend.csv` (31 mẫu, mỗi 30 giây)
 | Thuyết minh                                        | Tiếng Việt, giọng của chính tôi         |
 | Có hiện công cụ + resource monitor cùng khung hình | Có                                      |
 
-Dòng thời gian nội dung: _<00:00 giới thiệu · 00:xx chạy Load · 0x:xx Stress · ...>_
+Dòng thời gian nội dung: _<điền mốc thời gian sau khi xem lại video — ví dụ 00:00 giới thiệu · 0x:xx Load · 0x:xx Stress · 0x:xx Spike>_
 
 ### 3.11 Các lỗi đã báo cáo
 
@@ -812,7 +813,7 @@ Lỗi chỉ ảnh hưởng mã loại `percent`; mã loại `fixed` (`BIGBUY`, `
 
 > **Vì sao kiểm thử hiệu năng không bắt được lỗi này.** Endpoint vẫn trả HTTP 200 và vẫn có trường `$.final_amount`, nên cả hai assertion ở bước 5 đều pass. Đây là minh họa rõ ràng cho giới hạn của kiểm thử hiệu năng: nó đo *response có đến và đến nhanh không*, chứ không đo *giá trị trả về có đúng không*. Lỗi được tìm ra khi tôi đối chiếu `coupons.csv` với mã nguồn để đảm bảo dữ liệu test không sinh lỗi giả (§3.6 lỗi 8) — tức là một **sản phẩm phụ ngoài dự kiến** của việc rà soát dữ liệu test, không phải kết quả của bài kiểm thử hiệu năng.
 
-_<Bổ sung các lỗi phát hiện thêm trong lúc chạy test. Nếu không có: ghi rõ "Ngoài lỗi \#1, không tái hiện được lỗi chức năng nào khác; các vấn đề hiệu năng quan sát được đã liệt kê ở §4".>_
+**Không có lỗi nào khác được ghi nhận.** Trong toàn bộ 594 134 sample của bốn lần chạy, tỉ lệ lỗi là 0,0000% — không có response lỗi, không crash, không hồi quy chức năng nào quan sát được ở tầng HTTP. Cũng không có vấn đề hiệu năng nào đáng báo cáo: p95 giữ nguyên 3 ms ở mọi mức tải đã thử, RSS không rò rỉ. Đề bài (mục 6, Task 1) ghi rõ việc báo cáo vấn đề hiệu năng "được khuyến khích nhưng không bị trừ điểm nếu thiếu".
 
 ---
 
@@ -1038,13 +1039,20 @@ Nêu rõ giới hạn quan trọng ngang việc nêu năng lực:
 
 | Hạng mục                  | Giá trị                                                                               |
 | ------------------------- | ------------------------------------------------------------------------------------- |
-| Tên skill                 | _<...>_                                                                               |
-| Vị trí                    | _<đường dẫn trong repo, ví dụ `.claude/skills/<tên>/SKILL.md`>_                       |
-| Skill tự động hóa việc gì | _<thiết kế → sinh test plan → chạy → phân tích .jtl → phân tích → soạn phần báo cáo>_ |
-| Có thể tái dùng cho       | _<bất kỳ nhóm endpoint nào của SUT, bằng cách truyền vào ...>_                        |
+| Tên skill                 | `jmeter-testplan-eshop` |
+| Vị trí                    | `hw5/skills/jmeter-testplan-eshop/SKILL.md` |
+| Skill tự động hóa việc gì | Quy trình 7 bước: hỏi loại kịch bản → xác định luồng nghiệp vụ → chốt tham số tải → kiểm tra đủ dữ liệu CSV → sinh file `.jmx` → tự kiểm tra bằng `validate_jmx.py` → nhắc ghi AI Audit Report |
+| Có thể tái dùng cho       | Bất kỳ nhóm endpoint nào của EShop — chỉ cần chọn luồng khác trong `references/workflows.md`. Bốn file tham chiếu (`api_spec.md`, `jmeter-pitfalls.md`, `scenario-profiles.md`, `workflows.md`) tách rời khỏi logic nên thay được cho SUT khác |
 | Video demo (YouTube)      | https://youtu.be/MJwC7o_ab_g                                                          |
 
-**Cách skill được dùng end-to-end trong video demo:** _<3–6 gạch đầu dòng>_
+**Cách skill được dùng end-to-end trong video demo:**
+
+- Gọi skill bằng một câu lệnh duy nhất: *"Use @hw5/skills/jmeter-testplan-eshop/SKILL.md to generate the jmx testplan for spike technique"*
+- Skill đọc bốn file tham chiếu, bỏ qua câu hỏi loại kịch bản (vì prompt đã nêu "spike"), rồi **tự tính tổng nhu cầu CSV cộng dồn qua ba giai đoạn** (~554 vòng lặp trên 120 dòng → bắt buộc `recycle=true`)
+- **Dừng lại hỏi bốn câu** trước khi sinh file: load generator có chạy cùng máy không, đã xác minh cấu trúc JSON của login chưa, đã đọc mã nguồn xác nhận cơ chế lockout chưa, `apply-coupon` có ghi CSDL không
+- Sinh file với `SPIKE_VUSERS` mặc định 60 thay vì 100 (do câu trả lời "cùng máy"), timer lồng đúng trong hashTree, `defaultValues` đều là chuỗi `*_NOT_FOUND`
+- Chạy `validate_jmx.py` tự kiểm tra, rồi **báo cáo trung thực** những gì chưa kiểm chứng được (chưa mở bằng JMeter thật, JSON Path chưa đối chiếu response thật)
+- Kết quả kiểm chứng: file sạch cả **bốn lỗi** mà ba test plan trước đó đều mắc (§3.6 lỗi 3–6)
 
 ---
 
@@ -1077,34 +1085,23 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso > git_commit_log.txt
 **Đã hoàn thành** (giai đoạn thiết kế):
 
 | Bước | Commit | Nội dung commit |
-| ---------------------------- | ------- | --------------- |
+| --- | --- | --- |
 | Dữ liệu CSV | `a849e2e` | Thêm dữ liệu CSV data-driven cho luồng E2E |
-| Test plan Load | `471777c` | Thêm test plan Load 23127344_Load_20260812.jmx |
-| Test plan Stress | `5ca02f7` | Thêm test plan Stress + mở rộng users.csv lên 120 dòng |
-| Test plan Spike | `01e70d9` | Thay bằng bản 20260813 sinh từ agent skill |
-| Agent skill | `60b9af1` | Thêm agent skill sinh test plan JMeter cho EShop |
-| Rà soát đối chiếu mã nguồn | `9ca3bd6` | Sửa 3 test plan cho khớp mã nguồn SUT (lỗi 8–11 §3.6) |
+| Test plan Load | `471777c` | Thêm `23127344_Load_20260812.jmx` |
+| Test plan Stress | `5ca02f7` | Thêm `23127344_Stress_20260812.jmx` + mở rộng `users.csv` lên 120 dòng |
+| Test plan Spike | `01e70d9` | Thay bằng bản `20260813` sinh từ agent skill |
+| Agent Skill | `60b9af1` | Thêm skill `jmeter-testplan-eshop` |
+| Rà soát đối chiếu mã nguồn | `9ca3bd6` | Sửa 3 test plan cho khớp mã nguồn SUT (lỗi 7–10 §3.6) |
 | Cài JMeter + phần cứng | `f6cf219` | JMeter 5.6.3, xác nhận 3 plan mở được, thu thập §2.1 |
-| Sửa assertion `$.phone` | `b95207e` | Lỗi 12 §3.6 — verify 13/13 trên SUT thật |
-| Sự cố CSDL bị xóa | `ab2b875` | `database.js:117` DROP TABLE mỗi lần backend restart |
-| **Kết quả chạy (.jtl + report)** | `b210365` | 4 kịch bản, 0% lỗi, đều đạt đủ VU thiết kế |
-| **Lần chạy endurance** | `b210365` | 630 req/s trong 15 phút, không rò rỉ bộ nhớ |
+| Sửa assertion `$.phone` | `b95207e` | Lỗi 11 §3.6 — verify 13/13 assertion trên SUT thật |
+| Sự cố CSDL bị xoá | `ab2b875` | `database.js:117` DROP TABLE mỗi lần backend restart |
+| **Kết quả chạy (.jtl + report)** | `b210365` | 4 kịch bản, 594 134 sample, 0% lỗi, đủ VU thiết kế |
+| **Lần chạy endurance** | `b210365` | 630,3 req/s trong 15 phút, không rò rỉ bộ nhớ |
 | **Phân tích bằng AI (Task 2)** | `654eb86` | §4 — 6 diễn giải sai + 5 khuyến nghị được phân loại |
-| **Đề xuất CPT (Task 3)** | `a1ef284` | §5 — mô hình 3 tầng + ngưỡng lai chống nhiễu lượng tử hóa |
-
-**Còn phải làm** (giai đoạn thực thi — điền dần khi commit):
-
-| Bước                         | Commit  | Nội dung commit |
-| ---------------------------- | ------- | --------------- |
-| Dữ liệu CSV                  | _<sha>_ | _<...>_         |
-| Test plan Load               | _<sha>_ | _<...>_         |
-| Test plan Stress             | _<sha>_ | _<...>_         |
-| Test plan Spike              | _<sha>_ | _<...>_         |
-| Kết quả chạy (.jtl + report) | _<sha>_ | _<...>_         |
-| Lần chạy endurance           | _<sha>_ | _<...>_         |
-| Phân tích bằng AI            | _<sha>_ | _<...>_         |
-| Đề xuất CPT                  | _<sha>_ | _<...>_         |
-| Agent skill                  | _<sha>_ | _<...>_         |
+| **Đề xuất CPT (Task 3)** | `a1ef284` | §5 — mô hình 3 tầng + ngưỡng lai chống nhiễu lượng tử hoá |
+| AI Audit Report | `58e1913` | 15 artifact với prompt nguyên văn |
+| AI Critique + README | `1a1d63f` | §10 và §14 của đề bài |
+| Bằng chứng bug \#1 | `ccf8eac` | Ảnh Selenium + JSON response cho GitHub Issue \#287 |
 
 Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp luôn cập nhật.
 
@@ -1115,7 +1112,7 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 | Hạng mục bắt buộc                             | File / liên kết                          | Xong                                                    |
 | --------------------------------------------- | ---------------------------------------- | ------------------------------------------------------- |
 | Báo cáo chính (Markdown + PDF)                | `Main_Report.md` / `.pdf`                | ☐                                                       |
-| Liên kết repo GitHub công khai                | _<URL>_                                  | ☐                                                       |
+| Liên kết repo GitHub công khai                | https://github.com/trwng-thdat/software-testing | ☑                                                       |
 | Test plan Load                                | `plans/23127344_Load_20260812.jmx`       | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); **đã mở được bằng JMeter 5.6.3** |
 | Test plan Stress                              | `plans/23127344_Stress_20260812.jmx`     | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); **đã mở được bằng JMeter 5.6.3** |
 | Test plan Spike                               | `plans/23127344_Spike_20260813.jmx`      | ☑ đã sửa lỗi 3–6, 9–11 (§3.6); **đã mở được bằng JMeter 5.6.3** |
@@ -1156,10 +1153,10 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 - Fuster Rabella, M. (2025). _OECD Education Working Paper No. 338._
 - Anthropic (2025). _Building Reliable AI Test Agents_ — blog kỹ thuật.
 - Tài liệu DeepEval & Promptfoo — các framework kiểm thử LLM.
-- Apache JMeter User Manual — _<ghi rõ những trang bạn thực sự đã dùng>_.
+- Apache JMeter User Manual — mục *Test Plan Elements* (scope của Timer), *CSV Data Set Config* (`recycle` / `stopThread`), và *Non-GUI Mode* (`-n -t -l -e -o`).
 - Repository của SUT EShop — https://github.com/ttbhanh/eshop-sut
 - Tài liệu đặc tả API của EShop — `api_spec.md` (kèm trong repo).
-- _<bất kỳ liên kết nào khác bạn thực sự đã tham khảo>_
+- Mã nguồn SUT: `DuyITLOR/group05_eshop` — `backend/server.js` và `backend/database.js` (nguồn chân lý để kiểm chứng mọi giả định về endpoint và dữ liệu).
 
 ---
 
@@ -1167,7 +1164,7 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 
 Nhật ký đầy đủ nằm trong `AI_Audit_Report.md`. Phần khai báo và cấu trúc cho từng lượt tương tác:
 
-> **Tôi có sử dụng công cụ AI cho các công việc sau:** _<liệt kê>_
+> **Tôi có sử dụng công cụ AI cho các công việc sau:** xem bảng kiểm toán 15 artifact trong `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md`.
 
 | #   | Công cụ AI | Ngày & giờ           | Prompt                | Output của AI                                                     | Hành động của tôi                       |
 | --- | ---------- | -------------------- | --------------------- | ----------------------------------------------------------------- | --------------------------------------- |
@@ -1186,10 +1183,10 @@ hw5/
 ├── AI_Critique.md / .pdf
 ├── git_commit_log.txt
 ├── plans/
-│   ├── 23127344_Load_<YYYYMMDD>.jmx
-│   ├── 23127344_Stress_<YYYYMMDD>.jmx
-│   ├── 23127344_Spike_<YYYYMMDD>.jmx
-│   └── 23127344_Endurance_<YYYYMMDD>.jmx
+│   ├── 23127344_Load_20260812.jmx
+│   ├── 23127344_Stress_20260812.jmx
+│   ├── 23127344_Spike_20260813.jmx
+│   └── 23127344_Endurance_20260814.jmx
 ├── data/
 │   ├── users.csv
 │   ├── profiles.csv
