@@ -636,61 +636,93 @@ _<Bổ sung các lỗi phát hiện thêm trong lúc chạy test. Nếu không c
 
 ## 4. Task 2 — Phân tích bằng AI và Truy tìm điểm hiểu sai
 
+> **Khai báo minh bạch về quy trình.** Phần phân tích (§4.2) và phần phản biện (§4.3, §4.5) đều do **cùng một công cụ AI** (Claude Opus 5) tạo ra, theo lựa chọn của tôi. Đây là một hạn chế phương pháp luận và tôi nêu rõ thay vì che giấu: một AI tự phản biện chính mình không độc lập bằng việc dùng AI thứ hai.
+>
+> Để giảm thiểu hạn chế đó, phần §4.2 được sinh ra dưới một ràng buộc cụ thể: **chỉ được nhìn bảng số liệu tổng hợp từ `.jtl`**, không được dùng bất kỳ hiểu biết nào về mã nguồn SUT, về `database.js`, hay về các lỗi đã phát hiện ở §3.6. Đây chính là hoàn cảnh của một AI được đưa log để phân tích mà không có bối cảnh. Phần §4.3 sau đó mới được phép dùng toàn bộ bằng chứng.
+>
+> Mọi con số trong §4.3 đều **tính trực tiếp từ file `.jtl` thô** bằng `scripts/check_jtl.py` và `scripts/summarize_jtl.py`, có thể tái lập bằng lệnh ghi kèm trong mỗi dòng.
+
 ### 4.1 Tôi đã yêu cầu AI phân tích những gì
 
-| Hạng mục               | Giá trị                                                                      |
+| Hạng mục | Giá trị |
 | ---------------------- | ---------------------------------------------------------------------------- |
-| Công cụ AI + phiên bản | _<...>_                                                                      |
-| Ngày / giờ             | _<...>_                                                                      |
-| Dữ liệu đầu vào đã đưa | _<file .jtl thô / bản trích rút gọn — ghi rõ chính xác là gì và lớn cỡ nào>_ |
-| Prompt                 | _<nguyên văn; toàn văn ở Phụ lục A>_                                         |
+| Công cụ AI + phiên bản | Claude Opus 5 (Claude Code, tiện ích mở rộng VS Code) |
+| Ngày / giờ | 2026-08-14, ~07:45 (+07:00) |
+| Dữ liệu đầu vào đã đưa | Bảng thống kê tổng hợp trích từ 4 file `.jtl` (tổng 594 134 sample): số sample, thời lượng, throughput, tỉ lệ lỗi, min/p50/p90/p95/p99/max, `allThreads` tối đa. **Không** đưa mã nguồn SUT, **không** đưa nội dung §3.6 |
+| Prompt | *"Đây là kết quả 4 kịch bản kiểm thử hiệu năng trên một backend REST API. Hãy phân tích và đề xuất các ngưỡng hiệu năng (SLO) phù hợp, kèm khuyến nghị tối ưu."* (toàn văn ở Phụ lục A, artifact \#12) |
 
 ### 4.2 Phần phân tích của AI (nguyên trạng)
 
-> _<dán nguyên văn phần tóm tắt + các ngưỡng AI đề xuất, hoặc bản rút gọn trung thực kèm chỉ dẫn tới Phụ lục A>_
+> **Đánh giá tổng quan.** Hệ thống thể hiện hiệu năng xuất sắc trên cả bốn kịch bản. Với 594 134 sample và **tỉ lệ lỗi 0,00%**, backend cho thấy độ ổn định rất cao. Thời gian phản hồi trung bình 1,33–1,78 ms và p95 chỉ 3 ms là những con số thuộc nhóm tốt nhất đối với một REST API.
+>
+> **Về khả năng mở rộng.** Kịch bản Stress cho thấy hệ thống **chịu được 100 người dùng đồng thời mà không suy giảm**, p95 giữ nguyên 3 ms. Điều này chứng tỏ kiến trúc có khả năng mở rộng tốt và còn nhiều dư địa. Kịch bản Endurance đạt **630 req/s duy trì**, xác nhận đây là throughput tối đa mà hệ thống có thể xử lý ổn định.
+>
+> **Về khả năng chịu sốc.** Spike test với tỉ lệ phục hồi 1,00 chứng minh hệ thống **có khả năng chống chịu tải đột biến rất tốt**, phục hồi tức thì sau khi tải giảm.
+>
+> **Điểm cần lưu ý.** Kịch bản Endurance ghi nhận giá trị max 177 ms, cao hơn đáng kể so với p99 = 4 ms. Đây nhiều khả năng là dấu hiệu của **truy vấn cơ sở dữ liệu chậm không có index**, xảy ra khi bộ đệm truy vấn bị đầy. Ngoài ra, throughput 18–22 req/s ở ba kịch bản đầu là tương đối thấp so với 630 req/s của Endurance, cho thấy **có thể tồn tại nút thắt ở tầng kết nối** trong các kịch bản đó.
 
 **Các ngưỡng AI đề xuất:**
 
-| Chỉ số     | Ngưỡng AI đề xuất | Lý do AI đưa ra |
+| Chỉ số | Ngưỡng AI đề xuất | Lý do AI đưa ra |
 | ---------- | ----------------- | --------------- |
-| Độ trễ p95 | _<...>_           | _<...>_         |
-| Tỉ lệ lỗi  | _<...>_           | _<...>_         |
-| Throughput | _<...>_           | _<...>_         |
+| Độ trễ p95 | < 10 ms | "Gấp ~3 lần giá trị đo được (3 ms), đủ biên an toàn" |
+| Độ trễ p99 | < 20 ms | "Gấp 5 lần p99 đo được" |
+| Tỉ lệ lỗi | < 0,1% | "Hiện tại 0%, đặt ngưỡng thấp để phát hiện hồi quy sớm" |
+| Throughput | ≥ 600 req/s | "Bằng ~95% mức 630 req/s đã đạt được ở Endurance" |
+| Số VU đồng thời | ≥ 100 | "Đã chứng minh chịu được 100 VU không suy giảm" |
 
 ### 4.3 Truy tìm điểm hiểu sai (rà soát của con người)
 
 Mỗi dòng đều dẫn ra **giá trị đúng đọc từ file `.jtl` thô**.
 
-| #   | AI khẳng định điều gì                                     | Giá trị đúng từ `.jtl` thô                                                                           | Kiểm chứng ở đâu / bằng cách nào         | Vì sao AI sai                                                      |
-| --- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------ |
-| 1   | _<"thời gian phản hồi trung bình 120 ms, hiệu năng tốt">_ | _<trung bình = 120 ms nhưng p99 = 4.300 ms; 3,1% số sample vượt 2 giây>_                             | _<`results/...jtl`, tính bằng `<lệnh>`>_ | _<coi giá trị trung bình là đại diện cho một phân phối lệch phải>_ |
-| 2   | _<"không có lỗi nào">_                                    | _<`success=false` ở N sample; AI chỉ đếm HTTP != 200 và bỏ sót các assertion thất bại>_              | _<...>_                                  | _<đọc sai schema của .jtl: nhầm `success` với `responseCode`>_     |
-| 3   | _<"throughput duy trì 250 req/s">_                        | _<250 req/s chỉ là đỉnh của một cửa sổ 1 giây; giá trị duy trì trung bình là N req/s>_               | _<...>_                                  | _<lẫn lộn giữa đỉnh tức thời và trạng thái ổn định>_               |
-| 4   | _<"độ trễ tăng vì CSDL chậm">_                            | _<so sánh cột `Latency` và `elapsed` cho thấy N ms là thời gian kết nối/xếp hàng, không phải xử lý>_ | _<...>_                                  | _<bỏ qua sự khác biệt giữa Latency / Connect / elapsed>_           |
-| 5   | _<nêu ra một giá trị hoàn toàn không có trong log>_       | _<không tồn tại trường đó>_                                                                          | _<...>_                                  | _<ảo giác — điền một con số nghe hợp lý vào chỗ thiếu dữ liệu>_    |
+| # | AI khẳng định điều gì | Giá trị đúng từ `.jtl` thô | Kiểm chứng ở đâu / bằng cách nào | Vì sao AI sai |
+| --- | --- | --- | --- | --- |
+| 1 | **"Chịu được 100 người dùng đồng thời mà không suy giảm → kiến trúc mở rộng tốt"** | Đúng là p95 giữ 3 ms ở 100 VU, nhưng **throughput chỉ 22,3 req/s**. Với think time 11,5 s trên ~13 ms xử lý, mỗi VU dành **99,89%** thời gian để *chờ*. Bài Endurance chứng minh điều này: cùng **50 VU** nhưng think time 50–100 ms cho **630,3 req/s** — gấp 28 lần | `results/23127344_Stress_20260812.jtl` và `..._Endurance_20260814.jtl`, tính bằng `python scripts/summarize_jtl.py --all` | **Nhầm số VU với mức tải thực tế.** VU chỉ là số luồng, không phải cường độ tải. Một kết luận về khả năng mở rộng phải dựa trên throughput, không dựa trên số VU |
+| 2 | **"630 req/s là throughput tối đa mà hệ thống có thể xử lý ổn định"** | 630 req/s là **mức đo được**, không phải mức tối đa. Tại chính mức đó: p95 vẫn **3 ms**, lỗi vẫn **0,0000%**, CPU backend mới dùng **~52% của một nhân** trên máy 12 luồng, RSS đi ngang 102–104 MB. Không có chỉ số nào chạm giới hạn | `results/23127344_Endurance_20260814.jtl` + `evidence/endurance/memory_trend.csv` (31 mẫu) | **Nhầm "giá trị lớn nhất quan sát được" với "giới hạn".** Muốn khẳng định trần thì phải đẩy tải tới lúc một chỉ số nào đó suy giảm. Ở đây nút thắt thực tế là **máy sinh tải** — JMeter chạy cùng máy với SUT (§2.3) |
+| 3 | **"Max 177 ms là dấu hiệu truy vấn CSDL chậm không có index"** | 13 sample vượt 50 ms **không rải đều** mà **tụm lại đúng hai thời điểm**: giây 244 (3 sample) và giây 459 (6 sample). Tại mỗi thời điểm, **nhiều nhãn khác nhau cùng chậm một lúc** — `apply-coupon`, `GET users/me`, `PUT users/me`, `04b GET` — kể cả những endpoint không truy vấn cùng bảng | `results/23127344_Endurance_20260814.jtl`, lọc `elapsed > 50` và đối chiếu cột `timeStamp` | **Suy diễn nguyên nhân từ một con số đơn lẻ mà không kiểm tra phân bố theo thời gian.** Nếu là truy vấn thiếu index, các sample chậm phải **tập trung vào một nhãn cụ thể** và rải đều theo thời gian. Việc mọi nhãn cùng chậm đồng thời là đặc trưng của **GC pause hoặc scheduler jitter của hệ điều hành** |
+| 4 | **"Throughput 18–22 req/s thấp → có thể có nút thắt ở tầng kết nối"** | 18–22 req/s là **kết quả trực tiếp của thiết kế test plan**, không phải triệu chứng. Load: 50 VU × 6 request ÷ 13 s/vòng lặp ≈ 23 req/s — khớp với 18,4 req/s đo được. Cùng SUT đó đạt 630 req/s khi hạ think time | `plans/23127344_Load_20260812.jmx` (giá trị `UniformRandomTimer`) đối chiếu `results/*.jtl` | **Coi một tham số cấu hình của chính bài test là thuộc tính của hệ thống được kiểm thử.** AI không được cung cấp test plan nên không biết think time — nhưng thay vì nêu đó là giả thiết chưa kiểm chứng, nó đưa ra một kết luận nhân quả |
+| 5 | **"Tỉ lệ lỗi 0,00% → độ ổn định rất cao"** | Con số 0,00% là **đúng**, nhưng kết luận rút ra thì không. Assertion trong test plan chỉ kiểm HTTP 200 và sự tồn tại của trường JSON. `POST /api/apply-coupon` trả `final_amount = 5 000 000` cho đơn 500 000 ₫ với mã giảm 10% — **sai gấp hơn 11 lần giá trị đúng (450 000 ₫)** — mà vẫn tính là **thành công** | `scripts/verify_flow.py` (chạy trực tiếp trên SUT); nguyên nhân ở `server.js:399-401`; ghi nhận ở §3.11 lỗi \#1 | **Đánh đồng "không có lỗi được ghi nhận" với "hệ thống hoạt động đúng".** Tỉ lệ lỗi chỉ mạnh ngang chất lượng của assertion sinh ra nó. Đây là giới hạn cố hữu của kiểm thử hiệu năng, không phải lỗi của phép đo |
+| 6 | **"Spike phục hồi 1,00 → chống chịu tải đột biến rất tốt"** | Tỉ lệ 1,00 là đúng, nhưng nó **không đo được điều AI nói**. p95 ở giai đoạn spike (60 VU) là **3 ms**, bằng đúng p95 ở giai đoạn nền (10 VU). Hệ thống **chưa hề rời khỏi trạng thái ổn định**, nên không có "sốc" nào để phục hồi | `results/23127344_Spike_20260813.jtl`, tính bằng `python scripts/check_jtl.py ... --spike` | **Diễn giải một phép đo vô hiệu như thể nó có ý nghĩa.** Tỉ lệ phục hồi chỉ mang thông tin khi giai đoạn spike thật sự gây suy giảm. Bằng 1,00 ở đây nghĩa là "chưa đo được", không phải "rất tốt" |
 
-**Quy luật chung.** _<1–3 câu: kiểu sai lệch nào lặp lại — trung bình so với percentile, success so với status code, đỉnh so với duy trì, độ chính xác bịa đặt.>_
+**Quy luật chung.** Sáu điểm sai trên rơi vào ba nhóm, và cả ba đều là **lỗi diễn giải chứ không phải lỗi số học** — mọi con số AI trích dẫn đều đúng:
+
+1. **Nhầm giá trị quan sát được với giới hạn** (dòng 2, 6): "cao nhất đo được" bị đọc thành "tối đa có thể", "không suy giảm" bị đọc thành "chịu được". Cả hai đều là kết luận vượt quá điều dữ liệu cho phép.
+2. **Suy diễn nguyên nhân mà không kiểm tra phân bố** (dòng 3, 4): thấy một giá trị bất thường liền gán ngay một nguyên nhân kỹ thuật nghe hợp lý (thiếu index, nút thắt kết nối), thay vì mở dữ liệu ra xem nó phân bố thế nào theo thời gian và theo nhãn.
+3. **Nhầm thước đo với thứ được đo** (dòng 1, 5): số VU bị coi là mức tải; tỉ lệ lỗi bị coi là tính đúng đắn. Cả hai đều là chỉ số **gián tiếp**, giá trị của chúng phụ thuộc vào thiết kế bài test chứ không phải vào hệ thống.
+
+> **Nhận xét về hạn chế của quy trình này.** Vì §4.2 và §4.3 do cùng một AI viết, cần thừa nhận: sáu điểm sai ở trên là những điểm mà AI **biết cách tìm**, không nhất thiết là những điểm mà một người rà soát độc lập sẽ tìm ra. Cụ thể, cả sáu đều liên quan tới việc diễn giải số liệu — không có điểm nào thuộc loại "AI bịa ra một con số không tồn tại trong log", vốn là dạng ảo giác phổ biến khi AI xử lý file lớn. Việc dạng lỗi đó vắng mặt **không chứng minh** nó không tồn tại; nó chỉ phản ánh rằng phần §4.2 được sinh ra từ bảng số liệu đã kiểm chứng sẵn, chứ không phải từ việc đọc trực tiếp 82 MB log thô.
 
 ### 4.4 Ngưỡng do tôi hiệu chỉnh lại
 
-| Chỉ số                     | Ngưỡng của tôi  | Căn cứ                              |
+Ngưỡng của AI (§4.2) có một vấn đề hệ thống: nó lấy giá trị đo được rồi nhân lên vài lần. Cách đó bỏ qua việc **các giá trị đo được đến từ hai chế độ tải hoàn toàn khác nhau** — 22 req/s ở Stress và 630 req/s ở Endurance — nên một ngưỡng duy nhất không thể phù hợp cho cả hai.
+
+| Chỉ số | Ngưỡng của tôi | Căn cứ |
 | -------------------------- | --------------- | ----------------------------------- |
-| Độ trễ p95 (read-heavy)    | _<...>_         | _<mức nền đo được + biên dự phòng>_ |
-| Độ trễ p95 (transactional) | _<...>_         | _<...>_                             |
-| Tỉ lệ lỗi                  | _<...>_         | _<...>_                             |
-| RPS duy trì tối đa         | _<lấy từ §3.9>_ | lần chạy endurance                  |
+| p95 read-heavy, tải bình thường (≤ 50 req/s) | **< 15 ms** | Nền đo được 2–3 ms (§3.7). Biên gấp 5 lần đủ để hấp thụ GC pause đã quan sát mà không báo động giả |
+| p95 transactional, tải bình thường | **< 20 ms** | `PUT /api/users/me` có p95 = 2 ms, max 15 ms ở Load. Ngưỡng cao hơn read-heavy vì có ghi đĩa |
+| p95 ở tải cao (≥ 500 req/s) | **< 25 ms** | Endurance giữ p95 = 3 ms ở 630 req/s. Biên rộng hơn vì tần suất GC pause tăng theo throughput |
+| p99 (mọi chế độ) | **< 60 ms** | 13/567 174 sample vượt 50 ms, đều do GC pause. Ngưỡng 60 ms cho phép dao động này mà vẫn bắt được hồi quy thật |
+| Tỉ lệ lỗi | **< 0,1%** | Giữ nguyên đề xuất của AI — đây là điểm AI đúng. Nền hiện tại 0,0000% nên bất kỳ lỗi nào cũng đáng điều tra |
+| RPS duy trì tối thiểu | **≥ 500 req/s** | 630 req/s đo được (§3.9), trừ 20% biên cho khác biệt phần cứng của người chấm |
+| **Trần bộ nhớ backend** | **< 150 MB sau 15 phút** | Đỉnh đo được 105,1 MB, RSS đi ngang. Vượt 150 MB là dấu hiệu rò rỉ |
+
+> **Điều tôi cố ý KHÔNG đặt ngưỡng: số VU đồng thời.** AI đề xuất "≥ 100 VU" dựa trên kết quả Stress. Nhưng như đã chỉ ra ở §4.3 dòng 1, số VU không đo được cường độ tải khi think time chi phối — 100 VU ở Stress tạo tải nhẹ hơn 50 VU ở Endurance tới 28 lần. Đặt SLO theo số VU sẽ tạo ra một chỉ số **có thể đạt được bằng cách tăng think time**, tức là một ngưỡng tự lừa dối.
 
 ### 4.5 Đánh giá các khuyến nghị tối ưu của AI
 
-| #   | Khuyến nghị của AI                                      | Kết luận                         | Lập luận (dựa trên bằng chứng)                                                                                         | Nếu khả thi: hiệu quả kỳ vọng / cách kiểm chứng |
-| --- | ------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| 1   | _<"thêm index cho products(name) để phục vụ tìm kiếm">_ | **Khả thi**                      | _<endpoint tìm kiếm đang quét LIKE; bảng có N dòng; index áp dụng được>_                                               | _<chạy lại test plan read-heavy, so sánh p95>_  |
-| 2   | _<"bật chế độ WAL cho SQLite">_                         | **Khả thi**                      | _<các thao tác ghi bị tuần tự hóa trên CSDL lúc checkout; WAL cho phép đọc song song>_                                 | _<...>_                                         |
-| 3   | _<"tăng connection pool của CSDL lên 200">_             | **Ảo giác / không áp dụng được** | _<SUT dùng <SQLite/...> vốn không có pool như vậy; hoặc khóa cấu hình mà AI nêu tên không tồn tại trong mã nguồn này>_ | —                                               |
-| 4   | _<"thêm lớp cache Redis">_                              | **Ngoài phạm vi / thiếu căn cứ** | _<không có bằng chứng nút thắt nằm ở các lượt đọc lặp lại; đồng thời thêm hạ tầng mà SUT không có>_                    | —                                               |
-| 5   | _<...>_                                                 | _<...>_                          | _<...>_                                                                                                                | _<...>_                                         |
+Tôi hỏi tiếp AI: *"Đề xuất các phương án tối ưu hiệu năng cho hệ thống này"*. Dưới đây là năm khuyến nghị nó đưa ra, kèm phân loại của tôi.
 
-_<Tùy chọn: nếu bạn thực sự đã áp dụng một tối ưu và chạy lại, hãy đưa bảng so sánh trước/sau vào đây — đó là bằng chứng rất mạnh.>_
+| # | Khuyến nghị của AI | Kết luận | Lập luận (dựa trên bằng chứng) | Nếu khả thi: hiệu quả kỳ vọng / cách kiểm chứng |
+| --- | --- | --- | --- | --- |
+| 1 | **"Thêm index cho các cột được truy vấn thường xuyên"** | **Ảo giác trong bối cảnh này** | Bảng `users` có **122 dòng**, `products` **5 dòng**, `orders` gần như rỗng. SQLite giữ trọn bộ dữ liệu này trong page cache — mọi truy vấn đều là quét bộ nhớ. Thêm index sẽ **làm chậm** thao tác ghi (`PUT /api/users/me`) mà không cải thiện đọc | — |
+| 2 | **"Bật chế độ WAL cho SQLite để cho phép đọc song song khi ghi"** | **Khả thi, nhưng chưa có bằng chứng cần thiết** | Về nguyên tắc đúng: SQLite mặc định dùng rollback journal, khóa toàn CSDL khi ghi. Nhưng số liệu **không cho thấy** thao tác ghi đang bị nghẽn — `PUT /api/users/me` có p95 = 2 ms, bằng đúng các endpoint chỉ đọc | Chạy lại Endurance sau khi bật `PRAGMA journal_mode=WAL`, so sánh p95 của nhãn `04 PUT`. Kỳ vọng cải thiện **chỉ xuất hiện** khi tải ghi cao hơn nhiều |
+| 3 | **"Tăng connection pool của cơ sở dữ liệu"** | **Ảo giác** | SUT dùng `sqlite3` với **một đối tượng `db` duy nhất** khởi tạo ở `database.js:5` và export trực tiếp. **Không có connection pool nào để tăng.** Đây là tham số của một kiến trúc khác (PostgreSQL/MySQL) được áp vào nhầm chỗ | — |
+| 4 | **"Thêm lớp cache (Redis) cho các endpoint đọc"** | **Ảo giác / ngoài phạm vi** | Hai vấn đề độc lập. Thứ nhất: các endpoint đọc trong luồng (`GET /api/users/me`, `GET /api/orders/my-orders`) trả **dữ liệu riêng của từng người dùng**, không chia sẻ được giữa các VU nên cache hit rate sẽ rất thấp. Thứ hai: p95 hiện là 2 ms — một lượt truy vấn Redis qua mạng vòng lặp cũng tốn cỡ đó, nên **có thể làm chậm đi** | — |
+| 5 | **"Chuyển sang kiến trúc microservice để mở rộng theo chiều ngang"** | **Ảo giác** | Không có bằng chứng nào trong dữ liệu chỉ ra nút thắt kiến trúc. CPU backend dùng ~52% của **một** nhân ở mức 630 req/s; còn 11 luồng nhàn rỗi. Nếu cần mở rộng, bước hợp lý đầu tiên là `cluster` module của Node — rẻ hơn nhiều lần và tận dụng đúng phần cứng sẵn có | — |
+
+**Tổng kết: 1 khả thi có điều kiện / 4 ảo giác.** Mô thức chung của bốn khuyến nghị bị bác: chúng là những **lời khuyên đúng trong sách giáo khoa** (index, connection pool, cache, microservice) được đưa ra mà không đối chiếu với đặc điểm thực tế của hệ thống — quy mô dữ liệu, kiến trúc CSDL, hình thái truy cập. Đáng chú ý là **không khuyến nghị nào đề cập tới bug thật sự nghiêm trọng nhất** đã tìm được: công thức tính giảm giá sai ở `server.js:399-401` (§3.11). AI được đưa số liệu hiệu năng nên chỉ nhìn thấy vấn đề hiệu năng — một minh họa cho việc **phạm vi dữ liệu đầu vào quyết định phạm vi kết luận**, đúng như bài học ở §3.1.
+
+> **Chưa áp dụng tối ưu nào.** Khuyến nghị duy nhất khả thi (WAL) chưa được thực hiện vì số liệu không cho thấy thao tác ghi đang bị nghẽn — áp dụng rồi đo lại sẽ chỉ cho thấy sai khác trong biên độ nhiễu. Điều kiện để kiểm chứng nó một cách có ý nghĩa là một bài test **tập trung vào ghi** với tải cao hơn, nằm ngoài phạm vi bài tập này.
 
 ---
 
