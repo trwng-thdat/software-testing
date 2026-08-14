@@ -16,7 +16,7 @@ _Phỏng theo Med Kharbach, PhD (2026) — AI Use Policy Templates for Higher Ed
 | :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
 | **Họ và tên (viết in):**                | TRƯƠNG THÀNH ĐẠT                                                                                                 |
 | **MSSV:**                               | 23127344                                                                                                         |
-| **Lớp / Khóa:**                         | _\<điền vào\>_                                                                                                   |
+| **Lớp / Khóa:**                         | 23KTPM3 — Khóa K23                                                                                                   |
 | **Mã bài tập (ví dụ: HW\#00, HW\#02):** | HW\#05 — Kiểm thử Hiệu năng (HW05-AI)                                                                            |
 | **Ngày làm bài:**                       | 2026-08-12 → 2026-08-14                                                                                                 |
 | **Công cụ AI đã dùng:**                 | Claude Opus 5 (Claude Code, tiện ích mở rộng VS Code) — **công cụ AI duy nhất** dùng trong bài này |
@@ -113,9 +113,9 @@ Theo §11 của đề bài (Ràng buộc chống gian lận AI), những thành 
 | Họ và tên (viết in): | TRƯƠNG THÀNH ĐẠT                                                                                                                                     |
 | :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **MSSV:**            | 23127344                                                                                                                                             |
-| **Lớp / Khóa:**      | _\<điền vào\>_                                                                                                                                       |
+| **Lớp / Khóa:**      | 23KTPM3 — Khóa K23                                                                                                                                       |
 | **Môn học:**         | CS423 / CSC13003 – Kiểm thử Phần mềm                                                                                                                 |
-| **Giảng viên:**      | _\<giữ lại tên giảng viên phụ trách lớp của bạn: TS. Lâm Quang Vũ / TS. Trần Duy Hoàng / ThS. Trần Thị Bích Hạnh / ThS. Trương Phước Lộc / ThS. Hồ Tuấn Thanh\>_ |
+| **Giảng viên:**      | ThS. Trần Thị Bích Hạnh / ThS. Trương Phước Lộc / ThS. Hồ Tuấn Thanh |
 | **Ngày:**            | 14/08/2026                                                                                                                                           |
 | **Chữ ký:**          |                                                                                                                                                      |
 
