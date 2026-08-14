@@ -902,7 +902,7 @@ git log --pretty=format:"%h | %ad | %an | %s" --date=iso > git_commit_log.txt
 | **Kết quả chạy (.jtl + report)** | `b210365` | 4 kịch bản, 0% lỗi, đều đạt đủ VU thiết kế |
 | **Lần chạy endurance** | `b210365` | 630 req/s trong 15 phút, không rò rỉ bộ nhớ |
 | **Phân tích bằng AI (Task 2)** | `654eb86` | §4 — 6 diễn giải sai + 5 khuyến nghị được phân loại |
-| Đề xuất CPT (Task 3) | _<sha>_ | _<chưa làm>_ |
+| **Đề xuất CPT (Task 3)** | `a1ef284` | §5 — mô hình 3 tầng + ngưỡng lai chống nhiễu lượng tử hóa |
 
 **Còn phải làm** (giai đoạn thực thi — điền dần khi commit):
 
