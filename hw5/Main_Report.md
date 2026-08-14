@@ -55,7 +55,7 @@
 | **9** | [Danh sách kiểm tra sản phẩm nộp](#9-danh-sách-kiểm-tra-sản-phẩm-nộp) | |
 | **10** | [Tự đánh giá](#10-tự-đánh-giá) | |
 | **11** | [Tài liệu tham khảo](#11-tài-liệu-tham-khảo) | |
-| **A** | [Phụ lục A — AI Audit Report](#phụ-lục-a--ai-audit-report) | 15 artifact |
+| **A** | [Phụ lục A — AI Audit Report](#phụ-lục-a--ai-audit-report) | 20 artifact |
 | **B** | [Phụ lục B — Chỉ mục bằng chứng](#phụ-lục-b--chỉ-mục-bằng-chứng) | |
 
 <details>
@@ -1164,7 +1164,7 @@ Hãy xuất lại `git_commit_log.txt` sau mỗi commit mới để bản nộp 
 
 Nhật ký đầy đủ nằm trong `AI_Audit_Report.md`. Phần khai báo và cấu trúc cho từng lượt tương tác:
 
-> **Tôi có sử dụng công cụ AI cho các công việc sau:** xem bảng kiểm toán 15 artifact trong `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md`.
+> **Tôi có sử dụng công cụ AI cho các công việc sau:** xem bảng kiểm toán 20 artifact trong `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md`.
 
 | #   | Công cụ AI | Ngày & giờ           | Prompt                | Output của AI                                                     | Hành động của tôi                       |
 | --- | ---------- | -------------------- | --------------------- | ----------------------------------------------------------------- | --------------------------------------- |

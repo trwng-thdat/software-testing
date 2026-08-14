@@ -89,7 +89,7 @@ Bước 05 ban đầu bị gán nhãn `[transactional]`, sau đó sửa thành `
 hw5/
 ├── Main_Report.md                    Báo cáo chính (§1–§11 + Phụ lục)
 ├── AI_Critique.md                    Phê bình AI (296 từ)
-├── [AI-02] ... AI Audit Report...md  15 artifact, prompt nguyên văn
+├── [AI-02] ... AI Audit Report...md  20 artifact, prompt nguyên văn
 ├── README.md                         File này
 ├── RUNBOOK.md                        Hướng dẫn chạy test
 ├── EVIDENCE_GUIDE.md                 Hướng dẫn quay video + chụp ảnh
@@ -145,7 +145,7 @@ python ../scripts/check_jtl.py ../results/load.jtl
 | Task 2 — phân tích AI + phản biện | ✅ |
 | Task 3 — đề xuất CPT | ✅ |
 | Agent Skill + video demo skill | ✅ |
-| AI Audit Report (15 artifact) | ✅ |
+| AI Audit Report (20 artifact) | ✅ |
 | AI Critique (296 từ) | ✅ |
 | Git commit log | ✅ |
 | Báo cáo phần cứng (`dxdiag.txt` + `dxdiag.png` + §2.1) | ✅ |
