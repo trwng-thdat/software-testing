@@ -354,7 +354,7 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 
 | Nhóm kỹ thuật          | Số TC | Ghi chú |
 | ---------------------- | :---: | ------- |
-| Phân vùng miền giá trị |   8   | `:id` (không tồn tại, không phải số, âm, thập phân, ký tự lạ), body bị bỏ qua |
+| Phân vùng miền giá trị |   7   | `:id` (không tồn tại, không phải số, âm, thập phân, ký tự lạ), body bị bỏ qua — `TC-API2-002`…`008` |
 | Giá trị biên           |   8   | `:id` biên cấu trúc (0/1/2), token giả mạo với `id` biên (0/1/2), header 2-khoảng-trắng |
 | **Chuyển trạng thái**  | **9** | **Toàn bộ mô hình 5 trạng thái từ P7** — xem ma trận bên dưới |
 | Bảo mật (SEC-01…07)    |  11   | Auth bypass, IDOR (đơn của người khác), admin không sở hữu vẫn bị chặn, SQLi trên `:id`, token giả mạo |
