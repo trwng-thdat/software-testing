@@ -1,0 +1,63 @@
+================================================================================
+HW06 - Kiem thu API (API Testing) - GIT COMMIT LOG
+================================================================================
+MSSV      : 23127344
+Ho ten    : TRUONG THANH DAT
+Lop       : 23KTPM3 - K23
+Nhanh     : hw6/api-testing
+Sinh boi  : git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
+Ngay xuat : 2026-08-19
+================================================================================
+
+[1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
+--------------------------------------------------------------------------------
+d99d477 2026-08-19 docs(hw6): AI Audit Report — 14 artifact kiểm toán + log 38 prompt verbatim
+032ebde 2026-08-19 feat(hw6): mở rộng API 3 từ 44 lên 82 test case, đóng 4 nhóm coverage thiếu
+97210e6 2026-08-19 fix(hw6): sửa lệch số học bảng kỹ thuật API 2 (EP 8 -> 7)
+c870578 2026-08-19 docs(hw6): dựng khung 5 bước quy trình cho §5 và §6
+3bf0879 2026-08-19 docs(hw6): §6.9 — ma trận phủ SEC-01 đến SEC-07 cho cả 3 API
+476f8f5 2026-08-19 feat(hw6): §6 — 44 test case API 3 (FR-17) và cơ chế dọn dữ liệu
+5a4793e 2026-08-19 feat(hw6): §5 — 43 test case và ma trận chuyển trạng thái API 2 (FR-10)
+73db493 2026-08-19 feat(hw6): §4.1 — sinh 42 test case cho API 1 (FR-04) bằng AI
+8ef2f2e 2026-08-19 docs(hw6): khung báo cáo + §1 lựa chọn 3 API và §3 quy trình dẫn dắt AI
+89653b4 2026-08-19 chore(hw6): thay đề bài bản PDF/EN bằng bản Markdown tiếng Việt
+
+[2] THU TU THUC HIEN (cu -> moi) VA ANH XA SANG BUOC QUY TRINH
+--------------------------------------------------------------------------------
+De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
+(vi du: sinh test, kiem toan, mo rong va thuc thi cho tung API)."
+
+ #   Commit    Buoc quy trinh (de muc 6)                        Pham vi
+--------------------------------------------------------------------------------
+ 1   89653b4   Chuan bi - nguon yeu cau                         de bai
+ 2   8ef2f2e   Chuan bi - khung bao cao, chon API (muc 1,3)     ca 3 API
+ 3   73db493   BUOC 1 Sinh test bang AI                         API 1 (FR-04)
+ 4   5a4793e   BUOC 1 Sinh test bang AI                         API 2 (FR-10)
+ 5   476f8f5   BUOC 1 Sinh test bang AI                         API 3 (FR-17)
+ 6   3bf0879   Phu bao mat SEC-01..SEC-07                       ca 3 API
+ 7   c870578   Dung khung Buoc 2-5 cho muc 5 va 6               API 2, API 3
+ 8   97210e6   Ra soat cua con nguoi - sua loi so hoc           API 2
+ 9   032ebde   Ra soat cua con nguoi - dong 4 nhom thieu        API 3
+10   d99d477   Bao cao Kiem toan AI (Phu luc A)                 ca 3 API
+--------------------------------------------------------------------------------
+
+[3] TRANG THAI CAC BUOC CON LAI
+--------------------------------------------------------------------------------
+Da hoan thanh:
+  BUOC 1 - Sinh test bang AI ............ XONG (42 + 43 + 82 = 167 test case)
+  Ra soat cua con nguoi (mot phan) ...... XONG (3 loi that da phat hien va sua,
+                                          ghi trong AI Audit Report)
+
+CHUA thuc hien - se co commit rieng cho tung buoc khi lam:
+  BUOC 2 - Kiem toan VALID/INVALID/INCOMPLETE cho tung API   (3 commit)
+  BUOC 3 - Mo rong >= 5 test case tu nghi cho tung API       (3 commit)
+  BUOC 4 - Thuc thi Postman + Newman cho tung API            (3 commit)
+  BUOC 5 - Bao cao loi + GitHub Issues                       (1-3 commit)
+  Postman collection + environment + data file               (1-2 commit)
+  CI/CD pipeline + 2 lan chay mau (xanh / do)                (2 commit)
+  Agent Skill - so do tu ve + ma gia                         (1-2 commit)
+
+Khong tao commit khong tuong ung voi cong viec da lam that.
+Cac buoc chua chay khong duoc ghi nhan trong log nay.
+
+================================================================================

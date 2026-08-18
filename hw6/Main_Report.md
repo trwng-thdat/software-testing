@@ -907,12 +907,24 @@ _Số từ: «nnn»._
 git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 ```
 
-| Commit | Ngày | Bước quy trình                           |
-| ------ | ---- | ---------------------------------------- |
-| «hash» | «»   | «feat(hw6): sinh test case AI cho API 1» |
-| «hash» | «»   | «docs(hw6): kiểm toán test case API 1»   |
-| «hash» | «»   | «feat(hw6): bổ sung 5 TC cho API 1»      |
-| «hash» | «»   | «test(hw6): chạy Newman cho API 1»       |
+**Nhánh làm việc:** `hw6/api-testing`
+
+| # | Commit | Ngày | Bước quy trình | Phạm vi |
+| :-: | ------ | ---- | -------------- | ------- |
+| 1 | `89653b4` | 2026-08-19 | Chuẩn bị — nguồn yêu cầu | đề bài |
+| 2 | `8ef2f2e` | 2026-08-19 | Chuẩn bị — khung báo cáo, chọn API (§1, §3) | cả 3 API |
+| 3 | `73db493` | 2026-08-19 | **Bước 1** — Sinh test bằng AI (42 TC) | API 1 (FR-04) |
+| 4 | `5a4793e` | 2026-08-19 | **Bước 1** — Sinh test bằng AI (43 TC) + ma trận trạng thái | API 2 (FR-10) |
+| 5 | `476f8f5` | 2026-08-19 | **Bước 1** — Sinh test bằng AI (44 TC) | API 3 (FR-17) |
+| 6 | `3bf0879` | 2026-08-19 | Phủ bảo mật SEC-01→SEC-07 (§6.9) | cả 3 API |
+| 7 | `c870578` | 2026-08-19 | Dựng khung Bước 2–5 cho §5 và §6 | API 2, API 3 |
+| 8 | `97210e6` | 2026-08-19 | Rà soát của con người — sửa lệch số học EP | API 2 |
+| 9 | `032ebde` | 2026-08-19 | Rà soát của con người — đóng 4 nhóm coverage thiếu (44→82 TC) | API 3 |
+| 10 | `d99d477` | 2026-08-19 | Báo cáo Kiểm toán AI (Phụ lục A) | cả 3 API |
+
+**Các bước sẽ có commit riêng khi thực hiện:** Bước 2 kiểm toán (3 commit) · Bước 3 mở rộng ≥5 TC (3 commit) · Bước 4 thực thi Newman (3 commit) · Bước 5 báo lỗi (1–3 commit) · Postman collection · CI/CD 2 lần chạy · Agent Skill.
+
+> Không tạo commit cho công việc chưa thực sự làm — các bước chưa chạy không xuất hiện trong log.
 
 File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 
