@@ -337,7 +337,91 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 
 ### 5.0 Đặc tả tóm tắt
 
+| Thuộc tính   | Giá trị                                   |
+| ------------ | ----------------------------------------- |
+| Endpoint     | `PUT /api/orders/:id/cancel`               |
+| Pool / FR    | B / FR-10 — Máy trạng thái đơn hàng / Hủy đơn |
+| Auth         | Bearer JWT (user) — `authenticateToken`, `server.js:100-110` |
+| Request body | Không có (endpoint bỏ qua `req.body` hoàn toàn — `server.js:321-342`) |
+| Tham số path | `:id` — không được validate định dạng/kiểu trong mã nguồn |
+| Response 2xx | `200` — `{"message":"Order canceled successfully"}` (không đặc tả trong `api_specification.md §4.6`; suy từ `server.js:337`) — **không trả `id` hay `status` mới**, phải verify bằng `GET /api/orders/my-orders` |
+| Mã lỗi       | `401` `{"error":"Unauthorized"}` · `403` `{"error":"Forbidden"}` · `404` `{"error":"Order not found"}` (gộp 2 nguyên nhân: đơn không tồn tại VÀ đơn của người khác) · `400` `{"error":"Cannot cancel this order."}` (gộp `delivered` và `canceled`) — **không có 500** trên endpoint này |
+| Yêu cầu SEC  | SEC-02 (JWT hợp lệ — có) · SEC-05 (parameterized query trên `:id` — đạt) · **Không có SEC ID nào đặt tên trực tiếp cho lỗ hổng phân quyền theo trạng thái `shipping`** — xem P7/P8 |
+
 ### 5.1 Bước 1 — Sinh test case bằng AI
+
+**Mục tiêu ≥ 35 test case.** Số thực tế AI sinh: **43**.
+
+| Nhóm kỹ thuật          | Số TC | Ghi chú |
+| ---------------------- | :---: | ------- |
+| Phân vùng miền giá trị |   8   | `:id` (không tồn tại, không phải số, âm, thập phân, ký tự lạ), body bị bỏ qua |
+| Giá trị biên           |   8   | `:id` biên cấu trúc (0/1/2), token giả mạo với `id` biên (0/1/2), header 2-khoảng-trắng |
+| **Chuyển trạng thái**  | **9** | **Toàn bộ mô hình 5 trạng thái từ P7** — xem ma trận bên dưới |
+| Bảo mật (SEC-01…07)    |  11   | Auth bypass, IDOR (đơn của người khác), admin không sở hữu vẫn bị chặn, SQLi trên `:id`, token giả mạo |
+| Kiểm tra schema        |   8   | Response 2xx/401/403/404/400, xác nhận không có 500, xác nhận trạng thái không xuất hiện trong response `PUT` |
+| **Tổng**               |  43   | ≥ 35 theo yêu cầu đề bài |
+
+**Tiền điều kiện chung cho mọi TC của API 2.** DB vừa seed lại (**không có đơn hàng nào được seed** — mọi đơn phải tạo bằng `POST /api/checkout`, luôn bắt đầu ở `pending`). **User A** = `test@eshop.com`/`Test1234!` (`id=2`) → `{{tokenA}}`. **User B** = tài khoản thứ hai đăng ký mới → `{{tokenB}}` (cần cho TC kiểm tra ownership). **Admin** = `admin@eshop.com`/`Admin123!` (`id=1`) → `{{tokenAdmin}}`, **chỉ dùng để dựng trạng thái** qua `PUT /api/admin/orders/:id/status`, không phải chủ thể kiểm thử trừ khi TC ghi rõ. Verify trạng thái sau mỗi lần hủy bằng `GET /api/orders/my-orders`.
+
+**Bảng test case đầy đủ — 43 TC** _(ID `TC-API2-001`…`TC-API2-043`)_
+
+| ID     | Tiêu đề | Kỹ thuật | Truy vết (Coverage / FR / SEC) | Input / Precondition riêng | Expected (status + body) | Nguồn |
+| ------ | ------- | -------- | ------------------- | ------------ | ------------------------ | ----- |
+| TC-API2-001 | Hủy đơn `pending` (chuyển tiếp hợp lệ) | ST + EP | COV-001,029 · FR-10 | Đơn của user A, `status=pending` | 200 · `{"message":"Order canceled successfully"}`, `GET` → `status="canceled"` | AI |
+| TC-API2-002 | `:id` hợp lệ nhưng đơn không tồn tại | EP | COV-013 | `:id=999999` | 404 · `{"error":"Order not found"}` | AI |
+| TC-API2-003 | `:id` không phải số | EP | COV-006 | `:id="abc"` | ⚠️ chưa xác nhận — nhiều khả năng 404, cần probe | AI |
+| TC-API2-004 | `:id` là segment rỗng | EP | COV-007 | `/api/orders//cancel` | ⚠️ chưa xác nhận — có thể không khớp route, cần probe | AI |
+| TC-API2-005 | `:id` âm | EP | COV-008 | `:id=-1` | 404 — `AUTOINCREMENT` không bao giờ sinh id âm | AI |
+| TC-API2-006 | `:id` dạng thập phân | EP | COV-010 | `:id=1.5` | ⚠️ chưa xác nhận, cần probe | AI |
+| TC-API2-007 | `:id` có ký tự thừa | EP | COV-011 | `:id="1abc"` | ⚠️ chưa xác nhận, cần probe | AI |
+| TC-API2-008 | Body request không có tác dụng | EP | COV-036 · §4.6 | Body `{"status":"delivered"}` | 200, `status` = `"canceled"` (**không** `delivered`) — đích ghi cứng | AI |
+| TC-API2-009 | `:id = 0` (biên cấu trúc min−1) | BVA | COV-002 | `:id=0` | 404 · `AUTOINCREMENT` không cấp id 0 | AI |
+| TC-API2-010 | `:id = 1` (biên cấu trúc min) | BVA | COV-003 | Đơn id 1 tồn tại & thuộc user A (DB mới reset) | 200 · `{"message":"Order canceled successfully"}` | AI |
+| TC-API2-011 | `:id = 2` (biên min+1) | BVA | COV-004 | Đơn id 2 tồn tại & thuộc user A | 200 · `{"message":"Order canceled successfully"}` | AI |
+| TC-API2-012 | `:id` cực lớn (tràn số) | BVA | COV-005 | `:id=99999999999999999999` | ⚠️ chưa xác nhận, cần probe | AI |
+| TC-API2-013 | Token giả mạo `id=0` — không sở hữu đơn nào | BVA + Security | COV-028 | Token tự ký `{id:0}` | 404 · `{"error":"Order not found"}` | AI |
+| TC-API2-014 | Token giả mạo `id=1` (trùng admin thật) | BVA + Security | COV-028 | Token tự ký `{id:1}`, đơn thuộc admin | 200 — giả mạo không phân biệt được với token thật | AI |
+| TC-API2-015 | Token giả mạo `id=2` (trùng user A thật) | BVA + Security | COV-028 · SEC-02 | Token tự ký `{id:2}`, đơn thuộc user A | 200 — chiếm trọn quyền sở hữu của id bị mạo danh | AI |
+| TC-API2-016 | Header `Authorization` có 2 dấu cách | BVA | COV-023 | `Authorization: Bearer  {{tokenA}}` | 403 · `{"error":"Forbidden"}` — **không phải 401** | AI |
+| TC-API2-017 | Hủy đơn `confirmed` (chuyển tiếp hợp lệ) | ST | COV-030 · FR-10 | Đơn đã `pending→confirmed` qua admin | 200 · `{"message":"Order canceled successfully"}` | AI |
+| TC-API2-018 | **[CRITICAL]** Hủy đơn `shipping` bằng token user | ST + Security | COV-031 · **FR-10 (User bị cấm)** | Đơn đã `pending→confirmed→shipping` qua admin | 200 theo mã nguồn — **mâu thuẫn trực tiếp với FR-10** | AI |
+| TC-API2-019 | Hủy đơn `delivered` (trạng thái kết thúc) | ST | COV-032 · FR-10 | Đơn đã đi hết chuỗi tới `delivered` | 400 · `{"error":"Cannot cancel this order."}` | AI |
+| TC-API2-020 | Hủy đơn đã `canceled` (trạng thái kết thúc) | ST | COV-033 · FR-10 | Đơn đã `canceled` từ trước | 400 · `{"error":"Cannot cancel this order."}` | AI |
+| TC-API2-021 | Hủy lặp: gọi 2 lần liên tiếp cùng đơn | ST | COV-037 · FR-10 | Đơn `pending` mới, gọi PUT cancel 2 lần | Lần 1: 200 · Lần 2: 400 — trạng thái bất biến, response thì không | AI |
+| TC-API2-022 | `status` ngoài 5 giá trị hợp lệ | ST | COV-034 | ⚠️ Phải sửa DB trực tiếp — **không** tới được qua API | 200 — deny-list chỉ chặn `delivered`/`canceled` | AI |
+| TC-API2-023 | Route admin **từ chối** `shipping→canceled` | ST | COV-054 · FR-10 (đối chứng) | Đơn `shipping`, token admin, body `{"status":"canceled"}` | 400 · `Invalid state transition from shipping to canceled` | AI |
+| TC-API2-024 | Route admin **cho phép** `canceled→delivered` | ST | COV-055 · FR-10 (mâu thuẫn) | Đơn `canceled`, token admin, body `{"status":"delivered"}` | 200 — thoát khỏi trạng thái FR-10 gọi là kết thúc | AI |
+| TC-API2-025 | Không gửi header `Authorization` | Security | COV-015 · SEC-02 | (bỏ header) | 401 · `{"error":"Unauthorized"}` | AI |
+| TC-API2-026 | Header `Authorization` rỗng | Security | COV-016 | `Authorization: ` (rỗng) | 403 · `{"error":"Forbidden"}` — không phải 401 | AI |
+| TC-API2-027 | Header không có dấu cách phân tách | Security | COV-017 · SEC-02 | `Authorization: GarbageNoSpace` | 401 · `{"error":"Unauthorized"}` | AI |
+| TC-API2-028 | Scheme không chuẩn vẫn được chấp nhận | Security | COV-018 · §4 (đặc tả ghi `Bearer`) | `Authorization: Basic {{tokenA}}` | 200 — scheme không được kiểm | AI |
+| TC-API2-029 | JWT sai cú pháp | Security | COV-019 · SEC-02 | `Bearer not-a-jwt` | 403 · `{"error":"Forbidden"}` | AI |
+| TC-API2-030 | JWT ký bằng secret khác | Security | COV-020 · SEC-02 | Token ký sai khoá | 403 · `{"error":"Forbidden"}` | AI |
+| TC-API2-031 | Token giả mạo có `exp` quá khứ | Security | COV-021 · SEC-02 | Token tự ký, `exp` quá khứ | 403 · `{"error":"Forbidden"}` | AI |
+| TC-API2-032 | Token hợp lệ với `id` người dùng không tồn tại | Security + EP | COV-022 | Token tự ký `{id:999999}` | 404 — bộ lọc `user_id` không bao giờ khớp | AI |
+| TC-API2-033 | **IDOR:** user A hủy đơn của user B | Security | COV-025 · FR-11 (mở rộng) | Token user A, `:id` = đơn của user B | 404 · `{"error":"Order not found"}` — không phân biệt với "không tồn tại" | AI |
+| TC-API2-034 | Admin không sở hữu đơn vẫn bị chặn | Security | COV-026 · FR-10 | Token admin, `:id` = đơn của user A | 404 — bộ lọc ownership áp dụng cho cả admin | AI |
+| TC-API2-035 | Payload SQL injection trong `:id` | Security | COV-012 · SEC-05 | `:id="1 OR 1=1"` | 404 — xử lý như chuỗi literal, không thực thi SQL | AI |
+| TC-API2-036 | Schema response thành công | Schema | COV-045 | Đơn `pending` của user A | 200 · đúng 1 key `message`, **không** có `id`/`status` | AI |
+| TC-API2-037 | Schema lỗi 401 | Schema | COV-046 | (bỏ header) | 401 · đúng 1 key `error` = `"Unauthorized"` | AI |
+| TC-API2-038 | Schema lỗi 403 | Schema | COV-047 | Token sai cú pháp | 403 · đúng 1 key `error` = `"Forbidden"` | AI |
+| TC-API2-039 | Schema 404 giống hệt nhau cho 2 nguyên nhân | Schema | COV-048 | Gọi 2 lần: `:id` không tồn tại **và** `:id` của user B | Cả 2 → 404, body **giống hệt từng byte** (chống dò đơn) | AI |
+| TC-API2-040 | Schema 400 giống hệt nhau cho 2 nguyên nhân | Schema | COV-049 | Gọi 2 lần: đơn `delivered` **và** đơn `canceled` | Cả 2 → 400, body **giống hệt từng byte** | AI |
+| TC-API2-041 | Response `PUT` không chứa trạng thái — phải verify bằng `GET` | Schema | COV-051,052 | PUT cancel rồi `GET /api/orders/my-orders` | PUT: không có `status`; GET: phần tử có `status="canceled"` | AI |
+| TC-API2-042 | `GET /api/orders/:id` đọc được **không cần token** | Schema + Security | COV-053 · SEC-02 (vi phạm ở endpoint kề) | GET `/api/orders/{id}` **không** gửi header | 200 · trả full đơn hàng — lỗ hổng của endpoint hỗ trợ | AI |
+| TC-API2-043 | Xác nhận **không** tồn tại đường 500 nào | Schema | COV-050 | Tổng hợp toàn bộ TC-001…042 | Không có TC nào trả 500 (cả 2 callback SQLite đều bỏ qua `err`) | AI |
+
+> **11 TC cần rà soát thủ công:** `TC-API2-003`, `-004`, `-006`, `-007`, `-012` (hành vi `:id` bất thường chưa xác nhận) · `-016`, `-026` (suy luận nhánh code) · `-013`, `-014`, `-015`, `-031`, `-032` (cần tự ký JWT) · `-022` (phải sửa DB trực tiếp, **không** tới được qua API — đánh dấu tuỳ chọn) · `-023`, `-024` (nhắm route admin, ngoài phạm vi 3 API chính — đối chứng, tuỳ chọn).
+
+**Ma trận chuyển trạng thái (theo P7 — chỉ giữ trạng thái/chuyển tiếp có bằng chứng từ đặc tả hoặc mã nguồn; không giả định trạng thái không tồn tại)**
+
+| Từ \ Hành động | Admin: confirm | Admin: ship | Admin: deliver | **Hủy (User, `PUT .../cancel`)** |
+| -------------- | --------------- | ----------- | --------------- | --------------------------------- |
+| `pending`      | ✔ → `confirmed` (route admin, dùng để tạo tiền đề test) | ✘ (không có luật admin nào cho phép, `server.js:537-551`) | ✘ | **✔ → `canceled`** (200, TC-API2-001) |
+| `confirmed`    | ✘ (tự-chuyển, không áp dụng) | ✔ → `shipping` (route admin) | ✘ (bỏ qua `confirmed`, không có luật) | **✔ → `canceled`** (200, TC-API2-017) |
+| `shipping`     | ✘ | ✘ (tự-chuyển) | ✔ → `delivered` (route admin) | **✔ → `canceled` theo mã nguồn — nhưng FR-10 cấm User** (200 thực tế / mong đợi 400 hoặc 403 theo đặc tả) — **TC-API2-018, phát hiện chính** |
+| `delivered`    | ✘ | ✘ | ✘ (tự-chuyển, trạng thái kết thúc) | ✘ → 400 `{"error":"Cannot cancel this order."}` (TC-API2-019) |
+| `canceled`     | ✘ | ✘ | ✔ → `delivered` (route admin — **mâu thuẫn với FR-10 tuyên bố `canceled` là trạng thái kết thúc**, xem P7) | ✘ (lặp lại) → 400 (TC-API2-020) |
 
 ### 5.2 Bước 2 — Kiểm toán
 
