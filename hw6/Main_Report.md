@@ -533,17 +533,17 @@ File: [`«openapi.yaml»`](«openapi.yaml»)
 
 ### 6.9 Bảng phủ yêu cầu bảo mật SEC-01 → SEC-07
 
-> ✍️ Bảng tổng hợp cho cả 3 API — chứng minh không bỏ sót yêu cầu bảo mật nào.
+> ⚠️ SEC-01…SEC-07 nằm trong `README.md §9` của SUT (mục "Tham khảo"), **không nằm trong `api_specification.md`** như đề bài giả định — đã kiểm tra trực tiếp trong repo SUT (P8). Cột "Kết quả" để **pending** vì Newman chưa chạy (Bước 4).
 
-| Mã     | Yêu cầu (theo `api_specification.md`) | TC của API 1 | API 2 | API 3 | Kết quả |
+| Mã     | Yêu cầu (theo `README.md §9`) | TC của API 1 | API 2 | API 3 | Kết quả |
 | ------ | ------------------------------------- | ------------ | ----- | ----- | ------- |
-| SEC-01 | «» | «» | «» | «» | «» |
-| SEC-02 | «» | «» | «» | «» | «» |
-| SEC-03 | «» | «» | «» | «» | «» |
-| SEC-04 | «» | «» | «» | «» | «» |
-| SEC-05 | «» | «» | «» | «» | «» |
-| SEC-06 | «» | «» | «» | «» | «» |
-| SEC-07 | «» | «» | «» | «» | «» |
+| SEC-01 | Mật khẩu không lưu plaintext          | TC-API1-038 (endpoint hỗ trợ `GET`) | Không áp dụng | Không áp dụng | «pending» |
+| SEC-02 | API bảo mật phải yêu cầu JWT hợp lệ    | TC-API1-023…027 | TC-API2-025…031 | TC-API3-028,032,035 | «pending» |
+| SEC-03 | API Admin phải kiểm `role='admin'` trong Token | Không áp dụng trực tiếp (không phải admin API) | Không áp dụng trực tiếp (không phải admin route) | **TC-API3-029,030,031 — vi phạm** | «pending» |
+| SEC-04 | Escape dữ liệu user khi hiển thị UI    | TC-API1-032 (chỉ kiểm lưu/phản hồi, không kiểm UI) | Không áp dụng (endpoint không lưu chuỗi user) | Chưa có TC riêng (xem P8: mơ hồ) | «pending» |
+| SEC-05 | Parameterized query, không nối chuỗi  | TC-API1-031 | TC-API2-035 | TC-API3-033 | «pending» |
+| SEC-06 | API cập nhật hồ sơ không cho đổi `role` | **TC-API1-029 — vi phạm** | Không áp dụng | Không áp dụng | «pending» |
+| SEC-07 | OTP đủ entropy, có hạn, vô hiệu sau dùng | Không áp dụng (endpoint không liên quan OTP) | Không áp dụng | Không áp dụng | «pending» |
 
 ---
 
