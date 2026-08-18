@@ -180,7 +180,7 @@ console.log("X-Student-Id =", pm.environment.get("studentId"));
 
 ### 4.1 Bước 1 — Sinh test case bằng AI
 
-**Mục tiêu ≥ 35 test case.** Số thực tế AI sinh: **«nn»**.
+**Mục tiêu ≥ 35 test case.** Số thực tế AI sinh: **42**.
 
 | Nhóm kỹ thuật          | Số TC | Ghi chú |
 | ---------------------- | :---: | ------- |
@@ -192,11 +192,56 @@ console.log("X-Student-Id =", pm.environment.get("studentId"));
 | Quy tắc nghiệp vụ khác |   3   | Bất đối xứng ép kiểu `max_uses_per_user`, `is_active` không thể set qua API, chuỗi tạo→xoá→verify |
 | **Tổng**               |  42   | ≥ 35 theo yêu cầu đề bài |
 
-> ✍️ Bảng test case đầy đủ đặt trong file Excel (`«testcases/API1.xlsx»`). Trong báo cáo chỉ trích bảng tổng hợp + vài TC tiêu biểu.
+**Tiền điều kiện chung cho mọi TC của API 1.** SUT chạy tại `http://localhost:3000`, DB vừa seed lại (`node database.js` → `node server.js`) nên `test@eshop.com` / `Test1234!` là user `id=2`, `role="user"`. `{{token}}` = token lấy từ `POST /api/login` của user này, dùng lại cho mọi TC trừ khi TC ghi khác. Mọi TC ghi dữ liệu đều verify lại bằng `GET /api/users/me`.
 
-| ID     | Tiêu đề | Kỹ thuật | Truy vết (FR / SEC) | Precondition | Input | Expected (status + body) | Nguồn |
-| ------ | ------- | -------- | ------------------- | ------------ | ----- | ------------------------ | ----- |
-| A1-001 | «»      | «EP»     | «FR-0x §y»          | «»           | «»    | «»                       | AI    |
+**Bảng test case đầy đủ — 42 TC** _(ID `TC-API1-001`…`TC-API1-042`; đây là danh sách chuẩn — khi xuất sang `testcases/API1.xlsx` phải giữ nguyên ID để bảo toàn truy vết)_
+
+| ID     | Tiêu đề | Kỹ thuật | Truy vết (Coverage / FR / SEC) | Input / Precondition riêng | Expected (status + body) | Nguồn |
+| ------ | ------- | -------- | ------------------- | ------------ | ------------------------ | ----- |
+| TC-API1-001 | Cập nhật hồ sơ hợp lệ (happy path) | EP | COV-001,047 · FR-04 §2.2 | `{"name":"Nguyen Van A","shipping_address":"123 Le Loi","phone":"0912345678"}` | 200 · `{"message":"Profile updated"}` | AI |
+| TC-API1-002 | Thiếu trường `name` | EP | COV-013 · FR-04 | Body không có key `name` | 200 · `{"message":"Profile updated"}` (không có validate) | AI |
+| TC-API1-003 | `name` là chuỗi rỗng | EP | COV-014 · (không đặc tả) | `name:""` | 200 · `{"message":"Profile updated"}` | AI |
+| TC-API1-004 | `name` sai kiểu (number) | EP | COV-016 · (không đặc tả) | `name:12345` | ⚠️ 200 **hoặc** 500 — chưa xác nhận, cần probe | AI |
+| TC-API1-005 | Thiếu trường `shipping_address` | EP | COV-022 · FR-04 | Body không có key `shipping_address` | 200 · `{"message":"Profile updated"}` | AI |
+| TC-API1-006 | `shipping_address` sai kiểu (object) | EP | COV-025 · (không đặc tả) | `shipping_address:{"street":"123 Le Loi"}` | ⚠️ 200 **hoặc** 500 — chưa xác nhận, cần probe | AI |
+| TC-API1-007 | Gửi key camelCase `shippingAddress` — bị bỏ qua | EP | COV-028 · (BUG-D3 nhóm đã ghi nhận) | `shippingAddress:"789 Nguyen Hue"` | 200, `GET` cho thấy `shipping_address` **không** đổi | AI |
+| TC-API1-008 | Thiếu trường `phone` | EP | COV-037 · FR-04 | Body không có key `phone` | 200 · `{"message":"Profile updated"}` | AI |
+| TC-API1-009 | `phone` chứa ký tự không phải số | EP | COV-034 · FR-04 (không thực thi) | `phone:"0912-345-678"` | 200 (kỳ vọng đặc tả: từ chối) | AI |
+| TC-API1-010 | `phone` gửi dưới dạng JSON number | EP | COV-038 · FR-04 | `phone:912345678` (number) | 200 — kiểu số không thể giữ số `0` đầu | AI |
+| TC-API1-011 | `phone` khớp regex client web nhưng trái FR-04 | EP | COV-039 · xung đột 2 oracle | `phone:"912345678"` (9 số, không có `0` đầu) | 200 — chứng minh cả 2 luật đều không được backend thực thi | AI |
+| TC-API1-012 | Không gửi `role` (baseline đối chiếu) | EP | COV-041 · SEC-06 | 3 trường hợp lệ, không có `role` | 200, `GET` cho thấy `role` vẫn `"user"` | AI |
+| TC-API1-013 | Trường lạ không được nhận diện bị bỏ qua | EP | COV-051 · §2.2 | `{...,"foo":"bar"}` | 200, `foo` không có tác dụng | AI |
+| TC-API1-014 | `name`/`địa chỉ` hợp lệ + `phone` sai định dạng | EP | COV-052 · FR-04 | `phone:"abc"`, 2 trường kia hợp lệ | 200 — luật phone không được thực thi kể cả trong ngữ cảnh hỗn hợp | AI |
+| TC-API1-015 | `phone` 9 chữ số (biên min−1) | BVA | COV-032 · FR-04 | `phone:"091234567"` | 200 (kỳ vọng đặc tả: từ chối) | AI |
+| TC-API1-016 | `phone` 10 chữ số (biên min) | BVA | COV-029 · FR-04 | `phone:"0912345678"` | 200 · hợp lệ theo cả đặc tả lẫn mã nguồn | AI |
+| TC-API1-017 | `phone` 11 chữ số (biên max) | BVA | COV-030 · FR-04 | `phone:"09123456789"` | 200 · hợp lệ theo cả đặc tả lẫn mã nguồn | AI |
+| TC-API1-018 | `phone` 12 chữ số (biên max+1) | BVA | COV-033 · FR-04 | `phone:"091234567890"` | 200 (kỳ vọng đặc tả: từ chối) | AI |
+| TC-API1-019 | `phone` đúng độ dài nhưng không bắt đầu bằng `0` | BVA | COV-031,040 · FR-04 | `phone:"1912345678"` | 200 (kỳ vọng đặc tả: từ chối) | AI |
+| TC-API1-020 | Header `Authorization` có 2 dấu cách liên tiếp | BVA | COV-011 · (chỉ có ở mã nguồn) | `Authorization: Bearer  {{token}}` | **403** `{"error":"Forbidden"}` — **không phải 401** | AI |
+| TC-API1-021 | `role` là số `0` (falsy) — không ghi | BVA | COV-042,046 · SEC-06 | `role:0` | 200, `GET` cho thấy `role` vẫn `"user"` | AI |
+| TC-API1-022 | `role` là chuỗi `"0"` (truthy) — **bị ghi** | BVA + Security | COV-046 · SEC-06 | `role:"0"` | 200, `GET` cho thấy `role` = `"0"` | AI |
+| TC-API1-023 | Không gửi header `Authorization` | Security | COV-003 · SEC-02 | (bỏ header) | 401 · `{"error":"Unauthorized"}` | AI |
+| TC-API1-024 | Header không có dấu cách phân tách | Security | COV-005 · SEC-02 | `Authorization: SomeGarbageWithNoSpace` | 401 · `{"error":"Unauthorized"}` | AI |
+| TC-API1-025 | JWT sai cú pháp | Security | COV-007 · SEC-02 | `Authorization: Bearer not-a-valid-jwt` | 403 · `{"error":"Forbidden"}` | AI |
+| TC-API1-026 | JWT ký bằng secret khác | Security | COV-008 · SEC-02 | Token ký bằng khoá sai | 403 · `{"error":"Forbidden"}` | AI |
+| TC-API1-027 | Token giả mạo có `exp` quá khứ | Security | COV-009 · SEC-02 | Token tự ký bằng `SECRET_KEY` lộ, `exp` ở quá khứ | 403 · `{"error":"Forbidden"}` | AI |
+| TC-API1-028 | Token hợp lệ nhưng `id` không tồn tại | Security | COV-010 · (không đặc tả) | Token tự ký `{id:999999}` | 200 dù 0 dòng bị cập nhật (`this.changes` không kiểm) | AI |
+| TC-API1-029 | **[CRITICAL]** Leo thang quyền qua `role:"admin"` | Security | COV-043,061 · **SEC-06**, FR-04 | `{...,"role":"admin"}` | 200, `GET` cho thấy `role="admin"` — **vi phạm SEC-06** | AI |
+| TC-API1-030 | `role` ngoài enum (`"superadmin"`) | Security | COV-045 · SEC-06 | `role:"superadmin"` | 200, lưu nguyên văn — không có enum check | AI |
+| TC-API1-031 | Payload SQL injection trong `name` | Security | COV-019,060 · SEC-05 | `name:"Robert'); DROP TABLE users;--"` | 200 · lưu như chuỗi literal, bảng `users` còn nguyên | AI |
+| TC-API1-032 | Payload script/XSS trong `name` | Security | COV-018,059 · SEC-04 | `name:"<script>alert(1)</script>"` | 200 · `GET` trả về nguyên văn (chỉ kiểm lưu/phản hồi, không kiểm render) | AI |
+| TC-API1-033 | Schema response thành công | Schema | COV-063 | Body hợp lệ | 200 · đúng 1 key `message`, không dư trường | AI |
+| TC-API1-034 | Schema lỗi 401 | Schema | COV-064 | (bỏ header) | 401 · đúng 1 key `error` = `"Unauthorized"` | AI |
+| TC-API1-035 | Schema lỗi 403 | Schema | COV-065 | Token sai cú pháp | 403 · đúng 1 key `error` = `"Forbidden"` | AI |
+| TC-API1-036 | Schema xác minh của `GET /api/users/me` | Schema | COV-067 · (endpoint hỗ trợ) | — (GET) | 200 · đủ 10 trường theo `database.js:50-61` | AI |
+| TC-API1-037 | Response `PUT` không echo trường nào đã ghi | Schema | COV-068 | `name:"Distinctive Test Name XYZ"` | 200 · body **không** chứa giá trị vừa gửi | AI |
+| TC-API1-038 | `GET /api/users/me` lộ `password` plaintext | Schema + Security | COV-056 · SEC-01 (liên đới) | — (GET) | 200 · body chứa `"password":"Test1234!"` | AI |
+| TC-API1-039 | Ngữ nghĩa ghi-đè-toàn-bộ: bỏ trường sẽ xoá giá trị cũ | Quy tắc nghiệp vụ | COV-069 · FR-04 (suy từ mã nguồn) | B1 đặt `shipping_address` giá trị riêng; B2 gửi PUT không kèm trường này | 200, `GET` cho thấy giá trị cũ **đã mất** | AI |
+| TC-API1-040 | Scheme header không chuẩn vẫn được chấp nhận | Quy tắc nghiệp vụ | COV-006 · §2 (đặc tả ghi `Bearer`) | `Authorization: Basic {{token}}` | 200 — scheme không được kiểm | AI |
+| TC-API1-041 | Header `Authorization` rỗng → 403 (không phải 401) | Quy tắc nghiệp vụ | COV-004 · (chỉ có ở mã nguồn) | `Authorization: ` (rỗng) | 403 · `{"error":"Forbidden"}` — vì `"" == null` là false | AI |
+| TC-API1-042 | Token mang claim `role` cũ sau khi leo thang | Quy tắc nghiệp vụ + Security | COV-070 · SEC-06 | Chạy sau TC-029, dùng lại đúng token cũ | `GET` cho `role="admin"` nhưng payload JWT vẫn `role="user"` | AI |
+
+> **6 TC cần rà soát thủ công trước khi chốt expected:** `TC-API1-004`, `-006` (hành vi bind kiểu sai của sqlite3 chưa xác nhận), `-020`, `-041` (suy luận nhánh code, cần xác nhận thực tế), `-027`, `-028`, `-042` (cần tự ký JWT bằng pre-request script).
 
 ### 4.2 Bước 2 — Kiểm toán (rà soát của con người)
 
