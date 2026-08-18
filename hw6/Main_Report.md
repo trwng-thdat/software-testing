@@ -423,13 +423,100 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 | `delivered`    | ✘ | ✘ | ✘ (tự-chuyển, trạng thái kết thúc) | ✘ → 400 `{"error":"Cannot cancel this order."}` (TC-API2-019) |
 | `canceled`     | ✘ | ✘ | ✔ → `delivered` (route admin — **mâu thuẫn với FR-10 tuyên bố `canceled` là trạng thái kết thúc**, xem P7) | ✘ (lặp lại) → 400 (TC-API2-020) |
 
-### 5.2 Bước 2 — Kiểm toán
+### 5.2 Bước 2 — Kiểm toán (rà soát của con người)
 
-### 5.3 Bước 3 — Mở rộng (≥ 5 TC)
+| Nhãn       | Số TC | Tỉ lệ |
+| ---------- | :---: | :---: |
+| VALID      |  «»   |  «»%  |
+| INVALID    |  «»   |  «»%  |
+| INCOMPLETE |  «»   |  «»%  |
 
-### 5.4 Bước 4 — Thực thi
+**Chi tiết các test case KHÔNG đạt**
+
+> ✍️ Mỗi dòng phải có lập luận cụ thể — đối chiếu đặc tả hoặc mã nguồn SUT (ghi `file:line`).
+> **Điểm khởi đầu đã biết:** 11 TC đã được đánh dấu "cần rà soát thủ công" ở §5.1 — đây là ứng viên INCOMPLETE rõ ràng nhất, vì expected result còn ở dạng tạm (`⚠️ chưa xác nhận`).
+
+| ID     | Nhãn       | AI viết gì               | Vì sao sai / thiếu (dẫn chứng)              | Tôi sửa thành           |
+| ------ | ---------- | ------------------------ | ------------------------------------------- | ----------------------- |
+| TC-API2-003 | «INCOMPLETE» | «expected chưa xác định» | «AI không suy được hành vi type-affinity của SQLite từ mã nguồn» | «chốt sau khi probe» |
+| TC-API2-022 | «»         | «»                       | «cần sửa DB trực tiếp — không tới được qua API» | «»                   |
+| TC-API2-0xx | «»         | «»                       | «»                                          | «»                      |
+
+**Nhận xét kiểm toán.** «2–5 câu: AI mắc lỗi theo mẫu nào, tập trung ở nhóm kỹ thuật nào?»
+
+### 5.3 Bước 3 — Mở rộng (≥ 5 test case tự nghĩ)
+
+> ✍️ Đề §6.3 yêu cầu ≥ 5 TC **tự nghĩ** mà AI bỏ sót, đặc biệt quanh bảo mật và chuyển trạng thái.
+> **Gợi ý đã có sẵn từ phân tích:** khoảng trống **đồng thời (concurrency)** — AI hẹn ở P5, bỏ ở P7, không lên lịch ở P10, không sinh ở P11 (xem AI Audit Report, Artifact #7/#12). Đây là ứng viên số 1 cho `A2-E01`.
+
+| ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót**                                                      |
+| ------ | ------- | -------------- | ----- | -------- | ------------------------------------------------------------------------- |
+| A2-E01 | «Hủy đơn đồng thời với chuyển trạng thái của admin» | «state / race» | «» | «» | «hạn chế mô hình: AI hẹn ở P5 rồi tự đánh rơi qua 3 phase — xem Audit #7» |
+| A2-E02 | «»      | «state»        | «»    | «»       | «chất lượng prompt: chưa nêu …»                                           |
+| A2-E03 | «»      | «SEC-0x»       | «»    | «»       | «đặc điểm riêng của API: …»                                               |
+| A2-E04 | «»      | «»             | «»    | «»       | «»                                                                        |
+| A2-E05 | «»      | «»             | «»    | «»       | «»                                                                        |
+
+| Nguyên nhân bỏ sót     | Số TC | Diễn giải |
+| ---------------------- | :---: | --------- |
+| Chất lượng prompt      |  «»   | «»        |
+| Hạn chế của mô hình    |  «»   | «»        |
+| Đặc điểm riêng của API |  «»   | «»        |
+
+### 5.4 Bước 4 — Thực thi (Postman + Newman)
+
+| Hạng mục                | Giá trị                  |
+| ----------------------- | ------------------------ |
+| Folder trong collection | «API2 — Order Cancel»    |
+| Số request              | «»                       |
+| Số assertion            | «»                       |
+| Data file (nếu có)      | «data/api2.csv — n dòng» |
+
+```bash
+newman run «collection.json» \
+  -e «env.postman_environment.json» \
+  --folder "«API2 — Order Cancel»" \
+  -d «data/api2.csv» \
+  -r cli,htmlextra --reporter-htmlextra-export «reports/api2.html»
+```
+
+|            | Executed | Passed | Failed |
+| ---------- | :------: | :----: | :----: |
+| Requests   |    «»    |   «»   |   «»   |
+| Assertions |    «»    |   «»   |   «»   |
+
+> ✍️ Ảnh chụp Newman CLI phải thấy rõ hostname (`localhost` / `127.0.0.1`).
+> **Lưu ý riêng API 2:** phần lớn TC cần **dựng trạng thái trước** bằng `POST /api/checkout` + `PUT /api/admin/orders/:id/status`. Nên dùng `postman.setNextRequest` để chạy đúng thứ tự chuỗi trạng thái.
+
+![Newman API2](«evidence/newman_api2.png»)
+Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
+
+**Các assertion FAIL và diễn giải**
+
+| ID     | Assertion fail | Actual | Expected | Là bug SUT hay lỗi test?   |
+| ------ | -------------- | ------ | -------- | -------------------------- |
+| TC-API2-018 | «status 200, kỳ vọng từ chối» | «200» | «400/403 theo FR-10» | «BUG-0x — hủy đơn `shipping` bằng token user» |
+| TC-API2-0xx | «»             | «»     | «»       | «»                         |
 
 ### 5.5 Bước 5 — Lỗi phát hiện được
+
+| ID     | Tiêu đề | Mức độ | TC phát hiện | AI có sinh TC này không? | GitHub Issue |
+| ------ | ------- | ------ | ------------ | ------------------------ | ------------ |
+| BUG-0x | «User tự hủy được đơn đang `shipping` — trái FR-10» | «High» | «TC-API2-018» | «Có — AI sinh» | «URL» |
+| BUG-0x | «Route admin cho phép `canceled → delivered`, trái quy tắc trạng thái kết thúc» | «Medium» | «TC-API2-024» | «Có — AI sinh» | «URL» |
+
+<details>
+<summary><b>BUG-0x — «tiêu đề»</b></summary>
+
+- **Endpoint:** `«»`
+- **Các bước tái hiện:** «1… 2… 3…»
+- **Kết quả mong đợi:** «»
+- **Kết quả thực tế:** «»
+- **Mức độ / Độ ưu tiên:** «»
+- **Bằng chứng:** ![BUG](«evidence/bug0x.png»)
+- **Issue:** «URL»
+
+</details>
 
 ---
 
@@ -513,13 +600,99 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 | TC-API3-044 | Chuỗi dọn dữ liệu: tạo → xoá → verify | Schema + ST | COV-092,097 | POST → DELETE bằng `id` trả về → GET `/api/coupons` | GET **không** còn `code:"CLEANUPTEST01"` — xác thực cơ chế teardown của cả suite | AI |
 > **5 TC cần rà soát thủ công:** `TC-API3-008` (bind kiểu sai chưa xác nhận) · `-020` (biên truthy `"0"` — phát hiện quan trọng nhất API này, nên xác nhận kỹ) · `-024` (suy luận nhánh code) · `-032` (cần tự ký JWT) · `-042` (là bước tổng hợp kết quả, không phải một request độc lập).
 
-### 6.2 Bước 2 — Kiểm toán
+### 6.2 Bước 2 — Kiểm toán (rà soát của con người)
 
-### 6.3 Bước 3 — Mở rộng (≥ 5 TC)
+| Nhãn       | Số TC | Tỉ lệ |
+| ---------- | :---: | :---: |
+| VALID      |  «»   |  «»%  |
+| INVALID    |  «»   |  «»%  |
+| INCOMPLETE |  «»   |  «»%  |
 
-### 6.4 Bước 4 — Thực thi
+**Chi tiết các test case KHÔNG đạt**
+
+> ✍️ **Điểm khởi đầu đã biết:** 5 TC đã đánh dấu "cần rà soát thủ công" ở §6.1. Ngoài ra, nhóm cross-field (`type:"percent"` + `discount_value > 100`) **hoàn toàn không được AI sinh** — xem §6.3.
+
+| ID     | Nhãn       | AI viết gì               | Vì sao sai / thiếu (dẫn chứng)              | Tôi sửa thành           |
+| ------ | ---------- | ------------------------ | ------------------------------------------- | ----------------------- |
+| TC-API3-008 | «INCOMPLETE» | «expected chưa xác định» | «AI không suy được hành vi bind kiểu của sqlite3» | «chốt sau khi probe» |
+| TC-API3-042 | «INCOMPLETE» | «TC tổng hợp, không phải request» | «không thực thi được trực tiếp trong Postman» | «chuyển thành assertion hậu-suite» |
+| TC-API3-0xx | «»         | «»                       | «»                                          | «»                      |
+
+**Nhận xét kiểm toán.** «2–5 câu: AI mắc lỗi theo mẫu nào, tập trung ở nhóm kỹ thuật nào?»
+
+### 6.3 Bước 3 — Mở rộng (≥ 5 test case tự nghĩ)
+
+> ✍️ **Gợi ý đã có sẵn từ phân tích:** AI **không sinh** TC cho biên chéo `type:"percent"` + `discount_value > 100`, với lý do "không có tài liệu nào quy định trần 100 %". Lập luận đó đúng về mặt BVA, nhưng để trống hẳn một nhóm mà đề §6 yêu cầu → ứng viên số 1 cho `A3-E01`.
+
+| ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót**                                                      |
+| ------ | ------- | -------------- | ----- | -------- | ------------------------------------------------------------------------- |
+| A3-E01 | «Coupon `percent` với `discount_value = 101` (vượt trần khái niệm 100 %)» | «BVA chéo trường» | «`type:"percent"`, `discount_value:101`» | «» | «hạn chế mô hình: AI từ chối sinh vì không có trần nào được đặc tả — đúng luật BVA nhưng bỏ trống nhóm đề yêu cầu» |
+| A3-E02 | «»      | «SEC-03»       | «»    | «»       | «chất lượng prompt: chưa nêu …»                                           |
+| A3-E03 | «»      | «»             | «»    | «»       | «đặc điểm riêng của API: …»                                               |
+| A3-E04 | «»      | «»             | «»    | «»       | «»                                                                        |
+| A3-E05 | «»      | «»             | «»    | «»       | «»                                                                        |
+
+| Nguyên nhân bỏ sót     | Số TC | Diễn giải |
+| ---------------------- | :---: | --------- |
+| Chất lượng prompt      |  «»   | «»        |
+| Hạn chế của mô hình    |  «»   | «»        |
+| Đặc điểm riêng của API |  «»   | «»        |
+
+### 6.4 Bước 4 — Thực thi (Postman + Newman)
+
+| Hạng mục                | Giá trị                  |
+| ----------------------- | ------------------------ |
+| Folder trong collection | «API3 — Admin Coupons»   |
+| Số request              | «»                       |
+| Số assertion            | «»                       |
+| Data file (nếu có)      | «data/api3.csv — n dòng» |
+
+```bash
+newman run «collection.json» \
+  -e «env.postman_environment.json» \
+  --folder "«API3 — Admin Coupons»" \
+  -d «data/api3.csv» \
+  -r cli,htmlextra --reporter-htmlextra-export «reports/api3.html»
+```
+
+|            | Executed | Passed | Failed |
+| ---------- | :------: | :----: | :----: |
+| Requests   |    «»    |   «»   |   «»   |
+| Assertions |    «»    |   «»   |   «»   |
+
+> ✍️ **Lưu ý riêng API 3:** `code` là `UNIQUE`, nên **không dọn dữ liệu = không chạy lại được**. Chạy `TC-API3-044` sớm trong suite để xác thực cơ chế teardown trước khi các TC khác phụ thuộc vào nó.
+
+![Newman API3](«evidence/newman_api3.png»)
+Báo cáo HTML: [`«reports/api3.html»`](«reports/api3.html»)
+
+**Các assertion FAIL và diễn giải**
+
+| ID     | Assertion fail | Actual | Expected | Là bug SUT hay lỗi test?   |
+| ------ | -------------- | ------ | -------- | -------------------------- |
+| TC-API3-029 | «status 200, kỳ vọng 403» | «200» | «403 theo SEC-03/FR-12» | «BUG-0x — user thường tạo được coupon» |
+| TC-API3-0xx | «»             | «»     | «»       | «»                         |
 
 ### 6.5 Bước 5 — Lỗi phát hiện được
+
+| ID     | Tiêu đề | Mức độ | TC phát hiện | AI có sinh TC này không? | GitHub Issue |
+| ------ | ------- | ------ | ------------ | ------------------------ | ------------ |
+| BUG-0x | «User thường tạo/xoá/đọc được coupon — vi phạm SEC-03» | «Critical» | «TC-API3-029, -030, -031» | «Có — AI sinh» | «URL» |
+| BUG-0x | «Trùng `code` trả 500 kèm nguyên văn thông báo SQLite» | «Low» | «TC-API3-039» | «Có — AI sinh» | «URL» |
+
+<details>
+<summary><b>BUG-0x — «tiêu đề»</b></summary>
+
+- **Endpoint:** `«»`
+- **Các bước tái hiện:** «1… 2… 3…»
+- **Kết quả mong đợi:** «»
+- **Kết quả thực tế:** «»
+- **Mức độ / Độ ưu tiên:** «»
+- **Bằng chứng:** ![BUG](«evidence/bug0x.png»)
+- **Issue:** «URL»
+
+</details>
+
+> ✍️ **Gợi ý riêng cho Pool C (admin):** bắt buộc có test leo thang quyền — user thường gọi endpoint admin (TC-API3-029/030/031 ✓), token bị sửa chữ ký (TC-API3-035 ✓), không gửi token (TC-API3-028 ✓), token hết hạn (TC-API3-032 — lưu ý: SUT **không** phát hành token có `exp`, nên chỉ tới được bằng token tự ký).
 
 ### 6.10 Kiểm toán đặc tả OpenAPI do AI sinh (tùy chọn)
 
