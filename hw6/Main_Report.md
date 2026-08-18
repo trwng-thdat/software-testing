@@ -437,7 +437,81 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 
 ### 6.0 Đặc tả tóm tắt
 
+| Thuộc tính   | Giá trị                                   |
+| ------------ | ----------------------------------------- |
+| Endpoint     | `POST /api/admin/coupons` (dọn dữ liệu bằng `DELETE /api/admin/coupons/:id`) |
+| Pool / FR    | C / FR-17 — Quản lý mã giảm giá            |
+| Auth         | Bearer JWT (**đặc tả yêu cầu admin**) — nhưng mã nguồn chỉ gọi `authenticateToken`, **không kiểm tra `role`** (`server.js:457,483`) |
+| Request body | `code` (string, unique), `type` (string, đặc tả: `percent`/`fixed`), `discount_value` (int, đặc tả `>0`), `min_order_amount` (int, đặc tả `>=0`), `expired_at` (string ngày), `max_uses_per_user` (int, đặc tả `>=1`) — theo `api_specification.md §6.4` |
+| Response 2xx | `200` — `{"message":"Coupon created","id":<int>}` (không đặc tả; suy từ `server.js:478`) — **là API duy nhất trong 3 API trả về `id` động** |
+| Mã lỗi       | `401` `{"error":"Unauthorized"}` · `403` `{"error":"Forbidden"}` · `500` `{"error":"<sqlite message>"}` (kể cả trùng `code`) — **không có 400/409** dù nhiều ràng buộc đặc tả bị vi phạm |
+| Yêu cầu SEC  | **SEC-03 (VI PHẠM — endpoint chính là đối tượng của SEC-03: không kiểm tra `role='admin'` trong Token)** · SEC-02 (JWT hợp lệ — có) · SEC-05 (parameterized query — đạt) · SEC-04 (không thể kiểm chứng đầy đủ ở tầng API) |
+
 ### 6.1 Bước 1 — Sinh test case bằng AI
+
+**Mục tiêu ≥ 35 test case.** Số thực tế AI sinh: **44**.
+
+| Nhóm kỹ thuật          | Số TC | Ghi chú |
+| ---------------------- | :---: | ------- |
+| Phân vùng miền giá trị |  14   | 6 trường (`code`,`type`,`discount_value`,`min_order_amount`,`expired_at`,`max_uses_per_user`) — thiếu/rỗng/sai kiểu/trùng `code` |
+| Giá trị biên           |  10   | `discount_value` (0/1), `min_order_amount` (-1/0), `max_uses_per_user` (0 số/`"0"` chuỗi/1/-5), header 2-khoảng-trắng |
+| Chuyển trạng thái      |   3   | Vòng đời tồn tại của coupon (P7): tạo → xoá → tạo lại cùng `code` |
+| **Bảo mật (SEC-01…07)**| **8** | **User thường tạo/xoá coupon, đọc `GET /api/coupons` không lọc — SEC-03 vi phạm**, SQLi, chuỗi lạm dụng nghiệp vụ |
+| Kiểm tra schema        |   6   | Response 2xx (kèm `id`), 401/403/500, xác nhận không có 400/409/404 |
+| Quy tắc nghiệp vụ khác |   4   | Bất đối xứng ép kiểu `max_uses_per_user`, `is_active` không thể set qua API, chuỗi tạo→xoá→verify, `type` ngoài enum bị diễn giải thành `fixed` |
+| **Tổng**               |  44   | ≥ 35 theo yêu cầu đề bài |
+
+**Tiền điều kiện chung cho mọi TC của API 3.** DB vừa seed lại → 4 coupon mẫu tồn tại: `SAVE10`(id 1), `BIGBUY`(id 2), `VIP100`(id 3), `EXPIRED`(id 4); coupon mới tạo bắt đầu từ **id 5**. `{{tokenAdmin}}` = `admin@eshop.com`/`Admin123!`; `{{tokenUser}}` = `test@eshop.com`/`Test1234!`. **Quy tắc dọn dữ liệu mặc định:** mọi TC tạo coupon thành công đều phải `DELETE /api/admin/coupons/{{id}}` ở bước teardown (dùng `{{tokenAdmin}}`), trừ TC mà mục đích chính là kiểm chính cơ chế xoá/trùng mã. Body chuẩn 6 trường dùng lại xuyên suốt: `{"code":…,"type":"percent","discount_value":10,"min_order_amount":0,"expired_at":"2099-12-31","max_uses_per_user":1}`.
+
+**Bảng test case đầy đủ — 44 TC** _(ID `TC-API3-001`…`TC-API3-044`)_
+
+| ID     | Tiêu đề | Kỹ thuật | Truy vết (Coverage / FR / SEC) | Input / Precondition riêng | Expected (status + body) | Nguồn |
+| ------ | ------- | -------- | ------------------- | ------------ | ------------------------ | ----- |
+| TC-API3-001 | Tạo coupon hợp lệ (happy path) | EP | COV-055,001,011,018,027,034,042 · FR-17 | `code:"TESTNEW01"`, 6 trường hợp lệ, token admin | 200 · `{"message":"Coupon created","id":<int>}` | AI |
+| TC-API3-002 | Thiếu `code` | EP | COV-002 · FR-17 (bắt buộc, không thực thi) | Body bỏ key `code` | 200 — không có presence check | AI |
+| TC-API3-003 | `code` rỗng | EP | COV-003 | `code:""` | 200 — không có non-empty check | AI |
+| TC-API3-004 | Trùng `code` với coupon đã seed | EP + BR | COV-005,061 · FR-17 (**unique — được thực thi**) | `code:"SAVE10"` | 500 · `{"error":"<sqlite UNIQUE text>"}` — không tạo dòng mới | AI |
+| TC-API3-005 | Thiếu `type` | EP | COV-013 · FR-17 | Body bỏ key `type` | 200; `GET` cho thấy `type` **không** rơi về `'percent'` (DEFAULT bất hoạt) | AI |
+| TC-API3-006 | `type` ngoài enum | EP | COV-016 · FR-17 (enum không thực thi) | `type:"installment"` | 200, lưu nguyên văn — không có `CHECK` | AI |
+| TC-API3-007 | Thiếu `discount_value` | EP | COV-020 · FR-17 | Body bỏ key `discount_value` | 200 — không có presence check | AI |
+| TC-API3-008 | `discount_value` sai kiểu (string) | EP | COV-025 | `discount_value:"10"` | ⚠️ 200 **hoặc** 500 — chưa xác nhận, cần probe | AI |
+| TC-API3-009 | Thiếu `min_order_amount` | EP | COV-029 · FR-17 | Body bỏ key `min_order_amount` | 200 — `DEFAULT 0` cũng bất hoạt | AI |
+| TC-API3-010 | Thiếu `expired_at` | EP | COV-036 · FR-17 | Body bỏ key `expired_at` | 200 — không có presence check | AI |
+| TC-API3-011 | `expired_at` là ngày quá khứ | EP + BR | COV-035,060 | `expired_at:"2020-01-01"` | 200 — giống hệt coupon `EXPIRED` được seed sẵn | AI |
+| TC-API3-012 | `expired_at` sai định dạng | EP | COV-039 | `expired_at:"not-a-date"` | 200 — không validate định dạng ngày lúc tạo | AI |
+| TC-API3-013 | Thiếu `max_uses_per_user` → ép thành 1 | EP | COV-043 · FR-17 | Body bỏ key `max_uses_per_user` | 200; `GET` cho thấy lưu đúng `1` (`\|\| 1`) | AI |
+| TC-API3-014 | Gửi kèm `is_active` — bị bỏ qua | EP | COV-059,096 | `{...,"is_active":0}` | 200; `GET` cho thấy `is_active` = `1`, **không** phải `0` | AI |
+| TC-API3-015 | `discount_value = 0` (biên min−1 của `>0`) | BVA | COV-022 · FR-17 | `discount_value:0` | 200 (kỳ vọng đặc tả: từ chối) | AI |
+| TC-API3-016 | `discount_value = 1` (biên min) | BVA | COV-018 · FR-17 | `discount_value:1` | 200 · hợp lệ theo cả 2 nguồn | AI |
+| TC-API3-017 | `min_order_amount = -1` (biên min−1) | BVA | COV-031 · FR-17 (`>=0`) | `min_order_amount:-1` | 200 (kỳ vọng đặc tả: từ chối) | AI |
+| TC-API3-018 | `min_order_amount = 0` (biên min, **bao gồm**) | BVA | COV-027 · FR-17 | `min_order_amount:0` | 200 · hợp lệ — lưu ý biên này *bao gồm*, khác `discount_value` | AI |
+| TC-API3-019 | `max_uses_per_user = 0` (số) → **bị ép thành 1** | BVA | COV-044 · FR-17 (`>=1`) | `max_uses_per_user:0` | 200; `GET` cho thấy **`1`, không phải `0`** | AI |
+| TC-API3-020 | `max_uses_per_user = "0"` (chuỗi) → **KHÔNG bị ép** | BVA | COV-048 · FR-17 | `max_uses_per_user:"0"` | 200; `GET` cho thấy lưu đúng chuỗi `"0"` — **đối lập TC-019** | AI |
+| TC-API3-021 | `max_uses_per_user = 1` (biên min) | BVA | COV-042 · FR-17 | `max_uses_per_user:1` | 200 · hợp lệ, không bị biến đổi | AI |
+| TC-API3-022 | `max_uses_per_user = -5` → **KHÔNG bị ép** | BVA | COV-045 · FR-17 | `max_uses_per_user:-5` | 200; lưu đúng `-5` — số âm là truthy nên `\|\|` không can thiệp | AI |
+| TC-API3-023 | `discount_value` cực lớn | BVA | COV-026 | `discount_value:999999999` | 200 — không có chặn trên nào | AI |
+| TC-API3-024 | Header `Authorization` có 2 dấu cách | BVA | (biên P6 — middleware dùng chung) | `Authorization: Bearer  {{tokenAdmin}}` | 403 · `{"error":"Forbidden"}` | AI |
+| TC-API3-025 | Tạo lại coupon với `code` đã bị xoá | ST | COV-062 · P7 (vòng đời tồn tại) | B1 tạo `RECREATE01` → B2 xoá → B3 tạo lại cùng `code` | 200 với **id mới** — `AUTOINCREMENT` không tái dùng id cũ | AI |
+| TC-API3-026 | Trùng `code` khi coupon vẫn còn tồn tại | ST | COV-005,061 | `DUPTEST01` đang tồn tại, tạo lại với các trường khác nhau | 500 — chỉ `code` quyết định việc từ chối | AI |
+| TC-API3-027 | Xoá coupon đã bị xoá (idempotent âm thầm) | ST | COV-098 | Tạo → xoá → gọi `DELETE` lần 2 cùng id | 200 · `{"message":"Coupon deleted"}` — **giống hệt** lần xoá thật | AI |
+| TC-API3-028 | Không gửi header `Authorization` | Security | COV-064 · SEC-02 | (bỏ header) | 401 · `{"error":"Unauthorized"}` | AI |
+| TC-API3-029 | **[CRITICAL]** User thường tạo được coupon | Security | COV-073 · **SEC-03**, FR-12, FR-17 | `{{tokenUser}}` (`role="user"`), 6 trường hợp lệ | 200 — **vi phạm trực tiếp SEC-03** | AI |
+| TC-API3-030 | User thường **xoá** được coupon | Security | COV-074 · SEC-03 | `{{tokenUser}}`, xoá coupon do admin tạo | 200 · `{"message":"Coupon deleted"}` | AI |
+| TC-API3-031 | User thường đọc được `GET /api/coupons` không lọc | Security | COV-075 · SEC-03 (§5.2 ghi "Dành cho Admin") | `{{tokenUser}}`, GET `/api/coupons` | 200 · danh sách đầy đủ y hệt admin | AI |
+| TC-API3-032 | Token giả mạo claim `role:"admin"` | Security | COV-076 · SEC-02 | Token tự ký `{id:1,role:"admin"}` | 200 — nhưng theo TC-029, giả mạo thậm chí **không cần thiết** | AI |
+| TC-API3-033 | Payload SQL injection trong `code` | Security | COV-010 · SEC-05 | `code:"'; DROP TABLE coupons;--"` | 200 · lưu literal, bảng `coupons` còn nguyên | AI |
+| TC-API3-034 | Chuỗi lạm dụng: user thường tạo coupon giá trị cực lớn | Security + BR | COV-084 · SEC-03 + FR-17 | `{{tokenUser}}`, `discount_value:999999999`, `min_order_amount:0`, `max_uses_per_user:999999999` | 200 · lưu đúng mọi giá trị cực lớn | AI |
+| TC-API3-035 | JWT sai cú pháp | Security | COV-068 · SEC-02 | `Bearer not-a-jwt` | 403 · `{"error":"Forbidden"}` | AI |
+| TC-API3-036 | Schema response `POST` thành công | Schema | COV-085 | 6 trường hợp lệ, token admin | 200 · đúng 2 key `message` + `id` (int dương) | AI |
+| TC-API3-037 | Schema response `DELETE` thành công | Schema | COV-086 | Coupon tồn tại, token admin | 200 · đúng 1 key `message` = `"Coupon deleted"` | AI |
+| TC-API3-038 | Schema lỗi 401 | Schema | COV-087 | (bỏ header) | 401 · đúng 1 key `error` = `"Unauthorized"` | AI |
+| TC-API3-039 | Schema lỗi 500 khi trùng `code` — lộ text driver | Schema | COV-089 | `code:"SCHEMA03"` đã tồn tại | 500 · `error` chứa nguyên văn thông báo UNIQUE của SQLite | AI |
+| TC-API3-040 | Xác nhận **không** tồn tại đường 400/409 | Schema | COV-090 | Tổng hợp TC-002,003,006,008,015,017,019,022,023 | Không TC nào trả 400/409 — không có validation tầng ứng dụng | AI |
+| TC-API3-041 | `DELETE` id không tồn tại → 200, **không** 404 | Schema | COV-091 | `DELETE /api/admin/coupons/999999` | 200 · body giống hệt lần xoá thật (`this.changes` không kiểm) | AI |
+| TC-API3-042 | Bất đối xứng ép kiểu `max_uses_per_user` | Quy tắc nghiệp vụ | COV-095 · FR-17 | Đối chiếu kết quả TC-019 / TC-020 / TC-022 | Lưu lần lượt `1` / `"0"` / `-5` — 3 input "không hợp lệ" cho 3 hành vi khác nhau | AI |
+| TC-API3-043 | `is_active` luôn = 1 với mọi coupon do suite tạo | Quy tắc nghiệp vụ | COV-096 | GET `/api/coupons` cuối suite | Không coupon nào của suite có `is_active = 0` | AI |
+| TC-API3-044 | Chuỗi dọn dữ liệu: tạo → xoá → verify | Schema + ST | COV-092,097 | POST → DELETE bằng `id` trả về → GET `/api/coupons` | GET **không** còn `code:"CLEANUPTEST01"` — xác thực cơ chế teardown của cả suite | AI |
+> **5 TC cần rà soát thủ công:** `TC-API3-008` (bind kiểu sai chưa xác nhận) · `-020` (biên truthy `"0"` — phát hiện quan trọng nhất API này, nên xác nhận kỹ) · `-024` (suy luận nhánh code) · `-032` (cần tự ký JWT) · `-042` (là bước tổng hợp kết quả, không phải một request độc lập).
 
 ### 6.2 Bước 2 — Kiểm toán
 
