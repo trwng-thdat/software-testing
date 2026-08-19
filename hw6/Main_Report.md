@@ -201,9 +201,9 @@ console.log("X-Student-Id =", pm.environment.get("studentId"));
 | TC-API1-001 | Cập nhật hồ sơ hợp lệ (happy path) | EP | COV-001,047 · FR-04 §2.2 | `{"name":"Nguyen Van A","shipping_address":"123 Le Loi","phone":"0912345678"}` | 200 · `{"message":"Profile updated"}` | AI |
 | TC-API1-002 | Thiếu trường `name` | EP | COV-013 · FR-04 | Body không có key `name` | 200 · `{"message":"Profile updated"}` (không có validate) | AI |
 | TC-API1-003 | `name` là chuỗi rỗng | EP | COV-014 · (không đặc tả) | `name:""` | 200 · `{"message":"Profile updated"}` | AI |
-| TC-API1-004 | `name` sai kiểu (number) | EP | COV-016 · (không đặc tả) | `name:12345` | ⚠️ 200 **hoặc** 500 — chưa xác nhận, cần probe | AI |
+| TC-API1-004 | `name` sai kiểu (number) | EP | COV-016 · (không đặc tả) | `name:12345` | `200` · `{"message":"Profile updated"}`; `GET` trả `name="12345"` (**chuỗi** — TEXT affinity ép số) | AI · **đã sửa** |
 | TC-API1-005 | Thiếu trường `shipping_address` | EP | COV-022 · FR-04 | Body không có key `shipping_address` | 200 · `{"message":"Profile updated"}` | AI |
-| TC-API1-006 | `shipping_address` sai kiểu (object) | EP | COV-025 · (không đặc tả) | `shipping_address:{"street":"123 Le Loi"}` | ⚠️ 200 **hoặc** 500 — chưa xác nhận, cần probe | AI |
+| TC-API1-006 | `shipping_address` sai kiểu (object) | EP | COV-025 · (không đặc tả) | `shipping_address:{"street":"123 Le Loi"}` | `200`; `GET` trả `shipping_address="[object Object]"` — **hỏng dữ liệu thầm lặng** | AI · **đã sửa** |
 | TC-API1-007 | Gửi key camelCase `shippingAddress` — bị bỏ qua | EP | COV-028 · (BUG-D3 nhóm đã ghi nhận) | `shippingAddress:"789 Nguyen Hue"` | 200, `GET` cho thấy `shipping_address` **không** đổi | AI |
 | TC-API1-008 | Thiếu trường `phone` | EP | COV-037 · FR-04 | Body không có key `phone` | 200 · `{"message":"Profile updated"}` | AI |
 | TC-API1-009 | `phone` chứa ký tự không phải số | EP | COV-034 · FR-04 (không thực thi) | `phone:"0912-345-678"` | 200 (kỳ vọng đặc tả: từ chối) | AI |
@@ -231,7 +231,7 @@ console.log("X-Student-Id =", pm.environment.get("studentId"));
 | TC-API1-031 | Payload SQL injection trong `name` | Security | COV-019,060 · SEC-05 | `name:"Robert'); DROP TABLE users;--"` | 200 · lưu như chuỗi literal, bảng `users` còn nguyên | AI |
 | TC-API1-032 | Payload script/XSS trong `name` | Security | COV-018,059 · SEC-04 | `name:"<script>alert(1)</script>"` | 200 · `GET` trả về nguyên văn (chỉ kiểm lưu/phản hồi, không kiểm render) | AI |
 | TC-API1-033 | Schema response thành công | Schema | COV-063 | Body hợp lệ | 200 · đúng 1 key `message`, không dư trường | AI |
-| TC-API1-034 | Schema lỗi 401 | Schema | COV-064 | (bỏ header) | 401 · đúng 1 key `error` = `"Unauthorized"` | AI |
+| ~~TC-API1-034~~ | Schema lỗi 401 — **đã gộp vào TC-API1-023** | Schema | COV-064 | — | (2 assertion của TC-023: status + schema) | AI · **đã gộp** |
 | TC-API1-035 | Schema lỗi 403 | Schema | COV-065 | Token sai cú pháp | 403 · đúng 1 key `error` = `"Forbidden"` | AI |
 | TC-API1-036 | Schema xác minh của `GET /api/users/me` | Schema | COV-067 · (endpoint hỗ trợ) | — (GET) | 200 · đủ 10 trường theo `database.js:50-61` | AI |
 | TC-API1-037 | Response `PUT` không echo trường nào đã ghi | Schema | COV-068 | `name:"Distinctive Test Name XYZ"` | 200 · body **không** chứa giá trị vừa gửi | AI |
@@ -241,7 +241,7 @@ console.log("X-Student-Id =", pm.environment.get("studentId"));
 | TC-API1-041 | Header `Authorization` rỗng → 403 (không phải 401) | Quy tắc nghiệp vụ | COV-004 · (chỉ có ở mã nguồn) | `Authorization: ` (rỗng) | 403 · `{"error":"Forbidden"}` — vì `"" == null` là false | AI |
 | TC-API1-042 | Token mang claim `role` cũ sau khi leo thang | Quy tắc nghiệp vụ + Security | COV-070 · SEC-06 | Chạy sau TC-029, dùng lại đúng token cũ | `GET` cho `role="admin"` nhưng payload JWT vẫn `role="user"` | AI |
 
-> **6 TC cần rà soát thủ công trước khi chốt expected:** `TC-API1-004`, `-006` (hành vi bind kiểu sai của sqlite3 chưa xác nhận), `-020`, `-041` (suy luận nhánh code, cần xác nhận thực tế), `-027`, `-028`, `-042` (cần tự ký JWT bằng pre-request script).
+> **Trạng thái sau Bước 2 (kiểm toán).** `TC-API1-004`, `-006` **đã chốt expected bằng probe thật** (xem §4.2). `-020`, `-041` đã xác nhận đúng khi chạy (403, không phải 401). `-034` đã gộp vào `-023`. Còn lại `-027`, `-028`, `-042` cần pre-request script tự ký JWT — sẽ chốt ở Bước 4.
 
 ### 4.2 Bước 2 — Kiểm toán (rà soát của con người)
 
@@ -382,16 +382,16 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 | ------ | ------- | -------- | ------------------- | ------------ | ------------------------ | ----- |
 | TC-API2-001 | Hủy đơn `pending` (chuyển tiếp hợp lệ) | ST + EP | COV-001,029 · FR-10 | Đơn của user A, `status=pending` | 200 · `{"message":"Order canceled successfully"}`, `GET` → `status="canceled"` | AI |
 | TC-API2-002 | `:id` hợp lệ nhưng đơn không tồn tại | EP | COV-013 | `:id=999999` | 404 · `{"error":"Order not found"}` | AI |
-| TC-API2-003 | `:id` không phải số | EP | COV-006 | `:id="abc"` | ⚠️ chưa xác nhận — nhiều khả năng 404, cần probe | AI |
-| TC-API2-004 | `:id` là segment rỗng | EP | COV-007 | `/api/orders//cancel` | ⚠️ chưa xác nhận — có thể không khớp route, cần probe | AI |
+| TC-API2-003 | `:id` không phải số | EP | COV-006 | `:id="abc"` | `404` · `{"error":"Order not found"}` | AI · **đã sửa** |
+| TC-API2-004 | `:id` là segment rỗng | EP | COV-007 | `/api/orders//cancel` | `404` · body là **HTML** của Express (404 tầng routing), **không** phải JSON của SUT | AI · **đã sửa** |
 | TC-API2-005 | `:id` âm | EP | COV-008 | `:id=-1` | 404 — `AUTOINCREMENT` không bao giờ sinh id âm | AI |
-| TC-API2-006 | `:id` dạng thập phân | EP | COV-010 | `:id=1.5` | ⚠️ chưa xác nhận, cần probe | AI |
-| TC-API2-007 | `:id` có ký tự thừa | EP | COV-011 | `:id="1abc"` | ⚠️ chưa xác nhận, cần probe | AI |
+| TC-API2-006 | `:id` dạng thập phân | EP | COV-010 | `:id=1.5` | `404` · `{"error":"Order not found"}` | AI · **đã sửa** |
+| TC-API2-007 | `:id` có ký tự thừa | EP | COV-011 | `:id="1abc"` | `404`; đơn id=1 **không** bị hủy — SQLite không ép `"1abc"` thành `1` | AI · **đã sửa** |
 | TC-API2-008 | Body request không có tác dụng | EP | COV-036 · §4.6 | Body `{"status":"delivered"}` | 200, `status` = `"canceled"` (**không** `delivered`) — đích ghi cứng | AI |
 | TC-API2-009 | `:id = 0` (biên cấu trúc min−1) | BVA | COV-002 | `:id=0` | 404 · `AUTOINCREMENT` không cấp id 0 | AI |
 | TC-API2-010 | `:id = 1` (biên cấu trúc min) | BVA | COV-003 | Đơn id 1 tồn tại & thuộc user A (DB mới reset) | 200 · `{"message":"Order canceled successfully"}` | AI |
 | TC-API2-011 | `:id = 2` (biên min+1) | BVA | COV-004 | Đơn id 2 tồn tại & thuộc user A | 200 · `{"message":"Order canceled successfully"}` | AI |
-| TC-API2-012 | `:id` cực lớn (tràn số) | BVA | COV-005 | `:id=99999999999999999999` | ⚠️ chưa xác nhận, cần probe | AI |
+| TC-API2-012 | `:id` cực lớn (tràn số) | BVA | COV-005 | `:id=99999999999999999999` | `404` · không lỗi tràn số | AI · **đã sửa** |
 | TC-API2-013 | Token giả mạo `id=0` — không sở hữu đơn nào | BVA + Security | COV-028 | Token tự ký `{id:0}` | 404 · `{"error":"Order not found"}` | AI |
 | TC-API2-014 | Token giả mạo `id=1` (trùng admin thật) | BVA + Security | COV-028 | Token tự ký `{id:1}`, đơn thuộc admin | 200 — giả mạo không phân biệt được với token thật | AI |
 | TC-API2-015 | Token giả mạo `id=2` (trùng user A thật) | BVA + Security | COV-028 · SEC-02 | Token tự ký `{id:2}`, đơn thuộc user A | 200 — chiếm trọn quyền sở hữu của id bị mạo danh | AI |
@@ -401,7 +401,7 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 | TC-API2-019 | Hủy đơn `delivered` (trạng thái kết thúc) | ST | COV-032 · FR-10 | Đơn đã đi hết chuỗi tới `delivered` | 400 · `{"error":"Cannot cancel this order."}` | AI |
 | TC-API2-020 | Hủy đơn đã `canceled` (trạng thái kết thúc) | ST | COV-033 · FR-10 | Đơn đã `canceled` từ trước | 400 · `{"error":"Cannot cancel this order."}` | AI |
 | TC-API2-021 | Hủy lặp: gọi 2 lần liên tiếp cùng đơn | ST | COV-037 · FR-10 | Đơn `pending` mới, gọi PUT cancel 2 lần | Lần 1: 200 · Lần 2: 400 — trạng thái bất biến, response thì không | AI |
-| TC-API2-022 | `status` ngoài 5 giá trị hợp lệ | ST | COV-034 | ⚠️ Phải sửa DB trực tiếp — **không** tới được qua API | 200 — deny-list chỉ chặn `delivered`/`canceled` | AI |
+| TC-API2-022 | `status` ngoài 5 giá trị hợp lệ | ST | COV-034 | ⚠️ Phải sửa DB trực tiếp — **không** tới được qua API | 200 — deny-list chỉ chặn `delivered`/`canceled` | AI · **ngoài bộ chạy** |
 | TC-API2-023 | Route admin **từ chối** `shipping→canceled` | ST | COV-054 · FR-10 (đối chứng) | Đơn `shipping`, token admin, body `{"status":"canceled"}` | 400 · `Invalid state transition from shipping to canceled` | AI |
 | TC-API2-024 | Route admin **cho phép** `canceled→delivered` | ST | COV-055 · FR-10 (mâu thuẫn) | Đơn `canceled`, token admin, body `{"status":"delivered"}` | 200 — thoát khỏi trạng thái FR-10 gọi là kết thúc | AI |
 | TC-API2-025 | Không gửi header `Authorization` | Security | COV-015 · SEC-02 | (bỏ header) | 401 · `{"error":"Unauthorized"}` | AI |
@@ -422,9 +422,9 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 | TC-API2-040 | Schema 400 giống hệt nhau cho 2 nguyên nhân | Schema | COV-049 | Gọi 2 lần: đơn `delivered` **và** đơn `canceled` | Cả 2 → 400, body **giống hệt từng byte** | AI |
 | TC-API2-041 | Response `PUT` không chứa trạng thái — phải verify bằng `GET` | Schema | COV-051,052 | PUT cancel rồi `GET /api/orders/my-orders` | PUT: không có `status`; GET: phần tử có `status="canceled"` | AI |
 | TC-API2-042 | `GET /api/orders/:id` đọc được **không cần token** | Schema + Security | COV-053 · SEC-02 (vi phạm ở endpoint kề) | GET `/api/orders/{id}` **không** gửi header | 200 · trả full đơn hàng — lỗ hổng của endpoint hỗ trợ | AI |
-| TC-API2-043 | Xác nhận **không** tồn tại đường 500 nào | Schema | COV-050 | Tổng hợp toàn bộ TC-001…042 | Không có TC nào trả 500 (cả 2 callback SQLite đều bỏ qua `err`) | AI |
+| TC-API2-043 | Xác nhận **không** tồn tại đường 500 nào | Schema | COV-050 | Tổng hợp toàn bộ TC-001…042 | Không có TC nào trả 500 (cả 2 callback SQLite đều bỏ qua `err`) | AI · **assertion hậu-suite** |
 
-> **11 TC cần rà soát thủ công:** `TC-API2-003`, `-004`, `-006`, `-007`, `-012` (hành vi `:id` bất thường chưa xác nhận) · `-016`, `-026` (suy luận nhánh code) · `-013`, `-014`, `-015`, `-031`, `-032` (cần tự ký JWT) · `-022` (phải sửa DB trực tiếp, **không** tới được qua API — đánh dấu tuỳ chọn) · `-023`, `-024` (nhắm route admin, ngoài phạm vi 3 API chính — đối chứng, tuỳ chọn).
+> **Trạng thái sau Bước 2 (kiểm toán).** `-003`, `-004`, `-006`, `-007`, `-012` **đã chốt expected bằng probe thật** — cả 5 đều trả `404` (riêng `-004` là 404 tầng routing, body HTML). `-016`, `-026` đã xác nhận `403`. `-022` **đưa ra khỏi bộ chạy** (không tới được qua API), `-043` chuyển thành assertion hậu-suite. Còn `-013`, `-014`, `-015`, `-031`, `-032` cần tự ký JWT; `-023`, `-024` nhắm route admin nên để tuỳ chọn — cả nhóm chốt ở Bước 4.
 
 **Ma trận chuyển trạng thái (theo P7 — chỉ giữ trạng thái/chuyển tiếp có bằng chứng từ đặc tả hoặc mã nguồn; không giả định trạng thái không tồn tại)**
 
@@ -583,7 +583,7 @@ Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
 | TC-API3-005 | Thiếu `type` | EP | COV-013 · FR-17 | Body bỏ key `type` | 200; `GET` cho thấy `type` **không** rơi về `'percent'` (DEFAULT bất hoạt) | AI |
 | TC-API3-006 | `type` ngoài enum | EP | COV-016 · FR-17 (enum không thực thi) | `type:"installment"` | 200, lưu nguyên văn — không có `CHECK` | AI |
 | TC-API3-007 | Thiếu `discount_value` | EP | COV-020 · FR-17 | Body bỏ key `discount_value` | 200 — không có presence check | AI |
-| TC-API3-008 | `discount_value` sai kiểu (string) | EP | COV-025 | `discount_value:"10"` | ⚠️ 200 **hoặc** 500 — chưa xác nhận, cần probe | AI |
+| TC-API3-008 | `discount_value` sai kiểu (string) | EP | COV-025 | `discount_value:"10"` | `200` · tạo được coupon | AI · **đã sửa** |
 | TC-API3-009 | Thiếu `min_order_amount` | EP | COV-029 · FR-17 | Body bỏ key `min_order_amount` | 200 — `DEFAULT 0` cũng bất hoạt | AI |
 | TC-API3-010 | Thiếu `expired_at` | EP | COV-036 · FR-17 | Body bỏ key `expired_at` | 200 — không có presence check | AI |
 | TC-API3-011 | `expired_at` là ngày quá khứ | EP + BR | COV-035,060 | `expired_at:"2020-01-01"` | 200 — giống hệt coupon `EXPIRED` được seed sẵn | AI |
@@ -595,7 +595,7 @@ Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
 | TC-API3-017 | `min_order_amount = -1` (biên min−1) | BVA | COV-031 · FR-17 (`>=0`) | `min_order_amount:-1` | 200 (kỳ vọng đặc tả: từ chối) | AI |
 | TC-API3-018 | `min_order_amount = 0` (biên min, **bao gồm**) | BVA | COV-027 · FR-17 | `min_order_amount:0` | 200 · hợp lệ — lưu ý biên này *bao gồm*, khác `discount_value` | AI |
 | TC-API3-019 | `max_uses_per_user = 0` (số) → **bị ép thành 1** | BVA | COV-044 · FR-17 (`>=1`) | `max_uses_per_user:0` | 200; `GET` cho thấy **`1`, không phải `0`** | AI |
-| TC-API3-020 | `max_uses_per_user = "0"` (chuỗi) → **KHÔNG bị ép** | BVA | COV-048 · FR-17 | `max_uses_per_user:"0"` | 200; `GET` cho thấy lưu đúng chuỗi `"0"` — **đối lập TC-019** | AI |
+| TC-API3-020 | `max_uses_per_user = "0"` (chuỗi) → vượt `\|\| 1` nhưng **bị SQLite ép thành số `0`** | BVA | COV-048 · FR-17 | `max_uses_per_user:"0"` | `200`; `GET` trả **số `0`** (không phải chuỗi `"0"`) — SQLite INTEGER affinity ép tiếp. **Giá trị `0` mà `\|\| 1` sinh ra để chặn vẫn vào được DB** | AI · **đã sửa** |
 | TC-API3-021 | `max_uses_per_user = 1` (biên min) | BVA | COV-042 · FR-17 | `max_uses_per_user:1` | 200 · hợp lệ, không bị biến đổi | AI |
 | TC-API3-022 | `max_uses_per_user = -5` → **KHÔNG bị ép** | BVA | COV-045 · FR-17 | `max_uses_per_user:-5` | 200; lưu đúng `-5` — số âm là truthy nên `\|\|` không can thiệp | AI |
 | TC-API3-023 | `discount_value` cực lớn | BVA | COV-026 | `discount_value:999999999` | 200 — không có chặn trên nào | AI |
@@ -615,10 +615,10 @@ Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
 | TC-API3-037 | Schema response `DELETE` thành công | Schema | COV-086 | Coupon tồn tại, token admin | 200 · đúng 1 key `message` = `"Coupon deleted"` | AI |
 | TC-API3-038 | Schema lỗi 401 | Schema | COV-087 | (bỏ header) | 401 · đúng 1 key `error` = `"Unauthorized"` | AI |
 | TC-API3-039 | Schema lỗi 500 khi trùng `code` — lộ text driver | Schema | COV-089 | `code:"SCHEMA03"` đã tồn tại | 500 · `error` chứa nguyên văn thông báo UNIQUE của SQLite | AI |
-| TC-API3-040 | Xác nhận **không** tồn tại đường 400/409 | Schema | COV-090 | Tổng hợp TC-002,003,006,008,015,017,019,022,023 | Không TC nào trả 400/409 — không có validation tầng ứng dụng | AI |
+| TC-API3-040 | Xác nhận **không** tồn tại đường 400/409 | Schema | COV-090 | Tổng hợp TC-002,003,006,008,015,017,019,022,023 | Không TC nào trả 400/409 **từ handler** (400 chỉ đến từ `bodyParser`, xem TC-068) | AI · **assertion hậu-suite** |
 | TC-API3-041 | `DELETE` id không tồn tại → 200, **không** 404 | Schema | COV-091 | `DELETE /api/admin/coupons/999999` | 200 · body giống hệt lần xoá thật (`this.changes` không kiểm) | AI |
-| TC-API3-042 | Bất đối xứng ép kiểu `max_uses_per_user` | Quy tắc nghiệp vụ | COV-095 · FR-17 | Đối chiếu kết quả TC-019 / TC-020 / TC-022 | Lưu lần lượt `1` / `"0"` / `-5` — 3 input "không hợp lệ" cho 3 hành vi khác nhau | AI |
-| TC-API3-043 | `is_active` luôn = 1 với mọi coupon do suite tạo | Quy tắc nghiệp vụ | COV-096 | GET `/api/coupons` cuối suite | Không coupon nào của suite có `is_active = 0` | AI |
+| TC-API3-042 | Bất đối xứng ép kiểu `max_uses_per_user` | Quy tắc nghiệp vụ | COV-095 · FR-17 | Đối chiếu kết quả TC-019 / TC-020 / TC-022 | Lưu lần lượt `1` / **`0`** / `-5` — 3 input "không hợp lệ" cho 3 hành vi khác nhau | AI · **mục nhận xét** |
+| TC-API3-043 | `is_active` luôn = 1 với mọi coupon do suite tạo | Quy tắc nghiệp vụ | COV-096 | GET `/api/coupons` cuối suite | Không coupon nào của suite có `is_active = 0` | AI · **assertion hậu-suite** |
 | TC-API3-044 | Chuỗi dọn dữ liệu: tạo → xoá → verify | Schema + ST | COV-092,097 | POST → DELETE bằng `id` trả về → GET `/api/coupons` | GET **không** còn `code:"CLEANUPTEST01"` — xác thực cơ chế teardown của cả suite | AI |
 | TC-API3-045 | `type:"fixed"` — **giá trị enum hợp lệ thứ hai** | EP | COV-012 · FR-17 | `type:"fixed"`, `discount_value:50000` | 200 · enum có 2 giá trị hợp lệ, cả hai đều phải được phủ | AI |
 | TC-API3-046 | `code` là `null` | EP | COV-004 · FR-17 | `code:null` | 200 — cột không có `NOT NULL`; SQLite coi mỗi NULL là khác nhau nên `UNIQUE` không chặn | AI |
@@ -641,27 +641,27 @@ Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
 | TC-API3-063 | Scheme không chuẩn vẫn được chấp nhận | Security | COV-067 · §6 (đặc tả ghi `Bearer`) | `Authorization: Basic {{tokenAdmin}}` | 200 — scheme không được kiểm | AI |
 | TC-API3-064 | JWT ký bằng secret khác | Security | COV-069 · SEC-02 | Token ký sai khoá | 403 · `{"error":"Forbidden"}` | AI |
 | TC-API3-065 | Token giả mạo có `exp` quá khứ | Security | COV-070 · SEC-02 | Token tự ký, `exp` quá khứ | 403 · `{"error":"Forbidden"}` | AI |
-| TC-API3-066 | Body JSON rỗng `{}` | EP | COV-056 | `{}` | ⚠️ chưa xác nhận — 6 trường thành `undefined`, `max_uses` ép thành `1`; cần probe | AI |
-| TC-API3-067 | Không gửi body / sai `Content-Type` | EP | COV-057 | (không body, không `Content-Type`) | ⚠️ chưa xác nhận — destructure `req.body` không có guard; cần probe | AI |
-| TC-API3-068 | JSON sai cú pháp | EP | COV-058 | `{"code":"A",` (cụt) | ⚠️ chưa xác nhận — lỗi phát sinh ở `bodyParser` trước handler; cần probe | AI |
+| TC-API3-066 | Body JSON rỗng `{}` | EP | COV-056 | `{}` | `200` — **tạo được coupon rỗng**: `code/type/discount_value/min_order_amount/expired_at` đều `null`, chỉ `max_uses_per_user=1` | AI · **đã sửa** |
+| TC-API3-067 | Không gửi body / sai `Content-Type` | EP | COV-057 | (không body, không `Content-Type`) | `500` · body là **HTML**, không phải `{"error":...}` — `TypeError` khi destructure `req.body` | AI · **đã sửa** |
+| TC-API3-068 | JSON sai cú pháp | EP | COV-058 | `{"code":"A",` (cụt) | `400` · body là **HTML**, sinh bởi `bodyParser` trước khi vào handler | AI · **đã sửa** |
 | TC-API3-069 | `DELETE` không gửi token | Security | COV-064 (biến thể DELETE) · SEC-02 | `DELETE /api/admin/coupons/5`, bỏ header | 401 · `{"error":"Unauthorized"}` | AI |
-| TC-API3-070 | `DELETE` với `:id` không phải số | EP | COV-010 (biến thể DELETE) | `DELETE /api/admin/coupons/abc` | ⚠️ chưa xác nhận — `:id` không được parse/validate; cần probe | AI |
+| TC-API3-070 | `DELETE` với `:id` không phải số | EP | COV-010 (biến thể DELETE) | `DELETE /api/admin/coupons/abc` | `200` · `{"message":"Coupon deleted"}` dù không xoá gì — `this.changes` không kiểm | AI · **đã sửa** |
 | TC-API3-071 | `DELETE` với payload SQL injection trong `:id` | Security | COV-010 · SEC-05 | `DELETE /api/admin/coupons/1 OR 1=1` | 200 (không xoá gì) — tham số hoá, không thực thi SQL | AI |
 | TC-API3-072 | `code` rất dài | EP | COV-007 · (không có giới hạn độ dài) | `code` 5.000 ký tự | 200 — không có ràng buộc độ dài ở cả đặc tả lẫn schema | AI |
 | TC-API3-073 | `code` chỉ chứa khoảng trắng | EP | COV-009 | `code:"   "` | 200 — không có trim/format check | AI |
-| TC-API3-074 | `code` sai kiểu (number) | EP | COV-006 | `code:12345` | ⚠️ chưa xác nhận — cần probe | AI |
-| TC-API3-075 | `type` sai kiểu (number) | EP | COV-017 | `type:1` | ⚠️ chưa xác nhận — cần probe | AI |
-| TC-API3-076 | `discount_value` là số thập phân | EP | COV-024 · (cột `INTEGER`) | `discount_value:10.5` | ⚠️ chưa xác nhận — hành vi affinity `INTEGER`; cần probe | AI |
-| TC-API3-077 | `min_order_amount` sai kiểu (boolean) | EP | COV-033 | `min_order_amount:true` | ⚠️ chưa xác nhận — cần probe | AI |
+| TC-API3-074 | `code` sai kiểu (number) | EP | COV-006 | `code:12345` | `200`; lưu thành **chuỗi** `"12345"` (TEXT affinity) | AI · **đã sửa** |
+| TC-API3-075 | `type` sai kiểu (number) | EP | COV-017 | `type:1` | `200`; lưu thành **chuỗi** `"1"` — enum bị phá hoàn toàn | AI · **đã sửa** |
+| TC-API3-076 | `discount_value` là số thập phân | EP | COV-024 · (cột `INTEGER`) | `discount_value:10.5` | `200`; lưu **nguyên `10.5`** (REAL) — cột `INTEGER` không ép vì sẽ mất mát | AI · **đã sửa** |
+| TC-API3-077 | `min_order_amount` sai kiểu (boolean) | EP | COV-033 | `min_order_amount:true` | `200`; lưu thành `1` — boolean bị ép sang integer | AI · **đã sửa** |
 | TC-API3-078 | `expired_at` có kèm phần giờ | EP | COV-041 · (không quy định định dạng) | `expired_at:"2099-12-31T23:59:59Z"` | 200 — `DATETIME` chỉ là affinity, lưu nguyên chuỗi | AI |
-| TC-API3-079 | `expired_at` sai kiểu (timestamp số) | EP | COV-040 | `expired_at:1735689600` | ⚠️ chưa xác nhận — cần probe | AI |
-| TC-API3-080 | `max_uses_per_user` là số thập phân | EP | COV-049 | `max_uses_per_user:1.5` | ⚠️ chưa xác nhận — cần probe | AI |
-| TC-API3-081 | `max_uses_per_user` là boolean | EP | COV-050 | `false` → ép thành `1`; `true` → truthy, giữ nguyên | 200 · hai kết quả **đối lập** cho cùng một kiểu dữ liệu | AI |
+| TC-API3-079 | `expired_at` sai kiểu (timestamp số) | EP | COV-040 | `expired_at:1735689600` | `200`; lưu **nguyên số** `1735689600` — `DATETIME` chỉ là affinity | AI · **đã sửa** |
+| TC-API3-080 | `max_uses_per_user` là số thập phân | EP | COV-049 | `max_uses_per_user:1.5` | `200`; lưu **nguyên `1.5`** (REAL) | AI · **đã sửa** |
+| TC-API3-081a/b | `max_uses_per_user` là boolean (**tách 2 TC**) | EP | COV-050 | **Tách 2 TC:** `-081a` gửi `false` · `-081b` gửi `true` | Cả hai `200`, đều lưu **`1`** — nhưng khác cơ chế: `false` bị `\|\| 1` bắt, `true` truthy rồi bị SQLite ép sang `1` | AI · **đã sửa** |
 | TC-API3-082 | `max_uses_per_user` cực lớn | BVA | COV-051 · (không có chặn trên) | `max_uses_per_user:999999999` | 200 — không có giới hạn trên nào được đặc tả | AI |
 
 > **Vì sao API 3 có nhiều TC hơn API 1/2 (82 vs 42/43).** Đây là chủ ý, không phải mất cân đối: API 3 có **6 trường request** (API 1 có 4, API 2 có 0), **2 endpoint** (`POST` + `DELETE`), và **nhiều ràng buộc FR-17 được phát biểu rõ nhất** (`unique`, enum 2 giá trị, 3 biên số học). Phân bổ theo rủi ro/độ phức tạp đúng nguyên tắc ISTQB FL §5.1, không chia đều máy móc.
 
-> **19 TC cần rà soát thủ công:** `-008`, `-066`, `-067`, `-068`, `-070`, `-074`, `-075`, `-076`, `-077`, `-079`, `-080` (hành vi bind kiểu / body chưa xác nhận — cần probe ở Bước 4) · `-020`, `-081` (biên truthy JS — phát hiện quan trọng nhất của API này, nên xác nhận kỹ) · `-024`, `-061` (suy luận nhánh code) · `-032`, `-065` (cần tự ký JWT) · `-042` (bước tổng hợp, không phải request độc lập) · `-047` (case-sensitivity của `UNIQUE` — phụ thuộc collation, nên xác nhận trực tiếp).
+> **Trạng thái sau Bước 2 (kiểm toán).** **13 TC đã chốt expected bằng probe thật**: `-008`, `-066`, `-067`, `-068`, `-070`, `-074`, `-075`, `-076`, `-077`, `-079`, `-080`, và đặc biệt `-020`/`-081` — hai cái này expected ban đầu **sai**, đã sửa. `-047` xác nhận `200` (`UNIQUE` phân biệt hoa/thường). `-040`, `-042`, `-043` chuyển thành assertion hậu-suite / mục nhận xét. Còn `-024`, `-061`, `-032`, `-065` cần tự ký JWT hoặc header đặc biệt — chốt ở Bước 4.
 
 ### 6.2 Bước 2 — Kiểm toán (rà soát của con người)
 
