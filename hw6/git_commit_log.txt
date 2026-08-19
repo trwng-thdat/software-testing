@@ -11,6 +11,9 @@ Ngay xuat : 2026-08-19
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+2d25eb2 2026-08-19 docs(hw6): Bước 3 — 15 test case tự bổ sung mà AI đã bỏ sót
+1877ccb 2026-08-19 docs(hw6): Bước 2 — kiểm toán 167 test case bằng probe SUT thật
+b3abc4d 2026-08-19 docs(hw6): git commit log dạng .txt và đồng bộ §12 của báo cáo
 d99d477 2026-08-19 docs(hw6): AI Audit Report — 14 artifact kiểm toán + log 38 prompt verbatim
 032ebde 2026-08-19 feat(hw6): mở rộng API 3 từ 44 lên 82 test case, đóng 4 nhóm coverage thiếu
 97210e6 2026-08-19 fix(hw6): sửa lệch số học bảng kỹ thuật API 2 (EP 8 -> 7)
@@ -39,18 +42,20 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
  8   97210e6   Ra soat cua con nguoi - sua loi so hoc           API 2
  9   032ebde   Ra soat cua con nguoi - dong 4 nhom thieu        API 3
 10   d99d477   Bao cao Kiem toan AI (Phu luc A)                 ca 3 API
+11   b3abc4d   Git commit log + dong bo muc 12                  ca 3 API
+12   1877ccb   BUOC 2 Kiem toan 167 TC (probe SUT that)         ca 3 API
+13   2d25eb2   BUOC 3 Mo rong 15 TC tu bo sung                  ca 3 API
 --------------------------------------------------------------------------------
 
-[3] TRANG THAI CAC BUOC CON LAI
+[3] TRANG THAI CAC BUOC
 --------------------------------------------------------------------------------
 Da hoan thanh:
-  BUOC 1 - Sinh test bang AI ............ XONG (42 + 43 + 82 = 167 test case)
-  Ra soat cua con nguoi (mot phan) ...... XONG (3 loi that da phat hien va sua,
-                                          ghi trong AI Audit Report)
+  BUOC 1 - Sinh test bang AI ....... XONG   42 + 43 + 82 = 167 test case
+  BUOC 2 - Kiem toan ............... XONG   VALID 129 / INVALID 9 / INCOMPLETE 29
+                                            (co probe SUT that, khong suy doan)
+  BUOC 3 - Mo rong ................. XONG   15 test case tu bo sung (5 moi API)
 
 CHUA thuc hien - se co commit rieng cho tung buoc khi lam:
-  BUOC 2 - Kiem toan VALID/INVALID/INCOMPLETE cho tung API   (3 commit)
-  BUOC 3 - Mo rong >= 5 test case tu nghi cho tung API       (3 commit)
   BUOC 4 - Thuc thi Postman + Newman cho tung API            (3 commit)
   BUOC 5 - Bao cao loi + GitHub Issues                       (1-3 commit)
   Postman collection + environment + data file               (1-2 commit)
@@ -58,6 +63,16 @@ CHUA thuc hien - se co commit rieng cho tung buoc khi lam:
   Agent Skill - so do tu ve + ma gia                         (1-2 commit)
 
 Khong tao commit khong tuong ung voi cong viec da lam that.
-Cac buoc chua chay khong duoc ghi nhan trong log nay.
+
+[4] BANG CHUNG THU DUOC O BUOC 2 (probe SUT that tren localhost:3000)
+--------------------------------------------------------------------------------
+Ba vi pham duoc XAC NHAN bang thuc thi:
+  SEC-06  PUT /api/users/me voi role="admin"  -> 200, DB luu role='admin'
+  FR-10   User thuong huy don shipping        -> 200, status -> 'canceled'
+  SEC-03  Token role="user" goi API admin     -> POST/GET/DELETE deu 200
+
+Hai expected do AI viet bi BAC BO:
+  max_uses_per_user="0"  -> luu so 0 (khong phai chuoi "0")
+  max_uses_per_user=true -> luu 1    (khong phai "giu nguyen")
 
 ================================================================================

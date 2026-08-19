@@ -953,8 +953,11 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 8 | `97210e6` | 2026-08-19 | Rà soát của con người — sửa lệch số học EP | API 2 |
 | 9 | `032ebde` | 2026-08-19 | Rà soát của con người — đóng 4 nhóm coverage thiếu (44→82 TC) | API 3 |
 | 10 | `d99d477` | 2026-08-19 | Báo cáo Kiểm toán AI (Phụ lục A) | cả 3 API |
+| 11 | `b3abc4d` | 2026-08-19 | Git commit log + đồng bộ §12 | cả 3 API |
+| 12 | `1877ccb` | 2026-08-19 | **Bước 2** — Kiểm toán 167 TC bằng probe SUT thật | cả 3 API |
+| 13 | `2d25eb2` | 2026-08-19 | **Bước 3** — 15 TC tự bổ sung AI đã bỏ sót | cả 3 API |
 
-**Các bước sẽ có commit riêng khi thực hiện:** Bước 2 kiểm toán (3 commit) · Bước 3 mở rộng ≥5 TC (3 commit) · Bước 4 thực thi Newman (3 commit) · Bước 5 báo lỗi (1–3 commit) · Postman collection · CI/CD 2 lần chạy · Agent Skill.
+**Các bước sẽ có commit riêng khi thực hiện:** Bước 4 thực thi Newman (3 commit) · Bước 5 báo lỗi (1–3 commit) · Postman collection · CI/CD 2 lần chạy · Agent Skill.
 
 > Không tạo commit cho công việc chưa thực sự làm — các bước chưa chạy không xuất hiện trong log.
 
