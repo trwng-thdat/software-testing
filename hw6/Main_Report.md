@@ -39,7 +39,7 @@
 | — VALID                   |   31 (73.8%)  |   33 (76.7%)  |   65 (79.3%)  | 129 (77.2%) |
 | — INVALID (đã sửa)        |    2 (4.8%)   |    2 (4.7%)   |    5 (6.1%)   |   9 (5.4%)  |
 | — INCOMPLETE (đã bổ sung) |    9 (21.4%)  |    8 (18.6%)  |   12 (14.6%)  |  29 (17.4%) |
-| Test case tôi tự bổ sung  |  «pending — Bước 3»  |  «pending»  |  «pending»  |  «pending»  |
+| Test case tôi tự bổ sung  |       5       |       5       |       5       |     15      |
 | **Tổng test đã thực thi** |      «»       |      «»       |      «»       |    «»    |
 | — PASS                    |      «»       |      «»       |      «»       |    «»    |
 | — FAIL                    |      «»       |      «»       |      «»       |    «»    |
@@ -61,9 +61,9 @@
 | **1**  | [Phạm vi và Lựa chọn API](#1-phạm-vi-và-lựa-chọn-api)                               | 3 API / 3 Pool   |
 | **2**  | [Môi trường Kiểm thử](#2-môi-trường-kiểm-thử)                                       | «»               |
 | **3**  | [Phương pháp làm việc với AI](#3-phương-pháp-làm-việc-với-ai)                       | P3–P11 (9 bước)  |
-| **4**  | API 1 — `PUT /api/users/me` (§4)                                                                  | 42 TC AI · «pending» bug |
-| **5**  | API 2 — `PUT /api/orders/:id/cancel` (§5)                                                                  | 43 TC AI · «pending» bug |
-| **6**  | API 3 — `POST /api/admin/coupons` (§6)                                                                  | 82 TC AI · «pending» bug |
+| **4**  | API 1 — `PUT /api/users/me` (§4)                                                                  | 42 TC AI + 5 tự bổ sung · «pending» bug |
+| **5**  | API 2 — `PUT /api/orders/:id/cancel` (§5)                                                                  | 43 TC AI + 5 tự bổ sung · «pending» bug |
+| **6**  | API 3 — `POST /api/admin/coupons` (§6)                                                                  | 82 TC AI + 5 tự bổ sung · «pending» bug |
 | **7**  | [Tính năng Postman đã sử dụng](#7-tính-năng-postman-đã-sử-dụng)                     | «n» tính năng    |
 | **8**  | [Tích hợp CI/CD](#8-tích-hợp-cicd)                                                  | 2 run mẫu        |
 | **9**  | [Agent Skill — Bộ sinh test API](#9-agent-skill--bộ-sinh-test-api-do-ai-điều-khiển) | Sơ đồ tự vẽ      |
@@ -280,13 +280,17 @@ Môi trường probe: `node database.js` → `node server.js` trên `localhost:3
 
 | ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót** |
 | ------ | ------- | -------------- | ----- | -------- | -------------------- |
-| A1-E01 | «»      | «»             | «»    | «»       | «»                   |
+| **A1-E01** | JSON sai cú pháp trả `400` **dạng HTML**, không phải JSON | Schema | `PUT` với body `{"name":"A",` (cụt), `Content-Type: application/json` | `400` · body là trang HTML `<!DOCTYPE html>`, **không** có key `error` | **Hạn chế của mô hình.** AI trace từ `app.put` (`server.js:118`) xuống, nên chỉ thấy các nhánh *bên trong* handler và kết luận "không có 400". Nó không xét `bodyParser.json()` ở `server.js:12` — middleware chạy **trước** handler và tự sinh 400. Đây là điểm mù của lối đọc code từ điểm vào cục bộ. |
+| **A1-E02** | Không gửi body trả `500` **dạng HTML** | Schema | `PUT` không body, không `Content-Type` | `500` · trang HTML, **không** có key `error` | **Hạn chế của mô hình.** Cùng gốc với E01. AI có nêu nghi vấn "destructure `req.body` không có guard" ở P4 nhưng **không dám chốt**, nên không sinh TC. Tôi chạy thật thì `req.body` là `undefined` → `TypeError` ở `server.js:119` → Express trả 500 HTML. Hệ quả nghiêm trọng: client parse JSON sẽ crash. |
+| **A1-E03** | Mạo danh **id có thật** của người khác để sửa hồ sơ họ | SEC-02 / IDOR | Token tự ký `{id:1,role:"user"}` (id 1 = admin thật), body đổi `name` | `200`, hồ sơ **admin** bị sửa bởi người không phải admin | **Đặc điểm riêng của API.** AI kết luận đúng rằng endpoint "không có kênh IDOR" vì `WHERE id = req.user.id` lấy từ token. Nhưng nó coi token là **bất khả xâm phạm**, trong khi `SECRET_KEY` nằm ngay trong repo (`server.js:9`). AI có sinh TC-028 (id **không tồn tại**) mà không sinh TC mạo danh id **có thật** — đúng ra mới là kịch bản gây hại. |
+| **A1-E04** | Chuỗi leo thang **đầy đủ**: nâng quyền → đăng nhập lại → dùng quyền admin | SEC-06 → SEC-03 | (1) `PUT` `role:"admin"` · (2) `POST /api/login` lấy token mới · (3) gọi `GET /api/admin/users` | Bước 3 trả `200` — leo thang **có hiệu lực thật**, không chỉ đổi giá trị trong DB | **Chất lượng prompt.** Tôi yêu cầu AI phân tích *từng API riêng lẻ*, nên nó dừng ở "role đổi được" (TC-029) và ghi nhận token cũ còn stale (TC-042) — rồi kết luận hệ quả "chỉ tiềm ẩn". Nó không tự bắc cầu sang bước đăng nhập lại vì tôi chưa bao giờ yêu cầu nối chuỗi liên-API. |
+| **A1-E05** | Kiểm chứng **động** rằng `email` thật sự không sửa được | FR-04 | `PUT` body kèm `"email":"hacker@evil.com"` | `200`, `GET` cho thấy `email` **vẫn là** `test@eshop.com` | **Hạn chế của mô hình.** AI kết luận `email` an toàn "by construction" vì không nằm trong danh sách destructure ở `server.js:119` — một suy luận **tĩnh** rồi coi như xong. Nhưng FR-04 nêu ràng buộc này rõ ràng, mà ràng buộc đã nêu thì phải có TC chứng minh, không được suy luận thay. Đây là loại giả định "chắc chắn đúng nên khỏi test" mà con người phải bắt. |
 
 | Nguyên nhân bỏ sót     | Số TC | Diễn giải |
 | ---------------------- | :---: | --------- |
-| Chất lượng prompt      |  «»   | «»        |
-| Hạn chế của mô hình    |  «»   | «»        |
-| Đặc điểm riêng của API |  «»   | «»        |
+| Chất lượng prompt      |   1   | A1-E04 — tôi ra lệnh phân tích từng API tách biệt nên AI không nối chuỗi hệ quả liên-API. Lỗi của tôi, không phải của AI. |
+| Hạn chế của mô hình    |   3   | A1-E01, A1-E02 (đọc code từ handler ra ngoài nên mù middleware), A1-E05 (dừng ở suy luận tĩnh, không chuyển thành TC) |
+| Đặc điểm riêng của API |   1   | A1-E03 — bảo mật của endpoint này dựa **hoàn toàn** vào tính toàn vẹn của token; khi secret bị lộ thì kết luận "không có IDOR" sụp đổ |
 
 ### 4.4 Bước 4 — Thực thi (Postman + Newman)
 
@@ -467,13 +471,17 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 
 | ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót** |
 | ------ | ------- | -------------- | ----- | -------- | -------------------- |
-| A2-E01 | «»      | «»             | «»    | «»       | «»                   |
+| **A2-E01** | Hủy đơn **đồng thời** với admin chuyển trạng thái (race condition) | Chuyển trạng thái / tính nhất quán | Bắn song song: `PUT /api/orders/{id}/cancel` (token user) và `PUT /api/admin/orders/{id}/status` `{"status":"delivered"}` trên **cùng** một đơn `shipping` | Trạng thái cuối phải nhất quán, không được có kết quả mà **cả hai** request đều báo thành công nhưng chỉ một tác dụng | **Hạn chế của mô hình.** Đây là lỗ hổng AI **tự hẹn rồi tự đánh rơi**: nêu ở P5, hứa để dành cho P7, không giao ở P7, không lên lịch ở P10, không sinh ở P11 — bốn lần liên tiếp. Chỉ lộ ra khi tôi bắt nó tự rà lại. Gốc rễ: `server.js:322` (đọc) và `server.js:333` (ghi) là hai câu lệnh rời, không transaction, không khóa. |
+| **A2-E02** | Vượt chặn ownership bằng token mạo danh chủ đơn | SEC-02 / IDOR | User B tự ký token `{id:2}` (id của user A) rồi hủy đơn của A | `200` — hủy được đơn người khác | **Đặc điểm riêng của API.** AI kết luận đúng "không có IDOR" vì `WHERE id=? AND user_id=?` lấy `user_id` từ token (`server.js:323-324`). Nhưng kết luận đó chỉ đúng **nếu token không giả mạo được**. Với `SECRET_KEY` lộ ở `server.js:9`, hàng rào ownership sụp hoàn toàn. AI có sinh TC-015 (mạo danh id=2) nhưng đóng khung là "chứng minh forgery hoạt động", **không** đóng khung là "vượt kiểm soát ownership" — nên không ai đọc báo cáo mà thấy được đây là IDOR. |
+| **A2-E03** | Chuỗi 2 lỗ hổng: user hủy đơn `shipping` → admin hồi sinh thành `delivered` → đơn vào doanh thu | Chuyển trạng thái + FR-13 | (1) user hủy đơn `shipping` (2) admin set `delivered` trên đơn `canceled` (3) đọc `GET /api/admin/orders` | Đơn **đã bị hủy** lại mang trạng thái `delivered`, tức được tính vào tổng doanh thu theo FR-13 | **Chất lượng prompt.** Tôi yêu cầu AI phân tích chuyển trạng thái **theo từng ô** của ma trận. Nó tìm ra cả hai lỗ hổng riêng lẻ (TC-018 và TC-024) nhưng không nối chúng, vì tôi chưa bao giờ yêu cầu tìm **chuỗi khai thác**. Hệ quả tài chính chỉ hiện ra khi ghép hai ô lại. |
+| **A2-E04** | Hủy đơn **mồ côi** sau khi admin xóa chủ đơn | Chuyển trạng thái / toàn vẹn dữ liệu | (1) admin `DELETE /api/admin/users/{id}` xóa user A (2) user A dùng token cũ (vẫn hợp lệ) hủy đơn của mình | Token vẫn verify được (`server.js:51` không có `exp`) nhưng hàng user đã mất — quan sát xem đơn còn hủy được không | **Hạn chế của mô hình.** AI có nhận diện lớp "đơn mồ côi" (COV-027) nhưng **tự loại** với lý do "phải sửa DB trực tiếp". Kết luận đó sai: `DELETE /api/admin/users/:id` (`server.js:504`) xóa user mà **không** đụng bảng `orders` — vì không có khóa ngoại (`database.js:76`). Trạng thái mồ côi tới được **hoàn toàn bằng API**. AI đánh giá sai tính khả thi rồi bỏ luôn. |
+| **A2-E05** | Thông báo lỗi 400 **không "phù hợp"** như FR-10 đòi hỏi | Chuyển trạng thái / schema | Hủy đơn `delivered` và hủy đơn `canceled`, so 2 response | Cả hai trả **y hệt** `{"error":"Cannot cancel this order."}` — không cho biết đơn đã giao hay đã hủy | **Chất lượng prompt.** AI có sinh TC-040 kiểm hai response giống nhau từng byte, nhưng đóng khung là *đặc điểm schema* trung tính. Thực ra FR-10 viết rõ *"phải trả về lỗi với **thông báo phù hợp**"* — một thông báo chung chung cho hai nguyên nhân khác nhau là **chưa đạt yêu cầu**. Tôi đã đưa FR-10 cho AI nhưng không yêu cầu nó đánh giá **chất lượng** thông báo, nên nó chỉ mô tả mà không phán xét. |
 
 | Nguyên nhân bỏ sót     | Số TC | Diễn giải |
 | ---------------------- | :---: | --------- |
-| Chất lượng prompt      |  «»   | «»        |
-| Hạn chế của mô hình    |  «»   | «»        |
-| Đặc điểm riêng của API |  «»   | «»        |
+| Chất lượng prompt      |   2   | A2-E03, A2-E05 — tôi yêu cầu phân tích **từng ô** ma trận và **mô tả** schema, nên AI không đi tìm chuỗi khai thác cũng không đánh giá chất lượng thông báo lỗi |
+| Hạn chế của mô hình    |   2   | A2-E01 (tự hứa rồi đánh rơi qua 4 phase), A2-E04 (đánh giá sai tính khả thi rồi tự loại một lớp test hợp lệ) |
+| Đặc điểm riêng của API |   1   | A2-E02 — ownership của endpoint này dựa **hoàn toàn** vào token; secret lộ thì kết luận "không có IDOR" mất hiệu lực |
 
 ### 5.4 Bước 4 — Thực thi (Postman + Newman)
 
@@ -691,13 +699,19 @@ Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
 
 | ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót** |
 | ------ | ------- | -------------- | ----- | -------- | -------------------- |
-| A3-E01 | «»      | «»             | «»    | «»       | «»                   |
+| **A3-E01** | Số `0` **vẫn lọt vào DB** qua ngả chuỗi, vô hiệu hoá chính cơ chế `\|\| 1` | BVA + Quy tắc nghiệp vụ | Tạo 2 coupon: một với `max_uses_per_user:0`, một với `"0"`; đọc lại cả hai | Coupon A lưu `1` (bị chặn), coupon B lưu **`0`** (lọt) — cùng một giá trị nghiệp vụ, hai kết quả trái ngược | **Hạn chế của mô hình.** AI dừng suy luận ở tầng JavaScript (`"0"` truthy → vượt `\|\| 1`) và không đi tiếp xuống tầng SQLite affinity. Nó kết luận "lưu chuỗi `\"0\"`" trong khi thực tế lưu **số `0`**. Chỉ chạy thật mới lộ ra rằng lá chắn `\|\| 1` có một lỗ thủng đúng bằng giá trị nó định chặn. |
+| **A3-E02** | Coupon `max_uses_per_user = 0` khiến FR-09 C5 **chặn vĩnh viễn** | Quy tắc nghiệp vụ (hệ quả liên-API) | (1) tạo coupon `"0"` theo A3-E01 (2) `POST /api/apply-coupon` với `user_id` bất kỳ | Bị từ chối ngay lần đầu, vì `server.js:391` so `usage_count(0) >= max(0)` là **true** — coupon không bao giờ dùng được | **Chất lượng prompt.** Tôi ra lệnh "không invoke `apply-coupon` vì ngoài phạm vi 3 API", nên AI dừng ở "lưu được giá trị xấu". Nhưng một coupon chết cứng là **lỗi nghiệp vụ thật**, chỉ hiện ra khi đi tiếp một bước. Giới hạn phạm vi là quyết định của tôi, và nó đã che mất hệ quả. |
+| **A3-E03** | `code:null` tạo được **nhiều lần**, phá vỡ ràng buộc `unique` của FR-17 | EP + Quy tắc nghiệp vụ | Gọi `POST` hai lần liên tiếp với `code:null` | **Cả hai đều `200`** với id khác nhau — `UNIQUE` không chặn vì SQL coi mỗi `NULL` là khác biệt | **Hạn chế của mô hình.** AI có sinh TC-046 (`code:null`) nhưng chỉ gọi **một lần**, nên chỉ kết luận "không có `NOT NULL`". Ràng buộc bị vi phạm ở đây là **tính duy nhất**, mà muốn lộ ra thì phải gọi hai lần. AI test *thuộc tính của cột*, không test *ràng buộc nghiệp vụ*. |
+| **A3-E04** | User thường xoá **coupon seed của hệ thống** | SEC-03 (leo thang có hậu quả) | Token `role:"user"` → `DELETE /api/admin/coupons/1` (mã `SAVE10`) | `200` · `SAVE10` biến mất khỏi `GET /api/coupons` — người dùng thường phá được dữ liệu gốc | **Chất lượng prompt.** AI có TC-030 (user xoá coupon) nhưng chọn xoá **coupon do chính test tạo ra**, vì tôi đã nhấn mạnh "mọi TC phải dọn dữ liệu". Chỉ dẫn về vệ sinh dữ liệu vô tình khiến nó chọn mục tiêu vô hại, làm nhẹ đi mức nghiêm trọng thật của SEC-03. |
+| **A3-E05** | `discount_value` âm tạo coupon **làm tăng tiền phải trả** | BVA + hệ quả nghiệp vụ | (1) tạo coupon `type:"fixed"`, `discount_value:-50000` (2) `apply-coupon` với `total_amount:500000` | `final_amount = 500000 − (−50000) = 550000` — "giảm giá" khiến khách trả **nhiều hơn** | **Chất lượng prompt.** AI sinh TC-051 (giá trị âm) và dừng ở "200, lưu được", đúng phạm vi tôi giao. Nó không tính tiếp `final_amount = total − discount_amount` (`server.js:405`) để thấy dấu âm lật ngược ý nghĩa nghiệp vụ. Cùng khuôn với A3-E02: tôi cắt phạm vi ở ranh giới endpoint, nên hệ quả nằm bên kia ranh giới bị bỏ qua. |
 
 | Nguyên nhân bỏ sót     | Số TC | Diễn giải |
 | ---------------------- | :---: | --------- |
-| Chất lượng prompt      |  «»   | «»        |
-| Hạn chế của mô hình    |  «»   | «»        |
-| Đặc điểm riêng của API |  «»   | «»        |
+| Chất lượng prompt      |   3   | A3-E02, A3-E04, A3-E05 — tôi cắt phạm vi ở ranh giới 3 endpoint và nhấn mạnh dọn dữ liệu; cả hai chỉ dẫn đều đúng về mặt quản lý nhưng đã che mất hệ quả nghiệp vụ nằm ngay bên kia ranh giới |
+| Hạn chế của mô hình    |   2   | A3-E01 (suy luận dừng ở tầng JS, không xuống tầng lưu trữ), A3-E03 (test thuộc tính cột thay vì ràng buộc nghiệp vụ, nên gọi 1 lần thay vì 2) |
+| Đặc điểm riêng của API |   0   | — |
+
+> **Ghi chú về nhóm biên chéo.** Ở §6.1 tôi đã bổ sung TC-API3-058/059/060 cho `percent` + `discount_value` 100/101 sau khi phát hiện AI để trống hẳn nhóm này. Vì các TC đó nay đã nằm trong bộ chính, tôi **không** tính lại ở đây; 5 TC trên đều là những cái AI bỏ sót mà đến giờ vẫn chưa có TC nào phủ.
 
 ### 6.4 Bước 4 — Thực thi (Postman + Newman)
 
