@@ -36,10 +36,10 @@
 | ------------------------- | :-----------: | :-----------: | :-----------: | :------: |
 | Pool / FR                 |  A / **FR-04**  |  B / **FR-10**  |  C / **FR-17**  |    —     |
 | Test case AI sinh         |      42       |      43       |      82       |   167    |
-| — VALID                   |  «pending — chưa kiểm toán (Bước 2)»  |  «pending»  |  «pending»  |  «pending»  |
-| — INVALID (đã sửa)        |  «pending»  |  «pending»  |  «pending»  |  «pending»  |
-| — INCOMPLETE (đã bổ sung) |  «pending»  |  «pending»  |  «pending»  |  «pending»  |
-| Test case tôi tự bổ sung  |  «pending — chưa thực hiện Bước 3»  |  «pending»  |  «pending»  |  «pending»  |
+| — VALID                   |   31 (73.8%)  |   33 (76.7%)  |   65 (79.3%)  | 129 (77.2%) |
+| — INVALID (đã sửa)        |    2 (4.8%)   |    2 (4.7%)   |    5 (6.1%)   |   9 (5.4%)  |
+| — INCOMPLETE (đã bổ sung) |    9 (21.4%)  |    8 (18.6%)  |   12 (14.6%)  |  29 (17.4%) |
+| Test case tôi tự bổ sung  |  «pending — Bước 3»  |  «pending»  |  «pending»  |  «pending»  |
 | **Tổng test đã thực thi** |      «»       |      «»       |      «»       |    «»    |
 | — PASS                    |      «»       |      «»       |      «»       |    «»    |
 | — FAIL                    |      «»       |      «»       |      «»       |    «»    |
@@ -166,7 +166,7 @@ console.log("X-Student-Id =", pm.environment.get("studentId"));
 | Auth         | Bearer JWT (user) — `authenticateToken`, `server.js:100-110` |
 | Request body | `name` (string), `shipping_address` (string), `phone` (string) — theo `api_specification.md §2.2`. Trường `role` **không được đặc tả** nhưng mã nguồn vẫn đọc/ghi nếu truthy (`server.js:119,124-127`) — vi phạm SEC-06 |
 | Response 2xx | `200` — `{"message":"Profile updated"}` (không đặc tả trong `api_specification.md`; suy từ `server.js:133`) |
-| Mã lỗi       | `401` `{"error":"Unauthorized"}` · `403` `{"error":"Forbidden"}` · `500` `{"error":"<sqlite message>"}` — **không có 400/404** (không có validation/existence check) |
+| Mã lỗi       | **Từ handler (JSON):** `401` `{"error":"Unauthorized"}` · `403` `{"error":"Forbidden"}` · `500` `{"error":"<sqlite message>"}` — không có 400/404 vì không có validation/existence check.<br>**Từ middleware `bodyParser` (HTML, không phải JSON):** `400` khi JSON sai cú pháp · `500` khi thiếu body — phát hiện khi probe ở Bước 2, xem §4.2 và TC A1-E01/E02 |
 | Yêu cầu SEC  | SEC-02 (JWT hợp lệ — có, nhưng secret hardcode `server.js:9`, token không hết hạn) · **SEC-06 (vi phạm — `role` bị client ghi đè)** · SEC-05 (parameterized query — đạt) · SEC-01 (không áp dụng trực tiếp cho PUT, nhưng `GET /api/users/me` lộ `password`/`reset_token` dạng plaintext) |
 
 **Bảng tham số & phân vùng miền giá trị** _(rút gọn từ P5/P6; chi tiết đầy đủ nằm ở `testcases/API1.xlsx`)_
@@ -245,33 +245,42 @@ console.log("X-Student-Id =", pm.environment.get("studentId"));
 
 ### 4.2 Bước 2 — Kiểm toán (rà soát của con người)
 
+**Cách tôi kiểm toán.** Tôi không gán nhãn bằng cách đọc lướt. Với 42 TC của API 1, tôi làm ba việc: (1) đối chiếu từng `Expected` với `backend/server.js` ở đúng dòng xử lý; (2) **dựng SUT lên chạy thật** để chốt các TC mà AI để expected ở dạng "chưa xác nhận" — vì một test case không có kết quả mong đợi quyết định được thì không thể pass/fail, tức là chưa dùng được; (3) đối chiếu chéo với `README.md` (FR-04, SEC-06) xem nhãn kỹ thuật AI gán có đúng không.
+
+Môi trường probe: `node database.js` → `node server.js` trên `localhost:3000`, DB seed sạch, tài khoản `test@eshop.com` (id=2).
+
 | Nhãn       | Số TC | Tỉ lệ |
 | ---------- | :---: | :---: |
-| VALID      |  «»   |  «»%  |
-| INVALID    |  «»   |  «»%  |
-| INCOMPLETE |  «»   |  «»%  |
+| VALID      |  31   | 73.8% |
+| INVALID    |   2   |  4.8% |
+| INCOMPLETE |   9   | 21.4% |
+| **Tổng**   | **42**| 100%  |
 
 **Chi tiết các test case KHÔNG đạt**
 
-> ✍️ Mỗi dòng phải có lập luận cụ thể — đối chiếu đặc tả hoặc mã nguồn SUT (ghi `file:line`). Đây là phần chấm nặng nhất.
-
 | ID     | Nhãn       | AI viết gì               | Vì sao sai / thiếu (dẫn chứng)              | Tôi sửa thành           |
 | ------ | ---------- | ------------------------ | ------------------------------------------- | ----------------------- |
-| A1-0xx | INVALID    | «expected 200»           | «đặc tả §x.y quy định 422; `server.js:120`» | «expected 422»          |
-| A1-0xx | INCOMPLETE | «chỉ kiểm status code»   | «không kiểm schema / field bắt buộc»        | «thêm assertion schema» |
-| A1-0xx | INVALID    | «endpoint không tồn tại» | «AI bịa endpoint — không có trong spec»     | «loại bỏ / thay bằng …» |
+| TC-API1-004 | **INVALID** | Expected: `200 **hoặc** 500` | Một TC có hai kết quả mong đợi loại trừ nhau thì không thể đánh giá pass/fail — vi phạm nguyên tắc cơ bản của test case. AI viết vậy vì không suy được hành vi bind kiểu của `sqlite3` chỉ từ `server.js:122`. **Tôi chạy thật:** `name:12345` → `200`, và `GET` trả về `name:"12345"` — SQLite TEXT affinity ép số thành chuỗi. | Expected: `200` · `{"message":"Profile updated"}`; thêm assertion `GET` trả `name === "12345"` (kiểu string) |
+| TC-API1-006 | **INVALID** | Expected: `200 **hoặc** 500` | Cùng lỗi trên. **Tôi chạy thật:** `shipping_address:{"street":"x"}` → `200`, lưu thành chuỗi **`"[object Object]"`**. Đây là hỏng dữ liệu thầm lặng, đáng giá hơn hẳn cái expected mơ hồ ban đầu. | Expected: `200`; assertion `GET` trả `shipping_address === "[object Object]"` — ghi nhận là lỗi mất dữ liệu |
+| TC-API1-002 | INCOMPLETE | Chỉ kiểm `200` khi bỏ trường `name` | Không assert điều quan trọng nhất: `server.js:121-122` ghi `name` **vô điều kiện**, nên bỏ trường sẽ **ghi đè** giá trị cũ chứ không giữ nguyên. TC như AI viết vẫn pass kể cả khi SUT hành xử đúng lẫn sai. | Thêm bước `GET` trước/sau, assert `name` đã bị thay đổi |
+| TC-API1-005 | INCOMPLETE | Tương tự với `shipping_address` | Cùng lý do | Thêm assertion so sánh trước/sau |
+| TC-API1-008 | INCOMPLETE | Tương tự với `phone` | Cùng lý do | Thêm assertion so sánh trước/sau |
+| TC-API1-027 | INCOMPLETE | Token giả mạo `exp` quá khứ → 403 | Thiếu tiền điều kiện *cách tạo token*. `server.js:51` ký token **không** có `expiresIn`, nên trạng thái "token hết hạn" **không tồn tại** trong luồng đăng nhập bình thường — bắt buộc phải tự ký bằng `SECRET_KEY` ở `server.js:9`. AI không ghi rõ điều này. | Thêm pre-request script tạo token có `exp` quá khứ; ghi rõ đây là trạng thái chỉ tới được bằng giả mạo |
+| TC-API1-028 | INCOMPLETE | Token `id=999999` → 200 | Thiếu bước chứng minh **0 dòng bị ghi**. Đúng ra phải chỉ ra `server.js:131-134` không kiểm `this.changes`, nên 200 ở đây không đồng nghĩa với "đã cập nhật". | Thêm assertion: `GET` bằng token user thật cho thấy hồ sơ **không** đổi |
+| TC-API1-034 | INCOMPLETE | Schema 401 — request y hệt TC-API1-023 | Cùng một request, cùng expected, chỉ khác nhãn kỹ thuật. Trong Postman đây là **một** request với hai assertion, không phải hai TC. | Gộp vào TC-API1-023, giữ 2 assertion (status + schema) |
+| TC-API1-038 | INCOMPLETE | Assert `password === "Test1234!"` | Hard-code mật khẩu seed. Nếu chạy sau bất kỳ TC nào của FR-03 (reset password) thì giá trị đổi, TC fail sai. | Đổi thành assert **trường `password` tồn tại trong response** — đó mới là điều SEC-01 quan tâm, không phải giá trị cụ thể |
+| TC-API1-039 | INCOMPLETE | Mô tả 2 bước trong 1 dòng | Không tách rõ setup và assert; Newman cần 2 request riêng | Tách thành 2 request nối bằng `postman.setNextRequest` |
+| TC-API1-042 | INCOMPLETE | So claim `role` trong token với DB | Không phải assertion HTTP thuần — phải giải mã payload JWT | Ghi rõ dùng test script `atob(token.split('.')[1])` để đọc claim |
 
-**Nhận xét kiểm toán.** «2–5 câu: AI mắc lỗi theo mẫu nào, tập trung ở nhóm kỹ thuật nào?»
+**Tôi cũng sửa một lỗi trong chính §4.0 do kiểm toán phát hiện.** §4.0 ban đầu tôi ghi *"không có 400/404"*. Khi probe tôi thấy **JSON sai cú pháp trả `400`** và **không gửi body trả `500`**, cả hai đều là **trang HTML** của Express chứ không phải `{"error":...}`. Nguyên nhân: hai nhánh này phát sinh ở `bodyParser.json()` (`server.js:12`) **trước khi** vào handler, nên đọc handler không thể thấy. Đã sửa §4.0 và bổ sung thành 2 TC ở Bước 3.
+
+**Nhận xét kiểm toán.** Sai sót của AI đi theo hai khuôn rõ rệt. Thứ nhất — và nguy hiểm nhất — là **né tránh kết luận**: khi không suy được hành vi từ mã nguồn tĩnh, AI viết expected kiểu "200 hoặc 500" thay vì nói thẳng "cần chạy thử". Hai TC như vậy trông đầy đủ nhưng thực chất không kiểm được gì. Thứ hai là **assert nông**: nhiều TC (002, 005, 008, 028) chỉ kiểm status code mà bỏ qua đúng thứ cần kiểm là *dữ liệu sau khi ghi* — mà với endpoint này, `PUT` không echo lại gì nên status code gần như vô nghĩa nếu không có `GET` đi kèm. Đáng chú ý là các nhóm AI làm **tốt**: toàn bộ 8 TC biên `phone` và 4 TC ranh giới truthy `role` đều đúng khi tôi probe lại — AI mạnh ở chỗ suy diễn có luật rõ ràng, yếu ở chỗ phải quyết định khi thiếu thông tin.
 
 ### 4.3 Bước 3 — Mở rộng (≥ 5 test case tự nghĩ)
 
-| ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót**                                                      |
-| ------ | ------- | -------------- | ----- | -------- | ------------------------------------------------------------------------- |
-| A1-E01 | «»      | «SEC-04 IDOR»  | «»    | «»       | «hạn chế mô hình: không suy ra được quan hệ ownership giữa hai tài khoản» |
-| A1-E02 | «»      | «state»        | «»    | «»       | «chất lượng prompt: chưa nêu …»                                           |
-| A1-E03 | «»      | «»             | «»    | «»       | «đặc điểm riêng của API: …»                                               |
-| A1-E04 | «»      | «»             | «»    | «»       | «»                                                                        |
-| A1-E05 | «»      | «»             | «»    | «»       | «»                                                                        |
+| ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót** |
+| ------ | ------- | -------------- | ----- | -------- | -------------------- |
+| A1-E01 | «»      | «»             | «»    | «»       | «»                   |
 
 | Nguyên nhân bỏ sót     | Số TC | Diễn giải |
 | ---------------------- | :---: | --------- |
@@ -425,37 +434,40 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 
 ### 5.2 Bước 2 — Kiểm toán (rà soát của con người)
 
+**Cách tôi kiểm toán.** Tôi dựng SUT chạy thật, tạo đơn qua `POST /api/checkout`, dùng token admin đẩy trạng thái qua `PUT /api/admin/orders/:id/status` để tới đủ 5 trạng thái, rồi probe từng nhánh. Trọng tâm là 11 TC mà AI để expected dạng "chưa xác nhận".
+
 | Nhãn       | Số TC | Tỉ lệ |
 | ---------- | :---: | :---: |
-| VALID      |  «»   |  «»%  |
-| INVALID    |  «»   |  «»%  |
-| INCOMPLETE |  «»   |  «»%  |
+| VALID      |  33   | 76.7% |
+| INVALID    |   2   |  4.7% |
+| INCOMPLETE |   8   | 18.6% |
+| **Tổng**   | **43**| 100%  |
 
 **Chi tiết các test case KHÔNG đạt**
 
-> ✍️ Mỗi dòng phải có lập luận cụ thể — đối chiếu đặc tả hoặc mã nguồn SUT (ghi `file:line`).
-> **Điểm khởi đầu đã biết:** 11 TC đã được đánh dấu "cần rà soát thủ công" ở §5.1 — đây là ứng viên INCOMPLETE rõ ràng nhất, vì expected result còn ở dạng tạm (`⚠️ chưa xác nhận`).
-
 | ID     | Nhãn       | AI viết gì               | Vì sao sai / thiếu (dẫn chứng)              | Tôi sửa thành           |
 | ------ | ---------- | ------------------------ | ------------------------------------------- | ----------------------- |
-| TC-API2-003 | «INCOMPLETE» | «expected chưa xác định» | «AI không suy được hành vi type-affinity của SQLite từ mã nguồn» | «chốt sau khi probe» |
-| TC-API2-022 | «»         | «»                       | «cần sửa DB trực tiếp — không tới được qua API» | «»                   |
-| TC-API2-0xx | «»         | «»                       | «»                                          | «»                      |
+| TC-API2-022 | **INVALID** | `status` ngoài 5 giá trị → 200 | TC ghi tiền điều kiện *"phải sửa DB trực tiếp"* — tức là **không thực thi được** bằng Postman/Newman. Một TC API mà điều kiện tiên quyết nằm ngoài API thì không thuộc bộ test API. Đúng là `database.js:78` không có `CHECK`, nhưng cả hai route ghi `status` (`server.js:335` và `537-551`) đều chỉ ghi 5 literal, nên trạng thái lạ **không tới được qua bất kỳ API nào**. | Loại khỏi bộ test API; giữ lại như một **ghi chú rủi ro schema** trong phần phân tích |
+| TC-API2-043 | **INVALID** | "Xác nhận không tồn tại đường 500" | Không phải một request. Đây là mệnh đề tổng hợp trên toàn suite, không có input, không có endpoint để gọi. | Chuyển thành **assertion hậu-suite** trong Newman (kiểm không response nào có status 500), bỏ khỏi danh sách TC |
+| TC-API2-003 | INCOMPLETE | `:id="abc"` → "chưa xác nhận" | Expected không quyết định được thì TC vô dụng. **Tôi chạy thật:** → `404` · `{"error":"Order not found"}`. Lý do: `server.js:324` bind chuỗi vào cột `INTEGER`, SQLite so sánh không khớp → `!order` → 404. | Expected: `404` · `{"error":"Order not found"}` |
+| TC-API2-004 | INCOMPLETE | `/api/orders//cancel` → "chưa xác nhận" | **Tôi chạy thật:** Express **không khớp route** (segment rỗng) → trả 404 mặc định của framework, **không phải** JSON `{"error":...}` của SUT. Khác biệt này quan trọng: cùng mã 404 nhưng khác schema. | Expected: `404` · body **không** phải JSON của SUT; ghi rõ đây là 404 tầng routing |
+| TC-API2-006 | INCOMPLETE | `:id=1.5` → "chưa xác nhận" | **Tôi chạy thật:** → `404` | Expected: `404` · `{"error":"Order not found"}` |
+| TC-API2-007 | INCOMPLETE | `:id="1abc"` → "chưa xác nhận" | **Tôi chạy thật:** → `404`. Đáng chú ý: SQLite **không** ép `"1abc"` thành `1`, nên đơn id=1 an toàn. | Expected: `404` · thêm assertion: đơn id=1 **không** bị hủy |
+| TC-API2-012 | INCOMPLETE | `:id` tràn số → "chưa xác nhận" | **Tôi chạy thật:** → `404`, không lỗi tràn | Expected: `404` · `{"error":"Order not found"}` |
+| TC-API2-010 | INCOMPLETE | `:id=1` → 200 | Tiền điều kiện *"đơn id 1 tồn tại và thuộc user A"* mong manh: id phụ thuộc thứ tự chạy của cả suite. Chạy lại lần 2 là hỏng. | Đổi thành: tạo đơn ngay trong TC, lấy `orderId` từ response, dùng biến Postman thay vì hard-code |
+| TC-API2-011 | INCOMPLETE | `:id=2` → 200 | Cùng lý do | Cùng cách sửa |
+| TC-API2-041 | INCOMPLETE | Gộp `PUT` + `GET` trong một dòng | Newman cần 2 request tách biệt | Tách thành 2 request nối bằng `postman.setNextRequest` |
 
-**Nhận xét kiểm toán.** «2–5 câu: AI mắc lỗi theo mẫu nào, tập trung ở nhóm kỹ thuật nào?»
+**Nhận xét kiểm toán.** Điều tôi đánh giá cao: **toàn bộ 9 TC chuyển trạng thái đều đúng** khi probe — kể cả TC-API2-018, cái quan trọng nhất. Tôi chạy chuỗi `pending → confirmed → shipping` rồi hủy bằng token **user thường** và nhận `200` với `status` thành `canceled`, đúng như AI dự đoán và **trái FR-10**. Máy trạng thái là chỗ AI làm chắc nhất, vì FR-10 có sơ đồ rõ ràng để đối chiếu. Ngược lại, toàn bộ 5 TC về định dạng `:id` đều để trống expected — AI không dám kết luận về type affinity của SQLite dù thông tin đủ để suy đoán, và khi tôi chạy thì **cả 5 đều cho cùng một kết quả 404**, tức là AI đã bỏ trống một nhóm mà thực tế rất dễ chốt. Hai TC bị loại (022, 043) đều cùng một lỗi thiết kế: **nhầm "điều cần khẳng định" với "test case"** — một cái cần sửa DB tay, một cái là mệnh đề tổng hợp toàn suite.
 
 ### 5.3 Bước 3 — Mở rộng (≥ 5 test case tự nghĩ)
 
 > ✍️ Đề §6.3 yêu cầu ≥ 5 TC **tự nghĩ** mà AI bỏ sót, đặc biệt quanh bảo mật và chuyển trạng thái.
 > **Gợi ý đã có sẵn từ phân tích:** khoảng trống **đồng thời (concurrency)** — AI hẹn ở P5, bỏ ở P7, không lên lịch ở P10, không sinh ở P11 (xem AI Audit Report, Artifact #7/#12). Đây là ứng viên số 1 cho `A2-E01`.
 
-| ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót**                                                      |
-| ------ | ------- | -------------- | ----- | -------- | ------------------------------------------------------------------------- |
-| A2-E01 | «Hủy đơn đồng thời với chuyển trạng thái của admin» | «state / race» | «» | «» | «hạn chế mô hình: AI hẹn ở P5 rồi tự đánh rơi qua 3 phase — xem Audit #7» |
-| A2-E02 | «»      | «state»        | «»    | «»       | «chất lượng prompt: chưa nêu …»                                           |
-| A2-E03 | «»      | «SEC-0x»       | «»    | «»       | «đặc điểm riêng của API: …»                                               |
-| A2-E04 | «»      | «»             | «»    | «»       | «»                                                                        |
-| A2-E05 | «»      | «»             | «»    | «»       | «»                                                                        |
+| ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót** |
+| ------ | ------- | -------------- | ----- | -------- | -------------------- |
+| A2-E01 | «»      | «»             | «»    | «»       | «»                   |
 
 | Nguyên nhân bỏ sót     | Số TC | Diễn giải |
 | ---------------------- | :---: | --------- |
@@ -645,35 +657,41 @@ Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
 
 ### 6.2 Bước 2 — Kiểm toán (rà soát của con người)
 
+**Cách tôi kiểm toán.** Với 82 TC, tôi ưu tiên probe hai nhóm rủi ro nhất: (1) toàn bộ 8 biến thể ép kiểu `max_uses_per_user` — vì đây là trường duy nhất có logic biến đổi trong handler; (2) ba TC bảo mật SEC-03. Kết quả probe cho ra **một expected sai hẳn** mà đọc code không thể phát hiện.
+
 | Nhãn       | Số TC | Tỉ lệ |
 | ---------- | :---: | :---: |
-| VALID      |  «»   |  «»%  |
-| INVALID    |  «»   |  «»%  |
-| INCOMPLETE |  «»   |  «»%  |
+| VALID      |  65   | 79.3% |
+| INVALID    |   5   |  6.1% |
+| INCOMPLETE |  12   | 14.6% |
+| **Tổng**   | **82**| 100%  |
 
 **Chi tiết các test case KHÔNG đạt**
 
-> ✍️ **Điểm khởi đầu đã biết:** 5 TC đã đánh dấu "cần rà soát thủ công" ở §6.1. Ngoài ra, nhóm cross-field (`type:"percent"` + `discount_value > 100`) **hoàn toàn không được AI sinh** — xem §6.3.
-
 | ID     | Nhãn       | AI viết gì               | Vì sao sai / thiếu (dẫn chứng)              | Tôi sửa thành           |
 | ------ | ---------- | ------------------------ | ------------------------------------------- | ----------------------- |
-| TC-API3-008 | «INCOMPLETE» | «expected chưa xác định» | «AI không suy được hành vi bind kiểu của sqlite3» | «chốt sau khi probe» |
-| TC-API3-042 | «INCOMPLETE» | «TC tổng hợp, không phải request» | «không thực thi được trực tiếp trong Postman» | «chuyển thành assertion hậu-suite» |
-| TC-API3-0xx | «»         | «»                       | «»                                          | «»                      |
+| TC-API3-020 | **INVALID** | `max_uses_per_user:"0"` → *"lưu đúng chuỗi `\"0\"`"* | **Sai kết quả.** Lập luận của AI đúng một nửa: chuỗi `"0"` là truthy nên **lọt qua** `\|\| 1` ở `server.js:474` — đến đây đúng. Nhưng AI dừng ở tầng JavaScript, quên rằng cột là `INTEGER` (`database.js:37`). **Tôi chạy thật: lưu thành số `0`, không phải chuỗi `"0"`.** SQLite affinity ép `"0"` → `0`. Hệ quả nặng hơn AI tưởng: giá trị `0` — thứ mà `\|\| 1` sinh ra để chặn — **vẫn vào được DB**, chỉ bằng đường khác. | Expected: `200`, `GET` trả `max_uses_per_user === 0` (số). Ghi nhận là **lỗ hổng thật của cơ chế coercion** |
+| TC-API3-081 | **INVALID** | `false → ép thành 1; true → truthy, giữ nguyên` | Hai lỗi. (a) **Một TC chứa hai input với hai expected khác nhau** — không đánh giá pass/fail được. (b) *"giữ nguyên"* sai: **tôi chạy thật, `true` lưu thành `1`**, vì SQLite ép boolean sang integer. Nên cả `true` lẫn `false` đều ra `1`, chỉ khác đường đi. | Tách thành 2 TC; cả hai expected `max_uses_per_user === 1`, ghi rõ khác nhau ở cơ chế |
+| TC-API3-040 | **INVALID** | "Xác nhận không tồn tại đường 400/409" | Mệnh đề tổng hợp toàn suite, không phải request | Chuyển thành assertion hậu-suite trong Newman |
+| TC-API3-042 | **INVALID** | "Bất đối xứng ép kiểu" — đối chiếu kết quả 3 TC | Không có input, không có endpoint — là bước phân tích, không phải TC | Chuyển thành mục nhận xét trong báo cáo |
+| TC-API3-043 | **INVALID** | "`is_active` luôn = 1" — kiểm tổng hợp cuối suite | Cùng lý do | Gộp thành assertion trong TC-API3-014 |
+| TC-API3-008 | INCOMPLETE | `discount_value:"10"` → "chưa xác nhận" | **Tôi chạy thật:** `200`, tạo được coupon | Expected: `200` · `{"message":"Coupon created","id":<int>}` |
+| TC-API3-066 | INCOMPLETE | Body `{}` → "chưa xác nhận" | **Tôi chạy thật (trên API 1, cùng cơ chế):** `200` | Expected: `200`; thêm assertion `GET` xem 6 trường lưu ra sao |
+| TC-API3-067 | INCOMPLETE | Thiếu body → "chưa xác nhận" | **Tôi chạy thật:** `500` **dạng HTML**, không phải JSON — do `TypeError` khi destructure `req.body` (`server.js:458`) | Expected: `500` · body là HTML, **không** có key `error` |
+| TC-API3-068 | INCOMPLETE | JSON sai cú pháp → "chưa xác nhận" | **Tôi chạy thật:** `400` **dạng HTML**, sinh bởi `bodyParser` trước handler | Expected: `400` · body là HTML |
+| TC-API3-070 | INCOMPLETE | `DELETE` `:id` không phải số → "chưa xác nhận" | **Tôi chạy thật (tương tự API 2):** `200` — vì `server.js:484-487` không kiểm `this.changes`, xoá 0 dòng vẫn báo thành công | Expected: `200` · `{"message":"Coupon deleted"}` dù không xoá gì |
+| TC-API3-074 · -075 · -076 · -077 · -079 · -080 | INCOMPLETE | 6 TC sai kiểu → "chưa xác nhận" | Cùng một gốc: AI không dám kết luận về binding kiểu. **Tôi chạy mẫu `discount_value:"10"` và `max_uses_per_user:1.5`** → đều `200`; riêng `1.5` lưu **nguyên `1.5`** (SQLite giữ REAL vì không ép được sang INTEGER không mất mát) | Expected: `200` cho cả 6; bổ sung assertion `GET` kiểm giá trị **thực sự lưu** cho từng trường |
+| TC-API3-039 | INCOMPLETE | Trùng `code:"SCHEMA03"` → 500 | Thiếu bước tạo `SCHEMA03` trước. Chạy trên DB sạch sẽ ra `200` chứ không phải `500`. | Thêm request setup tạo `SCHEMA03` trước khi gọi lần 2 |
 
-**Nhận xét kiểm toán.** «2–5 câu: AI mắc lỗi theo mẫu nào, tập trung ở nhóm kỹ thuật nào?»
+**Nhận xét kiểm toán.** Đây là API mà kiểm toán có giá trị nhất, vì nó lộ ra **giới hạn của việc chỉ đọc code**. Với `max_uses_per_user`, AI lý luận rất chuẩn ở tầng JavaScript — nhận ra `"0"` truthy nên vượt được `|| 1`, một chi tiết tinh vi mà đọc lướt sẽ bỏ qua. Nhưng nó dừng đúng ở ranh giới ngôn ngữ và **không đi tiếp xuống tầng lưu trữ**, nên bỏ lỡ việc SQLite ép chuỗi `"0"` về số `0`. Kết quả là expected sai, và trớ trêu thay, sự thật còn nghiêm trọng hơn AI mô tả: cơ chế `|| 1` sinh ra để chặn số `0` nhưng vẫn bị số `0` lọt vào DB qua ngả kiểu chuỗi. Bài học tôi rút ra: khi một giá trị đi xuyên nhiều tầng (JS → driver → SQLite affinity → cột), AI có xu hướng chỉ suy luận ở tầng nó đang đọc. Về phía làm tốt: **cả 3 TC SEC-03 đều đúng** — tôi probe và xác nhận token `role:"user"` tạo, xoá, đọc coupon đều trả `200`.
 
 ### 6.3 Bước 3 — Mở rộng (≥ 5 test case tự nghĩ)
 
 > ✍️ **Gợi ý đã có sẵn từ phân tích:** AI **không sinh** TC cho biên chéo `type:"percent"` + `discount_value > 100`, với lý do "không có tài liệu nào quy định trần 100 %". Lập luận đó đúng về mặt BVA, nhưng để trống hẳn một nhóm mà đề §6 yêu cầu → ứng viên số 1 cho `A3-E01`.
 
-| ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót**                                                      |
-| ------ | ------- | -------------- | ----- | -------- | ------------------------------------------------------------------------- |
-| A3-E01 | «Coupon `percent` với `discount_value = 101` (vượt trần khái niệm 100 %)» | «BVA chéo trường» | «`type:"percent"`, `discount_value:101`» | «» | «hạn chế mô hình: AI từ chối sinh vì không có trần nào được đặc tả — đúng luật BVA nhưng bỏ trống nhóm đề yêu cầu» |
-| A3-E02 | «»      | «SEC-03»       | «»    | «»       | «chất lượng prompt: chưa nêu …»                                           |
-| A3-E03 | «»      | «»             | «»    | «»       | «đặc điểm riêng của API: …»                                               |
-| A3-E04 | «»      | «»             | «»    | «»       | «»                                                                        |
-| A3-E05 | «»      | «»             | «»    | «»       | «»                                                                        |
+| ID     | Tiêu đề | Kỹ thuật / SEC | Input | Expected | **Vì sao AI bỏ sót** |
+| ------ | ------- | -------------- | ----- | -------- | -------------------- |
+| A3-E01 | «»      | «»             | «»    | «»       | «»                   |
 
 | Nguyên nhân bỏ sót     | Số TC | Diễn giải |
 | ---------------------- | :---: | --------- |
