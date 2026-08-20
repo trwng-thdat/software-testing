@@ -1168,6 +1168,11 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 24  | `65ba952` | 2026-08-20 | **Bước 4** — collection + environment đã sinh                  | cả 3 API      |
 | 25  | `e69ec0c` | 2026-08-20 | **Bước 4** — kết quả chạy Newman thật (6 lần chạy)             | cả 3 API      |
 | 26  | `7c8b9d8` | 2026-08-20 | **Bước 4** — điền số liệu vào §4.4, §5.4, §6.4                 | cả 3 API      |
+| 27  | `f344faa` | 2026-08-20 | Chạy lại lần 2 — số liệu trùng khớp tuyệt đối                  | cả 3 API      |
+| 28  | `6d3ce04` | 2026-08-20 | Báo cáo Kiểm toán AI — log prompt 41–44                        | cả 3 API      |
+| 29  | `ad513ee` | 2026-08-20 | Data file cho API 2 (ma trận chuyển trạng thái)                | API 2         |
+| 30  | `7a617c5` | 2026-08-20 | Bổ sung 10 tính năng Postman (workspace/mock/visualizer…)      | cả 3 API      |
+| 31  | `54f1a5b` | 2026-08-20 | 24 ảnh bằng chứng tự động bằng Selenium                        | cả 3 API      |
 
 **Các bước sẽ có commit riêng khi thực hiện:** Bước 5 báo lỗi + GitHub Issues (1–3 commit) · CI/CD 2 lần chạy (2 commit) · sơ đồ tự vẽ §9.2 · Excel test case · README.md · phê bình AI §11.
 

@@ -14,6 +14,12 @@ Luu y     : File nay la snapshot. Commit cuoi cung (commit sinh ra chinh
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+54f1a5b 2026-08-20 test(hw6): 24 anh bang chung tu dong chup bang Selenium
+7a617c5 2026-08-20 feat(hw6): bo sung 10 tinh nang Postman con thieu, gom ca 3 muc de bai neu ten
+ad513ee 2026-08-20 feat(hw6): bo sung data file cho API 2 - chay theo du lieu ma tran chuyen trang thai
+f344faa 2026-08-20 test(hw6): chạy lại toàn bộ lần 2 — số liệu trùng khớp tuyệt đối
+6d3ce04 2026-08-20 docs(hw6): AI Audit Report — log prompt 41-44 (Bước 4 và các việc phụ trợ)
+170c057 2026-08-20 docs(hw6): commit log — Bước 4 (dòng 23-26) và bảng kết quả thực thi
 7c8b9d8 2026-08-20 docs(hw6): Bước 4 — điền §4.4, §5.4, §6.4 và số liệu thực thi thật
 e69ec0c 2026-08-20 test(hw6): Bước 4 — kết quả chạy Newman thật trên localhost:3000
 65ba952 2026-08-20 feat(hw6): Bước 4 — Postman collection và environment đã sinh
@@ -76,6 +82,11 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 24   65ba952   BUOC 4 Collection + environment da sinh          ca 3 API
 25   e69ec0c   BUOC 4 Ket qua chay Newman that (6 lan chay)     ca 3 API
 26   7c8b9d8   BUOC 4 Dien so lieu vao muc 4.4, 5.4, 6.4        ca 3 API
+27   f344faa   Chay lai lan 2 - so lieu trung khop tuyet doi    ca 3 API
+28   6d3ce04   Kiem toan AI - log prompt 41-44                  ca 3 API
+29   ad513ee   Data file cho API 2 (ma tran chuyen trang thai)  API 2
+30   7a617c5   Bo sung 10 tinh nang Postman (workspace/mock/..) ca 3 API
+31   54f1a5b   24 anh bang chung tu dong bang Selenium          ca 3 API
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC
@@ -87,7 +98,10 @@ Da hoan thanh:
   BUOC 3 - Mo rong ................. XONG   15 test case tu bo sung (5 moi API)
   BUOC 4 - Thuc thi Newman ......... XONG   6 lan chay, 559 HTTP call,
                                             942 assertion, 22 fail co chu dich
-  Postman collection ............... XONG   201 request / 661 pm.test / 8 folder
+  Postman collection ............... XONG   202 request / 664 pm.test / 9 folder
+                                            12 saved example, 3 data file CSV
+  Tinh nang Postman ................ XONG   34 muc o muc 7 (26 dung, 1 mot phan)
+  Anh bang chung tu dong ........... XONG   24 anh (Selenium)
   Agent Skill ...................... MOT PHAN  SKILL.md + video demo da co
                                             (commit 7122df2), con thieu so do
                                             tu ve muc 9.2 va ma gia muc 9.3
@@ -97,27 +111,32 @@ CHUA thuc hien - se co commit rieng cho tung buoc khi lam:
   CI/CD pipeline + 2 lan chay mau (xanh / do)                (2 commit)
   So do tu ve muc 9.2 (PNG/Mermaid) + ma gia muc 9.3         (1-2 commit)
   Excel test case + README.md + phe binh AI muc 11           (2-3 commit)
-  Anh chup man hinh (Postman Console, GitHub Issues, CI)     (1 commit)
+  Anh chup TAY: Postman Console, terminal Newman, workspace,
+    mock server, GitHub Issues, 2 lan chay CI  (8 anh)        (1 commit)
 
 Khong tao commit khong tuong ung voi cong viec da lam that.
 
 [4] KET QUA THUC THI BUOC 4 (newman tren localhost:3000, ngay 2026-08-20)
 --------------------------------------------------------------------------------
  Lan chay   HTTP call   Assertion   Fail   Ghi chu
- api1            102         178       0   46 TC (42 AI sinh + 5 tu bo sung;
+ api1            102         224       0   46 TC (42 AI sinh + 5 tu bo sung;
                                             TC-034 gop vao TC-023)
- api2            138         193       0   46 TC (41 + 5; loai TC-022, TC-043)
- api3            249         472       0   85 TC (80 + 5; loai TC-040/042/043,
+ api2            138         239       0   46 TC (41 + 5; loai TC-022, TC-043)
+ api3            249         557       0   85 TC (80 + 5; loai TC-040/042/043,
                                             tach TC-081 thanh -081a va -081b)
  DATA1            12          24       0   6 iteration tu api1_phone.csv
+ DATA2            27          24       0   6 iteration tu api2_state.csv (moi dong
+                                            la mot o cua ma tran FR-10)
  DATA3            12          18       0   6 iteration tu api3_coupon.csv
- SPEC             46          57      22   16 TC assertion theo dac ta,
+ SPEC             46          73      22   16 TC assertion theo dac ta,
                                             FAIL LA CO CHU DICH
  -----------------------------------------------------------------------------
- TONG            559         942      22
+ TONG            586        1159      22   (193 assertion la test cap FOLDER
+                                            kiem thoi gian phan hoi < 2000ms)
 
- Header X-Student-Id: 458 dong log console + 458 assertion tuong ung, deu pass.
- Bao cao HTML: hw6/reports/*.html   |   So lieu: hw6/reports/summary.md
+ Header X-Student-Id: 470 dong log console + 470 assertion tuong ung, deu pass.
+ Bao cao HTML: hw6/reports/*.html (7 file)  |  So lieu: hw6/reports/summary.md
+ Anh tu dong: hw6/evidence/*.png (24 anh)  |  Anh phai chup tay: hw6/evidence/README.md
  4/7 yeu cau bao mat bi vi pham: SEC-01, SEC-02, SEC-03, SEC-06 (SEC-05 dat).
 
 [5] BANG CHUNG THU DUOC O BUOC 2 (probe SUT that tren localhost:3000)
