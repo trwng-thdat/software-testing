@@ -1240,7 +1240,10 @@ Repo: **https://github.com/DuyITLOR/group05_eshop** · dải issue **#377–#392
 
 5 lỗi do test case **tự bổ sung** phát hiện: BUG-03 (`A1-E03`), BUG-05 (`A1-E04`), BUG-09 (`A2-E05`), BUG-12 (`A3-E04`), BUG-13 (`A3-E05`), BUG-15 (`A3-E03`) — phần lớn là chuỗi khai thác liên-API mà AI không nối được vì tôi ra lệnh phân tích từng API tách biệt (xem §4.3, §5.3, §6.3).
 
-> ✍️ **Còn phải làm:** chụp ảnh trang mỗi GitHub Issue (đề §5 yêu cầu ảnh cho mỗi issue). Nội dung lỗi và bằng chứng máy chạy được đã có ở `reports/spec_bugs.html` và `evidence/newman_spec_bugs_failed.png`.
+Ảnh chụp trang **cả 16 issue** nằm ở [`evidence/issues/`](./evidence/issues/) (`github_issue_BUG-xx_NNN.png`), chụp tự động bằng [`scripts/capture_issues.py`](./scripts/capture_issues.py) — repo công khai nên không cần đăng nhập. Mỗi ảnh thấy rõ tiêu đề `[HW06]`, tác giả `trwng-thdat`, đủ nhãn `module`/`severity`/`priority`, và toàn bộ nội dung.
+
+![GitHub Issue mẫu](./evidence/issues/github_issue_BUG-01_378.png)
+_Issue #378 (BUG-01): tiêu đề `[HW06]`, nhãn đầy đủ, bước tái hiện `curl`, truy vết FR/SEC và link CI._
 
 ## 11. Phê bình AI (200–300 từ)
 
@@ -1335,7 +1338,7 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 | ☐   | Test case & bảng tổng hợp dạng Excel                    | «»                      |
 | ☐   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | «»                      |
 | ☐   | (Tùy chọn) OpenAPI .yaml/.json đã kiểm toán             | «»                      |
-| ☑/☐ | Báo cáo lỗi + ảnh GitHub Issues                         | §10 + 16 issue #377–#392 (đã tạo); **còn thiếu ảnh** mỗi issue |
+| ☑   | Báo cáo lỗi + ảnh GitHub Issues                         | §10 + 16 issue #377–#392 + 16 ảnh ở `evidence/issues/` |
 | ☐   | Phê bình AI + AI Audit Report (Markdown + PDF)          | «»                      |
 | ☐   | Git commit log (.txt)                                   | «»                      |
 | ☑   | README.md (bảng tự đánh giá + tổng hợp kết quả)         | [`hw6/README.md`](./README.md) — tổng hợp 3 API, 196 TC, 17 lỗi, 2 lần chạy CI |
@@ -1403,6 +1406,6 @@ Mỗi lần tương tác phải ghi đủ: **tên công cụ AI · ngày giờ �
 | EV-15 | Danh sách lần chạy CI (xanh và đỏ cạnh nhau) | [`evidence/ci_runs_list.png`](./evidence/ci_runs_list.png) | §8.2 |
 | EV-16 | Diff một dòng tạo ra khác biệt giữa hai lần chạy | [`evidence/ci_commit_diff.png`](./evidence/ci_commit_diff.png) | §8.2 |
 | EV-17 | Log CI đầy đủ | [`reports/ci_regression.log`](./reports/ci_regression.log) · [`reports/ci_spec_gate.log`](./reports/ci_spec_gate.log) | §8.2 |
-| EV-08 | 16 GitHub Issues #377–#392 (tag `[HW06]`) | https://github.com/DuyITLOR/group05_eshop/issues?q=is%3Aissue+label%3A%22found-by%3A+test-case%22 | §10 |
+| EV-08 | 16 GitHub Issues #377–#392 (tag `[HW06]`) + **16 ảnh** | [dải issue](https://github.com/DuyITLOR/group05_eshop/issues) · [`evidence/issues/`](./evidence/issues/) | §10 |
 | EV-09 | Sơ đồ bộ sinh test (tự vẽ)         | «»        | §9.2       |
 | EV-10 | Collection + environment + bộ sinh | [`postman/`](./postman/) | §7 |

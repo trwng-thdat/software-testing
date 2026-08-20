@@ -82,7 +82,7 @@ Số liệu trên CI (Ubuntu) **trùng khớp tuyệt đối** với máy local 
 | Data file (CSV) | [`postman/data/`](./postman/data/) — một file cho mỗi API |
 | **Bộ sinh collection** | [`postman/src/`](./postman/src/) — sửa ở đây rồi `node postman/src/build.js` |
 | Báo cáo Newman (HTML) | [`reports/`](./reports/) — 7 báo cáo + `summary.md` + log console 3 974 dòng |
-| Ảnh bằng chứng | [`evidence/`](./evidence/) — 37 ảnh, xem [`evidence/README.md`](./evidence/README.md) |
+| Ảnh bằng chứng | [`evidence/`](./evidence/) — 53 ảnh (gồm 16 ảnh GitHub Issue ở `evidence/issues/`), xem [`evidence/README.md`](./evidence/README.md) |
 | Workflow CI/CD | [`../.github/workflows/hw6-api-tests.yml`](../.github/workflows/hw6-api-tests.yml) |
 | Script | [`scripts/`](./scripts/) — probe, reset DB, chạy Newman, tổng hợp, chụp ảnh |
 | Agent Skill | [`skills/SKILL.md`](./skills/SKILL.md) · video: https://youtu.be/Nz8hUbziTyI |
@@ -97,6 +97,7 @@ bash hw6/scripts/run_newman.sh all          # 7 lần chạy, sinh toàn bộ b�
 node hw6/scripts/summarize_newman.js        # trích số liệu ra summary.md
 python hw6/scripts/capture_evidence.py      # chụp 24 ảnh báo cáo Newman
 python hw6/scripts/capture_ci_evidence.py   # chụp 9 ảnh CI/CD
+python hw6/scripts/capture_issues.py        # chụp 16 ảnh GitHub Issue
 ```
 
 ---
@@ -111,7 +112,7 @@ python hw6/scripts/capture_ci_evidence.py   # chụp 9 ảnh CI/CD
 | 4 | Agent Skills (bộ sinh test do AI điều khiển) | 10 | *(chưa chấm)* | §9 |
 | | **Tổng** | **100** | | |
 
-> Chưa chấm vì còn thiếu Bước 5 (báo lỗi lên GitHub Issues), sơ đồ tự vẽ §9.2 và mã giả §9.3. Điền sau khi hoàn tất.
+> Chưa chấm vì còn thiếu sơ đồ tự vẽ §9.2 và mã giả §9.3. Điền sau khi hoàn tất. (Bước 5 đã xong: 16 issue #377–#392 + ảnh.)
 
 ---
 
@@ -119,7 +120,6 @@ python hw6/scripts/capture_ci_evidence.py   # chụp 9 ảnh CI/CD
 
 | Việc | Ghi chú |
 | --- | --- |
-| Bước 5 — **ảnh** mỗi GitHub Issue | 16 issue đã tạo (#377–#392 trên repo nhóm), còn thiếu ảnh chụp trang mỗi issue |
 | §9.2 — sơ đồ bộ sinh test **tự vẽ** | Đề §11 quy định sơ đồ không được do AI sinh |
 | §9.3 — mã giả hoàn chỉnh | Bản hiện tại còn 5 bước để trống |
 | §11 — phê bình AI 200–300 từ | |

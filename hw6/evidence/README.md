@@ -1,6 +1,6 @@
 # HW06 — Bằng chứng ảnh chụp
 
-MSSV 23127344. Thư mục này có **37 ảnh**: 33 ảnh do Selenium chụp tự động và 4 ảnh chụp tay từ app Postman (app desktop nên Selenium không với tới được).
+MSSV 23127344. Thư mục này có **53 ảnh** (gồm 16 ảnh GitHub Issue trong `issues/`): 33 ảnh do Selenium chụp tự động và 4 ảnh chụp tay từ app Postman (app desktop nên Selenium không với tới được).
 
 Sinh lại toàn bộ phần tự động:
 
@@ -42,11 +42,15 @@ Hai chi tiết trong ảnh console được **giữ lại có chủ ý**, không
 - **Dòng đỏ đầu console** `Error: Thieu bien moi truong studentId…` là của lần bấm Send **trước khi** chọn environment. Nó cho thấy câu `throw` bảo vệ trong pre-request script hoạt động.
 - **Cảnh báo vàng** `Using "CryptoJS" is deprecated` — sandbox Postman khuyến nghị dùng `crypto`. `CryptoJS` vẫn chạy (7 token giả mạo ký thành công), nên không đổi giữa lúc bộ test đã xanh và đã qua CI.
 
-### Còn thiếu: ảnh GitHub Issues (Bước 5 — chưa làm)
+### GitHub Issues (Bước 5) — **ĐÃ XONG**, 16 ảnh trong `issues/`
 
-Mỗi lỗi một issue, mỗi issue một ảnh. `gh` CLI đang đăng nhập nên có thể tạo 17 issue tự động rồi Selenium chụp; đó là hành động công khai lên repo nên chờ xác nhận.
+16 issue #377–#392 trên repo nhóm DuyITLOR/group05_eshop, mỗi issue tag `[HW06]`. Ảnh chụp tự động (repo công khai):
 
-Lưu thành → `github_issue_BUG-XX.png`
+```bash
+python hw6/scripts/capture_issues.py
+```
+
+File `issues/github_issue_BUG-xx_NNN.png` — mỗi ảnh thấy tiêu đề `[HW06]`, tác giả, đủ nhãn và toàn bộ nội dung (mô tả, curl tái hiện, truy vết FR/SEC, link CI).
 
 ## C. Không cần chụp
 
