@@ -1,100 +1,57 @@
-// HW06 - sinh "saved example" (example response) cho collection tu RESPONSE THAT
-// da ghi lai trong bao cao JSON cua Newman.
+// HW06 - gan "saved example" (example response) cho collection tu RESPONSE THAT cua SUT.
 //
-// Vi sao can: Mock Server cua Postman tra loi dua tren cac example luu trong collection.
-// Neu tu go example bang tay thi mock se tra ve thu toi TUONG LA dung; lay tu bao cao
-// Newman thi mock tra ve dung nguyen van byte ma SUT that da tra.
+// Nguon du lieu: hw6/postman/examples.recorded.json, do hw6/scripts/record_examples.js sinh ra
+// bang cach goi truc tiep SUT theo dung 12 tinh huong da chon.
 //
-// Chay tu build.js. Neu chua co bao cao JSON thi bo qua (collection van hop le).
+// VI SAO KHONG LAY TU BAO CAO JSON CUA NEWMAN (cach lam dau tien, da bo):
+//   Newman ghi mot execution cho MOI HTTP call phat sinh trong vong doi cua item, ke ca cac
+//   lenh pm.sendRequest trong test script - va truong request/response cua nhung execution do
+//   deu tro ve lenh sendRequest CUOI CUNG. Kiem chung: TC-API1-001 la mot PUT co 3 assertion
+//   doc lai bang GET, thi ca 4 execution trong api1.json deu ghi "GET /api/users/me". Ket qua
+//   la example cua mot PUT lai mang body cua GET (4/12 example bi sai), va Mock Server tra sai.
+//
+// Vi sao Mock Server can example: mock cua Postman tra loi dua tren example luu trong
+// collection. Khong co example thi mock khong co gi de tra.
 const fs = require('fs');
 const path = require('path');
 
-const REP = path.resolve(__dirname, '../../reports');
-const SOURCES = ['api1.json', 'api2.json', 'api3.json', 'spec_bugs.json'];
-
-// Danh sach request duoc gan example: happy path + moi lop loi mot dai dien.
-// Day la "be mat hop dong" du de mot client (frontend) phat trien duoc tren mock.
-const WANTED = [
-  'TC-API1-001', // 200 cap nhat ho so
-  'TC-API1-023', // 401 khong co token
-  'TC-API1-035', // 403 token sai
-  'TC-API1-036', // 200 GET ho so - schema 10 truong
-  'A1-E01',      // 400 HTML tu bodyParser
-  'TC-API2-001', // 200 huy don pending
-  'TC-API2-002', // 404 don khong ton tai
-  'TC-API2-019', // 400 khong huy duoc
-  'TC-API3-001', // 200 tao coupon
-  'TC-API3-004', // 500 trung code
-  'TC-API3-037', // 200 xoa coupon
-  'SETUP-01',    // 200 dang nhap admin (mock can de client lay token)
-];
+const SRC = path.resolve(__dirname, '../examples.recorded.json');
 
 const STATUS_TEXT = {
   200: 'OK', 400: 'Bad Request', 401: 'Unauthorized',
   403: 'Forbidden', 404: 'Not Found', 500: 'Internal Server Error',
 };
 
-function collect() {
-  const byId = new Map();
-  for (const f of SOURCES) {
-    const p = path.join(REP, f);
-    if (!fs.existsSync(p)) continue;
-    let j;
-    try { j = JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { continue; }
-    for (const ex of j.run.executions || []) {
-      const name = (ex.item && ex.item.name) || '';
-      const id = (name.split(' - ')[0] || '').trim();
-      if (!WANTED.includes(id)) continue;
-      if (byId.has(id)) continue;                     // lay lan dau tien
-      const res = ex.response;
-      if (!res || !res.code) continue;
-      // Newman luu body duoi dang buffer {type:'Buffer', data:[...]}
-      let body = '';
-      if (res.stream && Array.isArray(res.stream.data)) {
-        body = Buffer.from(res.stream.data).toString('utf8');
-      }
-      // Che gia tri JWT trong example.
-      // Ly do: example cua SETUP-01 la response dang nhap that nen chua mot JWT hop le.
-      // Token do ky bang secret hardcode o server.js:9 va chi dung duoc voi SUT o localhost,
-      // nhung de nguyen thi (a) secret scanner cua Postman bao dong moi lan import - no con
-      // doan sai thanh "Supabase Service Role API Key" - va (b) file nop co mot chuoi trong
-      // nhu credential ma nguoi doc phai tu suy ra la vo hai. Che lai thi sach hon, va mock
-      // van dung duoc vi client chi can dung HINH DANG cua response.
-      // Day cung la mot he qua truc tiep cua BUG-03: secret hardcode nen token nao cung "that".
-      body = body.replace(/eyJ[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,}/g,
-        '<JWT-da-che-xem-BUG-03>');
-      const isJson = (() => { try { JSON.parse(body); return true; } catch (e) { return false; } })();
-      byId.set(id, {
-        code: res.code,
-        status: STATUS_TEXT[res.code] || res.status || '',
-        body,
-        isJson,
-        contentType: isJson ? 'application/json; charset=utf-8' : 'text/html; charset=utf-8',
-      });
-    }
+let RECORDED = {};
+if (fs.existsSync(SRC)) {
+  try {
+    RECORDED = JSON.parse(fs.readFileSync(SRC, 'utf8'));
+  } catch (e) {
+    console.error('[examples] khong doc duoc ' + SRC + ': ' + e.message);
   }
-  return byId;
+} else {
+  console.error('[examples] chua co ' + SRC
+    + ' - chay: node hw6/scripts/reset_db.js && node hw6/scripts/record_examples.js');
 }
 
-const RECORDED = collect();
-
-// Gan example vao item (dang mutate item da dung boi tc()).
+// Gan example vao item (mutate item da dung boi tc()).
 function attach(item) {
   const id = (item.name.split(' - ')[0] || '').trim();
-  const rec = RECORDED.get(id);
+  const rec = RECORDED[id];
   if (!rec) return item;
   item.response = [{
-    name: rec.code + ' - ' + (rec.isJson ? 'JSON' : 'HTML') + ' (ghi lai tu SUT that)',
+    name: rec.code + ' - ' + (rec.isJson ? 'JSON' : 'HTML') + ' (ghi lai tu SUT that)'
+      + (rec.note ? ': ' + rec.note : ''),
     originalRequest: {
       method: item.request.method,
       header: item.request.header,
       url: item.request.url,
       body: item.request.body,
     },
-    status: rec.status,
+    status: STATUS_TEXT[rec.code] || '',
     code: rec.code,
     _postman_previewlanguage: rec.isJson ? 'json' : 'html',
-    header: [{ key: 'Content-Type', value: rec.contentType }],
+    header: [{ key: 'Content-Type', value: rec.isJson ? 'application/json; charset=utf-8' : 'text/html; charset=utf-8' }],
     cookie: [],
     body: rec.body,
   }];
@@ -110,7 +67,12 @@ function attachAll(folders) {
     if ((it.response ? it.response.length : 0) > before) n += 1;
   });
   folders.forEach((f) => walk(f.item ? f.item : [f]));
+  const wanted = Object.keys(RECORDED).length;
+  if (n !== wanted) {
+    console.error('[examples] CANH BAO: ghi nhan ' + wanted + ' example nhung chi gan duoc ' + n
+      + ' - co ID nao trong examples.recorded.json khong khop ten request?');
+  }
   return n;
 }
 
-module.exports = { attachAll, WANTED, recordedCount: RECORDED.size };
+module.exports = { attachAll, recordedCount: Object.keys(RECORDED).length };

@@ -96,7 +96,7 @@
           },
           "response": [
             {
-              "name": "200 - JSON (ghi lai tu SUT that)",
+              "name": "200 - JSON (ghi lai tu SUT that): response dang nhap admin",
               "originalRequest": {
                 "method": "POST",
                 "header": [
@@ -393,7 +393,7 @@
           },
           "response": [
             {
-              "name": "200 - JSON (ghi lai tu SUT that)",
+              "name": "200 - JSON (ghi lai tu SUT that): cap nhat ho so hop le",
               "originalRequest": {
                 "method": "PUT",
                 "header": [
@@ -427,7 +427,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\"id\":2,\"name\":\"Nguyen Van A\",\"email\":\"test@eshop.com\",\"password\":\"Test1234!\",\"role\":\"user\",\"login_attempts\":0,\"locked_until\":null,\"reset_token\":null,\"shipping_address\":\"123 Le Loi\",\"phone\":\"0912345678\"}"
+              "body": "{\"message\":\"Profile updated\"}"
             }
           ]
         },
@@ -1489,7 +1489,7 @@
           },
           "response": [
             {
-              "name": "401 - JSON (ghi lai tu SUT that)",
+              "name": "401 - JSON (ghi lai tu SUT that): khong gui token -> 401",
               "originalRequest": {
                 "method": "PUT",
                 "header": [
@@ -2078,7 +2078,7 @@
           },
           "response": [
             {
-              "name": "403 - JSON (ghi lai tu SUT that)",
+              "name": "403 - JSON (ghi lai tu SUT that): JWT sai cu phap -> 403",
               "originalRequest": {
                 "method": "PUT",
                 "header": [
@@ -2150,7 +2150,7 @@
           },
           "response": [
             {
-              "name": "200 - JSON (ghi lai tu SUT that)",
+              "name": "200 - JSON (ghi lai tu SUT that): GET ho so - 10 truong cua bang users",
               "originalRequest": {
                 "method": "GET",
                 "header": [
@@ -2544,7 +2544,7 @@
           },
           "response": [
             {
-              "name": "400 - HTML (ghi lai tu SUT that)",
+              "name": "400 - HTML (ghi lai tu SUT that): JSON sai cu phap -> 400 dang HTML",
               "originalRequest": {
                 "method": "PUT",
                 "header": [
@@ -3161,7 +3161,7 @@
           },
           "response": [
             {
-              "name": "200 - JSON (ghi lai tu SUT that)",
+              "name": "200 - JSON (ghi lai tu SUT that): huy don pending -> 200",
               "originalRequest": {
                 "method": "PUT",
                 "header": [
@@ -3182,7 +3182,7 @@
                 }
               ],
               "cookie": [],
-              "body": "[{\"id\":3,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:09\"},{\"id\":2,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:09\"},{\"id\":1,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:09\"}]"
+              "body": "{\"message\":\"Order canceled successfully\"}"
             }
           ]
         },
@@ -3216,7 +3216,7 @@
           },
           "response": [
             {
-              "name": "404 - JSON (ghi lai tu SUT that)",
+              "name": "404 - JSON (ghi lai tu SUT that): don khong ton tai -> 404",
               "originalRequest": {
                 "method": "PUT",
                 "header": [
@@ -4127,7 +4127,7 @@
           },
           "response": [
             {
-              "name": "200 - JSON (ghi lai tu SUT that)",
+              "name": "400 - JSON (ghi lai tu SUT that): huy don delivered -> 400",
               "originalRequest": {
                 "method": "PUT",
                 "header": [
@@ -4138,8 +4138,8 @@
                 ],
                 "url": "{{baseUrl}}/api/orders/{{orderId}}/cancel"
               },
-              "status": "OK",
-              "code": 200,
+              "status": "Bad Request",
+              "code": 400,
               "_postman_previewlanguage": "json",
               "header": [
                 {
@@ -4148,7 +4148,7 @@
                 }
               ],
               "cookie": [],
-              "body": "[{\"id\":12,\"user_id\":2,\"total_amount\":500000,\"status\":\"delivered\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:10\"},{\"id\":11,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:10\"},{\"id\":10,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:10\"},{\"id\":9,\"user_id\":2,\"total_amount\":500000,\"status\":\"pending\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:10\"},{\"id\":8,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:10\"},{\"id\":6,\"user_id\":2,\"total_amount\":500000,\"status\":\"pending\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:10\"},{\"id\":5,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:09\"},{\"id\":4,\"user_id\":2,\"total_amount\":500000,\"status\":\"pending\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:09\"},{\"id\":3,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:09\"},{\"id\":2,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:09\"},{\"id\":1,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 07:52:09\"}]"
+              "body": "{\"error\":\"Cannot cancel this order.\"}"
             }
           ]
         },
@@ -6136,7 +6136,7 @@
           },
           "response": [
             {
-              "name": "200 - JSON (ghi lai tu SUT that)",
+              "name": "200 - JSON (ghi lai tu SUT that): tao coupon hop le -> 200 kem id",
               "originalRequest": {
                 "method": "POST",
                 "header": [
@@ -6170,7 +6170,7 @@
                 }
               ],
               "cookie": [],
-              "body": "[{\"id\":1,\"code\":\"SAVE10\",\"type\":\"percent\",\"discount_value\":10,\"min_order_amount\":300000,\"expired_at\":\"2099-12-31\",\"is_active\":1,\"max_uses_per_user\":1},{\"id\":2,\"code\":\"BIGBUY\",\"type\":\"fixed\",\"discount_value\":50000,\"min_order_amount\":500000,\"expired_at\":\"2099-12-31\",\"is_active\":1,\"max_uses_per_user\":1},{\"id\":3,\"code\":\"VIP100\",\"type\":\"fixed\",\"discount_value\":100000,\"min_order_amount\":300000,\"expired_at\":\"2099-12-31\",\"is_active\":1,\"max_uses_per_user\":2},{\"id\":4,\"code\":\"EXPIRED\",\"type\":\"percent\",\"discount_value\":20,\"min_order_amount\":100000,\"expired_at\":\"2020-01-01\",\"is_active\":1,\"max_uses_per_user\":1},{\"id\":5,\"code\":\"TESTNEW01\",\"type\":\"percent\",\"discount_value\":10,\"min_order_amount\":0,\"expired_at\":\"2099-12-31\",\"is_active\":1,\"max_uses_per_user\":1}]"
+              "body": "{\"message\":\"Coupon created\",\"id\":5}"
             }
           ]
         },
@@ -6357,7 +6357,7 @@
           },
           "response": [
             {
-              "name": "500 - JSON (ghi lai tu SUT that)",
+              "name": "500 - JSON (ghi lai tu SUT that): trung code -> 500 kem thong bao SQLite",
               "originalRequest": {
                 "method": "POST",
                 "header": [
@@ -8550,7 +8550,7 @@
           },
           "response": [
             {
-              "name": "200 - JSON (ghi lai tu SUT that)",
+              "name": "200 - JSON (ghi lai tu SUT that): xoa coupon -> 200",
               "originalRequest": {
                 "method": "DELETE",
                 "header": [

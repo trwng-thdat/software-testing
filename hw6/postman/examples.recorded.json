@@ -1,0 +1,74 @@
+{
+  "SETUP-01": {
+    "code": 200,
+    "body": "{\"message\":\"Login successful\",\"token\":\"<JWT-da-che-xem-BUG-03>\",\"user\":{\"id\":1,\"name\":\"Admin User\",\"email\":\"admin@eshop.com\",\"password\":\"Admin123!\",\"role\":\"admin\",\"login_attempts\":0,\"locked_until\":null,\"reset_token\":null,\"shipping_address\":null,\"phone\":null}}",
+    "isJson": true,
+    "note": "response dang nhap admin"
+  },
+  "TC-API1-001": {
+    "code": 200,
+    "body": "{\"message\":\"Profile updated\"}",
+    "isJson": true,
+    "note": "cap nhat ho so hop le"
+  },
+  "TC-API1-023": {
+    "code": 401,
+    "body": "{\"error\":\"Unauthorized\"}",
+    "isJson": true,
+    "note": "khong gui token -> 401"
+  },
+  "TC-API1-035": {
+    "code": 403,
+    "body": "{\"error\":\"Forbidden\"}",
+    "isJson": true,
+    "note": "JWT sai cu phap -> 403"
+  },
+  "TC-API1-036": {
+    "code": 200,
+    "body": "{\"id\":2,\"name\":\"Nguyen Van A\",\"email\":\"test@eshop.com\",\"password\":\"Test1234!\",\"role\":\"user\",\"login_attempts\":0,\"locked_until\":null,\"reset_token\":null,\"shipping_address\":\"123 Le Loi\",\"phone\":\"0912345678\"}",
+    "isJson": true,
+    "note": "GET ho so - 10 truong cua bang users"
+  },
+  "A1-E01": {
+    "code": 400,
+    "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>SyntaxError: Expected double-quoted property name in JSON at position 12 (line 1 column 13)<br> &nbsp; &nbsp;at JSON.parse (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at parse (C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\body-parser@2.3.0\\node_modules\\body-parser\\lib\\types\\json.js:91:21)<br> &nbsp; &nbsp;at C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\body-parser@2.3.0\\node_modules\\body-parser\\lib\\read.js:162:18<br> &nbsp; &nbsp;at AsyncResource.runInAsyncScope (node:async_hooks:214:14)<br> &nbsp; &nbsp;at invokeCallback (C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\raw-body@3.0.2\\node_modules\\raw-body\\index.js:238:16)<br> &nbsp; &nbsp;at done (C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\raw-body@3.0.2\\node_modules\\raw-body\\index.js:227:7)<br> &nbsp; &nbsp;at IncomingMessage.onEnd (C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\raw-body@3.0.2\\node_modules\\raw-body\\index.js:287:7)<br> &nbsp; &nbsp;at IncomingMessage.emit (node:events:519:28)<br> &nbsp; &nbsp;at endReadableNT (node:internal/streams/readable:1698:12)<br> &nbsp; &nbsp;at process.processTicksAndRejections (node:internal/process/task_queues:89:21)</pre>\n</body>\n</html>\n",
+    "isJson": false,
+    "note": "JSON sai cu phap -> 400 dang HTML"
+  },
+  "TC-API2-001": {
+    "code": 200,
+    "body": "{\"message\":\"Order canceled successfully\"}",
+    "isJson": true,
+    "note": "huy don pending -> 200"
+  },
+  "TC-API2-002": {
+    "code": 404,
+    "body": "{\"error\":\"Order not found\"}",
+    "isJson": true,
+    "note": "don khong ton tai -> 404"
+  },
+  "TC-API2-019": {
+    "code": 400,
+    "body": "{\"error\":\"Cannot cancel this order.\"}",
+    "isJson": true,
+    "note": "huy don delivered -> 400"
+  },
+  "TC-API3-001": {
+    "code": 200,
+    "body": "{\"message\":\"Coupon created\",\"id\":5}",
+    "isJson": true,
+    "note": "tao coupon hop le -> 200 kem id"
+  },
+  "TC-API3-004": {
+    "code": 500,
+    "body": "{\"error\":\"SQLITE_CONSTRAINT: UNIQUE constraint failed: coupons.code\"}",
+    "isJson": true,
+    "note": "trung code -> 500 kem thong bao SQLite"
+  },
+  "TC-API3-037": {
+    "code": 200,
+    "body": "{\"message\":\"Coupon deleted\"}",
+    "isJson": true,
+    "note": "xoa coupon -> 200"
+  }
+}
