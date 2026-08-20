@@ -30,8 +30,6 @@
 
 ## Tóm tắt kết quả
 
-> ✍️ Điền sau khi chạy Newman xong. Đây là bảng TA đọc đầu tiên.
-
 |                           | API 1 — `PUT /users/me` | API 2 — `PUT /orders/:id/cancel` | API 3 — `POST /admin/coupons` |  **Tổng**   |
 | ------------------------- | :---------------------: | :------------------------------: | :---------------------------: | :---------: |
 | Pool / FR                 |      A / **FR-04**      |          B / **FR-10**           |         C / **FR-17**         |      —      |
@@ -40,19 +38,28 @@
 | — INVALID (đã sửa)        |        2 (4.8%)         |             2 (4.7%)             |           5 (6.1%)            |  9 (5.4%)   |
 | — INCOMPLETE (đã bổ sung) |        9 (21.4%)        |            8 (18.6%)             |          12 (14.6%)           | 29 (17.4%)  |
 | Test case tôi tự bổ sung  |            5            |                5                 |               5               |     15      |
-| **Tổng test đã thực thi** |           «»            |                «»                |              «»               |     «»      |
-| — PASS                    |           «»            |                «»                |              «»               |     «»      |
-| — FAIL                    |           «»            |                «»                |              «»               |     «»      |
-| Bug SUT phát hiện         |           «»            |                «»                |              «»               |     «»      |
+| **Test case đã thực thi** |         **46**          |              **46**              |            **85**             |   **177**   |
+| — HTTP call Newman        |           102           |               138                |              249              |     489     |
+| — Assertion               |           178           |               193                |              472              |     843     |
+| — PASS                    |           178           |               193                |              472              |     843     |
+| — FAIL                    |            0            |                0                 |               0               |      0      |
+| Lỗi SUT phát hiện         |            5            |                5                 |               7               |   **17**    |
+
+**Test case đã thực thi ngoài 3 folder API**
+
+| Lần chạy | Test case | Iteration | HTTP call | Assertion | PASS | FAIL |
+| --- | :-: | :-: | :-: | :-: | :-: | :-: |
+| `SPEC` — assertion theo đặc tả (**cố ý fail**) | 16 | 1 | 46 | 57 | 35 | **22** |
+| `DATA1` — chạy theo dữ liệu, `phone` (FR-04) | 1 | 6 | 12 | 24 | 24 | 0 |
+| `DATA3` — chạy theo dữ liệu, `coupon` (FR-17) | 1 | 6 | 12 | 18 | 18 | 0 |
+| **Tổng toàn bộ 6 lần chạy** | **195** | | **559** | **942** | **920** | **22** |
 
 | Kết luận chính            |                                                    |
 | ------------------------- | -------------------------------------------------- |
-| **Bug nghiêm trọng nhất** | «mô tả 1 dòng + link GitHub Issue»                 |
-| **Lỗi của AI đáng chú ý** | «AI bỏ sót nhóm nào — bảo mật? chuyển trạng thái?» |
-| **Vùng bảo mật yếu nhất** | «SEC-0x — mô tả»                                   |
-| **Kết quả CI/CD**         | «run xanh: URL · run đỏ: URL»                      |
-
----
+| **Lỗi nghiêm trọng nhất** | BUG-11/BUG-12 (SEC-03) — user thường **tạo và xoá được coupon**, kể cả coupon seed của hệ thống. Kèm BUG-13 (`discount_value` âm) thì một tài khoản thường tự phát hành được coupon **làm tăng** tiền phải trả: `A3-E05` cho `final_amount = 550000` trên đơn `500000`. |
+| **Lỗi của AI đáng chú ý** | AI **không sai về mã nguồn** mà sai về **tầng suy luận**: nó dừng ở tầng JavaScript (`max_uses_per_user \|\| 1`) và bỏ tầng lưu trữ, nên kết luận chuỗi `"0"` được giữ nguyên — thực tế SQLite ép về **số 0**, vô hiệu hoá chính cơ chế `\|\| 1` (BUG-14). Nó cũng hứa phân tích concurrency ở P5 rồi đánh rơi qua 4 phase sau (A2-E01). |
+| **Vùng bảo mật yếu nhất** | **SEC-03** — không một endpoint admin nào trong 3 API kiểm `role` trong token. 4/22 assertion fail thuộc nhóm này, và nó là gốc của 3 lỗi riêng biệt. |
+| **Kết quả thực thi**      | 6 lần chạy Newman trên `localhost:3000`, 559 HTTP call, 942 assertion. 3 folder API **xanh tuyệt đối** (843/843); 22 assertion fail đều nằm trong folder `SPEC` và **được thiết kế để fail**. |
 
 ## Mục lục
 
@@ -100,34 +107,65 @@
 
 ## 2. Môi trường Kiểm thử
 
-| Hạng mục           | Giá trị                                        |
-| ------------------ | ---------------------------------------------- |
-| Hệ điều hành       | «Windows 11 / …»                               |
-| Runtime SUT        | «Node.js vXX.X»                                |
-| SUT chạy tại       | «http://localhost:3000»                        |
-| Commit SUT đã test | «hash + ngày»                                  |
-| Postman            | «version»                                      |
-| Newman             | «version» + reporter «htmlextra»               |
-| Dữ liệu khởi tạo   | «script seed / database.js — mô tả cách reset» |
+| Hạng mục | Giá trị |
+| --- | --- |
+| Hệ điều hành | Windows 11 Home Single Language 10.0.26200 |
+| Runtime SUT | Node.js v22.22.1 |
+| SUT chạy tại | `http://localhost:3000` (Express 5, SQLite qua `sqlite3` 6.0.1) |
+| Thư mục SUT đang chạy | `C:\HCMUS\Software Testing\group05_eshop\backend` — **bản ngoài repo**; `server.js` và `database.js` đã `diff` giống hệt bản trong repo (xem §7.1 lỗi 1) |
+| Commit SUT đã test | `bdb7bd8` (2026-07-06) của bản trong repo `software-testing/group05_eshop` |
+| Postman | Collection viết theo schema `v2.1.0`, import được vào Postman app; bộ chạy dùng Newman CLI |
+| Newman | 6.2.2 + reporter `htmlextra` 1.23.1 + reporter `json` |
+| Tài khoản dùng để test | `admin@eshop.com` / `Admin123!` (id 1, `role=admin`) · `test@eshop.com` / `Test1234!` (id 2, `role=user`) · `userb.hw06@eshop.com` / `UserB123!` (user B, do Setup tự tạo, dùng cho IDOR) |
+| Dữ liệu khởi tạo | `node database.js` — `DROP` rồi `CREATE` lại 6 bảng, seed 2 user, 5 sản phẩm, 4 coupon (`SAVE10`, `BIGBUY`, `VIP100`, `EXPIRED`), **0 đơn hàng** |
 
-**Quy trình reset dữ liệu giữa các lần chạy.**
+**Quy trình reset dữ liệu giữa các lần chạy.** Mỗi API chạy trên một DB vừa seed lại. Không dùng trực tiếp `node database.js` mà gọi qua một script bọc, vì `database.js` ghi bất đồng bộ và **thoát trước khi dữ liệu kịp thấy được qua API** — lần đầu tôi bị đúng lỗi này (§7.1).
 
 ```bash
-«# lệnh dựng lại DB / seed dữ liệu trước mỗi lần chạy Newman»
+node hw6/scripts/reset_db.js
+# [reset_db] reset DB tai: C:\HCMUS\Software Testing\group05_eshop\backend
+# [reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
 ```
 
-**Header bắt buộc `X-Student-Id`.** Cấu hình ở cấp Collection (pre-request script) để mọi request đều mang header.
+Script chỉ thoát với mã 0 khi **API đã thật sự trả về trạng thái seed** (`role=user`, đúng 4 coupon, 0 đơn hàng), thử lại tối đa 30 lần × 200 ms.
+
+**Header bắt buộc `X-Student-Id`.** Cấu hình ở cấp Collection nên mọi request — kể cả request phụ trợ trong `pm.sendRequest` — đều mang header.
 
 ```javascript
-// Collection → Pre-request Script
-pm.request.headers.upsert({
-  key: "X-Student-Id",
-  value: pm.environment.get("studentId"),
-});
-console.log("X-Student-Id =", pm.environment.get("studentId"));
+// Collection → Pre-request Script (hw6/postman/src/build.js: COLLECTION_PREREQUEST)
+var studentId = pm.environment.get("studentId");
+if (!studentId) {
+  throw new Error("Thieu bien moi truong studentId - hay chon environment EShop_HW06");
+}
+pm.request.headers.upsert({ key: "X-Student-Id", value: studentId });
+console.log("[X-Student-Id] " + studentId + " -> " + pm.request.method + " " + pm.request.url.toString());
 ```
 
-> ✍️ **BẮT BUỘC (chống gian lận §11 của đề):** chèn ảnh chụp Postman Console cho thấy dòng log `X-Student-Id = «MSSV»`.
+```javascript
+// Collection → Tests: tu kiem lai chinh header do, o MOI request
+pm.test("[moi request] co header X-Student-Id = " + pm.environment.get("studentId"), function () {
+  pm.expect(pm.request.headers.get("X-Student-Id")).to.eql(pm.environment.get("studentId"));
+});
+```
+
+Trích log console thật của Newman (`hw6/reports/newman_console_full.log`):
+
+```text
+└ TC-API1-029 - [CRITICAL] Leo thang quyen qua role:"admin" (SEC-06)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT http://localhost:3000/api/users/me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+```
+
+Trong một lần chạy đầy đủ, log có **458 dòng `[X-Student-Id]`** và 458 assertion tương ứng đều pass:
+
+```bash
+grep -c "X-Student-Id" hw6/reports/newman_console_full.log   # 458
+```
+
+> ✍️ **Còn phải làm (chống gian lận §11 của đề):** chèn ảnh chụp **Postman Console** (không phải terminal) cho thấy dòng `[X-Student-Id] 23127344 -> …`. Log text ở trên là bằng chứng từ Newman CLI; đề yêu cầu thêm ảnh từ pre-request script trong app.
 
 ![Console X-Student-Id](«evidence/xstudentid_console.png»)
 
@@ -294,36 +332,61 @@ Môi trường probe: `node database.js` → `node server.js` trên `localhost:3
 
 ### 4.4 Bước 4 — Thực thi (Postman + Newman)
 
-| Hạng mục                | Giá trị                  |
-| ----------------------- | ------------------------ |
-| Folder trong collection | «API1 — …»               |
-| Số request              | «»                       |
-| Số assertion            | «»                       |
-| Data file (nếu có)      | «data/api1.csv — n dòng» |
+**Cách tổ chức bộ chạy (áp cho cả 3 API).** Collection được **sinh ra từ mã** (`hw6/postman/src/*.js` → `node hw6/postman/src/build.js`) chứ không dựng tay trong GUI. Lý do: 195 test case × trung bình 3 assertion là quá nhiều để soát bằng mắt trong Postman, còn ở dạng mã thì mỗi test case là một khối 5–10 dòng đọc được, diff được, review được. File `.json` xuất ra vẫn import bình thường vào Postman.
+
+Ba nguyên tắc tôi áp cho toàn bộ assertion:
+
+1. **Header `X-Student-Id` do pre-request script cấp collection chèn** vào _mọi_ request bằng `pm.request.headers.upsert`, và một test script cấp collection **tự kiểm lại** header đó ở mọi request — nên số assertion luôn ≥ số request.
+2. **Trong 3 folder API, assertion mã hoá HÀNH VI THỰC TẾ** đã probe được (characterization test). Nhờ vậy bộ test xanh và trở thành mốc hồi quy: bất kỳ thay đổi hành vi nào về sau cũng làm đỏ bộ test.
+3. **Điều đặc tả yêu cầu nằm ở folder `SPEC` riêng**, nơi assertion viết theo FR/SEC và **có chủ đích thất bại**. Một bug chỉ thực sự được *báo cáo* khi có một assertion nói rõ đặc tả đòi gì và assertion đó fail — xem §6.11.
+
+
+| Hạng mục | Giá trị |
+| --- | --- |
+| Folder trong collection | `API1 - PUT /api/users/me (Pool A / FR-04)` |
+| Số test case trong folder | **46** |
+| Số HTTP call Newman thực hiện | **102** (gồm cả request phụ trợ do `pm.sendRequest` dựng trạng thái / đọc lại DB) |
+| Số assertion | **178** |
+| Kết quả | **178 pass / 0 fail** |
+| Thời gian chạy | 4.4 giây |
+| Nguồn test case | 42 TC do AI sinh (TC-034 đã gộp vào TC-023 theo kết luận kiểm toán) + 5 TC tự bổ sung = **46** |
+| Data file | `hw6/postman/data/api1_phone.csv` — 6 dòng, chạy riêng ở folder `DATA1` (6 iteration, 24 assertion, 0 fail) |
 
 ```bash
-newman run «collection.json» \
-  -e «env.postman_environment.json» \
-  --folder "«API1 — …»" \
-  -d «data/api1.csv» \
-  -r cli,htmlextra --reporter-htmlextra-export «reports/api1.html»
+# reset DB rồi chạy đúng folder của API này (kèm Setup và Teardown)
+node hw6/scripts/reset_db.js
+newman run hw6/postman/EShop_HW06_API.postman_collection.json \
+  -e hw6/postman/EShop_HW06.postman_environment.json \
+  --folder "00 - Setup (dang nhap, tao user B, tu ky token gia mao)" \
+  --folder "API1 - PUT /api/users/me (Pool A / FR-04)" \
+  --folder "99 - Teardown (don du lieu de chay lai duoc)" \
+  -r cli,htmlextra,json \
+  --reporter-htmlextra-export hw6/reports/api1.html
+
+# hoặc gọn hơn (script đã gói sẵn cả reset + 3 reporter):
+bash hw6/scripts/run_newman.sh api1
 ```
 
 |            | Executed | Passed | Failed |
 | ---------- | :------: | :----: | :----: |
-| Requests   |    «»    |   «»   |   «»   |
-| Assertions |    «»    |   «»   |   «»   |
+| Requests   | 102 | 102 | 0 |
+| Assertions | 178 | 178 | 0 |
 
-> ✍️ Ảnh chụp Newman CLI phải thấy rõ hostname (`localhost` / `127.0.0.1`) — yêu cầu chống gian lận.
+Báo cáo HTML: [`hw6/reports/api1.html`](./reports/api1.html) · log console: [`hw6/reports/newman_console_full.log`](./reports/newman_console_full.log) (3578 dòng, có 458 dòng `[X-Student-Id]`)
 
-![Newman API1](«evidence/newman_api1.png»)
-Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
+> **Ghi chú về cách dựng dữ liệu.** Các TC ghi `role` (TC-022, -029, -030, -042, A1-E04) đều **tự trả `role` về `"user"`** ngay trong cùng chuỗi callback của assertion, nên chạy lại suite nhiều lần vẫn cho kết quả như nhau. Ban đầu tôi tách phần dọn thành một `pm.test` riêng và **bị fail thật** — xem "Hai lỗi tôi tự gây ra" ở §7.
 
-**Các assertion FAIL và diễn giải**
+**Các assertion FAIL và diễn giải.** Trong folder này **không có assertion nào fail** — vì assertion ở đây mã hoá hành vi thực tế đã probe. Chỗ đặc tả bị vi phạm được phơi bày ở folder `SPEC`:
 
-| ID     | Assertion fail | Actual | Expected | Là bug SUT hay lỗi test?   |
-| ------ | -------------- | ------ | -------- | -------------------------- |
-| A1-0xx | «»             | «»     | «»       | «BUG-01 / lỗi test đã sửa» |
+| ID (folder SPEC) | Assertion fail | Actual | Expected (theo đặc tả) | Là bug SUT hay lỗi test? |
+| --- | --- | --- | --- | --- |
+| `SPEC-BUG-01` | role trong DB phải vẫn là `user` sau khi gửi `role:"admin"` | `admin` | `user` (SEC-06) | **BUG-01 — SEC-06** |
+| `SPEC-BUG-02` | response `GET /api/users/me` không được có key `password` | có `password` plaintext | không có (SEC-01) | **BUG-02 — SEC-01** |
+| `SPEC-BUG-03` | token tự ký mạo danh `id=1` phải bị từ chối 401/403 | `200`, hồ sơ admin bị sửa | `401`/`403` (SEC-02) | **BUG-03 — SEC-02** |
+| `SPEC-BUG-04` | `phone:"abc"` phải bị từ chối `400` | `200`, lưu nguyên `abc` | `400` (FR-04) | **BUG-04 — FR-04** |
+| `SPEC-BUG-05` | `GET /api/admin/users` với token `role=user` phải trả `403` | `200`, trả danh sách user | `403` (SEC-03) | **BUG-05 — SEC-03** |
+
+> **Điều chỉnh so với bản §4.1 ban đầu.** Khi viết assertion tôi phải probe lại `TC-API1-020` (header 2 dấu cách) vì lần probe đầu tôi tự viết sai script (tham số `token` ghi đè header thủ công) nên đo ra `500`. Probe đúng cho **`403`** — đúng như §4.1 đã ghi. Đây là lỗi của tôi, không phải của SUT hay của AI.
 
 ### 4.5 Bước 5 — Lỗi phát hiện được
 
@@ -485,38 +548,51 @@ Báo cáo HTML: [`«reports/api1.html»`](«reports/api1.html»)
 
 ### 5.4 Bước 4 — Thực thi (Postman + Newman)
 
-| Hạng mục                | Giá trị                  |
-| ----------------------- | ------------------------ |
-| Folder trong collection | «API2 — Order Cancel»    |
-| Số request              | «»                       |
-| Số assertion            | «»                       |
-| Data file (nếu có)      | «data/api2.csv — n dòng» |
+| Hạng mục | Giá trị |
+| --- | --- |
+| Folder trong collection | `API2 - PUT /api/orders/:id/cancel (Pool B / FR-10)` |
+| Số test case trong folder | **46** |
+| Số HTTP call Newman thực hiện | **138** (gồm cả request phụ trợ do `pm.sendRequest` dựng trạng thái / đọc lại DB) |
+| Số assertion | **193** |
+| Kết quả | **193 pass / 0 fail** |
+| Thời gian chạy | 5.9 giây |
+| Nguồn test case | 43 TC do AI sinh **trừ 2 TC bị kiểm toán gán INVALID** (TC-022 cần sửa DB trực tiếp, TC-043 là mệnh đề tổng hợp) = 41, cộng 5 TC tự bổ sung = **46** |
+| Dựng trạng thái | 33/46 TC dùng pre-request script: `POST /api/checkout` → `PUT /api/admin/orders/:id/status` để đưa đơn tới `confirmed` / `shipping` / `delivered` / `canceled` |
 
 ```bash
-newman run «collection.json» \
-  -e «env.postman_environment.json» \
-  --folder "«API2 — Order Cancel»" \
-  -d «data/api2.csv» \
-  -r cli,htmlextra --reporter-htmlextra-export «reports/api2.html»
+# reset DB rồi chạy đúng folder của API này (kèm Setup và Teardown)
+node hw6/scripts/reset_db.js
+newman run hw6/postman/EShop_HW06_API.postman_collection.json \
+  -e hw6/postman/EShop_HW06.postman_environment.json \
+  --folder "00 - Setup (dang nhap, tao user B, tu ky token gia mao)" \
+  --folder "API2 - PUT /api/orders/:id/cancel (Pool B / FR-10)" \
+  --folder "99 - Teardown (don du lieu de chay lai duoc)" \
+  -r cli,htmlextra,json \
+  --reporter-htmlextra-export hw6/reports/api2.html
+
+# hoặc gọn hơn (script đã gói sẵn cả reset + 3 reporter):
+bash hw6/scripts/run_newman.sh api2
 ```
 
 |            | Executed | Passed | Failed |
 | ---------- | :------: | :----: | :----: |
-| Requests   |    «»    |   «»   |   «»   |
-| Assertions |    «»    |   «»   |   «»   |
+| Requests   | 138 | 138 | 0 |
+| Assertions | 193 | 193 | 0 |
 
-> ✍️ Ảnh chụp Newman CLI phải thấy rõ hostname (`localhost` / `127.0.0.1`).
-> **Lưu ý riêng API 2:** phần lớn TC cần **dựng trạng thái trước** bằng `POST /api/checkout` + `PUT /api/admin/orders/:id/status`. Nên dùng `postman.setNextRequest` để chạy đúng thứ tự chuỗi trạng thái.
+Báo cáo HTML: [`hw6/reports/api2.html`](./reports/api2.html) · log console: [`hw6/reports/newman_console_full.log`](./reports/newman_console_full.log) (3578 dòng, có 458 dòng `[X-Student-Id]`)
 
-![Newman API2](«evidence/newman_api2.png»)
-Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
+> **Yêu cầu DB sạch.** `TC-API2-010` và `TC-API2-011` kiểm biên cấu trúc `:id = 1` và `:id = 2`, nên chúng **assert luôn tiền điều kiện** `orderId === 1` / `=== 2`. Nếu chạy mà không reset DB, hai TC này fail với thông báo rõ ràng thay vì âm thầm mất ý nghĩa. Đây là cách tôi sửa nhãn INCOMPLETE mà kiểm toán đã gán cho chúng ở §5.2.
 
-**Các assertion FAIL và diễn giải**
+> **`A2-E01` (mất cập nhật) chạy tuần tự, không phải song song.** Newman chạy tuần tự nên trong collection tôi tái hiện cùng khiếm khuyết theo trình tự: hủy đơn `shipping` (200) → admin set `delivered` (200) → trạng thái cuối là `delivered`, tức lệnh hủy **bị mất**. Bản chạy **song song thật** tôi làm bằng `Promise.all` trong [`hw6/scripts/probe2.js`](./scripts/probe2.js) và cho đúng kết quả đó. Tôi ghi rõ điều này trong `desc` của TC để không nhận vơ là đã test được race condition thật bằng Postman.
 
-| ID          | Assertion fail                | Actual | Expected             | Là bug SUT hay lỗi test?                      |
-| ----------- | ----------------------------- | ------ | -------------------- | --------------------------------------------- |
-| TC-API2-018 | «status 200, kỳ vọng từ chối» | «200»  | «400/403 theo FR-10» | «BUG-0x — hủy đơn `shipping` bằng token user» |
-| TC-API2-0xx | «»                            | «»     | «»                   | «»                                            |
+**Các assertion FAIL và diễn giải.** Trong folder này **không có assertion nào fail** — vì assertion ở đây mã hoá hành vi thực tế đã probe. Chỗ đặc tả bị vi phạm được phơi bày ở folder `SPEC`:
+
+| ID (folder SPEC) | Assertion fail | Actual | Expected (theo đặc tả) | Là bug SUT hay lỗi test? |
+| --- | --- | --- | --- | --- |
+| `SPEC-BUG-06` | hủy đơn `shipping` phải bị từ chối `400` và đơn giữ nguyên `shipping` | `200`, đơn thành `canceled` | `400` (FR-10) | **BUG-06 — FR-10** |
+| `SPEC-BUG-07` | admin đổi `canceled → delivered` phải bị từ chối `400` | `200`, đơn thành `delivered` | `400` (FR-10: `canceled` là trạng thái kết thúc) | **BUG-07 — FR-10** |
+| `SPEC-BUG-08` | `GET /api/orders/:id` không token phải trả `401` | `200`, trả full đơn hàng | `401` (SEC-02) | **BUG-08 — SEC-02** |
+| `SPEC-BUG-09` | thông báo `400` phải cho biết đơn đang ở trạng thái nào | `Cannot cancel this order.` | thông báo phù hợp (FR-10) | **BUG-09 — FR-10** |
 
 ### 5.5 Bước 5 — Lỗi phát hiện được
 
@@ -715,37 +791,57 @@ Báo cáo HTML: [`«reports/api2.html»`](«reports/api2.html»)
 
 ### 6.4 Bước 4 — Thực thi (Postman + Newman)
 
-| Hạng mục                | Giá trị                  |
-| ----------------------- | ------------------------ |
-| Folder trong collection | «API3 — Admin Coupons»   |
-| Số request              | «»                       |
-| Số assertion            | «»                       |
-| Data file (nếu có)      | «data/api3.csv — n dòng» |
+| Hạng mục | Giá trị |
+| --- | --- |
+| Folder trong collection | `API3 - POST /api/admin/coupons (Pool C / FR-17)` |
+| Số test case trong folder | **85** |
+| Số HTTP call Newman thực hiện | **249** (gồm cả request phụ trợ do `pm.sendRequest` dựng trạng thái / đọc lại DB) |
+| Số assertion | **472** |
+| Kết quả | **472 pass / 0 fail** |
+| Thời gian chạy | 10.7 giây |
+| Nguồn test case | 82 TC do AI sinh **trừ 3 TC là mệnh đề tổng hợp** (TC-040, -042, -043), **cộng** TC-081 được tách thành `-081a`/`-081b` = 80, cộng 5 TC tự bổ sung = **85** |
+| Dọn dữ liệu | `code` là `UNIQUE` nên mọi TC tạo coupon đều đẩy `id` vào biến collection `createdCouponIds`; folder Teardown xoá sạch (lần chạy này xoá **71** coupon) |
+| Data file | `hw6/postman/data/api3_coupon.csv` — 6 dòng, folder `DATA3` (6 iteration, 18 assertion, 0 fail) |
 
 ```bash
-newman run «collection.json» \
-  -e «env.postman_environment.json» \
-  --folder "«API3 — Admin Coupons»" \
-  -d «data/api3.csv» \
-  -r cli,htmlextra --reporter-htmlextra-export «reports/api3.html»
+# reset DB rồi chạy đúng folder của API này (kèm Setup và Teardown)
+node hw6/scripts/reset_db.js
+newman run hw6/postman/EShop_HW06_API.postman_collection.json \
+  -e hw6/postman/EShop_HW06.postman_environment.json \
+  --folder "00 - Setup (dang nhap, tao user B, tu ky token gia mao)" \
+  --folder "API3 - POST /api/admin/coupons (Pool C / FR-17)" \
+  --folder "99 - Teardown (don du lieu de chay lai duoc)" \
+  -r cli,htmlextra,json \
+  --reporter-htmlextra-export hw6/reports/api3.html
+
+# hoặc gọn hơn (script đã gói sẵn cả reset + 3 reporter):
+bash hw6/scripts/run_newman.sh api3
 ```
 
 |            | Executed | Passed | Failed |
 | ---------- | :------: | :----: | :----: |
-| Requests   |    «»    |   «»   |   «»   |
-| Assertions |    «»    |   «»   |   «»   |
+| Requests   | 249 | 249 | 0 |
+| Assertions | 472 | 472 | 0 |
 
-> ✍️ **Lưu ý riêng API 3:** `code` là `UNIQUE`, nên **không dọn dữ liệu = không chạy lại được**. Chạy `TC-API3-044` sớm trong suite để xác thực cơ chế teardown trước khi các TC khác phụ thuộc vào nó.
+Báo cáo HTML: [`hw6/reports/api3.html`](./reports/api3.html) · log console: [`hw6/reports/newman_console_full.log`](./reports/newman_console_full.log) (3578 dòng, có 458 dòng `[X-Student-Id]`)
 
-![Newman API3](«evidence/newman_api3.png»)
-Báo cáo HTML: [`«reports/api3.html»`](«reports/api3.html»)
+> **Hệ quả nghiệp vụ đã kiểm chứng được bằng `apply-coupon`.** Hai TC tự bổ sung chạy xuyên sang FR-09 và đều PASS (tức tái hiện được hậu quả): `A3-E05` cho `final_amount = 550000` với `total_amount = 500000` — "giảm giá" làm khách **trả nhiều hơn**; `A3-E02` cho coupon `max_uses_per_user = 0` bị chặn **ngay lần dùng đầu tiên** (`usage_count 0 >= max 0`), tức coupon vĩnh viễn không dùng được.
 
-**Các assertion FAIL và diễn giải**
+> **`A3-E04` xoá coupon seed `SAVE10` nên được đặt cuối folder**, và mỗi lần chạy đều bắt đầu bằng `node hw6/scripts/reset_db.js`.
 
-| ID          | Assertion fail            | Actual | Expected                | Là bug SUT hay lỗi test?               |
-| ----------- | ------------------------- | ------ | ----------------------- | -------------------------------------- |
-| TC-API3-029 | «status 200, kỳ vọng 403» | «200»  | «403 theo SEC-03/FR-12» | «BUG-0x — user thường tạo được coupon» |
-| TC-API3-0xx | «»                        | «»     | «»                      | «»                                     |
+**Các assertion FAIL và diễn giải.** Trong folder này **không có assertion nào fail** — vì assertion ở đây mã hoá hành vi thực tế đã probe. Chỗ đặc tả bị vi phạm được phơi bày ở folder `SPEC`:
+
+| ID (folder SPEC) | Assertion fail | Actual | Expected (theo đặc tả) | Là bug SUT hay lỗi test? |
+| --- | --- | --- | --- | --- |
+| `SPEC-BUG-10` | user thường tạo coupon phải bị từ chối `403` | `200`, coupon được tạo | `403` (SEC-03) | **BUG-11 — SEC-03** |
+| `SPEC-BUG-11` | user thường xoá coupon phải bị từ chối `403`, `BIGBUY` phải còn | `200`, `BIGBUY` biến mất | `403` (SEC-03) | **BUG-12 — SEC-03** |
+| `SPEC-BUG-12` | `discount_value:-50000` phải bị từ chối `400` | `200`, coupon âm được tạo | `400` (FR-17: `>0`) | **BUG-13 — FR-17** |
+| `SPEC-BUG-13` | `max_uses_per_user:"0"` phải bị từ chối, giá trị lưu phải `>= 1` | `200`, lưu số `0` | `400` / `>=1` (FR-17) | **BUG-14 — FR-17** |
+| `SPEC-BUG-14` | coupon thứ hai với `code:null` phải bị từ chối `400`/`409` | `200`, hai coupon `code=null` | từ chối (FR-17: `code` unique) | **BUG-15 — FR-17** |
+| `SPEC-BUG-15` | trùng `code` phải trả `409`, không lộ text driver | `500` + `SQLITE_CONSTRAINT…` | `409` (không lộ thông tin nội bộ) | **BUG-16 — xử lý lỗi** |
+| `SPEC-BUG-16` | thiếu body phải trả `400` dạng JSON | `500` dạng HTML | `400` JSON có key `error` | **BUG-17 — xử lý lỗi** |
+
+> **Một sai số của bản §6.1 đã được thực thi sửa.** `TC-API3-009` (thiếu `min_order_amount`) tôi ghi là "`DEFAULT 0`". Probe thật cho **`null`**: `INSERT` luôn bind đủ 6 cột nên giá trị `undefined` thành `NULL`, `DEFAULT 0` **không bao giờ có hiệu lực**. Assertion trong collection dùng `null`. Cùng lý do đó áp cho `TC-API3-005` (`type` → `null`, không phải `DEFAULT 'percent'`).
 
 ### 6.5 Bước 5 — Lỗi phát hiện được
 
@@ -781,7 +877,7 @@ File: [`«openapi.yaml»`](«openapi.yaml»)
 
 ### 6.9 Bảng phủ yêu cầu bảo mật SEC-01 → SEC-07
 
-> ⚠️ SEC-01…SEC-07 nằm trong `README.md §9` của SUT (mục "Tham khảo"), **không nằm trong `api_specification.md`** như đề bài giả định — đã kiểm tra trực tiếp trong repo SUT (P8). Cột "Kết quả" để **pending** vì Newman chưa chạy (Bước 4).
+> ⚠️ SEC-01…SEC-07 nằm trong `README.md §9` của SUT (mục "Tham khảo"), **không nằm trong `api_specification.md`** như đề bài giả định — đã kiểm tra trực tiếp trong repo SUT (P8). Cột "Kết quả" dưới đây là **kết quả thực thi thật** sau Bước 4.
 
 | Mã     | Yêu cầu (theo `README.md §9`)                  | TC của API 1                                       | API 2                                            | API 3                             | Kết quả   |
 | ------ | ---------------------------------------------- | -------------------------------------------------- | ------------------------------------------------ | --------------------------------- | --------- |
@@ -793,30 +889,94 @@ File: [`«openapi.yaml»`](«openapi.yaml»)
 | SEC-06 | API cập nhật hồ sơ không cho đổi `role`        | **TC-API1-029 — vi phạm**                          | Không áp dụng                                    | Không áp dụng                     | «pending» |
 | SEC-07 | OTP đủ entropy, có hạn, vô hiệu sau dùng       | Không áp dụng (endpoint không liên quan OTP)       | Không áp dụng                                    | Không áp dụng                     | «pending» |
 
+
+**Diễn giải từng dòng**
+
+| Mã | Kết luận | Bằng chứng |
+| --- | --- | --- |
+| SEC-01 | **VI PHẠM** — `SPEC-BUG-02` fail | response `GET /api/users/me` trả về `password` dạng plaintext; mật khẩu cũng được so sánh trực tiếp trong `server.js:48` |
+| SEC-02 | **VI PHẠM** — `SPEC-BUG-03`, `SPEC-BUG-08` fail | 7 token tự ký bằng secret hardcode (`server.js:9`) đều được chấp nhận; `GET /api/orders/:id` không yêu cầu token |
+| SEC-03 | **VI PHẠM** — `SPEC-BUG-05`, `-10`, `-11` fail | không endpoint admin nào kiểm `role`: user thường tạo/xoá được coupon và đọc được `GET /api/admin/users` |
+| SEC-04 | Không kết luận được ở tầng API | payload `<script>` lưu và trả về nguyên văn (`TC-API1-032` pass); việc escape khi hiển thị thuộc tầng UI, ngoài phạm vi kiểm thử API |
+| SEC-05 | **ĐẠT** | `TC-API1-031`, `TC-API2-035`, `TC-API3-033`, `TC-API3-071` đều pass: payload SQLi được lưu/xử lý như chuỗi literal, bảng `users` và `coupons` còn nguyên |
+| SEC-06 | **VI PHẠM** — `SPEC-BUG-01` fail | `PUT /api/users/me` với `role:"admin"` ghi thẳng vào DB; đăng nhập lại nhận token mang claim `role=admin` (`A1-E04` pass) |
+| SEC-07 | Không áp dụng | không có endpoint OTP nào trong 3 API đã chọn |
+
+**Tổng kết: 4/7 yêu cầu bảo mật bị vi phạm** (SEC-01, SEC-02, SEC-03, SEC-06), 1 đạt (SEC-05), 1 không kết luận được ở tầng API (SEC-04), 1 không áp dụng (SEC-07).
+---
+
+### 6.11 Folder `SPEC` — assertion theo đặc tả (có chủ đích thất bại)
+
+Ba folder API ở trên đều xanh, và điều đó **không** có nghĩa là SUT đúng: assertion ở đó mã hoá hành vi thực tế. Để biến các vi phạm đặc tả thành bằng chứng máy chạy được, tôi tách thêm một folder trong cùng collection, nơi mỗi test case ghi **điều FR/SEC yêu cầu**. Assertion ở đây fail chính là mục đích.
+
+| Hạng mục | Giá trị |
+| --- | --- |
+| Folder | `SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug)` |
+| Số test case | **16** (5 cho API 1, 4 cho API 2, 7 cho API 3) |
+| Số HTTP call | 46 |
+| Assertion | 57 — **22 FAIL / 35 pass** |
+| Báo cáo | [`hw6/reports/spec_bugs.html`](./reports/spec_bugs.html) |
+| Dùng cho | Danh sách lỗi §10 và **lần chạy đỏ** của CI/CD §8.2 |
+
+```bash
+bash hw6/scripts/run_newman.sh spec   # ma thoat khac 0 la DUNG mong doi
+```
+
+**Vì sao không nhét các assertion này vào 3 folder API.** Nếu trộn vào, mỗi lần chạy sẽ luôn đỏ và không còn dùng làm cổng hồi quy trong CI được nữa — mọi thay đổi mới sẽ lẫn vào 22 lỗi cũ. Tách ra thì được cả hai: 3 folder API là cổng chặn hồi quy (phải luôn xanh), folder `SPEC` là bảng theo dõi nợ lỗi (mỗi assertion xanh trở lại = một lỗi đã được sửa).
+
+| Nhóm assertion fail | Số lượng | Ánh xạ sang lỗi |
+| --- | :-: | --- |
+| SEC-03 — endpoint admin không kiểm `role` | 4 | BUG-05, BUG-11, BUG-12 |
+| FR-10 — máy trạng thái đơn hàng | 5 | BUG-06, BUG-07, BUG-09 |
+| FR-17 — ràng buộc trường của coupon | 5 | BUG-13, BUG-14, BUG-15 |
+| SEC-01 / SEC-02 — xác thực và lộ dữ liệu | 3 | BUG-02, BUG-03, BUG-08 |
+| FR-04 — kiểm tra định dạng đầu vào | 1 | BUG-04 |
+| SEC-06 — leo thang quyền qua `role` | 1 | BUG-01 |
+| Xử lý lỗi — mã trạng thái và định dạng | 3 | BUG-16, BUG-17 |
+| **Tổng** | **22** | 17 lỗi khác nhau (một lỗi có thể bị nhiều assertion bắt) |
+
 ---
 
 ## 7. Tính năng Postman đã sử dụng
 
-> ✍️ Đề yêu cầu dùng càng nhiều càng tốt **và liệt kê ra**. Đánh dấu ✅ cái đã dùng; dòng không dùng thì xóa hoặc ghi lý do.
+Đề §6 yêu cầu dùng càng nhiều tính năng càng tốt **trong mức hợp lý** và liệt kê ra. Tôi liệt kê cả những tính năng **không dùng** kèm lý do, vì "không dùng vì không phù hợp" cũng là một quyết định kiểm thử.
 
-| #   | Tính năng                                                       | Đã dùng | Dùng để làm gì / Bằng chứng      |
-| --- | --------------------------------------------------------------- | :-----: | -------------------------------- |
-| 1   | Workspace                                                       |  «✅»   | «tên workspace + ảnh»            |
-| 2   | Collection + Folder theo API                                    |  «✅»   | «»                               |
-| 3   | Environment / Global variables                                  |  «✅»   | `baseUrl`, `studentId`, `token`… |
-| 4   | Collection variables                                            |   «»    | «»                               |
-| 5   | Pre-request script                                              |  «✅»   | chèn header `X-Student-Id`       |
-| 6   | Test script (`pm.test`, chai)                                   |  «✅»   | «»                               |
-| 7   | JSON schema validation (`pm.response.to.have.jsonSchema` / ajv) |  «✅»   | «»                               |
-| 8   | Collection Runner + Data file (CSV/JSON)                        |  «✅»   | «data/\*.csv — n dòng»           |
-| 9   | Authorization helper (Bearer)                                   |   «»    | «»                               |
-| 10  | Newman + reporter htmlextra                                     |  «✅»   | «reports/\*.html»                |
-| 11  | Mock server                                                     |   «»    | «»                               |
-| 12  | Monitor                                                         |   «»    | «»                               |
-| 13  | Postman Flows / Visualizer                                      |   «»    | «»                               |
-| 14  | `postman.setNextRequest` (điều khiển luồng)                     |   «»    | dùng cho chuỗi chuyển trạng thái |
+| #   | Tính năng | Đã dùng | Dùng để làm gì / Bằng chứng |
+| --- | --------- | :-----: | --------------------------- |
+| 1 | Collection + folder theo API | ✅ | 8 folder: `00 - Setup`, 3 folder API, `SPEC`, `DATA1`, `DATA3`, `99 - Teardown` |
+| 2 | Environment | ✅ | [`EShop_HW06.postman_environment.json`](./postman/EShop_HW06.postman_environment.json) — 24 biến: `baseUrl`, `studentId`, `secretKey`, 4 cặp tài khoản, 11 biến token |
+| 3 | Collection variables | ✅ | `createdCouponIds` (mảng id để teardown), `orderId`, `firstCancelCode`, `firstCancelBody` — dữ liệu chỉ sống trong một lần chạy nên để ở cấp collection, không để ở environment |
+| 4 | Pre-request script cấp **collection** | ✅ | Chèn `X-Student-Id` vào mọi request + `console.log` để chụp màn hình (§2, §11 của đề) |
+| 5 | Test script cấp **collection** | ✅ | Tự kiểm lại header `X-Student-Id` ở mọi request — 458 lần trong một lần chạy đầy đủ |
+| 6 | Pre-request script cấp request | ✅ | Dựng trạng thái: 33 TC của API 2 tạo đơn rồi đẩy qua chuỗi `confirmed → shipping → delivered`; 6 TC của API 3 tạo coupon trước |
+| 7 | `pm.test` + chai assertions | ✅ | 661 assertion, dùng `to.deep.equal`, `to.eql`, `to.be.oneOf`, `to.include`, `to.have.property`, `to.be.at.least` |
+| 8 | Assertion bất đồng bộ (`done`) | ✅ | Mọi assertion đọc lại DB đều là async; dùng `done()` và **lồng chuỗi callback** thay vì nhiều `pm.test` song song (xem lỗi #2 bên dưới) |
+| 9 | `pm.sendRequest` | ✅ | Verify sau ghi (`GET /api/users/me`, `GET /api/coupons`, `GET /api/orders/my-orders`), dựng trạng thái, và dọn dữ liệu |
+| 10 | JSON schema validation | ✅ | `pm.response.to.have.jsonSchema` với 4 schema: `msgOnly`, `errOnly`, `couponCreated`, `userProfile` |
+| 11 | Thư viện có sẵn trong sandbox (CryptoJS) | ✅ | **Tự ký 7 JWT** bằng `CryptoJS.HmacSHA256` với secret lấy từ `server.js:9` — chính việc làm được điều này là bằng chứng của BUG-03 |
+| 12 | Collection Runner + **data file** (CSV) | ✅ | 2 folder data-driven, 2 file CSV, 6 iteration mỗi file: [`api1_phone.csv`](./postman/data/api1_phone.csv), [`api3_coupon.csv`](./postman/data/api3_coupon.csv) |
+| 13 | `pm.iterationData` | ✅ | Đọc `caseId`, `phoneValue`, `expectedStatus`, `maxUses`, `expectedStored`, `note` từ CSV |
+| 14 | Newman CLI | ✅ | 6 lần chạy trong [`run_newman.sh`](./scripts/run_newman.sh) |
+| 15 | Newman `--folder` | ✅ | Chạy tách từng API để mỗi API có một DB sạch riêng |
+| 16 | Newman reporter `htmlextra` | ✅ | 6 báo cáo HTML trong [`hw6/reports/`](./reports/) |
+| 17 | Newman reporter `json` | ✅ | Nguồn cho [`summarize_newman.js`](./scripts/summarize_newman.js) → [`summary.md`](./reports/summary.md) — số liệu trong báo cáo này lấy từ đó, không gõ tay |
+| 18 | Newman `--export-environment` | ✅ | Truyền token từ lần chạy Setup sang lần chạy data-driven (mỗi `newman run` là một tiến trình riêng) |
+| 19 | Mã thoát của Newman | ✅ | `run_newman.sh` trả về mã thoát để CI/CD chặn được — cơ sở cho §8 |
+| 20 | Authorization helper (tab Auth) | ❌ | Cố ý không dùng: 18 chế độ `Authorization` khác nhau (thiếu header, header rỗng, 2 dấu cách, sai scheme, 7 token tự ký…) là **đối tượng kiểm thử**, nên phải đặt header thủ công mới kiểm được từng nhánh của `authenticateToken` |
+| 21 | Mock server | ❌ | Không phù hợp: SUT chạy thật ở `localhost:3000`; mock sẽ trả lời theo kỳ vọng của tôi chứ không phơi ra hành vi thật — trong khi toàn bộ 17 lỗi của bài này đều nằm ở khoảng cách giữa kỳ vọng và hành vi thật |
+| 22 | Monitor | ❌ | Monitor của Postman chạy trên cloud, không gọi được `localhost`; vai trò "chạy định kỳ" đã được CI/CD (§8) đảm nhiệm |
+| 23 | Postman Flows / Visualizer | ❌ | Không cần: sản phẩm cần nộp là báo cáo HTML của Newman, không phải dashboard trong app |
+| 24 | `postman.setNextRequest` | ❌ | Ban đầu định dùng cho chuỗi trạng thái FR-10, nhưng dựng trạng thái bằng `pm.sendRequest` trong pre-request giữ được **1 request = 1 test case** (truy vết sang §5.1 rõ hơn), nên tôi bỏ |
 
-![Postman workspace](«evidence/postman_workspace.png»)
+### 7.1 Hai lỗi tôi tự gây ra khi thực thi, và cách phát hiện
+
+Ghi lại đây vì cả hai đều là loại lỗi mà đọc code không thấy — chỉ chạy thật mới lộ.
+
+**Lỗi 1 — reset DB vào sai bản mã nguồn.** Suite fail ở `SETUP-02` với `expected 'admin' to deeply equal 'user'`. Tôi chạy `node database.js` trong `software-testing/group05_eshop/backend` nhưng SUT đang chạy lại được khởi động từ **bản ngoài repo** `C:\HCMUS\Software Testing\group05_eshop`. Truy ra bằng `Get-CimInstance Win32_Process` để xem dòng lệnh của tiến trình `node .\server.js`, rồi đối chiếu số bản ghi trong hai file `database.sqlite`. [`reset_db.js`](./scripts/reset_db.js) nay dò theo thứ tự ưu tiên `SUT_BACKEND_DIR` → bản ngoài repo → bản trong repo, và **chỉ thoát khi API đã thật sự trả về trạng thái seed** (4 coupon, 0 đơn, `role=user`).
+
+Điều đáng chú ý: chính assertion tiền điều kiện ở `SETUP-02` đã bắt được lỗi này. Nếu tôi không viết assertion đó, suite vẫn "xanh" trên dữ liệu cũ và mọi số liệu trong báo cáo sẽ sai.
+
+**Lỗi 2 — tưởng các `pm.test` bất đồng bộ chạy tuần tự.** `A2-E03` fail với `expected 'canceled' to deeply equal 'delivered'`: tôi viết bước 2 (admin đổi trạng thái) và bước 3 (đọc lại danh sách) thành **hai** `pm.test` riêng, và Postman **không** chờ `pm.test` async thứ nhất xong mới chạy cái thứ hai — nên bước 3 đọc trạng thái trước khi bước 2 kịp ghi. Đã sửa bằng cách lồng toàn chuỗi vào một `pm.test` duy nhất, và soát lại tất cả TC có nhiều assertion async phụ thuộc nhau: `A1-E04`, `A2-E01`, `TC-API1-022/029/030/042`. Tôi cũng bỏ hết `setTimeout` trong pre-request script (4 chỗ ở API 2, 2 chỗ ở API 3) và thay bằng callback đúng thứ tự — `setTimeout` chỉ "thường là đủ", không phải "đúng".
 
 ---
 
@@ -970,7 +1130,7 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 21  | `d99b1fb` | 2026-08-20 | Git commit log — điền hash dòng 20                             | cả 3 API      |
 | 22  | `5aca0cb` | 2026-08-20 | Cập nhật bản đề bài — §6 bước 2                                | đề bài        |
 
-**Các bước sẽ có commit riêng khi thực hiện:** Bước 4 thực thi Newman (3 commit) · Bước 5 báo lỗi (1–3 commit) · Postman collection · CI/CD 2 lần chạy · Agent Skill.
+**Các bước sẽ có commit riêng khi thực hiện:** Bước 5 báo lỗi + GitHub Issues (1–3 commit) · CI/CD 2 lần chạy (2 commit) · sơ đồ tự vẽ §9.2 · Excel test case · README.md · phê bình AI §11.
 
 > Không tạo commit cho công việc chưa thực sự làm — các bước chưa chạy không xuất hiện trong log.
 
@@ -986,9 +1146,9 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 | --- | ------------------------------------------------------- | ----------------------- |
 | ☐   | Báo cáo chính (Markdown + PDF)                          | «Main_Report.md / .pdf» |
 | ☐   | Link GitHub repo công khai                              | «URL»                   |
-| ☐   | Postman collection (.json)                              | «»                      |
-| ☐   | Báo cáo Newman (HTML)                                   | «»                      |
-| ☐   | Danh sách tính năng Postman đã dùng                     | §7                      |
+| ☑   | Postman collection (.json)                              | [`hw6/postman/EShop_HW06_API.postman_collection.json`](./postman/EShop_HW06_API.postman_collection.json) + environment + 2 data file CSV + bộ sinh `postman/src/` |
+| ☑   | Báo cáo Newman (HTML)                                   | 6 file trong [`hw6/reports/`](./reports/): `api1/api2/api3/spec_bugs/data_api1_phone/data_api3_coupon.html` + `newman_console_full.log` + `summary.md` |
+| ☑   | Danh sách tính năng Postman đã dùng                     | §7 — 19 tính năng đã dùng, 5 tính năng không dùng kèm lý do |
 | ☐   | Báo cáo CI/CD + 2 run mẫu (ảnh + link)                  | §8                      |
 | ☐   | Test case & bảng tổng hợp dạng Excel                    | «»                      |
 | ☐   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | «»                      |
@@ -1040,13 +1200,17 @@ Mỗi lần tương tác phải ghi đủ: **tên công cụ AI · ngày giờ �
 
 | Mã    | Nội dung                           | Đường dẫn | Tham chiếu |
 | ----- | ---------------------------------- | --------- | ---------- |
-| EV-01 | Console log `X-Student-Id`         | «»        | §2         |
-| EV-02 | Newman CLI — API 1 (thấy hostname) | «»        | §4.4       |
-| EV-03 | Newman HTML — API 1                | «»        | §4.4       |
-| EV-04 | Newman CLI/HTML — API 2            | «»        | §5.4       |
-| EV-05 | Newman CLI/HTML — API 3            | «»        | §6.4       |
+| EV-01 | Log console `X-Student-Id` (458 dòng) | [`reports/newman_console_full.log`](./reports/newman_console_full.log) | §2 |
+| EV-01b | Ảnh chụp Postman Console | *(chưa có — cần chụp)* | §2 |
+| EV-02 | Newman CLI — cả 6 lần chạy, thấy hostname `http://localhost:3000` | [`reports/newman_console_full.log`](./reports/newman_console_full.log) | §4.4, §5.4, §6.4 |
+| EV-03 | Newman HTML — API 1 (46 TC, 178 assertion, 0 fail) | [`reports/api1.html`](./reports/api1.html) | §4.4 |
+| EV-04 | Newman HTML — API 2 (46 TC, 193 assertion, 0 fail) | [`reports/api2.html`](./reports/api2.html) | §5.4 |
+| EV-05 | Newman HTML — API 3 (85 TC, 472 assertion, 0 fail) | [`reports/api3.html`](./reports/api3.html) | §6.4 |
+| EV-05b | Newman HTML — folder `SPEC` (16 TC, **22 assertion FAIL**) | [`reports/spec_bugs.html`](./reports/spec_bugs.html) | §6.11, §10 |
+| EV-05c | Newman HTML — 2 lần chạy theo dữ liệu CSV | [`reports/data_api1_phone.html`](./reports/data_api1_phone.html), [`reports/data_api3_coupon.html`](./reports/data_api3_coupon.html) | §7 |
+| EV-05d | Bảng số liệu trích từ JSON của Newman | [`reports/summary.md`](./reports/summary.md), [`reports/summary.json`](./reports/summary.json) | Tóm tắt kết quả |
 | EV-06 | CI run xanh                        | «»        | §8.2       |
 | EV-07 | CI run đỏ                          | «»        | §8.2       |
 | EV-08 | GitHub Issues — BUG-01…            | «»        | §10        |
 | EV-09 | Sơ đồ bộ sinh test (tự vẽ)         | «»        | §9.2       |
-| EV-10 | Postman workspace / collection     | «»        | §7         |
+| EV-10 | Collection + environment + bộ sinh | [`postman/`](./postman/) | §7 |
