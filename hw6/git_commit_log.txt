@@ -14,6 +14,8 @@ Luu y     : File nay la snapshot. Commit cuoi cung (commit sinh ra chinh
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+5aca0cb 2026-08-20 chore(hw6): cập nhật bản đề bài — §6 bước 2 đổi thành "Kiểm toán"
+0960168 2026-08-20 docs(hw6): commit log — dòng 21 và ghi chú snapshot
 d99b1fb 2026-08-20 chore(hw6): điền hash dòng 20 vào commit log
 131e251 2026-08-20 docs(hw6): commit log — bổ sung dòng 18, 19 và trạng thái Agent Skill
 7122df2 2026-08-20 feat(hw6): Agent Skill api-test-generator + link video demo §9.6
@@ -64,6 +66,7 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 19   7122df2   Agent Skill api-test-generator + link video 9.6  ca 3 API
 20   131e251   Git commit log - bo sung dong 18, 19            ca 3 API
 21   d99b1fb   Git commit log - dien hash dong 20              ca 3 API
+22   5aca0cb   Cap nhat ban de bai - muc 6 buoc 2              de bai
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC
