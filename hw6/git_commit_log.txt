@@ -14,6 +14,10 @@ Luu y     : File nay la snapshot. Commit cuoi cung (commit sinh ra chinh
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+9b6804f 2026-08-20 docs(hw6): nhung 4 anh chup tay + 11 anh Newman vao bao cao
+a8828fc 2026-08-20 fix(hw6): sua 4/12 saved example bi sai - ghi example bang lenh goi SUT truc tiep
+505eb6c 2026-08-20 fix(hw6): che gia tri JWT trong saved example + ghi lai phat hien cua secret scanner
+52fa8dc 2026-08-20 docs(hw6): commit log - dong 32-43 (CI/CD) va bang ket qua tren CI
 07ad4f0 2026-08-20 docs(hw6): ghi chu trang thai cuoi cua nhanh va lich su lan chay CI
 13a3bbe 2026-08-20 ci(hw6): dua ci.env ve SPEC_ENFORCED=false lam trang thai mac dinh cua nhanh
 e24076c 2026-08-20 docs(hw6): dien §8 CI/CD bang hai lan chay that + 9 anh bang chung
@@ -111,6 +115,10 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 41   e24076c   Dien muc 8 CI/CD + 9 anh bang chung CI           ca 3 API
 42   13a3bbe   CI/CD dua nhanh ve cau hinh mac dinh xanh        ca 3 API
 43   07ad4f0   Ghi chu trang thai cuoi + chup lai anh danh sach ca 3 API
+44   52fa8dc   Git commit log - dong 32-43 (CI/CD)              ca 3 API
+45   505eb6c   Che JWT trong saved example + muc 7.7            ca 3 API
+46   a8828fc   Sua 4/12 saved example bi sai (record_examples)   ca 3 API
+47   9b6804f   Nhung 4 anh chup tay + 11 anh Newman vao bao cao  ca 3 API
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC
@@ -135,13 +143,17 @@ Da hoan thanh:
                                             LAN CHAY DO  : 06524ea (run 32347386625)
                                             So lieu CI trung khop tuyet doi voi local
   Anh bang chung CI ................ XONG   9 anh (Selenium, repo cong khai)
+  Anh chup tay tu app Postman ...... XONG   4 anh: Console (§11), workspace,
+                                            mock server, request qua mock
+  Mock server ...................... XONG   Public, gan collection HW06,
+                                            12 saved example tu response that
+  README.md cua hw6 ................ XONG   tong hop + bang tu danh gia
 
 CHUA thuc hien - se co commit rieng cho tung buoc khi lam:
   BUOC 5 - Bao cao loi + GitHub Issues (17 loi)              (1-3 commit)
   So do tu ve muc 9.2 (PNG/Mermaid) + ma gia muc 9.3         (1-2 commit)
-  Excel test case + README.md + phe binh AI muc 11           (2-3 commit)
-  Anh chup TAY con lai: Postman Console, terminal Newman,
-    workspace, mock server, GitHub Issues     (6 anh)        (1 commit)
+  Anh chup TAY: GitHub Issues cua Buoc 5                     (1 commit)
+  Excel test case + phe binh AI muc 11 + ban PDF             (2-3 commit)
 
 Khong tao commit khong tuong ung voi cong viec da lam that.
 

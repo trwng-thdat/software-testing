@@ -1319,6 +1319,10 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 41  | `e24076c` | 2026-08-20 | Điền §8 CI/CD + 9 ảnh bằng chứng CI | cả 3 API      |
 | 42  | `13a3bbe` | 2026-08-20 | CI/CD — đưa nhánh về cấu hình mặc định xanh | cả 3 API      |
 | 43  | `07ad4f0` | 2026-08-20 | Ghi chú trạng thái cuối + chụp lại ảnh danh sách | cả 3 API      |
+| 44  | `52fa8dc` | 2026-08-20 | Git commit log — dòng 32–43 (CI/CD) | cả 3 API      |
+| 45  | `505eb6c` | 2026-08-20 | Che JWT trong saved example + §7.7 | cả 3 API      |
+| 46  | `a8828fc` | 2026-08-20 | Sửa 4/12 saved example bị sai (`record_examples.js`) | cả 3 API      |
+| 47  | `9b6804f` | 2026-08-20 | Nhúng 4 ảnh chụp tay + 11 ảnh Newman vào báo cáo | cả 3 API      |
 
 **Các bước sẽ có commit riêng khi thực hiện:** Bước 5 báo lỗi + GitHub Issues (1–3 commit) · CI/CD 2 lần chạy (2 commit) · sơ đồ tự vẽ §9.2 · Excel test case · README.md · phê bình AI §11.
 
@@ -1346,7 +1350,7 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 | ☐   | Báo cáo lỗi + ảnh GitHub Issues                         | «»                      |
 | ☐   | Phê bình AI + AI Audit Report (Markdown + PDF)          | «»                      |
 | ☐   | Git commit log (.txt)                                   | «»                      |
-| ☐   | README.md (bảng tự đánh giá + tổng hợp kết quả)         | «»                      |
+| ☑   | README.md (bảng tự đánh giá + tổng hợp kết quả)         | [`hw6/README.md`](./README.md) — tổng hợp 3 API, 196 TC, 17 lỗi, 2 lần chạy CI |
 
 ---
 
