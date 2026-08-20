@@ -52,7 +52,7 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 14   f8f4ed7   Git commit log - cap nhat sau Buoc 2 va Buoc 3   ca 3 API
 15   65045d1   Ra soat cua con nguoi - ap dung ket qua kiem toan ca 3 API
 16   61009aa   Kiem toan AI - log prompt 39/40, phien 20/08     ca 3 API
-17   (nay)     Git commit log - cap nhat den 20/08              ca 3 API
+17   4e3e738   Git commit log - cap nhat den 20/08              ca 3 API
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC
