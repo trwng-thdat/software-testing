@@ -100,7 +100,7 @@ AI was strongest where the task was bounded by evidence I could re-check: tracin
 
 ## **Appendix A-1 — Full verbatim prompt log (chronological)**
 
-*Session: Claude Opus 5 · Claude Code (VS Code extension) · 18/08/2026 19:20 → 19/08/2026 03:30. Every prompt is reproduced exactly as sent. AI responses are summarised in Section 3 column (2); the full responses are retained in the session transcript and available on request.*
+*Sessions: Claude Opus 5 · Claude Code (VS Code extension) · Session 1: 18/08/2026 19:20 → 19/08/2026 03:35; Session 2: 20/08/2026 (rows 39+). Every prompt is reproduced exactly as sent. AI responses are summarised in Section 3 column (2); the full responses are retained in the session transcript and available on request.*
 
 | \# | Time | Phase | Verbatim prompt (opening \+ decisive directives) | Audit row |
 | :---- | :---- | :---- | :---- | :---- |
@@ -142,6 +142,8 @@ AI was strongest where the task was bounded by evidence I could re-check: tracin
 | 36 | 02:25 | P11 | "Generate at least 35 meaningful API test cases \[API 3\]. … The test suite MUST meaningfully cover: A. Equivalence Partitioning … B. Boundary Value Analysis - all applicable numeric boundaries - string-length boundaries - date/time boundaries - usage-limit boundaries - discount boundaries - cross-field boundaries C. Security … D. Schema Validation … E. Business Rules - coupon uniqueness - discount rules - date rules - usage rules … Do NOT invent fields, constraints, status codes, or business rules." | \#13 |
 | 37 | 03:00 | Report | "I have an existing Main_Report.md template in this repository. DO NOT create a new report. DO NOT replace the existing report structure. DO NOT remove sections that are already present. … IMPORTANT REPORT RULE: The Main_Report.md template explicitly states in §4.1 that the full test-case table belongs in Excel … Therefore: - DO NOT paste all 35+ test cases into Main_Report.md. - DO NOT duplicate the entire Excel test-case dataset. - Include a concise summary and representative examples only. - Preserve traceability from representative cases to FR/SEC/coverage. … 4. GLOBAL CONSISTENCY … 5. TRACEABILITY … 6. AI AUDIT … 7. DO NOT FABRICATE. This is extremely important. … 8. FILE PRESERVATION. Modify ONLY Main_Report.md." | \#14 |
 | 38 | 03:35 | Audit | "ghi lại tất cả prompt và response trong session này dô file @hw6/\[AI-02\] - FIT@HCMUS - AI Audit Report_En.docx.md" | *(this document)* |
+| 39 | 20/08 | Gap review | "trong hw6. Bạn đọc yêu cầu đề bài @software-testing/hw6/2026.HW06.vi.md và xem các file trongg hw6 xem đã đáp ứng đầy đủ yêu cầu của đề bài chưa. nếu chưa thì liệt kê ra cho tôi" | *(no artifact — gap analysis only)* |
+| 40 | 20/08 | Audit | "Viết prompt trên vào @software-testing/hw6/\[AI-02\] - FIT@HCMUS - AI Audit Report_En.docx.md" | *(this document)* |
 
 ## **References**
 
