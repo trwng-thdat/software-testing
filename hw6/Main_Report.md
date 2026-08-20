@@ -40,8 +40,8 @@
 | Test case tôi tự bổ sung  |            5            |                5                 |               5               |     15      |
 | **Test case đã thực thi** |         **46**          |              **46**              |            **85**             |   **177**   |
 | — HTTP call Newman        |           102           |               138                |              249              |     489     |
-| — Assertion               |           178           |               193                |              472              |     843     |
-| — PASS                    |           178           |               193                |              472              |     843     |
+| — Assertion               |           224           |               239                |              557              |    1020     |
+| — PASS                    |           224           |               239                |              557              |    1020     |
 | — FAIL                    |            0            |                0                 |               0               |      0      |
 | Lỗi SUT phát hiện         |            5            |                5                 |               7               |   **17**    |
 
@@ -49,18 +49,18 @@
 
 | Lần chạy | Test case | Iteration | HTTP call | Assertion | PASS | FAIL |
 | --- | :-: | :-: | :-: | :-: | :-: | :-: |
-| `SPEC` — assertion theo đặc tả (**cố ý fail**) | 16 | 1 | 46 | 57 | 35 | **22** |
+| `SPEC` — assertion theo đặc tả (**cố ý fail**) | 16 | 1 | 46 | 73 | 51 | **22** |
 | `DATA1` — chạy theo dữ liệu, `phone` (FR-04) | 1 | 6 | 12 | 24 | 24 | 0 |
 | `DATA2` — chạy theo dữ liệu, **chuyển trạng thái** (FR-10) | 1 | 6 | 27 | 24 | 24 | 0 |
 | `DATA3` — chạy theo dữ liệu, `coupon` (FR-17) | 1 | 6 | 12 | 18 | 18 | 0 |
-| **Tổng toàn bộ 7 lần chạy** | **196** | | **586** | **966** | **944** | **22** |
+| **Tổng toàn bộ 7 lần chạy** | **196** | | **586** | **1159** | **1137** | **22** |
 
 | Kết luận chính            |                                                    |
 | ------------------------- | -------------------------------------------------- |
 | **Lỗi nghiêm trọng nhất** | BUG-11/BUG-12 (SEC-03) — user thường **tạo và xoá được coupon**, kể cả coupon seed của hệ thống. Kèm BUG-13 (`discount_value` âm) thì một tài khoản thường tự phát hành được coupon **làm tăng** tiền phải trả: `A3-E05` cho `final_amount = 550000` trên đơn `500000`. |
 | **Lỗi của AI đáng chú ý** | AI **không sai về mã nguồn** mà sai về **tầng suy luận**: nó dừng ở tầng JavaScript (`max_uses_per_user \|\| 1`) và bỏ tầng lưu trữ, nên kết luận chuỗi `"0"` được giữ nguyên — thực tế SQLite ép về **số 0**, vô hiệu hoá chính cơ chế `\|\| 1` (BUG-14). Nó cũng hứa phân tích concurrency ở P5 rồi đánh rơi qua 4 phase sau (A2-E01). |
 | **Vùng bảo mật yếu nhất** | **SEC-03** — không một endpoint admin nào trong 3 API kiểm `role` trong token. 4/22 assertion fail thuộc nhóm này, và nó là gốc của 3 lỗi riêng biệt. |
-| **Kết quả thực thi**      | 7 lần chạy Newman trên `localhost:3000`, 586 HTTP call, 966 assertion. 3 folder API **xanh tuyệt đối** (843/843); 22 assertion fail đều nằm trong folder `SPEC` và **được thiết kế để fail**. |
+| **Kết quả thực thi**      | 7 lần chạy Newman trên `localhost:3000`, 586 HTTP call, **1.159 assertion**. 3 folder API **xanh tuyệt đối** (1020/1020); 22 assertion fail đều nằm trong folder `SPEC` và **được thiết kế để fail**. |
 
 ## Mục lục
 
@@ -347,8 +347,8 @@ Ba nguyên tắc tôi áp cho toàn bộ assertion:
 | Folder trong collection | `API1 - PUT /api/users/me (Pool A / FR-04)` |
 | Số test case trong folder | **46** |
 | Số HTTP call Newman thực hiện | **102** (gồm cả request phụ trợ do `pm.sendRequest` dựng trạng thái / đọc lại DB) |
-| Số assertion | **178** |
-| Kết quả | **178 pass / 0 fail** |
+| Số assertion | **224** |
+| Kết quả | **224 pass / 0 fail** |
 | Thời gian chạy | 4.4 giây |
 | Nguồn test case | 42 TC do AI sinh (TC-034 đã gộp vào TC-023 theo kết luận kiểm toán) + 5 TC tự bổ sung = **46** |
 | Data file | `hw6/postman/data/api1_phone.csv` — 6 dòng, chạy riêng ở folder `DATA1` (6 iteration, 24 assertion, 0 fail) |
@@ -371,9 +371,9 @@ bash hw6/scripts/run_newman.sh api1
 |            | Executed | Passed | Failed |
 | ---------- | :------: | :----: | :----: |
 | Requests   | 102 | 102 | 0 |
-| Assertions | 178 | 178 | 0 |
+| Assertions | 224 | 224 | 0 |
 
-Báo cáo HTML: [`hw6/reports/api1.html`](./reports/api1.html) · log console: [`hw6/reports/newman_console_full.log`](./reports/newman_console_full.log) (3777 dòng, có 470 dòng `[X-Student-Id]`)
+Báo cáo HTML: [`hw6/reports/api1.html`](./reports/api1.html) · log console: [`hw6/reports/newman_console_full.log`](./reports/newman_console_full.log) (3974 dòng, có 470 dòng `[X-Student-Id]`)
 
 > **Ghi chú về cách dựng dữ liệu.** Các TC ghi `role` (TC-022, -029, -030, -042, A1-E04) đều **tự trả `role` về `"user"`** ngay trong cùng chuỗi callback của assertion, nên chạy lại suite nhiều lần vẫn cho kết quả như nhau. Ban đầu tôi tách phần dọn thành một `pm.test` riêng và **bị fail thật** — xem "Hai lỗi tôi tự gây ra" ở §7.
 
@@ -554,8 +554,8 @@ Báo cáo HTML: [`hw6/reports/api1.html`](./reports/api1.html) · log console: [
 | Folder trong collection | `API2 - PUT /api/orders/:id/cancel (Pool B / FR-10)` |
 | Số test case trong folder | **46** |
 | Số HTTP call Newman thực hiện | **138** (gồm cả request phụ trợ do `pm.sendRequest` dựng trạng thái / đọc lại DB) |
-| Số assertion | **193** |
-| Kết quả | **193 pass / 0 fail** |
+| Số assertion | **239** |
+| Kết quả | **239 pass / 0 fail** |
 | Thời gian chạy | 5.9 giây |
 | Nguồn test case | 43 TC do AI sinh **trừ 2 TC bị kiểm toán gán INVALID** (TC-022 cần sửa DB trực tiếp, TC-043 là mệnh đề tổng hợp) = 41, cộng 5 TC tự bổ sung = **46** |
 | Dựng trạng thái | 33/46 TC dùng pre-request script: `POST /api/checkout` → `PUT /api/admin/orders/:id/status` để đưa đơn tới `confirmed` / `shipping` / `delivered` / `canceled` |
@@ -579,7 +579,7 @@ bash hw6/scripts/run_newman.sh api2
 |            | Executed | Passed | Failed |
 | ---------- | :------: | :----: | :----: |
 | Requests   | 138 | 138 | 0 |
-| Assertions | 193 | 193 | 0 |
+| Assertions | 239 | 239 | 0 |
 
 Báo cáo HTML: [`hw6/reports/api2.html`](./reports/api2.html) · log console: [`hw6/reports/newman_console_full.log`](./reports/newman_console_full.log) (3777 dòng, có 470 dòng `[X-Student-Id]`)
 
@@ -798,8 +798,8 @@ Báo cáo HTML: [`hw6/reports/api2.html`](./reports/api2.html) · log console: [
 | Folder trong collection | `API3 - POST /api/admin/coupons (Pool C / FR-17)` |
 | Số test case trong folder | **85** |
 | Số HTTP call Newman thực hiện | **249** (gồm cả request phụ trợ do `pm.sendRequest` dựng trạng thái / đọc lại DB) |
-| Số assertion | **472** |
-| Kết quả | **472 pass / 0 fail** |
+| Số assertion | **557** |
+| Kết quả | **557 pass / 0 fail** |
 | Thời gian chạy | 10.7 giây |
 | Nguồn test case | 82 TC do AI sinh **trừ 3 TC là mệnh đề tổng hợp** (TC-040, -042, -043), **cộng** TC-081 được tách thành `-081a`/`-081b` = 80, cộng 5 TC tự bổ sung = **85** |
 | Dọn dữ liệu | `code` là `UNIQUE` nên mọi TC tạo coupon đều đẩy `id` vào biến collection `createdCouponIds`; folder Teardown xoá sạch (lần chạy này xoá **71** coupon) |
@@ -823,7 +823,7 @@ bash hw6/scripts/run_newman.sh api3
 |            | Executed | Passed | Failed |
 | ---------- | :------: | :----: | :----: |
 | Requests   | 249 | 249 | 0 |
-| Assertions | 472 | 472 | 0 |
+| Assertions | 557 | 557 | 0 |
 
 Báo cáo HTML: [`hw6/reports/api3.html`](./reports/api3.html) · log console: [`hw6/reports/newman_console_full.log`](./reports/newman_console_full.log) (3777 dòng, có 470 dòng `[X-Student-Id]`)
 
@@ -916,7 +916,7 @@ Ba folder API ở trên đều xanh, và điều đó **không** có nghĩa là 
 | Folder | `SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug)` |
 | Số test case | **16** (5 cho API 1, 4 cho API 2, 7 cho API 3) |
 | Số HTTP call | 46 |
-| Assertion | 57 — **22 FAIL / 35 pass** |
+| Assertion | 73 — **22 FAIL / 51 pass** |
 | Báo cáo | [`hw6/reports/spec_bugs.html`](./reports/spec_bugs.html) |
 | Dùng cho | Danh sách lỗi §10 và **lần chạy đỏ** của CI/CD §8.2 |
 
@@ -941,40 +941,73 @@ bash hw6/scripts/run_newman.sh spec   # ma thoat khac 0 la DUNG mong doi
 
 ## 7. Tính năng Postman đã sử dụng
 
-Đề §6 yêu cầu dùng càng nhiều tính năng càng tốt **trong mức hợp lý** và liệt kê ra. Tôi liệt kê cả những tính năng **không dùng** kèm lý do, vì "không dùng vì không phù hợp" cũng là một quyết định kiểm thử.
+Đề §6 yêu cầu dùng càng nhiều tính năng càng tốt **trong mức hợp lý** và liệt kê ra. Bảng dưới liệt kê **30 tính năng**: 26 đã dùng, 1 dùng một phần, 3 không dùng kèm lý do. Tôi liệt kê cả phần không dùng vì "không dùng vì không phù hợp" cũng là một quyết định kiểm thử, và vì hai trong ba mục đó (mock server, monitor) được đề nêu tên đích danh.
+
+### 7.1 Tổ chức và biến
 
 | #   | Tính năng | Đã dùng | Dùng để làm gì / Bằng chứng |
 | --- | --------- | :-----: | --------------------------- |
-| 1 | Collection + folder theo API | ✅ | 9 folder: `00 - Setup`, 3 folder API, `SPEC`, `DATA1`, `DATA2`, `DATA3`, `99 - Teardown` |
-| 2 | Environment | ✅ | [`EShop_HW06.postman_environment.json`](./postman/EShop_HW06.postman_environment.json) — 24 biến: `baseUrl`, `studentId`, `secretKey`, 4 cặp tài khoản, 11 biến token |
-| 3 | Collection variables | ✅ | `createdCouponIds` (mảng id để teardown), `orderId`, `firstCancelCode`, `firstCancelBody` — dữ liệu chỉ sống trong một lần chạy nên để ở cấp collection, không để ở environment |
-| 4 | Pre-request script cấp **collection** | ✅ | Chèn `X-Student-Id` vào mọi request + `console.log` để chụp màn hình (§2, §11 của đề) |
-| 5 | Test script cấp **collection** | ✅ | Tự kiểm lại header `X-Student-Id` ở mọi request — 470 lần trong một lần chạy đầy đủ |
-| 6 | Pre-request script cấp request | ✅ | Dựng trạng thái: 33 TC của API 2 tạo đơn rồi đẩy qua chuỗi `confirmed → shipping → delivered`; 6 TC của API 3 tạo coupon trước |
-| 7 | `pm.test` + chai assertions | ✅ | 664 assertion, dùng `to.deep.equal`, `to.eql`, `to.be.oneOf`, `to.include`, `to.have.property`, `to.be.at.least` |
-| 8 | Assertion bất đồng bộ (`done`) | ✅ | Mọi assertion đọc lại DB đều là async; dùng `done()` và **lồng chuỗi callback** thay vì nhiều `pm.test` song song (xem lỗi #2 bên dưới) |
-| 9 | `pm.sendRequest` | ✅ | Verify sau ghi (`GET /api/users/me`, `GET /api/coupons`, `GET /api/orders/my-orders`), dựng trạng thái, và dọn dữ liệu |
-| 10 | JSON schema validation | ✅ | `pm.response.to.have.jsonSchema` với 4 schema: `msgOnly`, `errOnly`, `couponCreated`, `userProfile` |
-| 11 | Thư viện có sẵn trong sandbox (CryptoJS) | ✅ | **Tự ký 7 JWT** bằng `CryptoJS.HmacSHA256` với secret lấy từ `server.js:9` — chính việc làm được điều này là bằng chứng của BUG-03 |
-| 12 | Collection Runner + **data file** (CSV) | ✅ | **3** folder data-driven, 3 file CSV, 6 iteration mỗi file — một file cho mỗi API: [`api1_phone.csv`](./postman/data/api1_phone.csv) (biên `phone`), [`api2_state.csv`](./postman/data/api2_state.csv) (ma trận chuyển trạng thái FR-10), [`api3_coupon.csv`](./postman/data/api3_coupon.csv) (ép kiểu `max_uses_per_user`) |
-| 13 | `pm.iterationData` | ✅ | Đọc `caseId`, `phoneValue`, `expectedStatus`, `stateChain`, `expectedFinalStatus`, `maxUses`, `expectedStored`, `note` từ CSV. `DATA2` dùng `stateChain` **ngay trong pre-request script** để dựng trạng thái đơn hàng khác nhau cho mỗi iteration |
-| 14 | Newman CLI | ✅ | 7 lần chạy trong [`run_newman.sh`](./scripts/run_newman.sh) |
-| 15 | Newman `--folder` | ✅ | Chạy tách từng API để mỗi API có một DB sạch riêng |
-| 16 | Newman reporter `htmlextra` | ✅ | 7 báo cáo HTML trong [`hw6/reports/`](./reports/) |
-| 17 | Newman reporter `json` | ✅ | Nguồn cho [`summarize_newman.js`](./scripts/summarize_newman.js) → [`summary.md`](./reports/summary.md) — số liệu trong báo cáo này lấy từ đó, không gõ tay |
-| 18 | Newman `--export-environment` | ✅ | Truyền token từ lần chạy Setup sang lần chạy data-driven (mỗi `newman run` là một tiến trình riêng) |
-| 19 | Mã thoát của Newman | ✅ | `run_newman.sh` trả về mã thoát để CI/CD chặn được — cơ sở cho §8 |
-| 20 | Authorization helper (tab Auth) | ❌ | Cố ý không dùng: 18 chế độ `Authorization` khác nhau (thiếu header, header rỗng, 2 dấu cách, sai scheme, 7 token tự ký…) là **đối tượng kiểm thử**, nên phải đặt header thủ công mới kiểm được từng nhánh của `authenticateToken` |
-| 21 | Mock server | ❌ | Không phù hợp: SUT chạy thật ở `localhost:3000`; mock sẽ trả lời theo kỳ vọng của tôi chứ không phơi ra hành vi thật — trong khi toàn bộ 17 lỗi của bài này đều nằm ở khoảng cách giữa kỳ vọng và hành vi thật |
-| 22 | Monitor | ❌ | Monitor của Postman chạy trên cloud, không gọi được `localhost`; vai trò "chạy định kỳ" đã được CI/CD (§8) đảm nhiệm |
-| 23 | Postman Flows / Visualizer | ❌ | Không cần: sản phẩm cần nộp là báo cáo HTML của Newman, không phải dashboard trong app |
-| 24 | `postman.setNextRequest` | ❌ | Ban đầu định dùng cho chuỗi trạng thái FR-10, nhưng dựng trạng thái bằng `pm.sendRequest` trong pre-request giữ được **1 request = 1 test case** (truy vết sang §5.1 rõ hơn), nên tôi bỏ |
+| 1 | **Workspace** | ✅ | `HW06 — EShop API Testing (23127344)`, Personal. Cách dựng lại: [`postman/README.md`](./postman/README.md) §1 |
+| 2 | Collection + folder | ✅ | 9 folder: `00 - Setup`, 3 folder API, `SPEC`, `DATA1`, `DATA2`, `DATA3`, `99 - Teardown` |
+| 3 | Collection description (documentation) | ✅ | Mô tả Markdown ở cấp collection và cấp từng folder; mỗi request có `description` ghi Coverage ID + dòng mã nguồn liên quan |
+| 4 | **Environment** | ✅ | [`EShop_HW06.postman_environment.json`](./postman/EShop_HW06.postman_environment.json) — 24 biến: `baseUrl`, `studentId`, `secretKey`, 4 cặp tài khoản, 11 biến token |
+| 5 | **Globals** (file riêng) | ✅ | [`EShop_HW06.postman_globals.json`](./postman/EShop_HW06.postman_globals.json) — 4 biến *không* đổi theo môi trường triển khai, tách khỏi environment vì environment phải đổi giữa local và CI |
+| 6 | Collection variables | ✅ | `createdCouponIds` (mảng id để teardown), `orderId`, `firstCancelCode`, `firstCancelBody`, `folderStarted_*` — dữ liệu chỉ sống trong một lần chạy |
+| 7 | Local variables (`pm.variables`) | ✅ | `tearDownAt` trong Teardown — minh hoạ scope hẹp nhất, chỉ sống trong một request |
+| 8 | Biến kiểu `secret` | ✅ | `secretKey` khai báo `type: "secret"` nên Postman ẩn giá trị trong UI (giá trị vẫn phải có vì nó dùng để **tự ký token** — xem #17) |
+| 9 | Data variables (`pm.iterationData`) | ✅ | Đọc `caseId`, `phoneValue`, `expectedStatus`, `stateChain`, `expectedFinalStatus`, `maxUses`, `expectedStored`, `note` từ CSV |
 
-### 7.1 Hai lỗi tôi tự gây ra khi thực thi, và cách phát hiện
+### 7.2 Script và assertion
+
+| #   | Tính năng | Đã dùng | Dùng để làm gì / Bằng chứng |
+| --- | --------- | :-----: | --------------------------- |
+| 10 | Pre-request script cấp **collection** | ✅ | Chèn `X-Student-Id` vào mọi request + `console.log` để chụp màn hình (đề §6.4, §11) |
+| 11 | Test script cấp **collection** | ✅ | Tự kiểm lại header `X-Student-Id` ở mọi request — **470 lần** trong một lần chạy đầy đủ |
+| 12 | Pre-request script cấp **folder** | ✅ | Ghi một dòng mở đầu khi folder bắt đầu chạy (`===== bat dau folder API2 =====`) |
+| 13 | Test script cấp **folder** | ✅ | Kiểm thời gian phản hồi `< 2000 ms` cho **mọi** request trong 4 folder — 193 assertion, tách khỏi assertion nghiệp vụ |
+| 14 | Pre-request script cấp **request** | ✅ | Dựng trạng thái: 33 TC của API 2 tạo đơn rồi đẩy qua chuỗi `confirmed → shipping → delivered`; 6 TC của API 3 tạo coupon trước; `DATA2` dựng trạng thái theo cột CSV |
+| 15 | `pm.test` + chai assertions | ✅ | 664 `pm.test` trong collection → **1.159 assertion** khi chạy, dùng `to.deep.equal`, `to.eql`, `to.be.oneOf`, `to.include`, `to.have.property`, `to.be.at.least`, `to.be.below` |
+| 16 | Assertion bất đồng bộ (`done`) | ✅ | Mọi assertion đọc lại DB đều async; dùng `done()` và **lồng chuỗi callback** thay vì nhiều `pm.test` song song (xem §7.6 lỗi 2) |
+| 17 | Thư viện sẵn trong sandbox (CryptoJS) | ✅ | **Tự ký 7 JWT** bằng `CryptoJS.HmacSHA256` với secret lấy từ `server.js:9` — việc làm được điều này chính là bằng chứng của BUG-03 |
+| 18 | `pm.sendRequest` | ✅ | Verify sau ghi (`GET /api/users/me`, `/api/coupons`, `/api/orders/my-orders`), dựng trạng thái, dọn dữ liệu |
+| 19 | JSON schema validation | ✅ | `pm.response.to.have.jsonSchema` với 4 schema: `msgOnly`, `errOnly`, `couponCreated`, `userProfile` |
+| 20 | **Visualizer** (`pm.visualizer.set`) | ✅ | Teardown render bảng HTML (MSSV, số coupon đã xoá, thời điểm) trong tab *Visualize* |
+| 21 | Authorization helper (cấp folder) | ✅ | Folder `DATA3` khai báo `auth: bearer {{tokenAdmin}}` thay vì đặt header thủ công. **Chỉ dùng ở folder này** — xem #29 |
+
+### 7.3 Chạy theo dữ liệu và Newman
+
+| #   | Tính năng | Đã dùng | Dùng để làm gì / Bằng chứng |
+| --- | --------- | :-----: | --------------------------- |
+| 22 | **Collection Runner + data file** | ✅ | 3 folder data-driven, 3 CSV, 6 iteration mỗi file — một file cho mỗi API: [`api1_phone.csv`](./postman/data/api1_phone.csv) (biên `phone`), [`api2_state.csv`](./postman/data/api2_state.csv) (ma trận chuyển trạng thái FR-10), [`api3_coupon.csv`](./postman/data/api3_coupon.csv) (ép kiểu `max_uses_per_user`) |
+| 23 | **Saved example** (example response) | ✅ | 12 example, **ghi lại từ response thật** của SUT bằng [`src/examples.js`](./postman/src/examples.js) đọc báo cáo JSON của Newman. Đây là dữ liệu mà Mock Server trả về (#28) |
+| 24 | Newman CLI + `--folder` | ✅ | 7 lần chạy trong [`run_newman.sh`](./scripts/run_newman.sh); chạy tách từng API để mỗi API có một DB sạch riêng |
+| 25 | Newman `-g` / `--export-globals` | ✅ | Nạp file globals và xuất lại sau mỗi lần chạy: `reports/globals_after_api{1,2,3}.json` |
+| 26 | Newman `--export-environment` | ✅ | Truyền token từ lần chạy Setup sang lần chạy data-driven (mỗi `newman run` là một tiến trình riêng) |
+| 27 | Newman `--bail`, `--timeout-request`, `--iteration-count`, `--env-var` | ✅ | `run_newman.sh smoke` dùng `--bail` để dừng ngay ở fail đầu tiên (dùng cho CI chặn nhanh); `--timeout-request 10000` ở mọi lần chạy; `--env-var` dùng khi trỏ `baseUrl` sang mock server |
+| 28 | Newman reporter `htmlextra` + `json` + mã thoát | ✅ | 7 báo cáo HTML; reporter `json` là nguồn cho [`summarize_newman.js`](./scripts/summarize_newman.js) → [`summary.md`](./reports/summary.md) (số liệu trong báo cáo này lấy từ đó, không gõ tay); mã thoát để CI chặn được |
+| 29 | SDK `postman-collection` | ✅ | `build.js` nạp collection vừa sinh bằng chính SDK của Postman và đếm lại request (**202**) trước khi ghi file — bắt lỗi cấu trúc ngay lúc build |
+
+### 7.4 Ba tính năng đề nêu tên: workspace, mock server, monitor
+
+| #   | Tính năng | Trạng thái | Chi tiết |
+| --- | --------- | :--------: | -------- |
+| 1 | Workspace | ✅ | Đã tạo, xem #1 ở trên |
+| 30 | **Mock server** | ⚠️ Một phần | Collection **đã có đủ 12 saved example** để mock hoạt động, gồm happy path và một đại diện cho mỗi lớp lỗi (`400` HTML, `401`, `403`, `404`, `500`). Việc bấm *Mock collection* phải làm trong app và cần tài khoản Postman; các bước và lệnh `newman --env-var baseUrl=<mock>` để kiểm chứng nằm ở [`postman/README.md`](./postman/README.md) §2. **Giới hạn thật:** mock chỉ trả lại example nên các assertion đọc lại DB sẽ fail trên mock — mock có ích cho việc client phát triển song song, không dùng để kiểm thử SUT. |
+| 31 | **Monitor** | ❌ | **Giới hạn kỹ thuật, không phải lựa chọn:** monitor của Postman chạy trên cloud nên không gọi được `http://localhost:3000`. Vai trò "chạy định kỳ" được đảm nhiệm bằng GitHub Actions với `schedule: cron` (§8) — đó mới là monitor gọi được SUT. Nếu chỉ để minh hoạ tính năng thì có thể tạo monitor trỏ vào mock server ở #30 (URL công khai), nhưng nó chỉ kiểm tra mock. |
+
+### 7.5 Không dùng, kèm lý do
+
+| #   | Tính năng | Vì sao không dùng |
+| --- | --------- | ----------------- |
+| 32 | Authorization helper cho 3 folder API | Cố ý. 18 chế độ `Authorization` khác nhau (thiếu header, header rỗng, 2 dấu cách, sai scheme, 7 token tự ký…) chính là **đối tượng kiểm thử**; phải đặt header thủ công mới kiểm được từng nhánh của `authenticateToken`. Vẫn dùng helper ở folder `DATA3` để chứng minh có nắm tính năng (#21) |
+| 33 | Postman Flows | Sản phẩm cần nộp là báo cáo HTML của Newman, không phải dashboard trong app; Flows không xuất được artefact cho CI |
+| 34 | `postman.setNextRequest` | Ban đầu định dùng cho chuỗi trạng thái FR-10, nhưng dựng trạng thái bằng `pm.sendRequest` trong pre-request giữ được **1 request = 1 test case**, truy vết sang §5.1 rõ hơn |
+
+### 7.6 Hai lỗi tôi tự gây ra khi thực thi, và cách phát hiện
 
 Ghi lại đây vì cả hai đều là loại lỗi mà đọc code không thấy — chỉ chạy thật mới lộ.
 
-**Lỗi 1 — reset DB vào sai bản mã nguồn.** Suite fail ở `SETUP-02` với `expected 'admin' to deeply equal 'user'`. Tôi chạy `node database.js` trong `software-testing/group05_eshop/backend` nhưng SUT đang chạy lại được khởi động từ **bản ngoài repo** `C:\HCMUS\Software Testing\group05_eshop`. Truy ra bằng `Get-CimInstance Win32_Process` để xem dòng lệnh của tiến trình `node .\server.js`, rồi đối chiếu số bản ghi trong hai file `database.sqlite`. [`reset_db.js`](./scripts/reset_db.js) nay dò theo thứ tự ưu tiên `SUT_BACKEND_DIR` → bản ngoài repo → bản trong repo, và **chỉ thoát khi API đã thật sự trả về trạng thái seed** (4 coupon, 0 đơn, `role=user`).
+**Lỗi 1 — reset DB vào sai bản mã nguồn.** Suite fail ở `SETUP-02` với `expected 'admin' to deeply equal 'user'`. Tôi chạy `node database.js` trong `software-testing/group05_eshop/backend` nhưng SUT đang chạy lại được khởi động từ **bản ngoài repo** `C:\HCMUS\Software Testing\group05_eshop`. Truy ra bằng `Get-CimInstance Win32_Process` để xem dòng lệnh của tiến trình `node .\server.js`, rồi đối chiếu số bản ghi trong hai file `database.sqlite`. [`reset_db.js`](./scripts/reset_db.js) nay dò theo thứ tự `SUT_BACKEND_DIR` → bản ngoài repo → bản trong repo, và **chỉ thoát khi API đã thật sự trả về trạng thái seed** (4 coupon, 0 đơn, `role=user`).
 
 Điều đáng chú ý: chính assertion tiền điều kiện ở `SETUP-02` đã bắt được lỗi này. Nếu tôi không viết assertion đó, suite vẫn "xanh" trên dữ liệu cũ và mọi số liệu trong báo cáo sẽ sai.
 
@@ -1154,7 +1187,7 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 | ☐   | Link GitHub repo công khai                              | «URL»                   |
 | ☑   | Postman collection (.json)                              | [`hw6/postman/EShop_HW06_API.postman_collection.json`](./postman/EShop_HW06_API.postman_collection.json) + environment + 3 data file CSV + bộ sinh `postman/src/` |
 | ☑   | Báo cáo Newman (HTML)                                   | 7 file trong [`hw6/reports/`](./reports/): `api1/api2/api3/spec_bugs/data_api1_phone/data_api2_state/data_api3_coupon.html` + `newman_console_full.log` + `summary.md` |
-| ☑   | Danh sách tính năng Postman đã dùng                     | §7 — 19 tính năng đã dùng, 5 tính năng không dùng kèm lý do |
+| ☑   | Danh sách tính năng Postman đã dùng                     | §7 — 34 mục: 26 đã dùng, 1 một phần (mock server), 3 không dùng kèm lý do, kèm [`postman/README.md`](./postman/README.md) hướng dẫn workspace/mock/monitor |
 | ☐   | Báo cáo CI/CD + 2 run mẫu (ảnh + link)                  | §8                      |
 | ☐   | Test case & bảng tổng hợp dạng Excel                    | «»                      |
 | ☐   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | «»                      |
@@ -1207,12 +1240,16 @@ Mỗi lần tương tác phải ghi đủ: **tên công cụ AI · ngày giờ �
 | Mã    | Nội dung                           | Đường dẫn | Tham chiếu |
 | ----- | ---------------------------------- | --------- | ---------- |
 | EV-01 | Log console `X-Student-Id` (458 dòng) | [`reports/newman_console_full.log`](./reports/newman_console_full.log) | §2 |
-| EV-01b | Ảnh chụp Postman Console | *(chưa có — cần chụp)* | §2 |
+| EV-01b | Ảnh chụp Postman Console | *(phải chụp tay — hướng dẫn ở [`evidence/README.md`](./evidence/README.md) §B1)* | §2 |
+| EV-11 | **24 ảnh tự động chụp bằng Selenium** ([`scripts/capture_evidence.py`](./scripts/capture_evidence.py)) | [`evidence/`](./evidence/) | §2, §4.4, §5.4, §6.4, §10 |
+| EV-12 | Ảnh có **cả** `Request URL: http://localhost:3000/...` **và** dòng `X-Student-Id  23127344` trong bảng REQUEST HEADERS | `evidence/newman_api{1,2,3}_xstudentid_header.png` | §11 |
+| EV-13 | Ảnh danh sách từng assertion fail của folder SPEC | `evidence/newman_spec_bugs_failed.png` | §10 |
+| EV-14 | Hướng dẫn 8 ảnh còn phải chụp tay, kèm lệnh và tổ hợp phím | [`evidence/README.md`](./evidence/README.md) | §11 |
 | EV-02 | Newman CLI — cả 6 lần chạy, thấy hostname `http://localhost:3000` | [`reports/newman_console_full.log`](./reports/newman_console_full.log) | §4.4, §5.4, §6.4 |
-| EV-03 | Newman HTML — API 1 (46 TC, 178 assertion, 0 fail) | [`reports/api1.html`](./reports/api1.html) | §4.4 |
-| EV-04 | Newman HTML — API 2 (46 TC, 193 assertion, 0 fail) | [`reports/api2.html`](./reports/api2.html) | §5.4 |
-| EV-05 | Newman HTML — API 3 (85 TC, 472 assertion, 0 fail) | [`reports/api3.html`](./reports/api3.html) | §6.4 |
-| EV-05b | Newman HTML — folder `SPEC` (16 TC, **22 assertion FAIL**) | [`reports/spec_bugs.html`](./reports/spec_bugs.html) | §6.11, §10 |
+| EV-03 | Newman HTML — API 1 (46 TC, 224 assertion, 0 fail) | [`reports/api1.html`](./reports/api1.html) | §4.4 |
+| EV-04 | Newman HTML — API 2 (46 TC, 239 assertion, 0 fail) | [`reports/api2.html`](./reports/api2.html) | §5.4 |
+| EV-05 | Newman HTML — API 3 (85 TC, 557 assertion, 0 fail) | [`reports/api3.html`](./reports/api3.html) | §6.4 |
+| EV-05b | Newman HTML — folder `SPEC` (16 TC, 73 assertion, **22 FAIL**) | [`reports/spec_bugs.html`](./reports/spec_bugs.html) | §6.11, §10 |
 | EV-05c | Newman HTML — 3 lần chạy theo dữ liệu CSV (một file cho mỗi API) | [`reports/data_api1_phone.html`](./reports/data_api1_phone.html), [`reports/data_api2_state.html`](./reports/data_api2_state.html), [`reports/data_api3_coupon.html`](./reports/data_api3_coupon.html) | §5.4, §7 |
 | EV-05d | Bảng số liệu trích từ JSON của Newman | [`reports/summary.md`](./reports/summary.md), [`reports/summary.json`](./reports/summary.json) | Tóm tắt kết quả |
 | EV-06 | CI run xanh                        | «»        | §8.2       |

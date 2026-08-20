@@ -12,6 +12,7 @@ set -u
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 COL="$ROOT/hw6/postman/EShop_HW06_API.postman_collection.json"
 ENV="$ROOT/hw6/postman/EShop_HW06.postman_environment.json"
+GLB="$ROOT/hw6/postman/EShop_HW06.postman_globals.json"
 REP="$ROOT/hw6/reports"
 DATA="$ROOT/hw6/postman/data"
 SETUP="00 - Setup (dang nhap, tao user B, tu ky token gia mao)"
@@ -40,7 +41,7 @@ run_api () {          # $1 = ma bao cao, $2 = ten folder
     --reporter-cli-no-banner \
     --reporter-htmlextra-export "$REP/$1.html" \
     --reporter-htmlextra-title "HW06 - $1 - 23127344" \
-    --reporter-json-export "$REP/$1.json"
+    --reporter-json-export "$REP/$1.json"     --export-globals "$REP/globals_after_$1.json"
   local rc=$?
   [ $rc -ne 0 ] && fail=1
   echo "[run_newman] $1 ket thuc voi ma thoat $rc"
@@ -57,13 +58,13 @@ run_data () {         # chay theo du lieu: mot lan chay cho moi dong CSV
   local TMPENV="$REP/.env_after_setup.json"
   newman run "$COL" -e "$ENV" --folder "$SETUP"     -r cli --reporter-cli-no-banner --export-environment "$TMPENV" >/dev/null || { echo "Setup that bai"; exit 1; }
 
-  newman run "$COL" -e "$TMPENV" --folder "$F_DATA1"     -d "$DATA/api1_phone.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api1_phone.html"     --reporter-htmlextra-title "HW06 - data-driven phone (FR-04) - 23127344"     --reporter-json-export "$REP/data_api1_phone.json"
+  newman run "$COL" -e "$TMPENV" -g "$GLB" --folder "$F_DATA1"     -d "$DATA/api1_phone.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api1_phone.html"     --reporter-htmlextra-title "HW06 - data-driven phone (FR-04) - 23127344"     --reporter-json-export "$REP/data_api1_phone.json"
   [ $? -ne 0 ] && fail=1
 
-  newman run "$COL" -e "$TMPENV" --folder "$F_DATA2"     -d "$DATA/api2_state.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api2_state.html"     --reporter-htmlextra-title "HW06 - data-driven chuyen trang thai (FR-10) - 23127344"     --reporter-json-export "$REP/data_api2_state.json"
+  newman run "$COL" -e "$TMPENV" -g "$GLB" --folder "$F_DATA2"     -d "$DATA/api2_state.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api2_state.html"     --reporter-htmlextra-title "HW06 - data-driven chuyen trang thai (FR-10) - 23127344"     --reporter-json-export "$REP/data_api2_state.json"
   [ $? -ne 0 ] && fail=1
 
-  newman run "$COL" -e "$TMPENV" --folder "$F_DATA3"     -d "$DATA/api3_coupon.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api3_coupon.html"     --reporter-htmlextra-title "HW06 - data-driven coupon (FR-17) - 23127344"     --reporter-json-export "$REP/data_api3_coupon.json"
+  newman run "$COL" -e "$TMPENV" -g "$GLB" --folder "$F_DATA3"     -d "$DATA/api3_coupon.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api3_coupon.html"     --reporter-htmlextra-title "HW06 - data-driven coupon (FR-17) - 23127344"     --reporter-json-export "$REP/data_api3_coupon.json"
   [ $? -ne 0 ] && fail=1
 }
 
@@ -73,11 +74,22 @@ run_spec () {         # lan chay DO: assertion theo dac ta -> phoi bay bug
   echo " spec  |  $F_SPEC"
   echo "=============================================================="
   node "$ROOT/hw6/scripts/reset_db.js" || exit 1
-  newman run "$COL" -e "$ENV" --folder "$SETUP" --folder "$F_SPEC" --folder "$F_TEARDOWN" -r cli,htmlextra,json --reporter-cli-no-banner --reporter-htmlextra-export "$REP/spec_bugs.html" --reporter-htmlextra-title "HW06 - assertion theo dac ta (phoi bay bug) - 23127344" --reporter-json-export "$REP/spec_bugs.json"
+  newman run "$COL" -e "$ENV" -g "$GLB" --folder "$SETUP" --folder "$F_SPEC" --folder "$F_TEARDOWN" -r cli,htmlextra,json --reporter-cli-no-banner --reporter-htmlextra-export "$REP/spec_bugs.html" --reporter-htmlextra-title "HW06 - assertion theo dac ta (phoi bay bug) - 23127344" --reporter-json-export "$REP/spec_bugs.json"
   echo "[run_newman] spec ket thuc voi ma thoat $? (KY VONG khac 0: moi fail la mot bug)"
 }
 
+run_smoke () {        # kiem nhanh: --bail dung ngay khi co fail dau tien
+  echo ""
+  echo "=============================================================="
+  echo " smoke  |  --bail (dung ngay khi fail) + --iteration-count 2"
+  echo "=============================================================="
+  node "$ROOT/hw6/scripts/reset_db.js" || exit 1
+  newman run "$COL" -e "$ENV" -g "$GLB" --folder "$SETUP" --bail --timeout-request 10000 --iteration-count 1 -r cli --reporter-cli-no-banner
+  echo "[run_newman] smoke ket thuc voi ma thoat $?"
+}
+
 case "${1:-all}" in
+  smoke) run_smoke ;;
   api1) run_api api1 "$F_API1" ;;
   spec) run_spec ;;
   api2) run_api api2 "$F_API2" ;;

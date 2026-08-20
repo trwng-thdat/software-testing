@@ -93,7 +93,42 @@
                 }
               }
             }
-          }
+          },
+          "response": [
+            {
+              "name": "200 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\"message\":\"Login successful\",\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzg3MjA1NDkxfQ.wWFj6t1mPTpdAvmOEgcMMgkzxPEoRjYtKlXXQcBz_hc\",\"user\":{\"id\":1,\"name\":\"Admin User\",\"email\":\"admin@eshop.com\",\"password\":\"Admin123!\",\"role\":\"admin\",\"login_attempts\":0,\"locked_until\":null,\"reset_token\":null,\"shipping_address\":null,\"phone\":null}}"
+            }
+          ]
         },
         {
           "name": "SETUP-02 - Dang nhap user A -> tokenUser",
@@ -355,7 +390,46 @@
                 }
               }
             }
-          }
+          },
+          "response": [
+            {
+              "name": "200 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenUser}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/users/me",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Nguyen Van A\",\n  \"shipping_address\": \"123 Le Loi\",\n  \"phone\": \"0912345678\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\"id\":2,\"name\":\"Nguyen Van A\",\"email\":\"test@eshop.com\",\"password\":\"Test1234!\",\"role\":\"user\",\"login_attempts\":0,\"locked_until\":null,\"reset_token\":null,\"shipping_address\":\"123 Le Loi\",\"phone\":\"0912345678\"}"
+            }
+          ]
         },
         {
           "name": "TC-API1-002 - Thieu truong name -> GHI DE thanh null",
@@ -1412,7 +1486,42 @@
                 }
               }
             }
-          }
+          },
+          "response": [
+            {
+              "name": "401 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/users/me",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Nguyen Van A\",\n  \"shipping_address\": \"123 Le Loi\",\n  \"phone\": \"0912345678\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\"error\":\"Unauthorized\"}"
+            }
+          ]
         },
         {
           "name": "TC-API1-024 - Header khong co dau cach phan tach -> 401",
@@ -1966,7 +2075,46 @@
                 }
               }
             }
-          }
+          },
+          "response": [
+            {
+              "name": "403 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer not-a-valid-jwt"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/users/me",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Nguyen Van A\",\n  \"shipping_address\": \"123 Le Loi\",\n  \"phone\": \"0912345678\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\"error\":\"Forbidden\"}"
+            }
+          ]
         },
         {
           "name": "TC-API1-036 - Schema xac minh cua GET /api/users/me (10 truong)",
@@ -1999,7 +2147,33 @@
             ],
             "url": "{{baseUrl}}/api/users/me",
             "description": ""
-          }
+          },
+          "response": [
+            {
+              "name": "200 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenUser}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/users/me"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\"id\":2,\"name\":\"Nguyen Van A\",\"email\":\"test@eshop.com\",\"password\":\"Test1234!\",\"role\":\"user\",\"login_attempts\":0,\"locked_until\":null,\"reset_token\":null,\"shipping_address\":\"123 Le Loi\",\"phone\":\"0912345678\"}"
+            }
+          ]
         },
         {
           "name": "TC-API1-037 - Response PUT khong echo truong nao da ghi",
@@ -2367,7 +2541,46 @@
                 }
               }
             }
-          }
+          },
+          "response": [
+            {
+              "name": "400 - HTML (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenUser}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/users/me",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"name\":\"A\",",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "html",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>SyntaxError: Expected double-quoted property name in JSON at position 12 (line 1 column 13)<br> &nbsp; &nbsp;at JSON.parse (&lt;anonymous&gt;)<br> &nbsp; &nbsp;at parse (C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\body-parser@2.3.0\\node_modules\\body-parser\\lib\\types\\json.js:91:21)<br> &nbsp; &nbsp;at C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\body-parser@2.3.0\\node_modules\\body-parser\\lib\\read.js:162:18<br> &nbsp; &nbsp;at AsyncResource.runInAsyncScope (node:async_hooks:214:14)<br> &nbsp; &nbsp;at invokeCallback (C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\raw-body@3.0.2\\node_modules\\raw-body\\index.js:238:16)<br> &nbsp; &nbsp;at done (C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\raw-body@3.0.2\\node_modules\\raw-body\\index.js:227:7)<br> &nbsp; &nbsp;at IncomingMessage.onEnd (C:\\HCMUS\\Software Testing\\group05_eshop\\backend\\node_modules\\.pnpm\\raw-body@3.0.2\\node_modules\\raw-body\\index.js:287:7)<br> &nbsp; &nbsp;at IncomingMessage.emit (node:events:519:28)<br> &nbsp; &nbsp;at endReadableNT (node:internal/streams/readable:1698:12)<br> &nbsp; &nbsp;at process.processTicksAndRejections (node:internal/process/task_queues:89:21)</pre>\n</body>\n</html>\n"
+            }
+          ]
         },
         {
           "name": "A1-E02 - [TU BO SUNG] Khong gui body -> 500 dang HTML",
@@ -2594,7 +2807,34 @@
           }
         }
       ],
-      "description": "42 TC do AI sinh (TC-034 gop vao TC-023 theo ket luan kiem toan) + 5 TC tu bo sung A1-E01..E05."
+      "description": "42 TC do AI sinh (TC-034 gop vao TC-023 theo ket luan kiem toan) + 5 TC tu bo sung A1-E01..E05.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// pre-request cap FOLDER - chay truoc moi request trong folder nay",
+              "if (!pm.collectionVariables.get('folderStarted_API1')) {",
+              "  pm.collectionVariables.set('folderStarted_API1', '1');",
+              "  console.log('===== bat dau folder API1 =====');",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// test cap FOLDER - chay cho moi request trong folder nay",
+              "pm.test('[API1] thoi gian phan hoi < 2000ms', function () {",
+              "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "});"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "API2 - PUT /api/orders/:id/cancel (Pool B / FR-10)",
@@ -2918,7 +3158,33 @@
             ],
             "url": "{{baseUrl}}/api/orders/{{orderId}}/cancel",
             "description": "COV-001,029 - FR-10. pending -> canceled."
-          }
+          },
+          "response": [
+            {
+              "name": "200 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenUser}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/orders/{{orderId}}/cancel"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "[{\"id\":3,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:19\"},{\"id\":2,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:19\"},{\"id\":1,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:19\"}]"
+            }
+          ]
         },
         {
           "name": "TC-API2-002 - :id hop le nhung don khong ton tai",
@@ -2947,7 +3213,33 @@
             ],
             "url": "{{baseUrl}}/api/orders/999999/cancel",
             "description": ""
-          }
+          },
+          "response": [
+            {
+              "name": "404 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenUser}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/orders/999999/cancel"
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\"error\":\"Order not found\"}"
+            }
+          ]
         },
         {
           "name": "TC-API2-003 - :id khong phai so",
@@ -3832,7 +4124,33 @@
             ],
             "url": "{{baseUrl}}/api/orders/{{orderId}}/cancel",
             "description": ""
-          }
+          },
+          "response": [
+            {
+              "name": "200 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenUser}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/orders/{{orderId}}/cancel"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "[{\"id\":12,\"user_id\":2,\"total_amount\":500000,\"status\":\"delivered\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:20\"},{\"id\":11,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:20\"},{\"id\":10,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:20\"},{\"id\":9,\"user_id\":2,\"total_amount\":500000,\"status\":\"pending\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:20\"},{\"id\":8,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:20\"},{\"id\":6,\"user_id\":2,\"total_amount\":500000,\"status\":\"pending\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:20\"},{\"id\":5,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:20\"},{\"id\":4,\"user_id\":2,\"total_amount\":500000,\"status\":\"pending\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:19\"},{\"id\":3,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:19\"},{\"id\":2,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:19\"},{\"id\":1,\"user_id\":2,\"total_amount\":500000,\"status\":\"canceled\",\"shipping_address\":\"HW06 state setup\",\"created_at\":\"2026-08-20 05:58:19\"}]"
+            }
+          ]
         },
         {
           "name": "TC-API2-020 - Huy don da canceled (trang thai ket thuc) -> 400",
@@ -5717,7 +6035,34 @@
           }
         }
       ],
-      "description": "41 TC thuc thi (TC-022 va TC-043 bi loai vi INVALID - xem §5.2) + 5 TC tu bo sung A2-E01..E05. Nhieu TC dung trang thai truoc bang pre-request script (POST /api/checkout + PUT /api/admin/orders/:id/status)."
+      "description": "41 TC thuc thi (TC-022 va TC-043 bi loai vi INVALID - xem §5.2) + 5 TC tu bo sung A2-E01..E05. Nhieu TC dung trang thai truoc bang pre-request script (POST /api/checkout + PUT /api/admin/orders/:id/status).",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// pre-request cap FOLDER - chay truoc moi request trong folder nay",
+              "if (!pm.collectionVariables.get('folderStarted_API2')) {",
+              "  pm.collectionVariables.set('folderStarted_API2', '1');",
+              "  console.log('===== bat dau folder API2 =====');",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// test cap FOLDER - chay cho moi request trong folder nay",
+              "pm.test('[API2] thoi gian phan hoi < 2000ms', function () {",
+              "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "});"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "API3 - POST /api/admin/coupons (Pool C / FR-17)",
@@ -5788,7 +6133,46 @@
                 }
               }
             }
-          }
+          },
+          "response": [
+            {
+              "name": "200 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenAdmin}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/admin/coupons",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"code\": \"TESTNEW01\",\n  \"type\": \"percent\",\n  \"discount_value\": 10,\n  \"min_order_amount\": 0,\n  \"expired_at\": \"2099-12-31\",\n  \"max_uses_per_user\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "[{\"id\":1,\"code\":\"SAVE10\",\"type\":\"percent\",\"discount_value\":10,\"min_order_amount\":300000,\"expired_at\":\"2099-12-31\",\"is_active\":1,\"max_uses_per_user\":1},{\"id\":2,\"code\":\"BIGBUY\",\"type\":\"fixed\",\"discount_value\":50000,\"min_order_amount\":500000,\"expired_at\":\"2099-12-31\",\"is_active\":1,\"max_uses_per_user\":1},{\"id\":3,\"code\":\"VIP100\",\"type\":\"fixed\",\"discount_value\":100000,\"min_order_amount\":300000,\"expired_at\":\"2099-12-31\",\"is_active\":1,\"max_uses_per_user\":2},{\"id\":4,\"code\":\"EXPIRED\",\"type\":\"percent\",\"discount_value\":20,\"min_order_amount\":100000,\"expired_at\":\"2020-01-01\",\"is_active\":1,\"max_uses_per_user\":1},{\"id\":5,\"code\":\"TESTNEW01\",\"type\":\"percent\",\"discount_value\":10,\"min_order_amount\":0,\"expired_at\":\"2099-12-31\",\"is_active\":1,\"max_uses_per_user\":1}]"
+            }
+          ]
         },
         {
           "name": "TC-API3-002 - Thieu code -> luu null (khong co not-null check)",
@@ -5970,7 +6354,46 @@
                 }
               }
             }
-          }
+          },
+          "response": [
+            {
+              "name": "500 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenAdmin}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/admin/coupons",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"code\": \"SAVE10\",\n  \"type\": \"percent\",\n  \"discount_value\": 10,\n  \"min_order_amount\": 0,\n  \"expired_at\": \"2099-12-31\",\n  \"max_uses_per_user\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\"error\":\"SQLITE_CONSTRAINT: UNIQUE constraint failed: coupons.code\"}"
+            }
+          ]
         },
         {
           "name": "TC-API3-005 - Thieu type -> luu null (DEFAULT percent bat hoat)",
@@ -8124,7 +8547,33 @@
             ],
             "url": "{{baseUrl}}/api/admin/coupons/{{schemaDelId}}",
             "description": ""
-          }
+          },
+          "response": [
+            {
+              "name": "200 - JSON (ghi lai tu SUT that)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{tokenAdmin}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/admin/coupons/{{schemaDelId}}"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\"message\":\"Coupon deleted\"}"
+            }
+          ]
         },
         {
           "name": "TC-API3-038 - Schema loi 401",
@@ -11168,7 +11617,34 @@
           }
         }
       ],
-      "description": "80 TC thuc thi (TC-040, -042, -043 bi loai vi la menh de tong hop; TC-081 tach thanh -081a/-081b) + 5 TC tu bo sung A3-E01..E05."
+      "description": "80 TC thuc thi (TC-040, -042, -043 bi loai vi la menh de tong hop; TC-081 tach thanh -081a/-081b) + 5 TC tu bo sung A3-E01..E05.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// pre-request cap FOLDER - chay truoc moi request trong folder nay",
+              "if (!pm.collectionVariables.get('folderStarted_API3')) {",
+              "  pm.collectionVariables.set('folderStarted_API3', '1');",
+              "  console.log('===== bat dau folder API3 =====');",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// test cap FOLDER - chay cho moi request trong folder nay",
+              "pm.test('[API3] thoi gian phan hoi < 2000ms', function () {",
+              "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "});"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug)",
@@ -12004,7 +12480,34 @@
           }
         }
       ],
-      "description": "16 TC ma hoa dieu DAC TA yeu cau. Moi assertion that bai o day = mot bug co that trong SUT. Folder nay KHONG duoc dua vao lan chay xanh cua CI; no chinh la lan chay do (§8.2)."
+      "description": "16 TC ma hoa dieu DAC TA yeu cau. Moi assertion that bai o day = mot bug co that trong SUT. Folder nay KHONG duoc dua vao lan chay xanh cua CI; no chinh la lan chay do (§8.2).",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// pre-request cap FOLDER - chay truoc moi request trong folder nay",
+              "if (!pm.collectionVariables.get('folderStarted_SPEC')) {",
+              "  pm.collectionVariables.set('folderStarted_SPEC', '1');",
+              "  console.log('===== bat dau folder SPEC =====');",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// test cap FOLDER - chay cho moi request trong folder nay",
+              "pm.test('[SPEC] thoi gian phan hoi < 2000ms', function () {",
+              "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "});"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "DATA1 - Chay theo du lieu: phone (FR-04)",
@@ -12209,10 +12712,6 @@
             "method": "POST",
             "header": [
               {
-                "key": "Authorization",
-                "value": "Bearer {{tokenAdmin}}"
-              },
-              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -12231,7 +12730,17 @@
           }
         }
       ],
-      "description": "Chi chay bang: newman -d hw6/postman/data/api3_coupon.csv"
+      "description": "Chi chay bang: newman -d hw6/postman/data/api3_coupon.csv",
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{tokenAdmin}}",
+            "type": "string"
+          }
+        ]
+      }
     },
     {
       "name": "99 - Teardown (don du lieu de chay lai duoc)",
@@ -12263,6 +12772,17 @@
                   "    });",
                   "  })();",
                   "});",
+                  "",
+                  "// --- Visualizer: bang tong ket hien trong tab Visualize cua Postman ---",
+                  "var idsForViz = JSON.parse(pm.collectionVariables.get('createdCouponIds') || '[]');",
+                  "pm.variables.set('tearDownAt', new Date().toISOString());        // bien LOCAL, chi song trong request nay",
+                  "pm.globals.set('hw06LastTeardownAt', pm.variables.get('tearDownAt')); // bien GLOBAL, xuat bang --export-globals",
+                  "var vizTpl = '<style>body{font-family:sans-serif}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}</style>'",
+                  "  + '<h3>HW06 - Teardown</h3><table><tr><th>Hang muc</th><th>Gia tri</th></tr>'",
+                  "  + '<tr><td>MSSV</td><td>{{sid}}</td></tr>'",
+                  "  + '<tr><td>Coupon da xoa</td><td>{{n}}</td></tr>'",
+                  "  + '<tr><td>Thoi diem</td><td>{{at}}</td></tr></table>';",
+                  "pm.visualizer.set(vizTpl, { sid: pm.environment.get('studentId'), n: idsForViz.length, at: pm.variables.get('tearDownAt') });",
                   "",
                   "pm.test('Dua profile user A ve trang thai seed (role=user)', function (done) {",
                   "  pm.sendRequest({ url: pm.environment.get('baseUrl') + '/api/users/me', method: 'PUT',",

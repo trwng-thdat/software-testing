@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const { tc, folder } = require('./lib');
+const examples = require('./examples');
 
 const OUT = path.resolve(__dirname, '..');
 const STUDENT_ID = '23127344';
@@ -179,6 +180,17 @@ const teardownFolder = folder('99 - Teardown (don du lieu de chay lai duoc)', [
         "  })();",
         "});",
         "",
+        "// --- Visualizer: bang tong ket hien trong tab Visualize cua Postman ---",
+        "var idsForViz = JSON.parse(pm.collectionVariables.get('createdCouponIds') || '[]');",
+        "pm.variables.set('tearDownAt', new Date().toISOString());        // bien LOCAL, chi song trong request nay",
+        "pm.globals.set('hw06LastTeardownAt', pm.variables.get('tearDownAt')); // bien GLOBAL, xuat bang --export-globals",
+        "var vizTpl = '<style>body{font-family:sans-serif}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}</style>'",
+        "  + '<h3>HW06 - Teardown</h3><table><tr><th>Hang muc</th><th>Gia tri</th></tr>'",
+        "  + '<tr><td>MSSV</td><td>{{sid}}</td></tr>'",
+        "  + '<tr><td>Coupon da xoa</td><td>{{n}}</td></tr>'",
+        "  + '<tr><td>Thoi diem</td><td>{{at}}</td></tr></table>';",
+        "pm.visualizer.set(vizTpl, { sid: pm.environment.get('studentId'), n: idsForViz.length, at: pm.variables.get('tearDownAt') });",
+        "",
         "pm.test('Dua profile user A ve trang thai seed (role=user)', function (done) {",
         "  pm.sendRequest({ url: pm.environment.get('baseUrl') + '/api/users/me', method: 'PUT',",
         "    header: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pm.environment.get('tokenUserPlain'), 'X-Student-Id': pm.environment.get('studentId') },",
@@ -294,7 +306,9 @@ const ddApi2 = folder('DATA2 - Chay theo du lieu: chuyen trang thai don hang (FR
 
 const ddApi3 = folder('DATA3 - Chay theo du lieu: coupon (FR-17)', [
   tc('DD-API3-COUPON', 'Bien coupon doc tu data file CSV (newman -d)', {
-    method: 'POST', path: '/api/admin/coupons', auth: 'admin',
+    // auth: 'none' o day la CO Y - folder DATA3 dung Authorization helper cap FOLDER
+    // (withFolderAuth) de xac thuc, khong dat header thu cong.
+    method: 'POST', path: '/api/admin/coupons', auth: 'none',
     body: {
       code: '{{couponCode}}', type: '{{couponType}}', discount_value: '{{discountValue}}',
       min_order_amount: 0, expired_at: '2099-12-31', max_uses_per_user: '{{maxUses}}',
@@ -327,6 +341,39 @@ const ddApi3 = folder('DATA3 - Chay theo du lieu: coupon (FR-17)', [
     ],
   }),
 ], 'Chi chay bang: newman -d hw6/postman/data/api3_coupon.csv');
+
+
+// ============================================================
+// Script cap FOLDER (khac cap collection va cap request)
+// Do thoi gian phan hoi cho moi request TRONG folder, va ghi mot dong mo dau
+// khi folder bat dau chay.
+// ============================================================
+function withFolderScripts(f, label, maxMs) {
+  f.event = [
+    { listen: 'prerequest', script: { type: 'text/javascript', exec: [
+      '// pre-request cap FOLDER - chay truoc moi request trong folder nay',
+      "if (!pm.collectionVariables.get('folderStarted_" + label + "')) {",
+      "  pm.collectionVariables.set('folderStarted_" + label + "', '1');",
+      "  console.log('===== bat dau folder " + label + " =====');",
+      '}',
+    ] } },
+    { listen: 'test', script: { type: 'text/javascript', exec: [
+      '// test cap FOLDER - chay cho moi request trong folder nay',
+      "pm.test('[" + label + "] thoi gian phan hoi < " + maxMs + "ms', function () {",
+      '  pm.expect(pm.response.responseTime).to.be.below(' + maxMs + ');',
+      '});',
+    ] } },
+  ];
+  return f;
+}
+
+// Auth helper cap FOLDER: dung khai bao auth cua Postman thay vi tu dat header.
+// Chi ap cho folder DATA3 de minh hoa tinh nang; 3 folder API van dat header thu cong
+// vi 18 che do Authorization chinh la DOI TUONG kiem thu.
+function withFolderAuth(f, tokenVar) {
+  f.auth = { type: 'bearer', bearer: [{ key: 'token', value: '{{' + tokenVar + '}}', type: 'string' }] };
+  return f;
+}
 
 // ============================================================
 // Ghep collection
@@ -366,13 +413,13 @@ const collection = {
   ],
   item: [
     setupFolder,
-    require('./api1'),
-    require('./api2'),
-    require('./api3'),
-    require('./spec'),
+    withFolderScripts(require('./api1'), 'API1', 2000),
+    withFolderScripts(require('./api2'), 'API2', 2000),
+    withFolderScripts(require('./api3'), 'API3', 2000),
+    withFolderScripts(require('./spec'), 'SPEC', 2000),
     ddApi1,
     ddApi2,
-    ddApi3,
+    withFolderAuth(ddApi3, 'tokenAdmin'),
     teardownFolder,
   ],
 };
@@ -386,7 +433,7 @@ const environment = {
   values: [
     { key: 'baseUrl', value: 'http://localhost:3000', type: 'default', enabled: true },
     { key: 'studentId', value: STUDENT_ID, type: 'default', enabled: true },
-    { key: 'secretKey', value: SECRET, type: 'default', enabled: true },
+    { key: 'secretKey', value: SECRET, type: 'secret', enabled: true },  // type secret: Postman an gia tri trong UI
     { key: 'adminEmail', value: 'admin@eshop.com', type: 'default', enabled: true },
     { key: 'adminPassword', value: 'Admin123!', type: 'default', enabled: true },
     { key: 'userEmail', value: 'test@eshop.com', type: 'default', enabled: true },
@@ -415,8 +462,39 @@ const environment = {
 // ============================================================
 // Xuat file + thong ke
 // ============================================================
+// Gan saved example (example response) lay tu response THAT da ghi trong bao cao Newman.
+// Day chinh la thu ma Mock Server cua Postman se tra ve.
+const nExamples = examples.attachAll(collection.item);
+
+// Kiem tra collection bang chinh SDK cua Postman truoc khi ghi file.
+let sdkOk;
+try {
+  const { Collection } = require('postman-collection');
+  const c = new Collection(collection);
+  let count = 0;
+  c.forEachItem(() => { count += 1; });
+  sdkOk = 'postman-collection doc duoc ' + count + ' request';
+} catch (e) {
+  sdkOk = 'KHONG kiem duoc: ' + e.message;
+}
+
 fs.writeFileSync(path.join(OUT, 'EShop_HW06_API.postman_collection.json'), JSON.stringify(collection, null, 2), 'utf8');
 fs.writeFileSync(path.join(OUT, 'EShop_HW06.postman_environment.json'), JSON.stringify(environment, null, 2), 'utf8');
+
+// File GLOBALS rieng (newman -g). Chua thong tin khong doi theo moi truong trien khai:
+// environment thi doi giua local va CI, globals thi khong.
+const globals = {
+  id: 'hw06-23127344-globals',
+  name: 'EShop_HW06_globals',
+  values: [
+    { key: 'hw06StudentId', value: STUDENT_ID, type: 'default', enabled: true },
+    { key: 'hw06Course', value: 'CSC13003 - Software Testing - HW06', type: 'default', enabled: true },
+    { key: 'hw06MaxResponseMs', value: '2000', type: 'default', enabled: true },
+    { key: 'hw06LastTeardownAt', value: '', type: 'default', enabled: true },
+  ],
+  _postman_variable_scope: 'globals',
+};
+fs.writeFileSync(path.join(OUT, 'EShop_HW06.postman_globals.json'), JSON.stringify(globals, null, 2), 'utf8');
 
 const count = (f) => f.item.length;
 const assertions = (f) => f.item.reduce((n, it) => {
@@ -425,8 +503,11 @@ const assertions = (f) => f.item.reduce((n, it) => {
 }, 0);
 
 console.log('Da xuat:');
+console.log('  saved example gan tu response that: ' + nExamples + ' request');
+console.log('  kiem tra SDK: ' + sdkOk);
 console.log('  ' + path.join(OUT, 'EShop_HW06_API.postman_collection.json'));
 console.log('  ' + path.join(OUT, 'EShop_HW06.postman_environment.json'));
+console.log('  ' + path.join(OUT, 'EShop_HW06.postman_globals.json'));
 console.log('');
 console.log('Folder'.padEnd(56), 'Request', 'pm.test');
 collection.item.forEach((f) => {

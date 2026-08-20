@@ -1,0 +1,31 @@
+{
+  "id": "hw06-23127344-globals",
+  "name": "EShop_HW06_globals",
+  "values": [
+    {
+      "key": "hw06StudentId",
+      "value": "23127344",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "hw06Course",
+      "value": "CSC13003 - Software Testing - HW06",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "hw06MaxResponseMs",
+      "value": "2000",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "hw06LastTeardownAt",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "globals"
+}
