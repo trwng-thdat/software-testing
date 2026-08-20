@@ -408,22 +408,15 @@ _Cùng một khung ảnh có **cả hai** bằng chứng chống gian lận §11
 
 ### 4.5 Bước 5 — Lỗi phát hiện được
 
-| ID     | Tiêu đề | Mức độ | TC phát hiện | AI có sinh TC này không? | GitHub Issue |
-| ------ | ------- | ------ | ------------ | ------------------------ | ------------ |
-| BUG-01 | «»      | «High» | «A1-0xx»     | «Không — tôi tự bổ sung» | «URL»        |
+| ID | Tiêu đề | Mức độ | TC phát hiện | AI có sinh TC này? | GitHub Issue |
+| --- | --- | --- | --- | --- | --- |
+| BUG-01 | User tự nâng quyền lên admin qua PUT /api/users/me | Critical | `TC-API1-029` | Có | [#378](https://github.com/DuyITLOR/group05_eshop/issues/378) |
+| BUG-02 | GET /api/users/me trả về password plaintext | Critical | `TC-API1-038` | Có | [#379](https://github.com/DuyITLOR/group05_eshop/issues/379) |
+| BUG-03 | Token tự ký bằng secret hardcode được chấp nhận | Critical | `A1-E03` | Không — tự bổ sung | [#380](https://github.com/DuyITLOR/group05_eshop/issues/380) |
+| BUG-04 | phone không được validate ở backend | Minor | `TC-API1-014` | Có | [#381](https://github.com/DuyITLOR/group05_eshop/issues/381) |
+| BUG-05 | GET /api/admin/users không kiểm role | Critical | `A1-E04` | Không — tự bổ sung | [#382](https://github.com/DuyITLOR/group05_eshop/issues/382) |
 
-<details>
-<summary><b>BUG-01 — «tiêu đề»</b></summary>
-
-- **Endpoint:** `«»`
-- **Các bước tái hiện:** «1… 2… 3…»
-- **Kết quả mong đợi:** «»
-- **Kết quả thực tế:** «»
-- **Mức độ / Độ ưu tiên:** «High / P1»
-- **Bằng chứng:** ![BUG-01](«evidence/bug01.png»)
-- **Issue:** «URL»
-
-</details>
+Mỗi issue có bước tái hiện `curl`, dẫn chiếu FR/SEC và dòng mã nguồn. Chi tiết đầy đủ ở §10.
 
 ---
 
@@ -621,23 +614,14 @@ _Cùng một khung ảnh có **cả hai** bằng chứng chống gian lận §11
 
 ### 5.5 Bước 5 — Lỗi phát hiện được
 
-| ID     | Tiêu đề                                                                         | Mức độ   | TC phát hiện  | AI có sinh TC này không? | GitHub Issue |
-| ------ | ------------------------------------------------------------------------------- | -------- | ------------- | ------------------------ | ------------ |
-| BUG-0x | «User tự hủy được đơn đang `shipping` — trái FR-10»                             | «High»   | «TC-API2-018» | «Có — AI sinh»           | «URL»        |
-| BUG-0x | «Route admin cho phép `canceled → delivered`, trái quy tắc trạng thái kết thúc» | «Medium» | «TC-API2-024» | «Có — AI sinh»           | «URL»        |
+| ID | Tiêu đề | Mức độ | TC phát hiện | AI có sinh TC này? | GitHub Issue |
+| --- | --- | --- | --- | --- | --- |
+| BUG-06 | User hủy được đơn đang shipping | Major | `TC-API2-018` | Có | [#383](https://github.com/DuyITLOR/group05_eshop/issues/383) |
+| BUG-07 | Admin đưa đơn canceled về delivered | Major | `TC-API2-024` | Có | [#384](https://github.com/DuyITLOR/group05_eshop/issues/384) |
+| BUG-08 | GET /api/orders/:id không yêu cầu token | Critical | `TC-API2-042` | Có | [#385](https://github.com/DuyITLOR/group05_eshop/issues/385) |
+| BUG-09 | Thông báo lỗi hủy đơn không cho biết lý do | Minor | `A2-E05` | Không — tự bổ sung | [#386](https://github.com/DuyITLOR/group05_eshop/issues/386) |
 
-<details>
-<summary><b>BUG-0x — «tiêu đề»</b></summary>
-
-- **Endpoint:** `«»`
-- **Các bước tái hiện:** «1… 2… 3…»
-- **Kết quả mong đợi:** «»
-- **Kết quả thực tế:** «»
-- **Mức độ / Độ ưu tiên:** «»
-- **Bằng chứng:** ![BUG](«evidence/bug0x.png»)
-- **Issue:** «URL»
-
-</details>
+Mỗi issue có bước tái hiện `curl`, dẫn chiếu FR/SEC và dòng mã nguồn. Chi tiết đầy đủ ở §10.
 
 ---
 
@@ -876,35 +860,19 @@ _Cùng một khung ảnh có **cả hai** bằng chứng chống gian lận §11
 
 ### 6.5 Bước 5 — Lỗi phát hiện được
 
-| ID     | Tiêu đề                                                | Mức độ     | TC phát hiện              | AI có sinh TC này không? | GitHub Issue |
-| ------ | ------------------------------------------------------ | ---------- | ------------------------- | ------------------------ | ------------ |
-| BUG-0x | «User thường tạo/xoá/đọc được coupon — vi phạm SEC-03» | «Critical» | «TC-API3-029, -030, -031» | «Có — AI sinh»           | «URL»        |
-| BUG-0x | «Trùng `code` trả 500 kèm nguyên văn thông báo SQLite» | «Low»      | «TC-API3-039»             | «Có — AI sinh»           | «URL»        |
+| ID | Tiêu đề | Mức độ | TC phát hiện | AI có sinh TC này? | GitHub Issue |
+| --- | --- | --- | --- | --- | --- |
+| BUG-11 | User thường tạo được coupon | Critical | `TC-API3-029` | Có | [#387](https://github.com/DuyITLOR/group05_eshop/issues/387) |
+| BUG-12 | User thường xoá được coupon (kể cả seed) | Critical | `A3-E04` | Không — tự bổ sung | [#388](https://github.com/DuyITLOR/group05_eshop/issues/388) |
+| BUG-13 | discount_value âm làm TĂNG tiền phải trả | Major | `A3-E05` | Không — tự bổ sung | [#389](https://github.com/DuyITLOR/group05_eshop/issues/389) |
+| BUG-14 | max_uses_per_user chuỗi "0" lưu thành số 0 | Major | `TC-API3-020` | Có | [#377](https://github.com/DuyITLOR/group05_eshop/issues/377) |
+| BUG-15 | code:null tạo được nhiều lần, phá UNIQUE | Major | `A3-E03` | Không — tự bổ sung | [#390](https://github.com/DuyITLOR/group05_eshop/issues/390) |
+| BUG-16 | Trùng code trả 500 kèm text driver SQLite | Minor | `TC-API3-004` | Có | [#391](https://github.com/DuyITLOR/group05_eshop/issues/391) |
+| BUG-17 | Thiếu body trả 500 HTML thay vì 400 JSON | Minor | `TC-API3-067` | Có | [#392](https://github.com/DuyITLOR/group05_eshop/issues/392) |
 
-<details>
-<summary><b>BUG-0x — «tiêu đề»</b></summary>
+Mỗi issue có bước tái hiện `curl`, dẫn chiếu FR/SEC và dòng mã nguồn. Chi tiết đầy đủ ở §10.
 
-- **Endpoint:** `«»`
-- **Các bước tái hiện:** «1… 2… 3…»
-- **Kết quả mong đợi:** «»
-- **Kết quả thực tế:** «»
-- **Mức độ / Độ ưu tiên:** «»
-- **Bằng chứng:** ![BUG](«evidence/bug0x.png»)
-- **Issue:** «URL»
-
-</details>
-
-> ✍️ **Gợi ý riêng cho Pool C (admin):** bắt buộc có test leo thang quyền — user thường gọi endpoint admin (TC-API3-029/030/031 ✓), token bị sửa chữ ký (TC-API3-035 ✓), không gửi token (TC-API3-028 ✓), token hết hạn (TC-API3-032 — lưu ý: SUT **không** phát hành token có `exp`, nên chỉ tới được bằng token tự ký).
-
-### 6.10 Kiểm toán đặc tả OpenAPI do AI sinh (tùy chọn)
-
-> ✍️ Đề §14 cho phép nộp bản chuyển đặc tả sang OpenAPI, nhưng **nếu do AI sinh thì bắt buộc kiểm toán**. Bỏ mục này nếu không nộp OpenAPI.
-
-| Endpoint | Sai lệch so với `api_specification.md` | Nhãn | Tôi sửa thành |
-| -------- | -------------------------------------- | ---- | ------------- |
-| «»       | «»                                     | «»   | «»            |
-
-File: [`«openapi.yaml»`](«openapi.yaml»)
+---
 
 ### 6.9 Bảng phủ yêu cầu bảo mật SEC-01 → SEC-07
 
@@ -925,12 +893,12 @@ File: [`«openapi.yaml»`](«openapi.yaml»)
 
 | Mã | Kết luận | Bằng chứng |
 | --- | --- | --- |
-| SEC-01 | **VI PHẠM** — `SPEC-BUG-02` fail | response `GET /api/users/me` trả về `password` dạng plaintext; mật khẩu cũng được so sánh trực tiếp trong `server.js:48` |
-| SEC-02 | **VI PHẠM** — `SPEC-BUG-03`, `SPEC-BUG-08` fail | 7 token tự ký bằng secret hardcode (`server.js:9`) đều được chấp nhận; `GET /api/orders/:id` không yêu cầu token |
-| SEC-03 | **VI PHẠM** — `SPEC-BUG-05`, `-10`, `-11` fail | không endpoint admin nào kiểm `role`: user thường tạo/xoá được coupon và đọc được `GET /api/admin/users` |
+| SEC-01 | **VI PHẠM** — `SPEC-BUG-02` fail ([#379](https://github.com/DuyITLOR/group05_eshop/issues/379)) | response `GET /api/users/me` trả về `password` dạng plaintext; mật khẩu cũng được so sánh trực tiếp trong `server.js:48` |
+| SEC-02 | **VI PHẠM** — `SPEC-BUG-03`, `SPEC-BUG-08` fail ([#380](https://github.com/DuyITLOR/group05_eshop/issues/380), [#385](https://github.com/DuyITLOR/group05_eshop/issues/385)) | 7 token tự ký bằng secret hardcode (`server.js:9`) đều được chấp nhận; `GET /api/orders/:id` không yêu cầu token |
+| SEC-03 | **VI PHẠM** — `SPEC-BUG-05`, `-10`, `-11` fail ([#382](https://github.com/DuyITLOR/group05_eshop/issues/382), [#387](https://github.com/DuyITLOR/group05_eshop/issues/387), [#388](https://github.com/DuyITLOR/group05_eshop/issues/388)) | không endpoint admin nào kiểm `role`: user thường tạo/xoá được coupon và đọc được `GET /api/admin/users` |
 | SEC-04 | Không kết luận được ở tầng API | payload `<script>` lưu và trả về nguyên văn (`TC-API1-032` pass); việc escape khi hiển thị thuộc tầng UI, ngoài phạm vi kiểm thử API |
 | SEC-05 | **ĐẠT** | `TC-API1-031`, `TC-API2-035`, `TC-API3-033`, `TC-API3-071` đều pass: payload SQLi được lưu/xử lý như chuỗi literal, bảng `users` và `coupons` còn nguyên |
-| SEC-06 | **VI PHẠM** — `SPEC-BUG-01` fail | `PUT /api/users/me` với `role:"admin"` ghi thẳng vào DB; đăng nhập lại nhận token mang claim `role=admin` (`A1-E04` pass) |
+| SEC-06 | **VI PHẠM** — `SPEC-BUG-01` fail ([#378](https://github.com/DuyITLOR/group05_eshop/issues/378)) | `PUT /api/users/me` với `role:"admin"` ghi thẳng vào DB; đăng nhập lại nhận token mang claim `role=admin` (`A1-E04` pass) |
 | SEC-07 | Không áp dụng | không có endpoint OTP nào trong 3 API đã chọn |
 
 **Tổng kết: 4/7 yêu cầu bảo mật bị vi phạm** (SEC-01, SEC-02, SEC-03, SEC-06), 1 đạt (SEC-05), 1 không kết luận được ở tầng API (SEC-04), 1 không áp dụng (SEC-07).
@@ -970,7 +938,7 @@ _Tab Failed Tests: từng assertion fail kèm thông báo `expected … to deepl
 | FR-04 — kiểm tra định dạng đầu vào | 1 | BUG-04 |
 | SEC-06 — leo thang quyền qua `role` | 1 | BUG-01 |
 | Xử lý lỗi — mã trạng thái và định dạng | 3 | BUG-16, BUG-17 |
-| **Tổng** | **22** | 17 lỗi khác nhau (một lỗi có thể bị nhiều assertion bắt) |
+| **Tổng** | **22** | 16 lỗi khác nhau (một lỗi có thể bị nhiều assertion bắt) |
 
 ---
 
@@ -1240,19 +1208,39 @@ Mã nguồn: [`«skills/api-test-generator/»`](«skills/api-test-generator/»)
 
 ## 10. Tổng hợp lỗi đã báo cáo
 
-| ID     | API | Tiêu đề | Mức độ | Trạng thái | GitHub Issue | Ảnh |
-| ------ | --- | ------- | ------ | ---------- | ------------ | --- |
-| BUG-01 | «1» | «»      | «»     | «Open»     | «URL»        | «»  |
-| BUG-02 | «»  | «»      | «»     | «»         | «»           | «»  |
+Toàn bộ **16 lỗi** đều đã báo lên GitHub Issues của SUT (repo nhóm), mỗi issue mang tag `[HW06]`, gán nhãn `module`/`severity`/`priority` và `found-by: test-case`, kèm bước tái hiện bằng `curl`, dẫn chiếu FR/SEC và dòng mã nguồn.
 
-> ✍️ Mỗi issue **bắt buộc** có ảnh chụp màn hình trang GitHub Issues.
+> **Ghi chú số đếm.** Bản trước ghi "17 lỗi" là do đánh số BUG chạy tới `BUG-17` nhưng bỏ `BUG-10`; số lỗi khác biệt thật là **16**, đúng bằng 16 test case trong folder `SPEC` và 16 issue đã tạo.
+
+Repo: **https://github.com/DuyITLOR/group05_eshop** · dải issue **#377–#392**.
+
+| ID | API | Tiêu đề | Mức độ | FR/SEC | TC phát hiện | GitHub Issue |
+| --- | :-: | --- | --- | --- | --- | --- |
+| BUG-01 | 1 | User tự nâng quyền lên admin qua PUT /api/users/me | Critical | SEC-06 | `TC-API1-029` | [#378](https://github.com/DuyITLOR/group05_eshop/issues/378) |
+| BUG-02 | 1 | GET /api/users/me trả về password plaintext | Critical | SEC-01 | `TC-API1-038` | [#379](https://github.com/DuyITLOR/group05_eshop/issues/379) |
+| BUG-03 | 1 | Token tự ký bằng secret hardcode được chấp nhận | Critical | SEC-02 | `A1-E03` | [#380](https://github.com/DuyITLOR/group05_eshop/issues/380) |
+| BUG-04 | 1 | phone không được validate ở backend | Minor | FR-04 | `TC-API1-014` | [#381](https://github.com/DuyITLOR/group05_eshop/issues/381) |
+| BUG-05 | 1 | GET /api/admin/users không kiểm role | Critical | SEC-03 | `A1-E04` | [#382](https://github.com/DuyITLOR/group05_eshop/issues/382) |
+| BUG-06 | 2 | User hủy được đơn đang shipping | Major | FR-10 | `TC-API2-018` | [#383](https://github.com/DuyITLOR/group05_eshop/issues/383) |
+| BUG-07 | 2 | Admin đưa đơn canceled về delivered | Major | FR-10 | `TC-API2-024` | [#384](https://github.com/DuyITLOR/group05_eshop/issues/384) |
+| BUG-08 | 2 | GET /api/orders/:id không yêu cầu token | Critical | SEC-02 | `TC-API2-042` | [#385](https://github.com/DuyITLOR/group05_eshop/issues/385) |
+| BUG-09 | 2 | Thông báo lỗi hủy đơn không cho biết lý do | Minor | FR-10 | `A2-E05` | [#386](https://github.com/DuyITLOR/group05_eshop/issues/386) |
+| BUG-11 | 3 | User thường tạo được coupon | Critical | SEC-03 | `TC-API3-029` | [#387](https://github.com/DuyITLOR/group05_eshop/issues/387) |
+| BUG-12 | 3 | User thường xoá được coupon (kể cả seed) | Critical | SEC-03 | `A3-E04` | [#388](https://github.com/DuyITLOR/group05_eshop/issues/388) |
+| BUG-13 | 3 | discount_value âm làm TĂNG tiền phải trả | Major | FR-17 | `A3-E05` | [#389](https://github.com/DuyITLOR/group05_eshop/issues/389) |
+| BUG-14 | 3 | max_uses_per_user chuỗi "0" lưu thành số 0 | Major | FR-17 | `TC-API3-020` | [#377](https://github.com/DuyITLOR/group05_eshop/issues/377) |
+| BUG-15 | 3 | code:null tạo được nhiều lần, phá UNIQUE | Major | FR-17 | `A3-E03` | [#390](https://github.com/DuyITLOR/group05_eshop/issues/390) |
+| BUG-16 | 3 | Trùng code trả 500 kèm text driver SQLite | Minor | Xử lý lỗi | `TC-API3-004` | [#391](https://github.com/DuyITLOR/group05_eshop/issues/391) |
+| BUG-17 | 3 | Thiếu body trả 500 HTML thay vì 400 JSON | Minor | Xử lý lỗi | `TC-API3-067` | [#392](https://github.com/DuyITLOR/group05_eshop/issues/392) |
 
 | Nguồn test case | Số bug tìm được |
-| --------------- | :-------------: |
-| AI sinh         |       «»        |
-| Tôi tự bổ sung  |       «»        |
+| --- | :-: |
+| AI sinh | 11 |
+| Tôi tự bổ sung | 5 |
 
----
+5 lỗi do test case **tự bổ sung** phát hiện: BUG-03 (`A1-E03`), BUG-05 (`A1-E04`), BUG-09 (`A2-E05`), BUG-12 (`A3-E04`), BUG-13 (`A3-E05`), BUG-15 (`A3-E03`) — phần lớn là chuỗi khai thác liên-API mà AI không nối được vì tôi ra lệnh phân tích từng API tách biệt (xem §4.3, §5.3, §6.3).
+
+> ✍️ **Còn phải làm:** chụp ảnh trang mỗi GitHub Issue (đề §5 yêu cầu ảnh cho mỗi issue). Nội dung lỗi và bằng chứng máy chạy được đã có ở `reports/spec_bugs.html` và `evidence/newman_spec_bugs_failed.png`.
 
 ## 11. Phê bình AI (200–300 từ)
 
@@ -1347,7 +1335,7 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 | ☐   | Test case & bảng tổng hợp dạng Excel                    | «»                      |
 | ☐   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | «»                      |
 | ☐   | (Tùy chọn) OpenAPI .yaml/.json đã kiểm toán             | «»                      |
-| ☐   | Báo cáo lỗi + ảnh GitHub Issues                         | «»                      |
+| ☑/☐ | Báo cáo lỗi + ảnh GitHub Issues                         | §10 + 16 issue #377–#392 (đã tạo); **còn thiếu ảnh** mỗi issue |
 | ☐   | Phê bình AI + AI Audit Report (Markdown + PDF)          | «»                      |
 | ☐   | Git commit log (.txt)                                   | «»                      |
 | ☑   | README.md (bảng tự đánh giá + tổng hợp kết quả)         | [`hw6/README.md`](./README.md) — tổng hợp 3 API, 196 TC, 17 lỗi, 2 lần chạy CI |
@@ -1415,6 +1403,6 @@ Mỗi lần tương tác phải ghi đủ: **tên công cụ AI · ngày giờ �
 | EV-15 | Danh sách lần chạy CI (xanh và đỏ cạnh nhau) | [`evidence/ci_runs_list.png`](./evidence/ci_runs_list.png) | §8.2 |
 | EV-16 | Diff một dòng tạo ra khác biệt giữa hai lần chạy | [`evidence/ci_commit_diff.png`](./evidence/ci_commit_diff.png) | §8.2 |
 | EV-17 | Log CI đầy đủ | [`reports/ci_regression.log`](./reports/ci_regression.log) · [`reports/ci_spec_gate.log`](./reports/ci_spec_gate.log) | §8.2 |
-| EV-08 | GitHub Issues — BUG-01…            | «»        | §10        |
+| EV-08 | 16 GitHub Issues #377–#392 (tag `[HW06]`) | https://github.com/DuyITLOR/group05_eshop/issues?q=is%3Aissue+label%3A%22found-by%3A+test-case%22 | §10 |
 | EV-09 | Sơ đồ bộ sinh test (tự vẽ)         | «»        | §9.2       |
 | EV-10 | Collection + environment + bộ sinh | [`postman/`](./postman/) | §7 |

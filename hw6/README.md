@@ -45,11 +45,11 @@ Chênh lệch giữa 182 (167+15) và 177 là do kiểm toán: `TC-API1-034` g�
 
 22 assertion fail **không phải sự cố**: chúng nằm trong folder `SPEC`, nơi assertion mã hoá **điều đặc tả yêu cầu** thay vì hành vi thực tế. Mỗi assertion fail là bằng chứng máy chạy được cho một vi phạm FR/SEC. Ba folder API xanh tuyệt đối (1 137/1 137) và là cổng chặn hồi quy.
 
-### Số lỗi phát hiện: 17
+### Số lỗi phát hiện: 16 — đã báo lên GitHub Issues #377–#392
 
 | Nhóm | Số lỗi | Nặng nhất |
 | --- | :-: | --- |
-| SEC-03 — endpoint admin không kiểm `role` | 3 | User thường **tạo và xoá được coupon**, kể cả coupon seed `SAVE10` |
+| SEC-03 — endpoint admin không kiểm `role` | 3 | User thường **tạo và xoá được coupon**, kể cả coupon seed `SAVE10` (#382, #387, #388) |
 | FR-10 — máy trạng thái đơn hàng | 4 | User hủy được đơn đang `shipping`; admin đưa đơn `canceled` về `delivered` |
 | FR-17 — ràng buộc trường coupon | 3 | `discount_value` âm được chấp nhận → `apply-coupon` cho `final_amount = 550 000` trên đơn `500 000` |
 | SEC-01 / SEC-02 — xác thực, lộ dữ liệu | 4 | Secret hardcode → tự ký được 7 token mạo danh; `GET /api/orders/:id` không cần token |
@@ -58,6 +58,8 @@ Chênh lệch giữa 182 (167+15) và 177 là do kiểm toán: `TC-API1-034` g�
 | Xử lý lỗi | 2 | Trùng `code` trả `500` kèm nguyên văn thông báo SQLite |
 
 **4/7 yêu cầu bảo mật bị vi phạm** (SEC-01, SEC-02, SEC-03, SEC-06). SEC-05 (parameterized query) **đạt**.
+
+Toàn bộ 16 lỗi đã báo lên GitHub Issues repo nhóm, dải **[#377–#392](https://github.com/DuyITLOR/group05_eshop/issues)**, mỗi issue tag `[HW06]` + bước tái hiện `curl` + dẫn chiếu FR/SEC.
 
 ### CI/CD
 
@@ -117,7 +119,7 @@ python hw6/scripts/capture_ci_evidence.py   # chụp 9 ảnh CI/CD
 
 | Việc | Ghi chú |
 | --- | --- |
-| Bước 5 — GitHub Issues cho 17 lỗi + ảnh mỗi issue | Bằng chứng đã có sẵn ở `reports/spec_bugs.html` và `evidence/newman_spec_bugs_failed.png` |
+| Bước 5 — **ảnh** mỗi GitHub Issue | 16 issue đã tạo (#377–#392 trên repo nhóm), còn thiếu ảnh chụp trang mỗi issue |
 | §9.2 — sơ đồ bộ sinh test **tự vẽ** | Đề §11 quy định sơ đồ không được do AI sinh |
 | §9.3 — mã giả hoàn chỉnh | Bản hiện tại còn 5 bước để trống |
 | §11 — phê bình AI 200–300 từ | |
