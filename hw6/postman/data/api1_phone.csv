@@ -1,0 +1,7 @@
+caseId,phoneValue,digits,expectedStatus,note
+DD-P01,091234567,9,200,bien min-1 theo FR-04 (ky vong dac ta: tu choi)
+DD-P02,0912345678,10,200,bien min - hop le theo ca FR-04 va backend
+DD-P03,09123456789,11,200,bien max - hop le theo ca FR-04 va backend
+DD-P04,091234567890,12,200,bien max+1 (ky vong dac ta: tu choi)
+DD-P05,1912345678,10,200,dung do dai nhung khong bat dau bang 0
+DD-P06,0912-345-678,12,200,co ky tu khong phai so

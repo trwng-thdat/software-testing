@@ -35,3 +35,16 @@ hw5/results/23127344_Endurance_20260814.jtl
 
 # File .jtl chay lai chi de quay video, khong thuoc bai nop
 hw5/results/demo_*.jtl
+
+# HW06: bao cao JSON tho cua Newman (api3.json rieng da 20 MB).
+# Commit ban .gz thay the + summary.json (do hw6/scripts/summarize_newman.js sinh).
+# Giai nen: gunzip -k hw6/reports/api3.json.gz
+hw6/reports/api1.json
+hw6/reports/api2.json
+hw6/reports/api3.json
+hw6/reports/spec_bugs.json
+hw6/reports/data_api1_phone.json
+hw6/reports/data_api3_coupon.json
+
+# Environment tam do newman --export-environment sinh ra (co chua token)
+hw6/reports/.env_after_setup.json

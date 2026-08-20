@@ -1,0 +1,7 @@
+caseId,couponCode,couponType,discountValue,maxUses,expectedStored,note
+DD-C01,DDCSV01,percent,10,1,1,bien min hop le
+DD-C02,DDCSV02,percent,10,0,0,"CSV chi truyen duoc CHUOI: '0' la truthy nen vuot co che || 1 roi bi SQLite ep ve so 0. Nhanh so 0 (JSON number) nam o TC-API3-019."
+DD-C03,DDCSV03,percent,10,-5,-5,so am truthy nen KHONG bi ep
+DD-C04,DDCSV04,fixed,50000,1.5,1.5,so thap phan luu nguyen (REAL)
+DD-C05,DDCSV05,percent,10,999999999,999999999,khong co gioi han tren
+DD-C06,DDCSV06,percent,10,2,2,gia tri hop le thong thuong
