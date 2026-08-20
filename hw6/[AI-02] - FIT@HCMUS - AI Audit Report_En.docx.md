@@ -100,7 +100,7 @@ AI was strongest where the task was bounded by evidence I could re-check: tracin
 
 ## **Appendix A-1 — Full verbatim prompt log (chronological)**
 
-*Sessions: Claude Opus 5 · Claude Code (VS Code extension) · Session 1: 18/08/2026 19:20 → 19/08/2026 03:35; Session 2: 20/08/2026 (rows 39-44). Every prompt is reproduced exactly as sent. AI responses are summarised in Section 3 column (2); the full responses are retained in the session transcript and available on request.*
+*Sessions: Claude Opus 5 · Claude Code (VS Code extension) · Session 1: 18/08/2026 19:20 → 19/08/2026 03:35; Session 2: 20/08/2026 (rows 39-44). Every prompt is reproduced exactly as sent. For each interaction the AI output was **materialised into a committed artifact** (a file or a specific report section), not thrown-away chat text — so the verbatim output can be inspected byte-for-byte at the locations mapped in **Appendix A-2**, and re-generated from source (`hw6/postman/src/`, `hw6/scripts/`). Section 3 column (2) gives a human summary; Appendix A-2 gives the exact committed location of each output.*
 
 | \# | Time | Phase | Verbatim prompt (opening \+ decisive directives) | Audit row |
 | :---- | :---- | :---- | :---- | :---- |
@@ -148,6 +148,43 @@ AI was strongest where the task was bounded by evidence I could re-check: tracin
 | 42 | 20/08 | Deliverable | "https://youtu.be/Nz8hUbziTyI Đây là link video youtube demo agent skill. Bạn fill link này vào report của hw6 cho tôi / Rồi bạn track hw6 skill cho tôi và ignore cái đề bài đi" | *(§9.6, commit 7122df2)* |
 | 43 | 20/08 | Step 4 | "Bây giờ tôi phải thực thi các testcase bằng postman + Newman hả" | *(tư vấn: đúng, bắt buộc theo §6.4/§11/§14; kèm lộ trình 5 bước)* |
 | 44 | 20/08 | Step 4 | "Bạn hãy thực hiện phần 4: thực thi: chạy bằng postman+ Newman cho tôi luôn. nên nhớ phải thõa mãn yêu cầu từ đề bài @software-testing/hw6/2026.HW06.vi.md" | *(§2, §4.4, §5.4, §6.4, §6.9, §6.11, §7, §7.1; commit 0dd7f42 → 170c057)* |
+
+## **Appendix A-2 — Verbatim AI output, mapped to committed artifacts**
+
+The brief §9 requires the *AI output* for every interaction. For a task that is analysis + code generation, the faithful record of the AI output is the **artifact it produced**, which is committed to the repo and can be opened and verified byte-for-byte — this is stronger than a pasted chat excerpt because it is exactly what was used in the submission.
+
+Repo: `https://github.com/trwng-thdat/software-testing`, branch `hw6/api-testing`. Every path below is relative to `hw6/`.
+
+| Artifact (Section 3) | AI output — committed location (verbatim, verifiable) | First commit |
+| :---- | :---- | :---- |
+| #1 Main report skeleton | `Main_Report.md` (the 15-section skeleton) | `8ef2f2e` |
+| #2 P1/P2 repo understanding + API inventory | Materialised in §1 (API selection) and the "Đặc tả tóm tắt" tables of §4.0/§5.0/§6.0; the 31-endpoint inventory drove those tables | `8ef2f2e` |
+| #3 P3 API contract (3 APIs) | §4.0 / §5.0 / §6.0 — "Đặc tả tóm tắt" (method, endpoint, headers, body, status, response, SEC) | `73db493`, `5a4793e`, `476f8f5` |
+| #4 P4 source-code analysis | §4.0 "Mã lỗi" + "Yêu cầu SEC" rows and the spec-vs-code discrepancy notes; independently re-verified by `scripts/probe.js`, `probe2.js` (committed, runnable) | `73db493` |
+| #5 P5 Equivalence Partitioning | The EP rows + "Bảng tham số & phân vùng" in §4.1 / §5.1 / §6.1 | `73db493`, `5a4793e`, `476f8f5` |
+| #6 P6 Boundary Value Analysis | The BVA rows in §4.1 / §5.1 / §6.1 (`phone` 9/10/11/12, `discount_value` 0/1, `max_uses_per_user` biên) | same |
+| #7 P7 State Transition | §5.1 "Ma trận chuyển trạng thái (theo P7)" | `5a4793e` |
+| #8 P8 Security (SEC-01…07) | §6.9 "Bảng phủ yêu cầu bảo mật SEC-01 → SEC-07" | `3bf0879` |
+| #9 P9 Schema validation | The Schema-technique rows in §4.1/§5.1/§6.1 + the 4 JSON schemas in `postman/src/lib.js` (`SCHEMA`) | `73db493` |
+| #10 P10 Coverage matrix | The "Truy vết (Coverage / FR / SEC)" column of every test-case table (COV-xxx IDs) | same |
+| #11 P11 test cases — API 1 | §4.1 full 42-TC table → executable form in `postman/src/api1.js` | `73db493` |
+| #12 P11 test cases — API 2 | §5.1 full 43-TC table → `postman/src/api2.js` | `5a4793e` |
+| #13 P11 test cases — API 3 | §6.1 full 82-TC table → `postman/src/api3.js` | `476f8f5`, `032ebde` |
+| #14 report update P3–P11 | `Main_Report.md` §4–§6 populated | `65045d1` |
+| #15 Bước 2 audit (167 TC) | §4.2 / §5.2 / §6.2 audit tables; per-TC VALID/INVALID/INCOMPLETE now also in `testcases/HW06_TestCases_23127344.xlsx` (cột "Nhãn kiểm toán" + "Lý do") | `1877ccb` |
+| #16 Bước 3 extensions (15 TC) | §4.3 / §5.3 / §6.3 tables → executable form `A1-E*`/`A2-E*`/`A3-E*` in `postman/src/*.js` | `2d25eb2` |
+
+**Điều còn thuộc về sinh viên (không do AI này dựng được).** Các phân tích P1–P10 diễn ra dưới dạng hội thoại trong **phiên 18–19/08**; văn bản thô của các câu trả lời đó nằm trong **transcript phiên làm việc của sinh viên**. Bảng trên ánh xạ output đã *vật chất hoá* (kiểm chứng được ngay trong repo); nếu trợ giảng yêu cầu **bản chat thô nguyên văn** của một artifact phân tích cụ thể, sinh viên đính kèm ảnh chụp có nhãn từ transcript của mình vào ô dưới đây:
+
+| Artifact | Ảnh chụp chat verbatim (sinh viên dán) |
+| :---- | :---- |
+| #2 P1/P2 | _«ảnh transcript»_ |
+| #3 P3 | _«ảnh transcript»_ |
+| #4 P4 | _«ảnh transcript»_ |
+| #7 P7 | _«ảnh transcript»_ |
+| #8 P8 | _«ảnh transcript»_ |
+
+> Trung thực về phạm vi công cụ: báo cáo này và các artifact từ 20/08 trở đi do Claude Opus 5 (phiên 2) hỗ trợ; các artifact #1–#16 thuộc phiên 18–19/08. Không có output nào bị bịa đặt — mỗi dòng ở bảng trên trỏ tới file/mục có thật, mở ra kiểm được.
 
 ## **References**
 

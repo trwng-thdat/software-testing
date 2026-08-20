@@ -43,6 +43,35 @@ def parse_tables():
 
 tables = parse_tables()
 
+# ---------- Nhan kiem toan VALID/INVALID/INCOMPLETE tung TC (tu §4.2/§5.2/§6.2) ----------
+def parse_verdicts():
+    """Doc cac bang 'Chi tiet test case KHONG dat'; tra ve {id: (nhan, ly_do)}."""
+    vmap = {}
+    for header, rows in tables:
+        # bang co cot dau la ID, cot 2 la Nhan (VALID/INVALID/INCOMPLETE)
+        for r in rows:
+            if len(r) < 4:
+                continue
+            id_cell, label, ai_wrote, reason = r[0], r[1], r[2], r[3]
+            lab = label.strip().upper()
+            if lab not in ('INVALID', 'INCOMPLETE', 'VALID'):
+                continue
+            # cot ID co the gom nhieu: "TC-API3-074 · -075 · -076 ..."
+            ids = re.findall(r'TC-API[123]-\d{3}', id_cell)
+            if not ids:
+                continue
+            # neu dong dang "TC-API3-074 · -075 ..." thi bat them cac hau to
+            base = ids[0]
+            prefix = base[:8]  # TC-API3-
+            for suf in re.findall(r'[·,]\s*-?(\d{3})', id_cell):
+                ids.append(prefix + suf)
+            rs = reason.strip() or ('AI viet: ' + ai_wrote.strip())
+            for i in set(ids):
+                vmap[i] = (lab, rs)
+    return vmap
+
+VERDICTS = parse_verdicts()
+
 TCID = re.compile(r'^(TC-API[123]-\d{3}[ab/]*|A[123]-E\d{2}|SPEC-BUG-\d{2})')
 
 def find_tc_table(prefixes, min_rows=10):
@@ -117,14 +146,21 @@ for w,ci in zip([46,11,10,10,11,8,8,13], range(1,9)):
     ws.column_dimensions[openpyxl.utils.get_column_letter(ci)].width = w
 
 # ============ Sheet 2-4: test case tung API ============
-COLW = [13, 46, 16, 26, 40, 44]
-HDR = ['ID', 'Tieu de', 'Ky thuat', 'Truy vet (Coverage/FR/SEC)', 'Input / Precondition', 'Expected (status + body)']
-def norm_rows(header, rows):
-    """Chuan hoa ve 6 cot HDR theo vi tri (bang goc co 6 cot)."""
+COLW = [13, 40, 14, 22, 34, 38, 14, 40]
+HDR = ['ID', 'Tieu de', 'Ky thuat', 'Truy vet (Coverage/FR/SEC)', 'Input / Precondition',
+       'Expected (status + body)', 'Nhan kiem toan', 'Ly do (nguoi ra soat)']
+VALID_REASON = 'VALID - ky vong khop hanh vi probe that cua SUT; assertion PASS khi chay Newman (xem §4.4/§5.4/§6.4)'
+def norm_rows(rows):
+    """Chuan hoa 6 cot goc + gan them Nhan/Ly do tu VERDICTS (mac dinh VALID)."""
     out = []
     for r0 in rows:
         r0 = (r0 + ['']*6)[:6]
-        out.append(r0)
+        tid = re.sub(r'[*~`]', '', r0[0]).strip()
+        # id co the la "TC-API3-081a/b" (dong gop) -> lay dang chuan TC-APIx-ddd de tra
+        m = re.search(r'TC-API[123]-\d{3}', tid)
+        canon = m.group(0) if m else tid
+        lab, reason = VERDICTS.get(tid) or VERDICTS.get(canon) or ('VALID', VALID_REASON)
+        out.append(r0 + [lab, reason])
     return out
 for api, pfx, sheet in (('API 1', ['TC-API1'], 'API1 - users_me (FR-04)'),
                         ('API 2', ['TC-API2'], 'API2 - order cancel (FR-10)'),
@@ -133,8 +169,11 @@ for api, pfx, sheet in (('API 1', ['TC-API1'], 'API1 - users_me (FR-04)'),
     if not found:
         print('  ! khong tim thay bang', api); continue
     header, rows = found
-    write_sheet(wb, sheet, HDR, norm_rows(header, rows), COLW)
-    print('  %s: %d test case' % (sheet, len(rows)))
+    nr = norm_rows(rows)
+    write_sheet(wb, sheet, HDR, nr, COLW)
+    from collections import Counter
+    cnt = Counter(x[6] for x in nr)
+    print('  %s: %d TC | %s' % (sheet, len(rows), dict(cnt)))
 
 # ============ Sheet 5: 15 TC tu bo sung (gop tu 3 bang §4.3/§5.3/§6.3) ============
 EXTID = re.compile(r'^A[123]-E\d{2}$')

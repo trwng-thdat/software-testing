@@ -305,6 +305,8 @@ Hai chi tiết trong ảnh tôi chủ động giữ lại thay vì xoá đi:
 
 Môi trường probe: `node database.js` → `node server.js` trên `localhost:3000`, DB seed sạch, tài khoản `test@eshop.com` (id=2).
 
+> **Nhãn từng test case.** Bảng dưới là mức tổng hợp + chi tiết các TC không đạt. Nhãn VALID/INVALID/INCOMPLETE + lý do cho **cả 167 TC** (kể cả 129 TC VALID) nằm ở cột "Nhãn kiểm toán"/"Lý do" trong [`testcases/HW06_TestCases_23127344.xlsx`](./testcases/HW06_TestCases_23127344.xlsx).
+
 | Nhãn       | Số TC  | Tỉ lệ |
 | ---------- | :----: | :---: |
 | VALID      |   31   | 73.8% |
