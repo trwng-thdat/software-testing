@@ -10,7 +10,7 @@ python hw6/scripts/capture_evidence.py     # cần SUT đang chạy cho ảnh su
 
 ---
 
-## A. Đã tự động chụp — 24 ảnh, không cần làm gì thêm
+## A. Đã tự động chụp — 32 ảnh, không cần làm gì thêm
 
 | Ảnh | Chứng minh điều gì | Dùng ở § |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ python hw6/scripts/capture_evidence.py     # cần SUT đang chạy cho ảnh su
 
 ---
 
-## B. Phải chụp tay — 8 ảnh
+## B. Phải chụp tay — 6 ảnh (2 mục còn lại đã tự động)
 
 Selenium chỉ điều khiển được trình duyệt. Postman là app desktop, terminal không phải trang web, còn GitHub thì cần đăng nhập.
 
@@ -84,11 +84,26 @@ Mỗi issue một ảnh. Sẽ làm ở Bước 5; nếu muốn tôi tạo issue 
 
 Lưu thành → `github_issue_BUG-XX.png`
 
-### B6. Hai lần chạy CI/CD, một xanh một đỏ (§8 — chưa làm)
+### B6. Hai lần chạy CI/CD — **ĐÃ TỰ ĐỘNG CHỤP**, không cần làm gì
 
-Chụp trang GitHub Actions của mỗi lần chạy, thấy commit hash và kết quả.
+Repo công khai nên Selenium chụp được không cần đăng nhập. 7 ảnh đã có:
 
-Lưu thành → `ci_run_pass.png`, `ci_run_fail.png`
+```bash
+python hw6/scripts/capture_ci_evidence.py
+```
+
+| Ảnh | Nội dung |
+| --- | --- |
+| `ci_runs_list.png` | Trang Actions: cả hai lần chạy cạnh nhau, một ✅ một ❌, kèm commit hash |
+| `ci_run_pass.png` | Lần chạy xanh `5d43840`: `regression` success, `spec-gate` skipped |
+| `ci_run_fail.png` | Lần chạy đỏ `06524ea`: sơ đồ job `regression` ✅ → `spec-gate` ❌ |
+| `ci_summary_pass.png`, `ci_summary_fail.png` | Trang tổng kết của từng lần chạy |
+| `ci_spec_gate_log.png` | Danh sách từng bước của job `spec-gate`, thấy bước Newman đỏ |
+| `ci_spec_log_render.png` | **Toàn bộ 22 assertion fail** kèm ID `SPEC-BUG-xx` và dẫn chiếu FR/SEC |
+| `ci_regression_log_render.png` | Log job xanh: số liệu Newman trùng khớp với máy local |
+| `ci_commit_diff.png` | Diff một dòng `SPEC_ENFORCED=false → true` |
+
+> Hai ảnh `*_log_render.png` được render lại từ log lấy bằng `gh run view --job <id> --log`, vì trang log của GitHub Actions **đòi đăng nhập** mới xem được (Selenium chạy ẩn danh chỉ thấy nút *Sign in to view logs*). Nội dung y hệt log gốc; log gốc cũng được commit ở [`../reports/ci_regression.log`](../reports/ci_regression.log) và [`../reports/ci_spec_gate.log`](../reports/ci_spec_gate.log).
 
 ---
 

@@ -1,0 +1,788 @@
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	﻿2026-08-20T08:09:48.2796698Z Current runner version: '2.336.0'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2833862Z ##[group]Runner Image Provisioner
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2834838Z Hosted Compute Agent
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2835512Z Version: 20260729.566
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2837024Z Commit: cf7153fe6e25b664e8693c24944bf2b00355d109
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2838604Z Build Date: 2026-07-29T19:17:02Z
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2839640Z Worker ID: {a9af1a6f-bbdf-4bfb-b3a5-dadd0d138bf2}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2840693Z Azure Region: eastus2
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2841496Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2843704Z ##[group]Operating System
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2844460Z Ubuntu
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2845035Z 24.04.4
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2845603Z LTS
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2846528Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2847122Z ##[group]Runner Image
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2847791Z Image: ubuntu-24.04
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2848408Z Version: 20260816.277.1
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2849498Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260816.277/images/ubuntu/Ubuntu2404-Readme.md
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2851384Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260816.277
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2852414Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2853674Z ##[group]GITHUB_TOKEN Permissions
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2856299Z Contents: read
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2856973Z Metadata: read
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2857566Z Packages: read
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2858408Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2860735Z Secret source: Actions
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.2862199Z Prepare workflow directory
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.3244447Z Prepare all required actions
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.3292680Z Getting action download info
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.5374817Z Download action repository 'actions/checkout@v5' (SHA:fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.6754080Z Download action repository 'actions/setup-node@v5' (SHA:a0853c24544627f65ddf259abe73b1d18a591444)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:48.8102702Z Download action repository 'actions/upload-artifact@v5' (SHA:330a01c490aca151604b8cf639adc76d48f6c5d4)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up job	2026-08-20T08:09:49.0781813Z Complete job name: Spec gate: assertion theo dac ta (se do khi bug con day)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	﻿2026-08-20T08:09:49.1677705Z ##[group]Run actions/checkout@v5
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1678684Z with:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1679169Z   sparse-checkout: hw6
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	.github
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1679772Z   repository: trwng-thdat/software-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1683997Z   token: ***
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1684480Z   ssh-strict: true
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1684963Z   ssh-user: git
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1685450Z   persist-credentials: true
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1686187Z   clean: true
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1686677Z   sparse-checkout-cone-mode: true
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1687243Z   fetch-depth: 1
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1687703Z   fetch-tags: false
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1688188Z   show-progress: true
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1688685Z   lfs: false
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1689161Z   submodules: false
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1689644Z   set-safe-directory: true
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1690187Z   allow-unsafe-pr-checkout: false
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1690971Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1691444Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1691950Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1692545Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1693075Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.1693545Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2728955Z Syncing repository: trwng-thdat/software-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2731540Z ##[group]Getting Git version info
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2732964Z Working directory is '/home/runner/work/software-testing/software-testing'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2734891Z [command]/usr/bin/git version
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2794437Z git version 2.55.0
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2817224Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2834095Z Temporarily overriding HOME='/home/runner/work/_temp/f3214885-7db0-42ca-9760-b71230135d0c' before making global git config changes
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2837184Z Adding repository directory to the temporary git global config as a safe directory
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2843155Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/software-testing/software-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2908821Z Deleting the contents of '/home/runner/work/software-testing/software-testing'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2914699Z ##[group]Initializing the repository
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.2921302Z [command]/usr/bin/git init /home/runner/work/software-testing/software-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3006864Z hint: Using 'master' as the name for the initial branch. This default branch name
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3013485Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3015432Z hint: to use in all of your new repositories, which will suppress this warning,
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3017293Z hint: call:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3018133Z hint:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3019129Z hint: 	git config --global init.defaultBranch <name>
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3020325Z hint:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3021505Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3023321Z hint: 'development'. The just-created branch can be renamed via this command:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3024828Z hint:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3025892Z hint: 	git branch -m <name>
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3026941Z hint:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3028166Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3030453Z Initialized empty Git repository in /home/runner/work/software-testing/software-testing/.git/
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3034685Z [command]/usr/bin/git remote add origin https://github.com/trwng-thdat/software-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3094784Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3096497Z ##[group]Disabling automatic garbage collection
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3099131Z [command]/usr/bin/git config --local gc.auto 0
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3143763Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3145208Z ##[group]Setting up auth
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3153664Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3199013Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3660624Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3670657Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3938183Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.3981480Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.4228183Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.4287265Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.4296986Z ##[group]Fetching the repository
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.4298828Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --filter=blob:none --depth=1 origin +06524ea5aaeb28e903855b48f41212d58ac4a479:refs/remotes/origin/hw6/api-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6570380Z From https://github.com/trwng-thdat/software-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6572282Z  * [new ref]         06524ea5aaeb28e903855b48f41212d58ac4a479 -> origin/hw6/api-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6576479Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6578062Z ##[group]Determining the checkout info
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6584968Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6586682Z ##[group]Setting up sparse checkout
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6587508Z [command]/usr/bin/git sparse-checkout set hw6 .github
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6639727Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6641166Z ##[group]Checking out the ref
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:49.6646417Z [command]/usr/bin/git checkout --progress --force -B hw6/api-testing refs/remotes/origin/hw6/api-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:50.1080526Z Switched to a new branch 'hw6/api-testing'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:50.1083271Z branch 'hw6/api-testing' set up to track 'origin/hw6/api-testing'.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:50.1092452Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:50.1177717Z [command]/usr/bin/git log -1 --format=%H
+Spec gate: assertion theo dac ta (se do khi bug con day)	Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:09:50.1210730Z 06524ea5aaeb28e903855b48f41212d58ac4a479
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	﻿2026-08-20T08:09:50.1574124Z ##[group]Run git clone --no-checkout --depth 1 --branch "${SUT_REF}"             "https://github.com/${GITHUB_REPOSITORY}.git" "${RUNNER_TEMP}/sut"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1578532Z ^[[36;1mgit clone --no-checkout --depth 1 --branch "${SUT_REF}"             "https://github.com/${GITHUB_REPOSITORY}.git" "${RUNNER_TEMP}/sut"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1581285Z ^[[36;1mcd "${RUNNER_TEMP}/sut"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1582631Z ^[[36;1mgit sparse-checkout init --no-cone^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1584108Z ^[[36;1mgit sparse-checkout set "${SUT_PATH}"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1585512Z ^[[36;1mgit checkout^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1586713Z ^[[36;1mls -la "${SUT_PATH}/backend"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1635130Z shell: /usr/bin/bash -e {0}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1636684Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1637617Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1638675Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1639824Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1640979Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1641962Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:50.1759541Z Cloning into '/home/runner/work/_temp/sut'...
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5263285Z Your branch is up to date with 'origin/feature/23127344'.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5281041Z total 140
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5281773Z drwxr-xr-x 2 runner runner  4096 Aug 20 08:09 .
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5282549Z drwxr-xr-x 6 runner runner  4096 Aug 20 08:09 ..
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5285962Z -rw-r--r-- 1 runner runner  5043 Aug 20 08:09 database.js
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5286764Z -rw-r--r-- 1 runner runner 36864 Aug 20 08:09 database.sqlite
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5287493Z -rw-r--r-- 1 runner runner 59187 Aug 20 08:09 package-lock.json
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5288243Z -rw-r--r-- 1 runner runner   398 Aug 20 08:09 package.json
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5288900Z -rw-r--r-- 1 runner runner 17538 Aug 20 08:09 server.js
+Spec gate: assertion theo dac ta (se do khi bug con day)	Lay ma nguon SUT tu nhanh feature/23127344 (sparse checkout)	2026-08-20T08:09:51.5289628Z -rw-r--r-- 1 runner runner   393 Aug 20 08:09 test_profile.js
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	﻿2026-08-20T08:09:51.5395470Z ##[group]Run actions/setup-node@v5
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5396001Z with:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5396255Z   node-version: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5396523Z   always-auth: false
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5396791Z   check-latest: false
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5399298Z   token: ***
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5399575Z   package-manager-cache: true
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5399884Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5400127Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5400430Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5400727Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5401021Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.5401281Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.6863761Z Found in cache @ /opt/hostedtoolcache/node/22.23.2/x64
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.6867833Z (node:2271) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.6868629Z (Use `node --trace-deprecation ...` to show where the warning was created)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:51.6870525Z ##[group]Environment details
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:54.3584054Z node: v22.23.2
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:54.3584820Z npm: 10.9.8
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:54.3585307Z yarn: 1.22.22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Set up Node.js	2026-08-20T08:09:54.3586516Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	﻿2026-08-20T08:09:54.3724337Z ##[group]Run npm ci || npm install
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:54.3724687Z ^[[36;1mnpm ci || npm install^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:54.3770803Z shell: /usr/bin/bash -e {0}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:54.3771083Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:54.3771309Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:54.3771549Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:54.3771799Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:54.3772045Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:54.3772260Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:56.6254572Z npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.3529275Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.3530241Z added 135 packages, and audited 136 packages in 3s
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.3531010Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.3531219Z 36 packages are looking for funding
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.3531569Z   run `npm fund` for details
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.3591500Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.3592156Z 4 vulnerabilities (1 low, 1 moderate, 1 high, 1 critical)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.4026955Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.4027269Z To address all issues, run:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.4027603Z   npm audit fix
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.4027766Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai dependency cho SUT	2026-08-20T08:09:57.4027903Z Run `npm audit` for details.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	﻿2026-08-20T08:09:57.4056522Z ##[group]Run npm install --global newman newman-reporter-htmlextra
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:09:57.4057052Z ^[[36;1mnpm install --global newman newman-reporter-htmlextra^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:09:57.4100864Z shell: /usr/bin/bash -e {0}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:09:57.4101128Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:09:57.4101334Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:09:57.4101571Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:09:57.4101821Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:09:57.4102075Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:09:57.4102300Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:00.5505407Z npm warn deprecated har-validator@5.1.5: this library is no longer supported
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:00.8334310Z npm warn deprecated uuid@3.4.0: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:01.2466215Z npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:01.2678309Z npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:02.3792701Z npm warn deprecated @faker-js/faker@5.5.3: Please update to a newer version.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:02.3969305Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:02.3969826Z added 205 packages in 5s
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:02.3970135Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:02.3970461Z 25 packages are looking for funding
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cai Newman va reporter	2026-08-20T08:10:02.3970997Z   run `npm fund` for details
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	﻿2026-08-20T08:10:02.4201274Z ##[group]Run node database.js
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4201601Z ^[[36;1mnode database.js^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4201942Z ^[[36;1mnohup node server.js > "/home/runner/work/_temp/sut.log" 2>&1 &^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4202364Z ^[[36;1mecho "SUT_PID=$!" >> "$GITHUB_ENV"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4244907Z shell: /usr/bin/bash -e {0}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4245166Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4245369Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4245600Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4246023Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4246292Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4246505Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4873497Z Database initialized and seeded (Phase 2).
+Spec gate: assertion theo dac ta (se do khi bug con day)	Seed DB va khoi dong SUT	2026-08-20T08:10:02.4876425Z Connected to database
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	﻿2026-08-20T08:10:02.5361415Z ##[group]Run for i in $(seq 1 30); do
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5361769Z ^[[36;1mfor i in $(seq 1 30); do^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5362183Z ^[[36;1m  if curl -fsS http://localhost:3000/api/products > /dev/null 2>&1; then^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5362620Z ^[[36;1m    echo "SUT san sang sau ${i}s"; exit 0^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5362912Z ^[[36;1m  fi^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5363118Z ^[[36;1m  sleep 1^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5363321Z ^[[36;1mdone^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5363556Z ^[[36;1mecho "::error::SUT khong san sang trong 30s"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5363900Z ^[[36;1mcat "/home/runner/work/_temp/sut.log" || true^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5364192Z ^[[36;1mexit 1^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5404590Z shell: /usr/bin/bash -e {0}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5404849Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5405058Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5405290Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5405536Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5405978Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5406187Z   SUT_PID: 2357
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:02.5406429Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Cho SUT san sang	2026-08-20T08:10:03.5730248Z SUT san sang sau 2s
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	﻿2026-08-20T08:10:03.5787073Z ##[group]Run bash hw6/scripts/run_newman.sh spec-strict
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5787769Z ^[[36;1mbash hw6/scripts/run_newman.sh spec-strict^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5828571Z shell: /usr/bin/bash -e {0}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5828832Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5829031Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5829269Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5829516Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5829771Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5829981Z   SUT_PID: 2357
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5830303Z   SUT_BACKEND_DIR: /home/runner/work/_temp/sut/hw3/docs/eshop-sut/backend
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5830730Z   SUT_BASE_URL: http://localhost:3000
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5831004Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5940859Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5941360Z ==============================================================
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5942162Z  spec  |  SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.5942812Z ==============================================================
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:03.6182303Z [reset_db] reset DB tai: /home/runner/work/_temp/sut/hw3/docs/eshop-sut/backend
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:04.0082710Z [reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:04.9865336Z HW06 - EShop API Testing (23127344)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:04.9917103Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:04.9921058Z ❏ 00 - Setup (dang nhap, tao user B, tu ky token gia mao)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:04.9921857Z ↳ SETUP-01 - Dang nhap admin -> tokenAdmin
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0180761Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0181583Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0182350Z   │ '
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0279989Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0518058Z   POST http://localhost:3000/api/login [200 OK, 640B, 22ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0617276Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0683853Z   ✓  Dang nhap admin thanh cong
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0689662Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0691830Z   │ '[SETUP] tokenAdmin da luu, admin id=1'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0745232Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0745453Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0746347Z ↳ SETUP-02 - Dang nhap user A -> tokenUser
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0785917Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0786656Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0787265Z   │ '
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0834455Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0874179Z   POST http://localhost:3000/api/login [200 OK, 635B, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0918516Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0973979Z   ✓  Dang nhap user A thanh cong
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0988455Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0989032Z   │ '[SETUP] tokenUser da luu, user A id=2 role=user'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0989395Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.0989784Z   ✓  [tien dieu kien] user A phai co role="user" (DB vua reset)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1033414Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1033999Z ↳ SETUP-03 - Tao user B (cho cac test IDOR)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1072550Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1073439Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/regis
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1075029Z   │ ter'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1124305Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1183841Z   POST http://localhost:3000/api/register [200 OK, 316B, 6ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1233585Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1289378Z   ✓  Dang ky user B tra 200
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1291518Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1292131Z   │ '[SETUP] user B da dang ky, id=3'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1351422Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1351636Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1352081Z ↳ SETUP-04 - Dang nhap user B -> tokenUserB
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1387508Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1387961Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1388495Z   │ '
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1439149Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1469110Z   POST http://localhost:3000/api/login [200 OK, 643B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1510150Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1576624Z   ✓  Dang nhap user B thanh cong
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1577483Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1577942Z   │ '[SETUP] tokenUserB da luu, user B id=3'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1627782Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1628213Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1629057Z ↳ SETUP-05 - Tu ky 7 token gia mao (chung minh SECRET_KEY bi hardcode)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1666842Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1667435Z   │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/produc
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1667982Z   │ ts'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1722787Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1765132Z   GET http://localhost:3000/api/products [200 OK, 1.24kB, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1804405Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1865210Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1866275Z   │ `Using "CryptoJS" is deprecated. Use "require('crypto-
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1867057Z   │ js')" instead.`
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1901164Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1901926Z   ✓  Da tu ky duoc 7 token gia mao bang secret lay tu ma nguon (SEC-02)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.1996619Z   GET http://localhost:3000/api/users/me [200 OK, 452B, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2012781Z   ✓  Token tu ky duoc SUT chap nhan -> secret hardcode la lo hong that
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2033257Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2034672Z ❏ SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2036011Z ↳ SPEC-BUG-01 - [SEC-06] Client KHONG duoc phep tu doi role qua PUT /api/users/me
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2067957Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2068565Z   │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2069180Z   │ me'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2109812Z   │ '===== bat dau folder SPEC ====='
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2156092Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2201132Z   PUT http://localhost:3000/api/users/me [200 OK, 296B, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2238086Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2286742Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2356944Z   ✓  Status 200
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2405850Z   GET http://localhost:3000/api/users/me [200 OK, 462B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2467944Z   1. GET /api/users/me: role = "user" roi tra role ve "user"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2509558Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2510293Z ↳ SPEC-BUG-02 - [SEC-01] GET /api/users/me KHONG duoc tra ve mat khau
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2539254Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2539816Z   │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/users/
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2540256Z   │ me'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2618833Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2656627Z   GET http://localhost:3000/api/users/me [200 OK, 462B, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2693755Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2730601Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2785049Z   ✓  Status 200
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2794341Z   2. Response KHONG chua key "password"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2833117Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2833827Z ↳ SPEC-BUG-03 - [SEC-02] Token tu ky bang secret hardcode KHONG duoc chap nhan
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2861874Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2862451Z   │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2862984Z   │ me'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2930234Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.2971476Z   PUT http://localhost:3000/api/users/me [200 OK, 296B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3006690Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3056714Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3092271Z   3. Token mao danh phai bi tu choi (401 hoac 403), KHONG duoc tra 200
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3167282Z   PUT http://localhost:3000/api/users/me [200 OK, 296B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3169387Z   ✓  [cleanup] tra ten admin ve gia tri seed neu da bi ghi
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3236184Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3236781Z ↳ SPEC-BUG-04 - [FR-04] phone phai la 10-11 chu so va bat dau bang 0
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3266628Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3267399Z   │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3268202Z   │ me'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3306621Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3346937Z   PUT http://localhost:3000/api/users/me [200 OK, 296B, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3382719Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3418451Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3458102Z   4. phone sai dinh dang phai bi tu choi 400
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3496402Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3497139Z ↳ SPEC-BUG-05 - [SEC-03] GET /api/admin/users phai kiem role="admin" trong token
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3523236Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3523799Z   │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/admin/
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3524179Z   │ users'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3599780Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3624606Z   GET http://localhost:3000/api/admin/users [200 OK, 673B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3650563Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3696654Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3768990Z   5. Token role=user phai bi tu choi 403 o endpoint admin
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3811787Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3812763Z ↳ SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3841310Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3841788Z   │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3842232Z   │ /{{orderId}}/cancel'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3926968Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3963830Z   POST http://localhost:3000/api/checkout [200 OK, 312B, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3973834Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3974344Z   │ '[SETUP] tao don #1 (pending)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.3987978Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4025322Z   PUT http://localhost:3000/api/admin/orders/1/status [200 OK, 301B, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4034627Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4035187Z   │ '[SETUP] don #1 -> confirmed (HTTP 200)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4048777Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4081796Z   PUT http://localhost:3000/api/admin/orders/1/status [200 OK, 301B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4088257Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4088858Z   │ '[SETUP] don #1 -> shipping (HTTP 200)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4129165Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4159142Z   PUT http://localhost:3000/api/orders/1/cancel [200 OK, 308B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4198307Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4237960Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4279518Z   6. Huy don shipping phai bi tu choi 400
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4306452Z   GET http://localhost:3000/api/orders/1 [200 OK, 403B, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4318613Z   7. GET /api/orders/:id: status = "shipping"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4348911Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4349858Z ↳ SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4377912Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4378489Z   │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/admin/
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4379137Z   │ orders/{{orderId}}/status'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4521981Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4555318Z   POST http://localhost:3000/api/checkout [200 OK, 312B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4563481Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4563938Z   │ '[SETUP] tao don #2 (pending)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4584432Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4616401Z   PUT http://localhost:3000/api/orders/2/cancel [200 OK, 308B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4622823Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4623288Z   │ '[SETUP] huy lan 1 don #2 -> HTTP 200'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4664069Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4693893Z   PUT http://localhost:3000/api/admin/orders/2/status [200 OK, 301B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4727995Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4775093Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4837280Z   8. canceled -> delivered phai bi tu choi 400
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4872807Z   GET http://localhost:3000/api/orders/2 [200 OK, 404B, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4887642Z   9. GET /api/orders/:id: status = "canceled"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4924766Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4925327Z ↳ SPEC-BUG-08 - [SEC-02] GET /api/orders/:id phai yeu cau xac thuc
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4969793Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4970817Z   │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/orders
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.4971479Z   │ /{{orderId}}'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5036873Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5086192Z   POST http://localhost:3000/api/checkout [200 OK, 312B, 5ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5095312Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5096295Z   │ '[SETUP] tao don #3 (pending)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5136768Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5154373Z   GET http://localhost:3000/api/orders/3 [200 OK, 402B, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5188333Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5222447Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5260006Z  10. Doc don hang khong token phai bi tu choi 401
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5296501Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5297155Z ↳ SPEC-BUG-09 - [FR-10] Thong bao loi phai cho biet ly do khong huy duoc
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5323412Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5323992Z   │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5326281Z   │ /{{orderId}}/cancel'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5416516Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5468786Z   POST http://localhost:3000/api/checkout [200 OK, 312B, 6ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5477269Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5477778Z   │ '[SETUP] tao don #4 (pending)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5497217Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5527799Z   PUT http://localhost:3000/api/admin/orders/4/status [200 OK, 301B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5534138Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5534567Z   │ '[SETUP] don #4 -> confirmed (HTTP 200)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5555076Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5586340Z   PUT http://localhost:3000/api/admin/orders/4/status [200 OK, 301B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5592418Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5592948Z   │ '[SETUP] don #4 -> shipping (HTTP 200)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5611784Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5641268Z   PUT http://localhost:3000/api/admin/orders/4/status [200 OK, 301B, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5647536Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5648368Z   │ '[SETUP] don #4 -> delivered (HTTP 200)'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5690929Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5710601Z   PUT http://localhost:3000/api/orders/4/cancel [400 Bad Request, 313B, 1ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5743444Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5778079Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5817913Z   ✓  Status 400
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5826948Z  11. Thong bao 400 phai nhac trang thai hien tai (delivered)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5863698Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5864326Z ↳ SPEC-BUG-10 - [SEC-03] User thuong KHONG duoc tao coupon
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5882472Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5883025Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5883591Z   │ /coupons'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5942915Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.5976713Z   POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6011545Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6056162Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6094149Z  12. User thuong tao coupon phai bi tu choi 403
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6132428Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6133167Z ↳ SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6160179Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6160740Z   │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6161308Z   │ in/coupons/2'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6222345Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6257864Z   DELETE http://localhost:3000/api/admin/coupons/2 [200 OK, 295B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6287262Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6346661Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6373922Z  13. User thuong xoa coupon phai bi tu choi 403
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6411790Z   GET http://localhost:3000/api/coupons [200 OK, 871B, 1ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6430840Z  14. Coupon BIGBUY phai con trong GET /api/coupons
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6467967Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6468507Z ↳ SPEC-BUG-12 - [FR-17] discount_value phai > 0
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6494809Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6495445Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6496545Z   │ /coupons'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6548338Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6580365Z   POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6622428Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6670099Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6714313Z  15. discount_value am phai bi tu choi 400
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6752237Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6752627Z ↳ SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6779199Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6779661Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6780194Z   │ /coupons'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6841400Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6872896Z   POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6906323Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6938916Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.6976484Z  16. max_uses_per_user = "0" phai bi tu choi 400
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7006724Z   GET http://localhost:3000/api/coupons [200 OK, 1.17kB, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7025932Z  17. Gia tri luu vao DB phai >= 1 (khong duoc la 0)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7064388Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7065157Z ↳ SPEC-BUG-14 - [FR-17] code phai la duy nhat - null khong duoc pha vo rang buoc
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7082336Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7082862Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7083413Z   │ /coupons'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7152186Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7182867Z   POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7190479Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7190947Z   │ '[SETUP] tao coupon id=8 code=null'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7230901Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7258310Z   POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7290568Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7323374Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7364915Z  18. Coupon thu hai voi code=null phai bi tu choi (400 hoac 409)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7399476Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7400264Z ↳ SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7422735Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7423282Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7423867Z   │ /coupons'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7498629Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7519241Z   POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 355B, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7551802Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7584278Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7621866Z  19. Trung code phai tra 409/400, khong phai 500
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7627732Z  20. Thong bao loi khong duoc lo chi tiet noi bo cua SQLite
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7664598Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7665360Z ↳ SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7682427Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7682991Z   │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7683614Z   │ /coupons'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7766816Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7802308Z   POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 1.74kB, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7843170Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7878197Z   ✓  [SPEC] thoi gian phan hoi < 2000ms
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7923033Z  21. Thieu body phai tra 400 (khong phai 500)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7938181Z  22. Body loi phai la JSON co key error
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7982423Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7982927Z ❏ 99 - Teardown (don du lieu de chay lai duoc)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.7983458Z ↳ TEARDOWN-01 - Xoa toan bo coupon do suite tao ra
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8002003Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8002495Z   │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/coupon
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8003005Z   │ s'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8041359Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8063485Z   GET http://localhost:3000/api/coupons [200 OK, 1.45kB, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8096485Z   ✓  [moi request] co header X-Student-Id = 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8131874Z   ┌
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8132305Z   │ '[TEARDOWN] se xoa 5 coupon do suite tao: [5,6,7,8,9]'
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8148591Z   └
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8203462Z   DELETE http://localhost:3000/api/admin/coupons/5   PUT http://localhost:3000/api/users/me [200 OK, 295B, 6ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8226630Z   DELETE http://localhost:3000/api/admin/coupons/6 [200 OK, 296B, 7ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8233899Z   ✓  Dua profile user A ve trang thai seed (role=user)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8259676Z [200 OK, 295B, 4ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8310479Z   DELETE http://localhost:3000/api/admin/coupons/7 [200 OK, 295B, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8358630Z   DELETE http://localhost:3000/api/admin/coupons/8 [200 OK, 295B, 2ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8404944Z   DELETE http://localhost:3000/api/admin/coupons/9 [200 OK, 295B, 3ms]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:05.8413456Z   ✓  Xoa het coupon do suite tao ra
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2602475Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2603611Z ┌─────────────────────────┬─────────────────┬─────────────────┐
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2604389Z │                         │        executed │          failed │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2605084Z ├─────────────────────────┼─────────────────┼─────────────────┤
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2606001Z │              iterations │               1 │               0 │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2606756Z ├─────────────────────────┼─────────────────┼─────────────────┤
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2607355Z │                requests │              46 │               0 │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2607836Z ├─────────────────────────┼─────────────────┼─────────────────┤
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2608314Z │            test-scripts │              60 │               0 │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2608799Z ├─────────────────────────┼─────────────────┼─────────────────┤
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2609259Z │      prerequest-scripts │              43 │               0 │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2609738Z ├─────────────────────────┼─────────────────┼─────────────────┤
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2610170Z │              assertions │              73 │              22 │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2610627Z ├─────────────────────────┴─────────────────┴─────────────────┤
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2611105Z │ total run duration: 866ms                                   │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2611597Z ├─────────────────────────────────────────────────────────────┤
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2612104Z │ total data received: 8.68kB (approx)                        │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2612654Z ├─────────────────────────────────────────────────────────────┤
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2613139Z │ average response time: 3ms [min: 1ms, max: 22ms, s.d.: 3ms] │
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.2613788Z └─────────────────────────────────────────────────────────────┘
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4851996Z 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4853052Z    #  failure         detail                                                                                                                                                             
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4854234Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4855499Z  01.  AssertionError  GET /api/users/me: role = "user" roi tra role ve "user"                                                                                                            
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4858054Z                       expected 'admin' to deeply equal 'user'                                                                                                                            
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4859364Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4860359Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-01 - [SEC-06] Client KHONG duoc phep tu doi role qua PUT /api/users/me"        
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4861272Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4862057Z  02.  AssertionError  Response KHONG chua key "password"                                                                                                                                 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4863331Z                       expected { id: 2, name: 'SPEC-BUG-01', …(8) } to not have property 'password'                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4864201Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4865134Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-02 - [SEC-01] GET /api/users/me KHONG duoc tra ve mat khau"                    
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4866232Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4867033Z  03.  AssertionError  Token mao danh phai bi tu choi (401 hoac 403), KHONG duoc tra 200                                                                                                  
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4867916Z                       ma trang thai: expected 200 to be one of [ 401, 403 ]                                                                                                              
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4868714Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4869659Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-03 - [SEC-02] Token tu ky bang secret hardcode KHONG duoc chap nhan"           
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4870511Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4871275Z  04.  AssertionError  phone sai dinh dang phai bi tu choi 400                                                                                                                            
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4872095Z                       expected 200 to deeply equal 400                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4872913Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4873866Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-04 - [FR-04] phone phai la 10-11 chu so va bat dau bang 0"                     
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4874705Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4876046Z  05.  AssertionError  Token role=user phai bi tu choi 403 o endpoint admin                                                                                                               
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4877856Z                       expected 200 to deeply equal 403                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4879136Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4880654Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-05 - [SEC-03] GET /api/admin/users phai kiem role="admin" trong token"         
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4882116Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4883384Z  06.  AssertionError  Huy don shipping phai bi tu choi 400                                                                                                                               
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4884726Z                       expected 200 to deeply equal 400                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4886165Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4887708Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping"                            
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4889120Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4890397Z  07.  AssertionError  GET /api/orders/:id: status = "shipping"                                                                                                                           
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4891769Z                       expected 'canceled' to deeply equal 'shipping'                                                                                                                     
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4893088Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4894616Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping"                            
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4896329Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4897639Z  08.  AssertionError  canceled -> delivered phai bi tu choi 400                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4898996Z                       expected 200 to deeply equal 400                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4900263Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4901776Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered" 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4903397Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4904798Z  09.  AssertionError  GET /api/orders/:id: status = "canceled"                                                                                                                           
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4906363Z                       expected 'delivered' to deeply equal 'canceled'                                                                                                                    
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4907696Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4909245Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered" 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4910696Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4911949Z  10.  AssertionError  Doc don hang khong token phai bi tu choi 401                                                                                                                       
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4913332Z                       expected 200 to deeply equal 401                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4914645Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4916293Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-08 - [SEC-02] GET /api/orders/:id phai yeu cau xac thuc"                       
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4917734Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4919096Z  11.  AssertionError  Thong bao 400 phai nhac trang thai hien tai (delivered)                                                                                                            
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4920593Z                       expected 'cannot cancel this order.' to include 'delivered'                                                                                                        
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4921936Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4923470Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-09 - [FR-10] Thong bao loi phai cho biet ly do khong huy duoc"                 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4924933Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4926309Z  12.  AssertionError  User thuong tao coupon phai bi tu choi 403                                                                                                                         
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4927656Z                       expected 200 to deeply equal 403                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4928915Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4930982Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-10 - [SEC-03] User thuong KHONG duoc tao coupon"                               
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4932570Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4933849Z  13.  AssertionError  User thuong xoa coupon phai bi tu choi 403                                                                                                                         
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4935226Z                       expected 200 to deeply equal 403                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4936663Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4938199Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong"                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4939613Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4940894Z  14.  AssertionError  Coupon BIGBUY phai con trong GET /api/coupons                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4942696Z                       expected [ 'SAVE10', 'VIP100', 'EXPIRED', …(1) ] to include 'BIGBUY'                                                                                               
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4944020Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4945546Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong"                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4947137Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4948404Z  15.  AssertionError  discount_value am phai bi tu choi 400                                                                                                                              
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4949735Z                       expected 200 to deeply equal 400                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4951036Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4952546Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-12 - [FR-17] discount_value phai > 0"                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4953962Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4955236Z  16.  AssertionError  max_uses_per_user = "0" phai bi tu choi 400                                                                                                                        
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4956791Z                       expected 200 to deeply equal 400                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4958311Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4960022Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1"                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4961407Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4962654Z  17.  AssertionError  Gia tri luu vao DB phai >= 1 (khong duoc la 0)                                                                                                                     
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4964078Z                       gia tri luu trong DB: expected +0 to be at least 1                                                                                                                 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4965452Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4967171Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1"                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4968576Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4969909Z  18.  AssertionError  Coupon thu hai voi code=null phai bi tu choi (400 hoac 409)                                                                                                        
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4971324Z                       expected 200 to be one of [ 400, 409 ]                                                                                                                             
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4972620Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4974243Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-14 - [FR-17] code phai la duy nhat - null khong duoc pha vo rang buoc"         
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4975626Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4977074Z  19.  AssertionError  Trung code phai tra 409/400, khong phai 500                                                                                                                        
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4978382Z                       expected 500 to be one of [ 400, 409 ]                                                                                                                             
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4979677Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4981189Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver"  
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4982607Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4983891Z  20.  AssertionError  Thong bao loi khong duoc lo chi tiet noi bo cua SQLite                                                                                                             
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4986230Z                       expected '{"error":"SQLITE_CONSTRAINT: UNIQUE c…' to not include 'SQLITE_CONSTRAINT'                                                                               
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4987855Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4989356Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver"  
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4990805Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4992036Z  21.  AssertionError  Thieu body phai tra 400 (khong phai 500)                                                                                                                           
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4993417Z                       expected 500 to deeply equal 400                                                                                                                                   
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4994691Z                       at assertion:0 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4996343Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML"            
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4997757Z                                                                                                                                                                                          
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.4999029Z  22.  AssertionError  Body loi phai la JSON co key error                                                                                                                                 
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.5000493Z                       response phai parse duoc thanh JSON: expected null not to be null                                                                                                  
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.5001892Z                       at assertion:1 in test-script                                                                                                                                      
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.5003401Z                       inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML"            
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.5256139Z [run_newman] spec ket thuc voi ma thoat 1 (KY VONG khac 0: moi fail la mot bug)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.5256886Z [run_newman] spec-strict: tra ve ma thoat 1 vi con assertion theo dac ta that bai
+Spec gate: assertion theo dac ta (se do khi bug con day)	Chay Newman - folder SPEC (assertion theo dac ta)	2026-08-20T08:10:06.5272870Z ##[error]Process completed with exit code 1.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	﻿2026-08-20T08:10:06.5322117Z ##[group]Run {
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5322395Z ^[[36;1m{^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5322658Z ^[[36;1m  echo "## HW06 - Spec gate (MSSV ${STUDENT_ID})"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5322991Z ^[[36;1m  echo ""^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5323351Z ^[[36;1m  echo "Moi assertion that bai duoi day la MOT VI PHAM DAC TA co that trong SUT,"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5323949Z ^[[36;1m  echo "kem dan chieu FR/SEC. Job do la dung mong doi cho tới khi SUT duoc sua."^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5324353Z ^[[36;1m  echo ""^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5324577Z ^[[36;1m} >> "$GITHUB_STEP_SUMMARY"^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5324837Z ^[[36;1mnode -e "^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5325053Z ^[[36;1m  const fs = require('fs');^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5325342Z ^[[36;1m  const p = 'hw6/reports/spec_bugs.json';^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5326140Z ^[[36;1m  if (!fs.existsSync(p)) { process.exit(0); }^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5326560Z ^[[36;1m  const r = JSON.parse(fs.readFileSync(p, 'utf8'));^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5326912Z ^[[36;1m  const s = r.run.stats;^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5327410Z ^[[36;1m  const out = [];^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5327839Z ^[[36;1m  out.push('- Assertion: ' + s.assertions.total + ' (that bai: ' + s.assertions.failed + ')');^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5328287Z ^[[36;1m  out.push('');^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5328613Z ^[[36;1m  out.push('| Test case | Assertion that bai | Thong bao |');^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5328989Z ^[[36;1m  out.push('| --- | --- | --- |');^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5329275Z ^[[36;1m  const seen = new Set();^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5329552Z ^[[36;1m  for (const f of r.run.failures) {^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5329902Z ^[[36;1m    const item = (f.source && f.source.name) || '(khong ro)';^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5330271Z ^[[36;1m    const key = item + '|' + f.error.test;^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5330590Z ^[[36;1m    if (seen.has(key)) continue;^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5330867Z ^[[36;1m    seen.add(key);^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5331391Z ^[[36;1m    out.push('| ' + item.split(' - ')[0] + ' | ' + f.error.test + ' | ' + String(f.error.message).replace(/\|/g, '\\\\|').slice(0, 120) + ' |');^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5331951Z ^[[36;1m  }^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5332304Z ^[[36;1m  fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, out.join('\n') + '\n');^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5332718Z ^[[36;1m" || true^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5373105Z shell: /usr/bin/bash -e {0}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5373366Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5373572Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5373806Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5374049Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5374302Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5374511Z   SUT_PID: 2357
+Spec gate: assertion theo dac ta (se do khi bug con day)	Liet ke assertion that bai vao Step Summary	2026-08-20T08:10:06.5374718Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	﻿2026-08-20T08:10:06.6011983Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6013354Z ##[group]Run actions/upload-artifact@v5
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6013632Z with:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6013846Z   name: newman-spec-23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6014172Z   path: hw6/reports/spec_bugs.html
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	hw6/reports/spec_bugs.json
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6014521Z   if-no-files-found: warn
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6014760Z   compression-level: 6
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6014983Z   overwrite: false
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6015216Z   include-hidden-files: false
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6015450Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6015641Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6016143Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6016385Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6016624Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6016865Z   SUT_PID: 2357
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.6017067Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.7627647Z (node:2550) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.7628554Z (Use `node --trace-deprecation ...` to show where the warning was created)
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.7681160Z Multiple search paths detected. Calculating the least common ancestor of all paths
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.7684220Z The least common ancestor is /home/runner/work/software-testing/software-testing/hw6/reports. This will be the root directory of the artifact
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.7685533Z With the provided path, there will be 2 files uploaded
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.7690541Z Artifact name is valid!
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:06.7696742Z Root directory input is valid!
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.0026178Z Beginning upload of artifact content to blob storage
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.0553131Z (node:2550) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.0903124Z Uploaded bytes 251280
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.1025223Z Finished uploading artifact content to blob storage!
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.1026595Z SHA256 digest of uploaded artifact zip is 7946264a4c8fa514556f6e1aef1a60981bd32bdae0471747adbe8ae68ecd9dd7
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.1028643Z Finalizing artifact upload
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.2892612Z Artifact newman-spec-23127344.zip successfully finalized. Artifact ID 9398544230
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.2893524Z Artifact newman-spec-23127344 has been successfully uploaded! Final size is 251280 bytes. Artifact ID is 9398544230
+Spec gate: assertion theo dac ta (se do khi bug con day)	Tai bao cao HTML len artifact	2026-08-20T08:10:07.2899505Z Artifact download URL: https://github.com/trwng-thdat/software-testing/actions/runs/32347386625/artifacts/9398544230
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	﻿2026-08-20T08:10:07.3041541Z ##[group]Run kill "$SUT_PID" 2>/dev/null || true
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3042112Z ^[[36;1mkill "$SUT_PID" 2>/dev/null || true^[[0m
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3096645Z shell: /usr/bin/bash -e {0}
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3097073Z env:
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3097371Z   STUDENT_ID: 23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3097765Z   SUT_REF: feature/23127344
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3098149Z   SUT_PATH: hw3/docs/eshop-sut
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3098539Z   NODE_VERSION: 22
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3098905Z   SUT_PID: 2357
+Spec gate: assertion theo dac ta (se do khi bug con day)	Dung SUT	2026-08-20T08:10:07.3099227Z ##[endgroup]
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	﻿2026-08-20T08:10:07.3293549Z Post job cleanup.
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4149791Z [command]/usr/bin/git version
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4191009Z git version 2.55.0
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4231221Z Temporarily overriding HOME='/home/runner/work/_temp/20460dc8-cfb9-4a87-a2c5-2a92ec3c0890' before making global git config changes
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4233004Z Adding repository directory to the temporary git global config as a safe directory
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4235602Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/software-testing/software-testing
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4280238Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4319698Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4590272Z fatal: No url found for submodule path 'hw3/docs/eshop-sut' in .gitmodules
+Spec gate: assertion theo dac ta (se do khi bug con day)	Post Checkout bai lam HW06 (chi hw6 va .github)	2026-08-20T08:10:07.4629931Z ##[warning]The process '/usr/bin/git' failed with exit code 128
+Spec gate: assertion theo dac ta (se do khi bug con day)	Complete job	﻿2026-08-20T08:10:07.4799413Z Cleaning up orphan processes
+Spec gate: assertion theo dac ta (se do khi bug con day)	Complete job	2026-08-20T08:10:07.5153426Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

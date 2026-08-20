@@ -1017,30 +1017,91 @@ Ghi lại đây vì cả hai đều là loại lỗi mà đọc code không th�
 
 ## 8. Tích hợp CI/CD
 
+Repo công khai: **https://github.com/trwng-thdat/software-testing** · nhánh `hw6/api-testing` · workflow [`.github/workflows/hw6-api-tests.yml`](../.github/workflows/hw6-api-tests.yml)
+
 ### 8.1 Cấu hình pipeline
 
-| Hạng mục      | Giá trị                                                                          |
-| ------------- | -------------------------------------------------------------------------------- |
-| Nền tảng      | «GitHub Actions»                                                                 |
-| File workflow | «.github/workflows/api-tests.yml»                                                |
-| Trigger       | «push / pull_request»                                                            |
-| Runner        | «ubuntu-latest»                                                                  |
-| Các bước      | «checkout → setup-node → khởi động SUT → seed DB → newman run → upload artifact» |
+| Hạng mục | Giá trị |
+| --- | --- |
+| Nền tảng | GitHub Actions, runner `ubuntu-latest` |
+| File workflow | `.github/workflows/hw6-api-tests.yml` (`name: hw6-api-tests`) |
+| Trigger | `push` (nhánh `hw6/**`, lọc theo `paths`) · `pull_request` · `workflow_dispatch` · **`schedule: cron "0 0 * * *"`** |
+| Node.js | 22 (`actions/setup-node@v5`) |
+| Số job | 2 job tách biệt: `regression` và `spec-gate` |
+| Artifact | Báo cáo HTML + `summary.md` + `summary.json`; log SUT được tải lên khi thất bại |
 
-```yaml
-«dán nội dung .github/workflows/api-tests.yml tại đây»
-```
+**Hai cổng, và đó là quyết định thiết kế chính.**
 
-**Giải thích cấu hình.** «3–6 câu: cách khởi động SUT trong CI, chờ healthcheck, truyền biến môi trường và secret, lưu báo cáo HTML dưới dạng artifact.»
+| Job | Chạy gì | Kỳ vọng | Vai trò |
+| --- | --- | --- | --- |
+| `regression` | 3 folder API + 3 folder chạy theo dữ liệu | **luôn xanh** | Cổng chặn hồi quy. Assertion mã hoá **hành vi thực tế** nên bất kỳ thay đổi hành vi nào của SUT về sau sẽ làm đỏ job này |
+| `spec-gate` | folder `SPEC` | **đỏ khi bug còn đó** | Cổng đặc tả. Assertion mã hoá **điều FR/SEC đòi hỏi**; mỗi assertion xanh trở lại = một lỗi đã được sửa |
+
+`spec-gate` chỉ chạy khi [`hw6/ci/ci.env`](./ci/ci.env) đặt `SPEC_ENFORCED=true`. **Đúng một dòng đó** là khác biệt giữa hai lần chạy mẫu mà đề §6 yêu cầu — không phải hai pipeline khác nhau, không phải sửa assertion cho fail giả.
+
+**Cách pipeline lấy mã nguồn SUT.** Repo này cho `group05_eshop/` vào `.gitignore` vì SUT có repo riêng, nên CI không có SUT để chạy. Tôi không nhân bản thêm một bản thứ ba: một bản SUT **giống byte-for-byte** (đã `diff --strip-trailing-cr` cả `server.js` và `database.js`) đã nằm trong lịch sử repo ở nhánh `feature/23127344`, đường dẫn `hw3/docs/eshop-sut`. Workflow `git clone --depth 1` + `sparse-checkout` đúng đường dẫn đó vào `RUNNER_TEMP`.
+
+**Các bước của job.** `checkout` → `git clone` SUT (sparse) → `setup-node@v5` → `npm ci` cho SUT → cài `newman` + `newman-reporter-htmlextra` → `node database.js` seed DB → `nohup node server.js &` → **healthcheck poll `/api/products` tối đa 30 lần** (không `sleep` cố định) → `bash hw6/scripts/run_newman.sh regression` (hoặc `spec-strict`) → in bảng số liệu vào Step Summary → upload artifact → `kill` SUT.
+
+Hai chi tiết đáng nói:
+
+- `reset_db.js` nhận đường dẫn backend qua biến `SUT_BACKEND_DIR`. Biến này có sẵn từ trước vì tôi đã cần nó khi phát hiện lỗi reset sai bản mã nguồn ở máy local (§7.6 lỗi 1) — nhờ vậy CI dùng lại được ngay, không phải sửa script.
+- Pipeline dùng **cùng một script** `run_newman.sh` với máy local. Không có nhánh mã riêng cho CI, nên số liệu CI và số liệu local so sánh được trực tiếp — và chúng trùng khớp (xem §8.2).
 
 ### 8.2 Hai lần chạy mẫu
 
-| Lần chạy       | Commit | Kết quả      | Link run | Ảnh                         |
-| -------------- | ------ | ------------ | -------- | --------------------------- |
-| ✅ Tất cả PASS | «hash» | «n/n passed» | «URL»    | ![](«evidence/ci_pass.png») |
-| ❌ Có FAIL     | «hash» | «1 failed»   | «URL»    | ![](«evidence/ci_fail.png») |
+| Lần chạy | Commit | `SPEC_ENFORCED` | Kết quả | Link |
+| --- | --- | :-: | --- | --- |
+| ✅ **Tất cả PASS** | [`5d43840`](https://github.com/trwng-thdat/software-testing/commit/5d43840) | `false` | `success` — job `regression` xanh, `spec-gate` bị bỏ qua | [run 32347245797](https://github.com/trwng-thdat/software-testing/actions/runs/32347245797) |
+| ❌ **Có test FAIL** | [`06524ea`](https://github.com/trwng-thdat/software-testing/commit/06524ea) | `true` | `failure` — `regression` **vẫn xanh**, `spec-gate` đỏ với **22 assertion fail** | [run 32347386625](https://github.com/trwng-thdat/software-testing/actions/runs/32347386625) |
 
-**Mô tả lần chạy đỏ.** «Test case nào fail, vì sao (bug thật hay cố ý sửa assertion), pipeline đã chặn ra sao.»
+![Danh sách lần chạy](./evidence/ci_runs_list.png)
+_Trang Actions: cả hai lần chạy cạnh nhau, kèm commit hash và nhánh._
+
+![Lần chạy xanh](./evidence/ci_run_pass.png)
+_Lần chạy xanh `5d43840`: `regression` success, `spec-gate` skipped._
+
+![Lần chạy đỏ](./evidence/ci_run_fail.png)
+_Lần chạy đỏ `06524ea`: sơ đồ job cho thấy `regression` ✅ → `spec-gate` ❌, annotation `Process completed with exit code 1`._
+
+![Log spec-gate](./evidence/ci_spec_log_render.png)
+_Toàn bộ 22 assertion fail trong CI, mỗi dòng kèm ID `SPEC-BUG-xx` và dẫn chiếu FR/SEC._
+
+![Diff một dòng](./evidence/ci_commit_diff.png)
+_Diff của commit đỏ: đúng một dòng `SPEC_ENFORCED=false → true`._
+
+**Số liệu CI so với máy local.** Cùng script, cùng collection, khác máy và khác hệ điều hành (Windows 11 ↔ Ubuntu):
+
+| | API 1 | API 2 | API 3 | DATA1 | DATA2 | DATA3 | SPEC |
+| --- | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Assertion — máy local | 224 | 239 | 557 | 24 | 24 | 18 | 73 (22 fail) |
+| Assertion — CI (Ubuntu) | 224 | 239 | 557 | 24 | 24 | 18 | 73 (22 fail) |
+
+Trùng khớp tuyệt đối. Đây là điểm tôi coi trọng nhất ở phần CI/CD: nó chứng minh bộ test **không phụ thuộc máy của tôi** — không phụ thuộc dữ liệu còn sót, không phụ thuộc thứ tự chạy, không phụ thuộc hệ điều hành. Log đầy đủ: [`reports/ci_regression.log`](./reports/ci_regression.log) (3.863 dòng) và [`reports/ci_spec_gate.log`](./reports/ci_spec_gate.log) (788 dòng).
+
+**Mô tả lần chạy đỏ.** Job `spec-gate` chạy `run_newman.sh spec-strict`, và script này **trả về mã thoát 1** sau khi in kết quả — đó là cách CI biết phải đỏ. 22 assertion fail thuộc 16 test case, phân bố: SEC-03 (4), FR-10 (5), FR-17 (5), SEC-01/SEC-02 (3), FR-04 (1), SEC-06 (1), xử lý lỗi (3). Điều quan trọng là **job `regression` vẫn xanh trong cùng lần chạy đó** — nên việc đỏ không đến từ hạ tầng CI hay từ suite bị hỏng, mà đến từ chính các vi phạm đặc tả trong SUT.
+
+### 8.3 Vai trò "monitor"
+
+§7 mục 31 đã ghi: monitor của Postman chạy trên cloud nên **không gọi được `localhost`**. Vai trò chạy định kỳ do chính pipeline này đảm nhiệm bằng `schedule: cron "0 0 * * *"` (07:00 giờ Việt Nam). Khác với monitor của Postman, lần chạy theo lịch này **tự dựng SUT** rồi mới test, nên nó kiểm tra được hệ thống thật chứ không phải một mock công khai.
+
+### 8.4 Một cảnh báo còn lại, và vì sao tôi không tự sửa
+
+Cả hai lần chạy đều còn một cảnh báo vàng `The process '/usr/bin/git' failed with exit code 128`. Truy ra được nguyên nhân từ log:
+
+```text
+fatal: No url found for submodule path 'hw3/docs/eshop-sut' in .gitmodules
+```
+
+Đây là **lỗi có sẵn của repo, không phải của pipeline**: trên nhánh này, đường dẫn `hw3/docs/eshop-sut` được ghi là một **gitlink** (mode `160000`, trỏ tới commit `85af3ba`) nhưng repo **không có file `.gitmodules`** — tức là một tham chiếu submodule mồ côi, `git checkout` chỉ tạo ra thư mục rỗng. Bước post-cleanup của `actions/checkout` chạy `git submodule foreach` nên báo lỗi.
+
+Tôi đã thử ba cách và ghi lại vì cả ba đều thất bại theo cách đáng học:
+
+1. Bỏ `actions/checkout` thứ hai (dùng cho SUT), thay bằng `git clone` — vẫn còn, vì nguồn không phải ở đó.
+2. Clone SUT ra `RUNNER_TEMP` để workspace không có repo git lồng — vẫn còn.
+3. `sparse-checkout` chỉ lấy `hw6` và `.github` — **vẫn còn**, vì `git submodule foreach` đọc **index**, không đọc working tree.
+
+Cách sửa thật là `git rm --cached hw3/docs/eshop-sut`, nhưng việc đó sửa vào cây thư mục của **hw3 — một bài đã nộp**, nên tôi không tự làm. Cảnh báo này không ảnh hưởng kết quả pass/fail: lần chạy xanh vẫn `success`, lần chạy đỏ đỏ đúng vì `spec-gate`.
 
 ---
 
@@ -1189,11 +1250,11 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 | ✔   | Sản phẩm                                                | Đường dẫn               |
 | --- | ------------------------------------------------------- | ----------------------- |
 | ☐   | Báo cáo chính (Markdown + PDF)                          | «Main_Report.md / .pdf» |
-| ☐   | Link GitHub repo công khai                              | «URL»                   |
+| ☑   | Link GitHub repo công khai                              | https://github.com/trwng-thdat/software-testing (nhánh `hw6/api-testing`) |
 | ☑   | Postman collection (.json)                              | [`hw6/postman/EShop_HW06_API.postman_collection.json`](./postman/EShop_HW06_API.postman_collection.json) + environment + 3 data file CSV + bộ sinh `postman/src/` |
 | ☑   | Báo cáo Newman (HTML)                                   | 7 file trong [`hw6/reports/`](./reports/): `api1/api2/api3/spec_bugs/data_api1_phone/data_api2_state/data_api3_coupon.html` + `newman_console_full.log` + `summary.md` |
 | ☑   | Danh sách tính năng Postman đã dùng                     | §7 — 34 mục: 26 đã dùng, 1 một phần (mock server), 3 không dùng kèm lý do, kèm [`postman/README.md`](./postman/README.md) hướng dẫn workspace/mock/monitor |
-| ☐   | Báo cáo CI/CD + 2 run mẫu (ảnh + link)                  | §8                      |
+| ☑   | Báo cáo CI/CD + 2 run mẫu (ảnh + link)                  | §8 — workflow + 2 lần chạy thật kèm 5 ảnh và link |
 | ☐   | Test case & bảng tổng hợp dạng Excel                    | «»                      |
 | ☐   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | «»                      |
 | ☐   | (Tùy chọn) OpenAPI .yaml/.json đã kiểm toán             | «»                      |
@@ -1257,8 +1318,11 @@ Mỗi lần tương tác phải ghi đủ: **tên công cụ AI · ngày giờ �
 | EV-05b | Newman HTML — folder `SPEC` (16 TC, 73 assertion, **22 FAIL**) | [`reports/spec_bugs.html`](./reports/spec_bugs.html) | §6.11, §10 |
 | EV-05c | Newman HTML — 3 lần chạy theo dữ liệu CSV (một file cho mỗi API) | [`reports/data_api1_phone.html`](./reports/data_api1_phone.html), [`reports/data_api2_state.html`](./reports/data_api2_state.html), [`reports/data_api3_coupon.html`](./reports/data_api3_coupon.html) | §5.4, §7 |
 | EV-05d | Bảng số liệu trích từ JSON của Newman | [`reports/summary.md`](./reports/summary.md), [`reports/summary.json`](./reports/summary.json) | Tóm tắt kết quả |
-| EV-06 | CI run xanh                        | «»        | §8.2       |
-| EV-07 | CI run đỏ                          | «»        | §8.2       |
+| EV-06 | CI run xanh `5d43840` | [`evidence/ci_run_pass.png`](./evidence/ci_run_pass.png) · [run 32347245797](https://github.com/trwng-thdat/software-testing/actions/runs/32347245797) | §8.2 |
+| EV-07 | CI run đỏ `06524ea` (22 assertion fail) | [`evidence/ci_run_fail.png`](./evidence/ci_run_fail.png) · [`ci_spec_log_render.png`](./evidence/ci_spec_log_render.png) · [run 32347386625](https://github.com/trwng-thdat/software-testing/actions/runs/32347386625) | §8.2 |
+| EV-15 | Danh sách lần chạy CI (xanh và đỏ cạnh nhau) | [`evidence/ci_runs_list.png`](./evidence/ci_runs_list.png) | §8.2 |
+| EV-16 | Diff một dòng tạo ra khác biệt giữa hai lần chạy | [`evidence/ci_commit_diff.png`](./evidence/ci_commit_diff.png) | §8.2 |
+| EV-17 | Log CI đầy đủ | [`reports/ci_regression.log`](./reports/ci_regression.log) · [`reports/ci_spec_gate.log`](./reports/ci_spec_gate.log) | §8.2 |
 | EV-08 | GitHub Issues — BUG-01…            | «»        | §10        |
 | EV-09 | Sơ đồ bộ sinh test (tự vẽ)         | «»        | §9.2       |
 | EV-10 | Collection + environment + bộ sinh | [`postman/`](./postman/) | §7 |
