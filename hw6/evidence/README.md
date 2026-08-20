@@ -1,6 +1,6 @@
 # HW06 — Bằng chứng ảnh chụp
 
-MSSV 23127344. Thư mục này chứa ảnh chụp. Chia làm hai loại: **tự động** (Selenium chụp được, đã có) và **phải chụp tay** (app desktop / terminal / trang web cần đăng nhập).
+MSSV 23127344. Thư mục này có **37 ảnh**: 33 ảnh do Selenium chụp tự động và 4 ảnh chụp tay từ app Postman (app desktop nên Selenium không với tới được).
 
 Sinh lại toàn bộ phần tự động:
 
@@ -10,7 +10,7 @@ python hw6/scripts/capture_evidence.py     # cần SUT đang chạy cho ảnh su
 
 ---
 
-## A. Đã tự động chụp — 32 ảnh, không cần làm gì thêm
+## A. Đã tự động chụp — 33 ảnh, không cần làm gì thêm
 
 | Ảnh | Chứng minh điều gì | Dùng ở § |
 | --- | --- | --- |
@@ -28,84 +28,25 @@ python hw6/scripts/capture_evidence.py     # cần SUT đang chạy cho ảnh su
 
 ---
 
-## B. Phải chụp tay — 6 ảnh (2 mục còn lại đã tự động)
+## B. Đã chụp tay — 4 ảnh, xong
 
-Selenium chỉ điều khiển được trình duyệt. Postman là app desktop, terminal không phải trang web, còn GitHub thì cần đăng nhập.
+| Ảnh | Chứng minh điều gì | Dùng ở § |
+| --- | --- | --- |
+| `postman_console_xstudentid.png` | **Ảnh đề bài đòi đích danh (§11).** 5 dòng `[X-Student-Id] 23127344 -> …` từ pre-request script, kèm dòng URL đã phân giải `POST http://localhost:3000/api/login` ngay dưới. Thấy cả cây 9 folder, environment, và `[SETUP] tokenAdmin da luu, admin id=1` | §2, §11 |
+| `postman_workspace.png` | Workspace `HW06 — EShop API Testing (23127344)`: 9 folder, 202 request, mô tả collection render sẵn | §7.1 |
+| `postman_mock_server.png` | Mock `HW06 EShop mock (23127344)`, **Public**, gắn vào chính collection HW06, URL `https://52831da1-….mock.pstmn.io` | §7.6 |
+| `postman_mock_response.png` | `SETUP-01` chạy qua mock → `200`, environment `EShop_HW06_mock` | §7.6 |
 
-### B1. Postman Console cho thấy `X-Student-Id` — **BẮT BUỘC** (đề §11)
+Hai chi tiết trong ảnh console được **giữ lại có chủ ý**, không phải lỗi chụp:
 
-Đây là ảnh đề bài đòi đích danh: *"được chứng minh bằng ảnh chụp màn hình console từ pre-request script của bạn"*.
+- **Dòng đỏ đầu console** `Error: Thieu bien moi truong studentId…` là của lần bấm Send **trước khi** chọn environment. Nó cho thấy câu `throw` bảo vệ trong pre-request script hoạt động.
+- **Cảnh báo vàng** `Using "CryptoJS" is deprecated` — sandbox Postman khuyến nghị dùng `crypto`. `CryptoJS` vẫn chạy (7 token giả mạo ký thành công), nên không đổi giữa lúc bộ test đã xanh và đã qua CI.
 
-1. Mở app Postman → tạo workspace `HW06 — EShop API Testing (23127344)` → **Import** 3 file `.json` trong `hw6/postman/`.
-2. Chọn environment `EShop_HW06_local` (góc trên phải).
-3. Mở **Console**: `Ctrl + Alt + C` (hoặc View → Show Postman Console).
-4. Chạy request `00 - Setup / SETUP-01`, rồi chạy `API1 / TC-API1-029` (test leo thang quyền).
-5. Trong Console sẽ thấy dòng `[X-Student-Id] 23127344 -> PUT http://localhost:3000/api/users/me`.
-6. Chụp **cả cửa sổ Postman** để thấy đồng thời: tên workspace, request đang chạy, và dòng log.
+### Còn thiếu: ảnh GitHub Issues (Bước 5 — chưa làm)
 
-Lưu thành → `postman_console_xstudentid.png`
-
-### B2. Newman CLI trong terminal, thấy hostname — **BẮT BUỘC** (đề §11)
-
-Chạy đúng lệnh này để output ngắn, vừa một màn hình:
-
-```bash
-node hw6/scripts/reset_db.js
-newman run hw6/postman/EShop_HW06_API.postman_collection.json \
-  -e hw6/postman/EShop_HW06.postman_environment.json \
-  -g hw6/postman/EShop_HW06.postman_globals.json \
-  --folder "00 - Setup (dang nhap, tao user B, tu ky token gia mao)" \
-  -r cli
-```
-
-Chụp terminal sao cho thấy được: dòng `POST http://localhost:3000/api/login [200 OK, …]`, các dòng `[X-Student-Id] 23127344 -> …`, và bảng tổng kết cuối. Chụp bằng `Win + Shift + S` (Snipping Tool).
-
-Lưu thành → `newman_cli_terminal.png`
-
-### B3. Workspace trong Postman
-
-Sau khi import ở bước B1: chụp sidebar thấy 9 folder của collection + tên workspace + environment đang chọn.
-
-Lưu thành → `postman_workspace.png`
-
-### B4. Mock server
-
-1. Chuột phải collection → **Mock collection** → tên `HW06 EShop mock (23127344)`.
-2. Chụp trang cấu hình mock (thấy URL `https://<id>.mock.pstmn.io`).
-3. Đổi `baseUrl` sang URL đó, gửi lại `TC-API1-001`, chụp response lấy từ saved example.
-
-Lưu thành → `postman_mock_server.png`, `postman_mock_response.png`
-
-Chi tiết các bước: [`../postman/README.md`](../postman/README.md) §2.
-
-### B5. GitHub Issues cho từng lỗi (Bước 5 — chưa làm)
-
-Mỗi issue một ảnh. Sẽ làm ở Bước 5; nếu muốn tôi tạo issue tự động bằng `gh` CLI thì nói, vì đó là hành động công khai lên repo nên tôi không tự làm.
+Mỗi lỗi một issue, mỗi issue một ảnh. `gh` CLI đang đăng nhập nên có thể tạo 17 issue tự động rồi Selenium chụp; đó là hành động công khai lên repo nên chờ xác nhận.
 
 Lưu thành → `github_issue_BUG-XX.png`
-
-### B6. Hai lần chạy CI/CD — **ĐÃ TỰ ĐỘNG CHỤP**, không cần làm gì
-
-Repo công khai nên Selenium chụp được không cần đăng nhập. 7 ảnh đã có:
-
-```bash
-python hw6/scripts/capture_ci_evidence.py
-```
-
-| Ảnh | Nội dung |
-| --- | --- |
-| `ci_runs_list.png` | Trang Actions: cả hai lần chạy cạnh nhau, một ✅ một ❌, kèm commit hash |
-| `ci_run_pass.png` | Lần chạy xanh `5d43840`: `regression` success, `spec-gate` skipped |
-| `ci_run_fail.png` | Lần chạy đỏ `06524ea`: sơ đồ job `regression` ✅ → `spec-gate` ❌ |
-| `ci_summary_pass.png`, `ci_summary_fail.png` | Trang tổng kết của từng lần chạy |
-| `ci_spec_gate_log.png` | Danh sách từng bước của job `spec-gate`, thấy bước Newman đỏ |
-| `ci_spec_log_render.png` | **Toàn bộ 22 assertion fail** kèm ID `SPEC-BUG-xx` và dẫn chiếu FR/SEC |
-| `ci_regression_log_render.png` | Log job xanh: số liệu Newman trùng khớp với máy local |
-| `ci_commit_diff.png` | Diff một dòng `SPEC_ENFORCED=false → true` |
-
-> Hai ảnh `*_log_render.png` được render lại từ log lấy bằng `gh run view --job <id> --log`, vì trang log của GitHub Actions **đòi đăng nhập** mới xem được (Selenium chạy ẩn danh chỉ thấy nút *Sign in to view logs*). Nội dung y hệt log gốc; log gốc cũng được commit ở [`../reports/ci_regression.log`](../reports/ci_regression.log) và [`../reports/ci_spec_gate.log`](../reports/ci_spec_gate.log).
-
----
 
 ## C. Không cần chụp
 
