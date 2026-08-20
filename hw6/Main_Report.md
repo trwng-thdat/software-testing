@@ -1236,6 +1236,18 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 29  | `ad513ee` | 2026-08-20 | Data file cho API 2 (ma trận chuyển trạng thái)                | API 2         |
 | 30  | `7a617c5` | 2026-08-20 | Bổ sung 10 tính năng Postman (workspace/mock/visualizer…)      | cả 3 API      |
 | 31  | `54f1a5b` | 2026-08-20 | 24 ảnh bằng chứng tự động bằng Selenium                        | cả 3 API      |
+| 32  | `0bf840f` | 2026-08-20 | Git commit log — dòng 27–31 | cả 3 API      |
+| 33  | `071ba10` | 2026-08-20 | **CI/CD** — pipeline GitHub Actions (cấu hình xanh) | cả 3 API      |
+| 34  | `dc74f42` | 2026-08-20 | CI/CD — dọn 2 cảnh báo trên trang kết quả | cả 3 API      |
+| 35  | `284d31b` | 2026-08-20 | CI/CD — nâng actions lên v5 | cả 3 API      |
+| 36  | `592a1ce` | 2026-08-20 | CI/CD — bật cổng đặc tả → pipeline đỏ | cả 3 API      |
+| 37  | `8e4101b` | 2026-08-20 | CI/CD — clone SUT ra `RUNNER_TEMP` | cả 3 API      |
+| 38  | `79e82fb` | 2026-08-20 | CI/CD — bật cổng đặc tả (lần 2) | cả 3 API      |
+| 39  | `5d43840` | 2026-08-20 | **CI/CD — LẦN CHẠY XANH MẪU** (`SPEC_ENFORCED=false`) | cả 3 API      |
+| 40  | `06524ea` | 2026-08-20 | **CI/CD — LẦN CHẠY ĐỎ MẪU** (`SPEC_ENFORCED=true`) | cả 3 API      |
+| 41  | `e24076c` | 2026-08-20 | Điền §8 CI/CD + 9 ảnh bằng chứng CI | cả 3 API      |
+| 42  | `13a3bbe` | 2026-08-20 | CI/CD — đưa nhánh về cấu hình mặc định xanh | cả 3 API      |
+| 43  | `07ad4f0` | 2026-08-20 | Ghi chú trạng thái cuối + chụp lại ảnh danh sách | cả 3 API      |
 
 **Các bước sẽ có commit riêng khi thực hiện:** Bước 5 báo lỗi + GitHub Issues (1–3 commit) · CI/CD 2 lần chạy (2 commit) · sơ đồ tự vẽ §9.2 · Excel test case · README.md · phê bình AI §11.
 

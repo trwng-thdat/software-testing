@@ -14,6 +14,18 @@ Luu y     : File nay la snapshot. Commit cuoi cung (commit sinh ra chinh
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+07ad4f0 2026-08-20 docs(hw6): ghi chu trang thai cuoi cua nhanh va lich su lan chay CI
+13a3bbe 2026-08-20 ci(hw6): dua ci.env ve SPEC_ENFORCED=false lam trang thai mac dinh cua nhanh
+e24076c 2026-08-20 docs(hw6): dien §8 CI/CD bang hai lan chay that + 9 anh bang chung
+06524ea 2026-08-20 ci(hw6): bat cong dac ta -> pipeline DO (lan chay mau thu hai)
+5d43840 2026-08-20 ci(hw6): sparse-checkout hw6 + .github de het canh bao gitlink mo coi
+79e82fb 2026-08-20 ci(hw6): bat cong dac ta -> pipeline DO (lan chay mau thu hai)
+8e4101b 2026-08-20 ci(hw6): clone SUT ra ngoai workspace + tro lai cau hinh xanh
+592a1ce 2026-08-20 ci(hw6): bat cong dac ta -> pipeline DO (lan chay mau thu hai)
+284d31b 2026-08-20 ci(hw6): nang actions len v5 de het canh bao Node 20
+dc74f42 2026-08-20 ci(hw6): don 2 canh bao tren trang ket qua pipeline
+071ba10 2026-08-20 ci(hw6): pipeline GitHub Actions cho test API - cau hinh xanh
+0bf840f 2026-08-20 docs(hw6): commit log - dong 27-31 va cap nhat bang ket qua thuc thi
 54f1a5b 2026-08-20 test(hw6): 24 anh bang chung tu dong chup bang Selenium
 7a617c5 2026-08-20 feat(hw6): bo sung 10 tinh nang Postman con thieu, gom ca 3 muc de bai neu ten
 ad513ee 2026-08-20 feat(hw6): bo sung data file cho API 2 - chay theo du lieu ma tran chuyen trang thai
@@ -87,6 +99,18 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 29   ad513ee   Data file cho API 2 (ma tran chuyen trang thai)  API 2
 30   7a617c5   Bo sung 10 tinh nang Postman (workspace/mock/..) ca 3 API
 31   54f1a5b   24 anh bang chung tu dong bang Selenium          ca 3 API
+32   0bf840f   Git commit log - dong 27-31                      ca 3 API
+33   071ba10   CI/CD Pipeline GitHub Actions (cau hinh xanh)    ca 3 API
+34   dc74f42   CI/CD don 2 canh bao tren trang ket qua          ca 3 API
+35   284d31b   CI/CD nang actions len v5                        ca 3 API
+36   592a1ce   CI/CD bat cong dac ta -> pipeline DO             ca 3 API
+37   8e4101b   CI/CD clone SUT ra RUNNER_TEMP                   ca 3 API
+38   79e82fb   CI/CD bat cong dac ta (lan 2)                    ca 3 API
+39   5d43840   CI/CD LAN CHAY XANH MAU (SPEC_ENFORCED=false)    ca 3 API
+40   06524ea   CI/CD LAN CHAY DO MAU (SPEC_ENFORCED=true)       ca 3 API
+41   e24076c   Dien muc 8 CI/CD + 9 anh bang chung CI           ca 3 API
+42   13a3bbe   CI/CD dua nhanh ve cau hinh mac dinh xanh        ca 3 API
+43   07ad4f0   Ghi chu trang thai cuoi + chup lai anh danh sach ca 3 API
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC
@@ -106,13 +130,18 @@ Da hoan thanh:
                                             (commit 7122df2), con thieu so do
                                             tu ve muc 9.2 va ma gia muc 9.3
 
+  CI/CD pipeline .................... XONG   2 job tach biet + schedule cron
+                                            LAN CHAY XANH: 5d43840 (run 32347245797)
+                                            LAN CHAY DO  : 06524ea (run 32347386625)
+                                            So lieu CI trung khop tuyet doi voi local
+  Anh bang chung CI ................ XONG   9 anh (Selenium, repo cong khai)
+
 CHUA thuc hien - se co commit rieng cho tung buoc khi lam:
   BUOC 5 - Bao cao loi + GitHub Issues (17 loi)              (1-3 commit)
-  CI/CD pipeline + 2 lan chay mau (xanh / do)                (2 commit)
   So do tu ve muc 9.2 (PNG/Mermaid) + ma gia muc 9.3         (1-2 commit)
   Excel test case + README.md + phe binh AI muc 11           (2-3 commit)
-  Anh chup TAY: Postman Console, terminal Newman, workspace,
-    mock server, GitHub Issues, 2 lan chay CI  (8 anh)        (1 commit)
+  Anh chup TAY con lai: Postman Console, terminal Newman,
+    workspace, mock server, GitHub Issues     (6 anh)        (1 commit)
 
 Khong tao commit khong tuong ung voi cong viec da lam that.
 
@@ -138,6 +167,21 @@ Khong tao commit khong tuong ung voi cong viec da lam that.
  Bao cao HTML: hw6/reports/*.html (7 file)  |  So lieu: hw6/reports/summary.md
  Anh tu dong: hw6/evidence/*.png (24 anh)  |  Anh phai chup tay: hw6/evidence/README.md
  4/7 yeu cau bao mat bi vi pham: SEC-01, SEC-02, SEC-03, SEC-06 (SEC-05 dat).
+
+[4b] KET QUA TREN CI (GitHub Actions, ubuntu-latest)
+--------------------------------------------------------------------------------
+ Lan chay xanh  commit 5d43840  run 32347245797  success
+   job regression: 3 API + 3 lan chay theo du lieu -> dat
+   job spec-gate : bi bo qua (SPEC_ENFORCED=false)
+
+ Lan chay do    commit 06524ea  run 32347386625  failure
+   job regression: VAN DAT  (nen viec do khong den tu ha tang CI)
+   job spec-gate : 73 assertion, 22 FAIL - dung mong doi
+
+ So lieu CI trung khop tuyet doi voi may local tren ca 7 lan chay:
+   224 / 239 / 557 / 24 / 24 / 18 / 73(22 fail)
+ Log: hw6/reports/ci_regression.log, hw6/reports/ci_spec_gate.log
+ Repo: https://github.com/trwng-thdat/software-testing (nhanh hw6/api-testing)
 
 [5] BANG CHUNG THU DUOC O BUOC 2 (probe SUT that tren localhost:3000)
 --------------------------------------------------------------------------------
