@@ -12,6 +12,7 @@ Ngay xuat : 2026-08-20
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+131e251 2026-08-20 docs(hw6): commit log — bổ sung dòng 18, 19 và trạng thái Agent Skill
 7122df2 2026-08-20 feat(hw6): Agent Skill api-test-generator + link video demo §9.6
 4d50d65 2026-08-20 chore(hw6): điền hash thật 4e3e738 cho dòng 17 của commit log
 4e3e738 2026-08-20 docs(hw6): git commit log — cập nhật đến 20/08 và đồng bộ §12
@@ -58,6 +59,7 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 17   4e3e738   Git commit log - cap nhat den 20/08              ca 3 API
 18   4d50d65   Git commit log - dien hash that cho dong 17      ca 3 API
 19   7122df2   Agent Skill api-test-generator + link video 9.6  ca 3 API
+20   131e251   Git commit log - bo sung dong 18, 19            ca 3 API
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC
