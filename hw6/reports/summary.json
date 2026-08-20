@@ -13,7 +13,7 @@
       "testCasesPassed": 46,
       "testCasesFailed": 0,
       "failedList": [],
-      "durationMs": 4367
+      "durationMs": 3197
     },
     "api2": {
       "label": "API 2 - PUT /api/orders/:id/cancel (FR-10)",
@@ -27,7 +27,7 @@
       "testCasesPassed": 46,
       "testCasesFailed": 0,
       "failedList": [],
-      "durationMs": 5867
+      "durationMs": 3667
     },
     "api3": {
       "label": "API 3 - POST /api/admin/coupons (FR-17)",
@@ -41,7 +41,7 @@
       "testCasesPassed": 85,
       "testCasesFailed": 0,
       "failedList": [],
-      "durationMs": 10690
+      "durationMs": 6451
     },
     "data1": {
       "label": "Data-driven CSV - phone (FR-04)",
@@ -55,7 +55,7 @@
       "testCasesPassed": 1,
       "testCasesFailed": 0,
       "failedList": [],
-      "durationMs": 617
+      "durationMs": 464
     },
     "data3": {
       "label": "Data-driven CSV - coupon (FR-17)",
@@ -69,7 +69,7 @@
       "testCasesPassed": 1,
       "testCasesFailed": 0,
       "failedList": [],
-      "durationMs": 508
+      "durationMs": 379
     },
     "spec": {
       "label": "SPEC - assertion theo dac ta (co y dinh fail)",
@@ -180,7 +180,7 @@
           "of": 3
         }
       ],
-      "durationMs": 2185
+      "durationMs": 1418
     }
   },
   "totals": {
