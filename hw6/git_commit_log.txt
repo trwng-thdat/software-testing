@@ -8,10 +8,13 @@ Nhanh     : hw6/api-testing
 Sinh boi  : git log --pretty=format:"%h %ad %s" --date=short 2a908f1..HEAD
             (2a908f1 = commit cuoi truoc khi bat dau HW06)
 Ngay xuat : 2026-08-20
+Luu y     : File nay la snapshot. Commit cuoi cung (commit sinh ra chinh
+            file nay) khong the tu liet ke trong muc [2]; xem `git log`.
 ================================================================================
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+d99b1fb 2026-08-20 chore(hw6): điền hash dòng 20 vào commit log
 131e251 2026-08-20 docs(hw6): commit log — bổ sung dòng 18, 19 và trạng thái Agent Skill
 7122df2 2026-08-20 feat(hw6): Agent Skill api-test-generator + link video demo §9.6
 4d50d65 2026-08-20 chore(hw6): điền hash thật 4e3e738 cho dòng 17 của commit log
@@ -60,6 +63,7 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 18   4d50d65   Git commit log - dien hash that cho dong 17      ca 3 API
 19   7122df2   Agent Skill api-test-generator + link video 9.6  ca 3 API
 20   131e251   Git commit log - bo sung dong 18, 19            ca 3 API
+21   d99b1fb   Git commit log - dien hash dong 20              ca 3 API
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC

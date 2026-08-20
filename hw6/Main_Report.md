@@ -967,6 +967,7 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 18  | `4d50d65` | 2026-08-20 | Git commit log — điền hash thật cho dòng 17                    | cả 3 API      |
 | 19  | `7122df2` | 2026-08-20 | Agent Skill `api-test-generator` + link video demo §9.6        | cả 3 API      |
 | 20  | `131e251` | 2026-08-20 | Git commit log — bổ sung dòng 18, 19                           | cả 3 API      |
+| 21  | `d99b1fb` | 2026-08-20 | Git commit log — điền hash dòng 20                             | cả 3 API      |
 
 **Các bước sẽ có commit riêng khi thực hiện:** Bước 4 thực thi Newman (3 commit) · Bước 5 báo lỗi (1–3 commit) · Postman collection · CI/CD 2 lần chạy · Agent Skill.
 
