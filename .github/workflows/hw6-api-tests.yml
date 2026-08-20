@@ -53,8 +53,19 @@ jobs:
       spec_enforced: ${{ steps.flag.outputs.spec_enforced }}
 
     steps:
-      - name: Checkout bai lam HW06
+      # sparse-checkout chi lay hw6 va .github. Ngoai viec nhanh hon, no con tranh mot
+      # loi CO SAN cua repo: duong dan hw3/docs/eshop-sut tren nhanh nay la mot GITLINK
+      # (mode 160000) tro toi commit 85af3ba nhung repo KHONG co .gitmodules, nen buoc
+      # post-cleanup cua checkout chay `git submodule foreach` va bao
+      # "fatal: No url found for submodule path 'hw3/docs/eshop-sut'" -> exit 128.
+      # Khong lay duong dan do ve thi khong con canh bao. (Ban SUT that nam o nhanh
+      # feature/23127344 duoi dang file thuong - do la ban buoc duoi clone ve.)
+      - name: Checkout bai lam HW06 (chi hw6 va .github)
         uses: actions/checkout@v5
+        with:
+          sparse-checkout: |
+            hw6
+            .github
 
       - name: Doc co SPEC_ENFORCED tu hw6/ci/ci.env
         id: flag
@@ -161,8 +172,19 @@ jobs:
     if: needs.regression.outputs.spec_enforced == 'true'
 
     steps:
-      - name: Checkout bai lam HW06
+      # sparse-checkout chi lay hw6 va .github. Ngoai viec nhanh hon, no con tranh mot
+      # loi CO SAN cua repo: duong dan hw3/docs/eshop-sut tren nhanh nay la mot GITLINK
+      # (mode 160000) tro toi commit 85af3ba nhung repo KHONG co .gitmodules, nen buoc
+      # post-cleanup cua checkout chay `git submodule foreach` va bao
+      # "fatal: No url found for submodule path 'hw3/docs/eshop-sut'" -> exit 128.
+      # Khong lay duong dan do ve thi khong con canh bao. (Ban SUT that nam o nhanh
+      # feature/23127344 duoi dang file thuong - do la ban buoc duoi clone ve.)
+      - name: Checkout bai lam HW06 (chi hw6 va .github)
         uses: actions/checkout@v5
+        with:
+          sparse-checkout: |
+            hw6
+            .github
 
       # Dung git truc tiep thay vi actions/checkout thu hai, va clone RA NGOAI workspace
       # (RUNNER_TEMP). Hai ly do:
