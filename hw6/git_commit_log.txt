@@ -5,12 +5,16 @@ MSSV      : 23127344
 Ho ten    : TRUONG THANH DAT
 Lop       : 23KTPM3 - K23
 Nhanh     : hw6/api-testing
-Sinh boi  : git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
-Ngay xuat : 2026-08-19
+Sinh boi  : git log --pretty=format:"%h %ad %s" --date=short 2a908f1..HEAD
+            (2a908f1 = commit cuoi truoc khi bat dau HW06)
+Ngay xuat : 2026-08-20
 ================================================================================
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+61009aa 2026-08-20 docs(hw6): AI Audit Report — log prompt 39/40 và mở phiên làm việc 20/08
+65045d1 2026-08-19 fix(hw6): áp dụng kết quả kiểm toán vào bảng test case §4.1/§5.1/§6.1
+f8f4ed7 2026-08-19 docs(hw6): cập nhật commit log sau Bước 2 và Bước 3
 2d25eb2 2026-08-19 docs(hw6): Bước 3 — 15 test case tự bổ sung mà AI đã bỏ sót
 1877ccb 2026-08-19 docs(hw6): Bước 2 — kiểm toán 167 test case bằng probe SUT thật
 b3abc4d 2026-08-19 docs(hw6): git commit log dạng .txt và đồng bộ §12 của báo cáo
@@ -45,6 +49,10 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 11   b3abc4d   Git commit log + dong bo muc 12                  ca 3 API
 12   1877ccb   BUOC 2 Kiem toan 167 TC (probe SUT that)         ca 3 API
 13   2d25eb2   BUOC 3 Mo rong 15 TC tu bo sung                  ca 3 API
+14   f8f4ed7   Git commit log - cap nhat sau Buoc 2 va Buoc 3   ca 3 API
+15   65045d1   Ra soat cua con nguoi - ap dung ket qua kiem toan ca 3 API
+16   61009aa   Kiem toan AI - log prompt 39/40, phien 20/08     ca 3 API
+17   (nay)     Git commit log - cap nhat den 20/08              ca 3 API
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC
