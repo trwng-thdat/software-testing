@@ -901,7 +901,11 @@ Mã nguồn: [`«skills/api-test-generator/»`](«skills/api-test-generator/»)
 
 ### 9.6 Video demo (tùy chọn)
 
-«URL» — nội dung: «sinh test cho API … từ đặc tả, xuất collection, chạy Newman».
+| Hạng mục | Giá trị |
+| --- | --- |
+| URL | https://youtu.be/Nz8hUbziTyI |
+| Nội dung | Demo Agent Skill `api-test-generator` — sinh test case cho một API của EShop từ đặc tả |
+| Mã nguồn skill | [`skills/SKILL.md`](./skills/SKILL.md) |
 
 ---
 
