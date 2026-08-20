@@ -1154,8 +1154,11 @@ Cách sửa thật là `git rm --cached hw3/docs/eshop-sut`, nhưng việc đó 
 
 > ✍️ **Ràng buộc chống gian lận:** sơ đồ phải do bạn tự thiết kế. Dùng công cụ vẽ bất kỳ (draw.io, Excalidraw, Mermaid viết tay, vẽ tay chụp ảnh). Nêu rõ công cụ đã dùng.
 
-![Sơ đồ bộ sinh test](«diagrams/generator.png»)
-_Công cụ vẽ: «…». Người thiết kế: «Họ tên» — các quyết định thiết kế nêu ở §9.4._
+![Sơ đồ bộ sinh test](./diagrams/generator.png)
+
+_Công cụ vẽ: **Excalidraw**. Người thiết kế: **Trương Thành Đạt (23127344)**. File nguồn mở/sửa được: [`diagrams/generator.excalidraw`](./diagrams/generator.excalidraw) (mở tại excalidraw.com). Các quyết định thiết kế nêu ở §9.4._
+
+Sơ đồ đọc từ trên xuống: **đầu vào** (đặc tả + mã nguồn SUT) → **phân tích hợp đồng API** (tách phần đã đặc tả với phần suy từ mã nguồn) → **với mỗi endpoint** chạy lần lượt 5 kỹ thuật, *mỗi kỹ thuật một prompt riêng* → **sinh test case bằng LLM** → **tự kiểm đối chiếu đặc tả** (nếu loại thì vòng lại sinh bù, đây là nhánh phản hồi) → **xuất Postman collection** kèm header `X-Student-Id` → **chạy Newman** và đưa bug lên GitHub Issues.
 
 ### 9.3 Mã giả (pseudocode)
 
