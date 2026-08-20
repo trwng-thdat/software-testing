@@ -88,6 +88,7 @@ Số liệu trên CI (Ubuntu) **trùng khớp tuyệt đối** với máy local 
 | Agent Skill | [`skills/SKILL.md`](./skills/SKILL.md) · video: https://youtu.be/Nz8hUbziTyI |
 | Phê bình AI | [`AI_Critique.md`](./AI_Critique.md) — 296 từ |
 | AI Audit Report | [`[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md`](./%5BAI-02%5D%20-%20FIT@HCMUS%20-%20AI%20Audit%20Report_En.docx.md) — 44 prompt verbatim |
+| Test case (Excel) | [`testcases/HW06_TestCases_23127344.xlsx`](./testcases/HW06_TestCases_23127344.xlsx) — Tổng hợp + 3 API + Mở rộng + 16 lỗi |
 | Git commit log | [`git_commit_log.txt`](./git_commit_log.txt) |
 
 ### Chạy lại toàn bộ
@@ -122,6 +123,4 @@ python hw6/scripts/capture_issues.py        # chụp 16 ảnh GitHub Issue
 | Việc | Ghi chú |
 | --- | --- |
 | §9.2 — sơ đồ bộ sinh test **tự vẽ** | Đề §11 quy định sơ đồ không được do AI sinh |
-| §9.3 — mã giả hoàn chỉnh | Bản hiện tại còn 5 bước để trống |
-| Excel test case + bảng tổng hợp | |
 | Bản PDF của báo cáo chính, phê bình AI, AI Audit Report | |

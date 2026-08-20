@@ -217,7 +217,7 @@ Hai chi tiết trong ảnh tôi chủ động giữ lại thay vì xoá đi:
 | Mã lỗi       | **Từ handler (JSON):** `401` `{"error":"Unauthorized"}` · `403` `{"error":"Forbidden"}` · `500` `{"error":"<sqlite message>"}` — không có 400/404 vì không có validation/existence check.<br>**Từ middleware `bodyParser` (HTML, không phải JSON):** `400` khi JSON sai cú pháp · `500` khi thiếu body — phát hiện khi probe ở Bước 2, xem §4.2 và TC A1-E01/E02 |
 | Yêu cầu SEC  | SEC-02 (JWT hợp lệ — có, nhưng secret hardcode `server.js:9`, token không hết hạn) · **SEC-06 (vi phạm — `role` bị client ghi đè)** · SEC-05 (parameterized query — đạt) · SEC-01 (không áp dụng trực tiếp cho PUT, nhưng `GET /api/users/me` lộ `password`/`reset_token` dạng plaintext)                                                                        |
 
-**Bảng tham số & phân vùng miền giá trị** _(rút gọn từ P5/P6; chi tiết đầy đủ nằm ở `testcases/API1.xlsx`)_
+**Bảng tham số & phân vùng miền giá trị** _(rút gọn từ P5/P6; chi tiết đầy đủ nằm ở `testcases/HW06_TestCases_23127344.xlsx`)_
 
 | Tham số            | Kiểu                  | Ràng buộc                                                                 | Phân vùng hợp lệ                            | Phân vùng không hợp lệ                                      | Giá trị biên                                       |
 | ------------------ | --------------------- | ------------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------- |
@@ -242,7 +242,7 @@ Hai chi tiết trong ảnh tôi chủ động giữ lại thay vì xoá đi:
 
 **Tiền điều kiện chung cho mọi TC của API 1.** SUT chạy tại `http://localhost:3000`, DB vừa seed lại (`node database.js` → `node server.js`) nên `test@eshop.com` / `Test1234!` là user `id=2`, `role="user"`. `{{token}}` = token lấy từ `POST /api/login` của user này, dùng lại cho mọi TC trừ khi TC ghi khác. Mọi TC ghi dữ liệu đều verify lại bằng `GET /api/users/me`.
 
-**Bảng test case đầy đủ — 42 TC** _(ID `TC-API1-001`…`TC-API1-042`; đây là danh sách chuẩn — khi xuất sang `testcases/API1.xlsx` phải giữ nguyên ID để bảo toàn truy vết)_
+**Bảng test case đầy đủ — 42 TC** _(ID `TC-API1-001`…`TC-API1-042`; đây là danh sách chuẩn — khi xuất sang `testcases/HW06_TestCases_23127344.xlsx` phải giữ nguyên ID để bảo toàn truy vết)_
 
 | ID              | Tiêu đề                                               | Kỹ thuật                     | Truy vết (Coverage / FR / SEC)      | Input / Precondition riêng                                                     | Expected (status + body)                                                                            | Nguồn           |
 | --------------- | ----------------------------------------------------- | ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- | --------------- |
@@ -1163,25 +1163,48 @@ Sơ đồ đọc từ trên xuống: **đầu vào** (đặc tả + mã nguồn 
 ### 9.3 Mã giả (pseudocode)
 
 ```text
-INPUT : api_spec, sut_base_url, student_id
-OUTPUT: test_cases[], postman_collection.json
+INPUT : api_spec        // api_specification.md của SUT
+        sut_source      // mã nguồn SUT (để đối chiếu spec vs hành vi thật)
+        sut_base_url, student_id
+OUTPUT: test_cases[]    // mỗi TC: id, kỹ thuật, coverage_id, input, expected, nhãn
+        postman_collection.json
 
-1.  spec ← PARSE(api_spec)                    // endpoint, params, schema, auth, SEC rules
-2.  FOR EACH endpoint e IN spec.endpoints:
-3.      params       ← EXTRACT_PARAMS(e)
-4.      partitions   ← «…»                    // EP: phân vùng hợp lệ / không hợp lệ
-5.      boundaries   ← «…»                    // BVA
-6.      states       ← «…»                    // nếu e thuộc máy trạng thái
-7.      sec_cases    ← «…»                    // SEC-01…07
-8.      schema_cases ← «…»
-9.      raw          ← LLM_GENERATE(«prompt riêng cho từng kỹ thuật, KHÔNG gộp 1 prompt»)
-10.     validated    ← SELF_CHECK(raw, spec)  // loại TC bịa endpoint / sai mã lỗi
-11.     test_cases  += validated
-12. collection ← RENDER_POSTMAN(test_cases, header={X-Student-Id: student_id})
-13. RETURN test_cases, collection
+# ---- Pha A: phân tích hợp đồng, TÁCH phần đặc tả với phần suy từ mã nguồn ----
+1.  contract ← PARSE(api_spec)                 // endpoint, method, params, schema, auth, SEC
+2.  observed ← TRACE_SOURCE(sut_source)        // hành vi thật đọc từ mã nguồn
+3.  FOR EACH endpoint e IN contract.endpoints:
+
+# ---- Pha B: mỗi kỹ thuật là MỘT lượt phân tích riêng (một prompt riêng) ----
+4.      params     ← EXTRACT_PARAMS(e)                         // biến + miền giá trị + ràng buộc
+5.      partitions ← LLM("EP: chia miền mỗi param thành valid/invalid", e, params)
+6.      boundaries ← LLM("BVA: biên đóng/mở của param có thứ tự", e, params)
+7.      states     ← IF HAS_STATE_MACHINE(e, observed)         // vd FR-10
+                        THEN LLM("State transition: liệt kê mọi chuyển tiếp valid/invalid")
+                        ELSE ∅                                  // ghi rõ "không áp dụng", không bịa
+8.      sec_cases  ← LLM("Bảo mật SEC-01…07: auth bypass, IDOR, leo quyền, SQLi/XSS", e)
+9.      schema     ← LLM("Schema: response khớp CHÍNH XÁC đặc tả, không thiếu/thừa field", e)
+
+# ---- Pha C: gộp, gán coverage id, sinh test case ----
+10.     coverage   ← BUILD_COVERAGE_MATRIX(partitions, boundaries, states, sec_cases, schema)
+11.     raw        ← LLM_GENERATE_TC(coverage, target ≥ 35)    // mỗi TC ↔ ≥1 coverage_id
+
+# ---- Pha D: TỰ KIỂM đối chiếu nguồn thật (mấu chốt chống AI bịa) ----
+12.     FOR EACH tc IN raw:
+13.         IF tc.endpoint ∉ contract  OR  tc.expected MÂU THUẪN observed:
+14.             DROP tc  hoặc  gán nhãn INVALID/INCOMPLETE + sinh bù   // nhánh "loại → sinh lại"
+15.         ELSE tc.label ← VALID
+16.     test_cases += SELF_CHECK_PASSED(raw)
+
+# ---- Pha E: mở rộng của con người + xuất ----
+17. test_cases += HUMAN_EXTRA_TC()             // ≥5 TC người viết, ghi lý do AI bỏ sót
+18. collection ← RENDER_POSTMAN(test_cases,
+                    prerequest = "chèn X-Student-Id = {student_id} vào MỌI request")
+19. RETURN test_cases, collection              // rồi chạy Newman → báo cáo → GitHub Issues
 ```
 
-Mã nguồn: [`«skills/api-test-generator/»`](«skills/api-test-generator/»)
+**Đọc kèm sơ đồ §9.2.** Pha A–B–C–D–E ứng với các hộp trong sơ đồ; bước 12–14 chính là nhánh phản hồi "loại → sinh lại". Điểm cốt tử là **bước 2 và 12–14**: bộ sinh luôn giữ một bản *hành vi thật* đọc từ mã nguồn để đối chiếu, nên loại được TC mà LLM bịa endpoint hoặc đoán sai mã lỗi — đúng loại lỗi tôi phê bình ở §11.
+
+Hiện thực (Agent Skill): [`skills/SKILL.md`](./skills/SKILL.md). Bộ sinh Postman thực tế: [`postman/src/`](./postman/src/) (`lib.js` + `api{1,2,3}.js` + `build.js`).
 
 ### 9.4 Các quyết định thiết kế của tôi
 
@@ -1338,7 +1361,7 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 | ☑   | Báo cáo Newman (HTML)                                   | 7 file trong [`hw6/reports/`](./reports/): `api1/api2/api3/spec_bugs/data_api1_phone/data_api2_state/data_api3_coupon.html` + `newman_console_full.log` + `summary.md` |
 | ☑   | Danh sách tính năng Postman đã dùng                     | §7 — 34 mục: **27 đã dùng** (gồm workspace và mock server đã làm thật), 3 không dùng kèm lý do; kèm [`postman/README.md`](./postman/README.md) |
 | ☑   | Báo cáo CI/CD + 2 run mẫu (ảnh + link)                  | §8 — workflow + 2 lần chạy thật kèm 5 ảnh và link |
-| ☐   | Test case & bảng tổng hợp dạng Excel                    | «»                      |
+| ☑   | Test case & bảng tổng hợp dạng Excel                    | [`testcases/HW06_TestCases_23127344.xlsx`](./testcases/HW06_TestCases_23127344.xlsx) — 6 sheet |
 | ☐   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | «»                      |
 | ☐   | (Tùy chọn) OpenAPI .yaml/.json đã kiểm toán             | «»                      |
 | ☑   | Báo cáo lỗi + ảnh GitHub Issues                         | §10 + 16 issue #377–#392 + 16 ảnh ở `evidence/issues/` |
