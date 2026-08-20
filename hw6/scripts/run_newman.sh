@@ -21,6 +21,7 @@ F_API1="API1 - PUT /api/users/me (Pool A / FR-04)"
 F_API2="API2 - PUT /api/orders/:id/cancel (Pool B / FR-10)"
 F_API3="API3 - POST /api/admin/coupons (Pool C / FR-17)"
 F_DATA1="DATA1 - Chay theo du lieu: phone (FR-04)"
+F_DATA2="DATA2 - Chay theo du lieu: chuyen trang thai don hang (FR-10)"
 F_DATA3="DATA3 - Chay theo du lieu: coupon (FR-17)"
 F_SPEC="SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug)"
 F_TEARDOWN="99 - Teardown (don du lieu de chay lai duoc)"
@@ -57,6 +58,9 @@ run_data () {         # chay theo du lieu: mot lan chay cho moi dong CSV
   newman run "$COL" -e "$ENV" --folder "$SETUP"     -r cli --reporter-cli-no-banner --export-environment "$TMPENV" >/dev/null || { echo "Setup that bai"; exit 1; }
 
   newman run "$COL" -e "$TMPENV" --folder "$F_DATA1"     -d "$DATA/api1_phone.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api1_phone.html"     --reporter-htmlextra-title "HW06 - data-driven phone (FR-04) - 23127344"     --reporter-json-export "$REP/data_api1_phone.json"
+  [ $? -ne 0 ] && fail=1
+
+  newman run "$COL" -e "$TMPENV" --folder "$F_DATA2"     -d "$DATA/api2_state.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api2_state.html"     --reporter-htmlextra-title "HW06 - data-driven chuyen trang thai (FR-10) - 23127344"     --reporter-json-export "$REP/data_api2_state.json"
   [ $? -ne 0 ] && fail=1
 
   newman run "$COL" -e "$TMPENV" --folder "$F_DATA3"     -d "$DATA/api3_coupon.csv"     -r cli,htmlextra,json --reporter-cli-no-banner     --reporter-htmlextra-export "$REP/data_api3_coupon.html"     --reporter-htmlextra-title "HW06 - data-driven coupon (FR-17) - 23127344"     --reporter-json-export "$REP/data_api3_coupon.json"

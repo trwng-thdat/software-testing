@@ -2,13 +2,14 @@
 
 | Lan chay | Iter | Request | Assertion | Assertion FAIL | Test case | TC pass | TC fail | Thoi gian |
 | --- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| API 1 - PUT /api/users/me (FR-04) | 1 | 102 | 178 | 0 | 46 | 46 | 0 | 3.2s |
-| API 2 - PUT /api/orders/:id/cancel (FR-10) | 1 | 138 | 193 | 0 | 46 | 46 | 0 | 3.7s |
-| API 3 - POST /api/admin/coupons (FR-17) | 1 | 249 | 472 | 0 | 85 | 85 | 0 | 6.5s |
-| Data-driven CSV - phone (FR-04) | 6 | 12 | 24 | 0 | 1 | 1 | 0 | 0.5s |
+| API 1 - PUT /api/users/me (FR-04) | 1 | 102 | 178 | 0 | 46 | 46 | 0 | 4.7s |
+| API 2 - PUT /api/orders/:id/cancel (FR-10) | 1 | 138 | 193 | 0 | 46 | 46 | 0 | 5.0s |
+| API 3 - POST /api/admin/coupons (FR-17) | 1 | 249 | 472 | 0 | 85 | 85 | 0 | 6.6s |
+| Data-driven CSV - phone (FR-04) | 6 | 12 | 24 | 0 | 1 | 1 | 0 | 0.4s |
+| Data-driven CSV - chuyen trang thai (FR-10) | 6 | 27 | 24 | 0 | 1 | 1 | 0 | 0.6s |
 | Data-driven CSV - coupon (FR-17) | 6 | 12 | 18 | 0 | 1 | 1 | 0 | 0.4s |
 | SPEC - assertion theo dac ta (co y dinh fail) | 1 | 46 | 57 | 22 | 16 | 0 | 16 | 1.4s |
-| **TONG** | | **559** | **942** | **22** | **195** | **179** | **16** | |
+| **TONG** | | **586** | **966** | **22** | **196** | **180** | **16** | |
 
 ## Cac test case co assertion FAIL
 

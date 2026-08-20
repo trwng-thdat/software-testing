@@ -1,0 +1,7 @@
+caseId,stateChain,expectedStatus,expectedFinalStatus,note
+DD-O01,,200,canceled,"pending -> canceled: chuyen tiep hop le theo FR-10"
+DD-O02,confirmed,200,canceled,"confirmed -> canceled: chuyen tiep hop le theo FR-10"
+DD-O03,confirmed|shipping,200,canceled,"shipping -> canceled: FR-10 CAM nhung server.js:328 cho qua (BUG-06)"
+DD-O04,confirmed|shipping|delivered,400,delivered,"delivered la trang thai ket thuc -> tu choi 400"
+DD-O05,cancel,400,canceled,"da canceled roi -> tu choi 400, trang thai bat bien"
+DD-O06,confirmed|cancel,400,canceled,"confirmed roi huy roi huy lai -> tu choi 400"

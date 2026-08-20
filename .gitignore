@@ -44,6 +44,7 @@ hw6/reports/api2.json
 hw6/reports/api3.json
 hw6/reports/spec_bugs.json
 hw6/reports/data_api1_phone.json
+hw6/reports/data_api2_state.json
 hw6/reports/data_api3_coupon.json
 
 # Environment tam do newman --export-environment sinh ra (co chua token)

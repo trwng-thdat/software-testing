@@ -10,12 +10,13 @@ const RUNS = [
   { file: 'api2.json', label: 'API 2 - PUT /api/orders/:id/cancel (FR-10)', key: 'api2' },
   { file: 'api3.json', label: 'API 3 - POST /api/admin/coupons (FR-17)', key: 'api3' },
   { file: 'data_api1_phone.json', label: 'Data-driven CSV - phone (FR-04)', key: 'data1' },
+  { file: 'data_api2_state.json', label: 'Data-driven CSV - chuyen trang thai (FR-10)', key: 'data2' },
   { file: 'data_api3_coupon.json', label: 'Data-driven CSV - coupon (FR-17)', key: 'data3' },
   { file: 'spec_bugs.json', label: 'SPEC - assertion theo dac ta (co y dinh fail)', key: 'spec' },
 ];
 
 // Tien to ID cua test case "thuc" (khong tinh Setup/Teardown)
-const TC_PREFIX = /^(TC-API[123]-\d{3}[ab]?|A[123]-E\d{2}|SPEC-BUG-\d{2}|DD-API[13]-[A-Z]+)/;
+const TC_PREFIX = /^(TC-API[123]-\d{3}[ab]?|A[123]-E\d{2}|SPEC-BUG-\d{2}|DD-API[123]-[A-Z]+)/;
 
 const out = { generatedFrom: 'newman JSON reporter', runs: {}, totals: {} };
 const lines = [];
