@@ -48,6 +48,8 @@ Collection này đã có **12 example được ghi lại từ response THẬT** 
 (`src/examples.js` đọc `hw6/reports/*.json` do Newman sinh), nên mock trả về đúng
 nguyên văn byte mà SUT đã trả — không phải thứ tôi tưởng là đúng.
 
+Giá trị JWT trong example được **che** thành `<JWT-da-che-xem-BUG-03>`: example của `SETUP-01` là response đăng nhập thật nên chứa một token hợp lệ. Che đi để secret scanner của Postman không báo động mỗi lần import; mock vẫn dùng được vì client chỉ cần đúng **hình dạng** response.
+
 Danh sách request có example: `SETUP-01`, `TC-API1-001`, `TC-API1-023`, `TC-API1-035`,
 `TC-API1-036`, `A1-E01`, `TC-API2-001`, `TC-API2-002`, `TC-API2-019`, `TC-API3-001`,
 `TC-API3-004`, `TC-API3-037` — gồm happy path và một đại diện cho mỗi lớp lỗi
@@ -91,7 +93,7 @@ newman run hw6/postman/EShop_HW06_API.postman_collection.json \
 
 ## Tính năng đã dùng được từ dòng lệnh
 
-Danh sách đầy đủ 30 mục nằm ở §7 báo cáo chính. Các mục kiểm chứng được ngay:
+Danh sách đầy đủ 34 mục nằm ở §7 báo cáo chính. Các mục kiểm chứng được ngay:
 
 ```bash
 node hw6/postman/src/build.js     # in ra: 12 saved example, SDK đọc được 202 request

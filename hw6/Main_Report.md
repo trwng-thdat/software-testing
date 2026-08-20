@@ -375,7 +375,7 @@ bash hw6/scripts/run_newman.sh api1
 
 Báo cáo HTML: [`hw6/reports/api1.html`](./reports/api1.html) · log console: [`hw6/reports/newman_console_full.log`](./reports/newman_console_full.log) (3974 dòng, có 470 dòng `[X-Student-Id]`)
 
-> **Ghi chú về cách dựng dữ liệu.** Các TC ghi `role` (TC-022, -029, -030, -042, A1-E04) đều **tự trả `role` về `"user"`** ngay trong cùng chuỗi callback của assertion, nên chạy lại suite nhiều lần vẫn cho kết quả như nhau. Ban đầu tôi tách phần dọn thành một `pm.test` riêng và **bị fail thật** — xem "Hai lỗi tôi tự gây ra" ở §7.
+> **Ghi chú về cách dựng dữ liệu.** Các TC ghi `role` (TC-022, -029, -030, -042, A1-E04) đều **tự trả `role` về `"user"`** ngay trong cùng chuỗi callback của assertion, nên chạy lại suite nhiều lần vẫn cho kết quả như nhau. Ban đầu tôi tách phần dọn thành một `pm.test` riêng và **bị fail thật** — xem "Hai lỗi tôi tự gây ra" ở §7.7.
 
 **Các assertion FAIL và diễn giải.** Trong folder này **không có assertion nào fail** — vì assertion ở đây mã hoá hành vi thực tế đã probe. Chỗ đặc tả bị vi phạm được phơi bày ở folder `SPEC`:
 
@@ -967,7 +967,7 @@ bash hw6/scripts/run_newman.sh spec   # ma thoat khac 0 la DUNG mong doi
 | 13 | Test script cấp **folder** | ✅ | Kiểm thời gian phản hồi `< 2000 ms` cho **mọi** request trong 4 folder — 193 assertion, tách khỏi assertion nghiệp vụ |
 | 14 | Pre-request script cấp **request** | ✅ | Dựng trạng thái: 33 TC của API 2 tạo đơn rồi đẩy qua chuỗi `confirmed → shipping → delivered`; 6 TC của API 3 tạo coupon trước; `DATA2` dựng trạng thái theo cột CSV |
 | 15 | `pm.test` + chai assertions | ✅ | 664 `pm.test` trong collection → **1.159 assertion** khi chạy, dùng `to.deep.equal`, `to.eql`, `to.be.oneOf`, `to.include`, `to.have.property`, `to.be.at.least`, `to.be.below` |
-| 16 | Assertion bất đồng bộ (`done`) | ✅ | Mọi assertion đọc lại DB đều async; dùng `done()` và **lồng chuỗi callback** thay vì nhiều `pm.test` song song (xem §7.6 lỗi 2) |
+| 16 | Assertion bất đồng bộ (`done`) | ✅ | Mọi assertion đọc lại DB đều async; dùng `done()` và **lồng chuỗi callback** thay vì nhiều `pm.test` song song (xem §7.7 lỗi 2) |
 | 17 | Thư viện sẵn trong sandbox (CryptoJS) | ✅ | **Tự ký 7 JWT** bằng `CryptoJS.HmacSHA256` với secret lấy từ `server.js:9` — việc làm được điều này chính là bằng chứng của BUG-03 |
 | 18 | `pm.sendRequest` | ✅ | Verify sau ghi (`GET /api/users/me`, `/api/coupons`, `/api/orders/my-orders`), dựng trạng thái, dọn dữ liệu |
 | 19 | JSON schema validation | ✅ | `pm.response.to.have.jsonSchema` với 4 schema: `msgOnly`, `errOnly`, `couponCreated`, `userProfile` |
@@ -979,7 +979,7 @@ bash hw6/scripts/run_newman.sh spec   # ma thoat khac 0 la DUNG mong doi
 | #   | Tính năng | Đã dùng | Dùng để làm gì / Bằng chứng |
 | --- | --------- | :-----: | --------------------------- |
 | 22 | **Collection Runner + data file** | ✅ | 3 folder data-driven, 3 CSV, 6 iteration mỗi file — một file cho mỗi API: [`api1_phone.csv`](./postman/data/api1_phone.csv) (biên `phone`), [`api2_state.csv`](./postman/data/api2_state.csv) (ma trận chuyển trạng thái FR-10), [`api3_coupon.csv`](./postman/data/api3_coupon.csv) (ép kiểu `max_uses_per_user`) |
-| 23 | **Saved example** (example response) | ✅ | 12 example, **ghi lại từ response thật** của SUT bằng [`src/examples.js`](./postman/src/examples.js) đọc báo cáo JSON của Newman. Đây là dữ liệu mà Mock Server trả về (#28) |
+| 23 | **Saved example** (example response) | ✅ | 12 example, **ghi lại từ response thật** của SUT bằng [`src/examples.js`](./postman/src/examples.js) đọc báo cáo JSON của Newman. Đây là dữ liệu mà Mock Server trả về (#30). Giá trị JWT trong example bị **che** thành `<JWT-da-che-xem-BUG-03>` — xem §7.6 |
 | 24 | Newman CLI + `--folder` | ✅ | 7 lần chạy trong [`run_newman.sh`](./scripts/run_newman.sh); chạy tách từng API để mỗi API có một DB sạch riêng |
 | 25 | Newman `-g` / `--export-globals` | ✅ | Nạp file globals và xuất lại sau mỗi lần chạy: `reports/globals_after_api{1,2,3}.json` |
 | 26 | Newman `--export-environment` | ✅ | Truyền token từ lần chạy Setup sang lần chạy data-driven (mỗi `newman run` là một tiến trình riêng) |
@@ -1003,7 +1003,20 @@ bash hw6/scripts/run_newman.sh spec   # ma thoat khac 0 la DUNG mong doi
 | 33 | Postman Flows | Sản phẩm cần nộp là báo cáo HTML của Newman, không phải dashboard trong app; Flows không xuất được artefact cho CI |
 | 34 | `postman.setNextRequest` | Ban đầu định dùng cho chuỗi trạng thái FR-10, nhưng dựng trạng thái bằng `pm.sendRequest` trong pre-request giữ được **1 request = 1 test case**, truy vết sang §5.1 rõ hơn |
 
-### 7.6 Hai lỗi tôi tự gây ra khi thực thi, và cách phát hiện
+### 7.6 Secret scanner của Postman tự bắt được BUG-03
+
+Khi import collection vào app, secret scanner của Postman cảnh báo hai thứ. Đáng ghi lại vì một cái là bằng chứng độc lập cho một lỗi tôi đã báo, còn cái kia là bài học về dương tính giả.
+
+| Postman báo | Thực chất | Xử lý |
+| --- | --- | --- |
+| `Supabase Service Role API Key` — `eyJh…z_hc` | **Một JWT thật**, nằm trong saved example của `SETUP-01` (response đăng nhập admin). Scanner đoán sai tên vì key của Supabase cũng là JWT. Token đó ký bằng secret hardcode `server.js:9` nên chỉ dùng được với SUT ở `localhost` | Đã **che** giá trị thành `<JWT-da-che-xem-BUG-03>` ngay trong `examples.js`, nên lần build sau không còn |
+| `Bearer Token` — `Bear…-jwt` | **Dương tính giả**: đó là chuỗi `Bearer not-a-valid-jwt` mà tôi cố tình đặt để test nhánh "JWT sai cú pháp" (`TC-API1-025`, `TC-API2-029`, `TC-API3-035`…) | Giữ nguyên. Che đi là phá chính test case |
+
+Điều đáng nói ở dòng đầu: **một công cụ độc lập, không biết gì về bài này, tự phát hiện ra hệ quả của BUG-03.** Sở dĩ một token còn hiệu lực có thể nằm trong file văn bản là vì secret ký nó được in thẳng trong mã nguồn — nên mọi token đều "thật" và không bao giờ hết hạn (`server.js:51` không đặt `expiresIn`). Đây cũng chính là cơ chế tôi dùng để tự ký 7 token giả mạo ở `SETUP-05` (§7.2 mục 17).
+
+Tôi **không** bấm "Secure All" của Postman: nút đó sửa giá trị ngay trong app, còn file `.json` trong repo mới là sản phẩm nộp và do `build.js` sinh ra — sửa hai nơi khác nhau thì lần build sau ghi đè hết. Cách sửa đúng là sửa ở bộ sinh, và đó là điều tôi đã làm.
+
+### 7.7 Hai lỗi tôi tự gây ra khi thực thi, và cách phát hiện
 
 Ghi lại đây vì cả hai đều là loại lỗi mà đọc code không thấy — chỉ chạy thật mới lộ.
 
@@ -1045,7 +1058,7 @@ Repo công khai: **https://github.com/trwng-thdat/software-testing** · nhánh `
 
 Hai chi tiết đáng nói:
 
-- `reset_db.js` nhận đường dẫn backend qua biến `SUT_BACKEND_DIR`. Biến này có sẵn từ trước vì tôi đã cần nó khi phát hiện lỗi reset sai bản mã nguồn ở máy local (§7.6 lỗi 1) — nhờ vậy CI dùng lại được ngay, không phải sửa script.
+- `reset_db.js` nhận đường dẫn backend qua biến `SUT_BACKEND_DIR`. Biến này có sẵn từ trước vì tôi đã cần nó khi phát hiện lỗi reset sai bản mã nguồn ở máy local (§7.7 lỗi 1) — nhờ vậy CI dùng lại được ngay, không phải sửa script.
 - Pipeline dùng **cùng một script** `run_newman.sh` với máy local. Không có nhánh mã riêng cho CI, nên số liệu CI và số liệu local so sánh được trực tiếp — và chúng trùng khớp (xem §8.2).
 
 ### 8.2 Hai lần chạy mẫu

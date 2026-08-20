@@ -53,6 +53,16 @@ function collect() {
       if (res.stream && Array.isArray(res.stream.data)) {
         body = Buffer.from(res.stream.data).toString('utf8');
       }
+      // Che gia tri JWT trong example.
+      // Ly do: example cua SETUP-01 la response dang nhap that nen chua mot JWT hop le.
+      // Token do ky bang secret hardcode o server.js:9 va chi dung duoc voi SUT o localhost,
+      // nhung de nguyen thi (a) secret scanner cua Postman bao dong moi lan import - no con
+      // doan sai thanh "Supabase Service Role API Key" - va (b) file nop co mot chuoi trong
+      // nhu credential ma nguoi doc phai tu suy ra la vo hai. Che lai thi sach hon, va mock
+      // van dung duoc vi client chi can dung HINH DANG cua response.
+      // Day cung la mot he qua truc tiep cua BUG-03: secret hardcode nen token nao cung "that".
+      body = body.replace(/eyJ[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,}/g,
+        '<JWT-da-che-xem-BUG-03>');
       const isJson = (() => { try { JSON.parse(body); return true; } catch (e) { return false; } })();
       byId.set(id, {
         code: res.code,
