@@ -40,7 +40,7 @@ env:
   STUDENT_ID: "23127344"
   SUT_REF: feature/23127344
   SUT_PATH: hw3/docs/eshop-sut
-  NODE_VERSION: "20"
+  NODE_VERSION: "22"
 
 jobs:
   # ==========================================================================
@@ -63,13 +63,17 @@ jobs:
           echo "spec_enforced=${SPEC_ENFORCED}" >> "$GITHUB_OUTPUT"
           echo "SPEC_ENFORCED = ${SPEC_ENFORCED}" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Checkout ma nguon SUT tu nhanh ${{ env.SUT_REF }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.SUT_REF }}
-          sparse-checkout: ${{ env.SUT_PATH }}
-          sparse-checkout-cone-mode: false
-          path: sut
+      # Dung git truc tiep thay vi actions/checkout thu hai: buoc post-cleanup cua
+      # action do chay `git submodule foreach` tren mot sparse checkout va tra ve
+      # exit 128, sinh ra mot canh bao vang tren trang ket qua du job van dat.
+      - name: Lay ma nguon SUT tu nhanh ${{ env.SUT_REF }} (sparse checkout)
+        run: |
+          git clone --no-checkout --depth 1 --branch "${SUT_REF}"             "https://github.com/${GITHUB_REPOSITORY}.git" sut
+          cd sut
+          git sparse-checkout init --no-cone
+          git sparse-checkout set "${SUT_PATH}"
+          git checkout
+          ls -la "${SUT_PATH}/backend"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -156,13 +160,17 @@ jobs:
       - name: Checkout bai lam HW06
         uses: actions/checkout@v4
 
-      - name: Checkout ma nguon SUT tu nhanh ${{ env.SUT_REF }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.SUT_REF }}
-          sparse-checkout: ${{ env.SUT_PATH }}
-          sparse-checkout-cone-mode: false
-          path: sut
+      # Dung git truc tiep thay vi actions/checkout thu hai: buoc post-cleanup cua
+      # action do chay `git submodule foreach` tren mot sparse checkout va tra ve
+      # exit 128, sinh ra mot canh bao vang tren trang ket qua du job van dat.
+      - name: Lay ma nguon SUT tu nhanh ${{ env.SUT_REF }} (sparse checkout)
+        run: |
+          git clone --no-checkout --depth 1 --branch "${SUT_REF}"             "https://github.com/${GITHUB_REPOSITORY}.git" sut
+          cd sut
+          git sparse-checkout init --no-cone
+          git sparse-checkout set "${SUT_PATH}"
+          git checkout
+          ls -la "${SUT_PATH}/backend"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
