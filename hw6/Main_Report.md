@@ -1129,6 +1129,10 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 20  | `131e251` | 2026-08-20 | Git commit log — bổ sung dòng 18, 19                           | cả 3 API      |
 | 21  | `d99b1fb` | 2026-08-20 | Git commit log — điền hash dòng 20                             | cả 3 API      |
 | 22  | `5aca0cb` | 2026-08-20 | Cập nhật bản đề bài — §6 bước 2                                | đề bài        |
+| 23  | `0dd7f42` | 2026-08-20 | **Bước 4** — bộ sinh collection + script thực thi              | cả 3 API      |
+| 24  | `65ba952` | 2026-08-20 | **Bước 4** — collection + environment đã sinh                  | cả 3 API      |
+| 25  | `e69ec0c` | 2026-08-20 | **Bước 4** — kết quả chạy Newman thật (6 lần chạy)             | cả 3 API      |
+| 26  | `7c8b9d8` | 2026-08-20 | **Bước 4** — điền số liệu vào §4.4, §5.4, §6.4                 | cả 3 API      |
 
 **Các bước sẽ có commit riêng khi thực hiện:** Bước 5 báo lỗi + GitHub Issues (1–3 commit) · CI/CD 2 lần chạy (2 commit) · sơ đồ tự vẽ §9.2 · Excel test case · README.md · phê bình AI §11.
 
