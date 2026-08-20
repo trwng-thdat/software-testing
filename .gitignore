@@ -49,4 +49,4 @@ hw6/reports/data_api3_coupon.json
 
 # Environment tam do newman --export-environment sinh ra (co chua token)
 hw6/reports/.env_after_setup.json
-diagrams/generator_preview.png
+hw6/diagrams/generator_preview.png
