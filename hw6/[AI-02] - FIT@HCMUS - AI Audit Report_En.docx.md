@@ -100,7 +100,7 @@ AI was strongest where the task was bounded by evidence I could re-check: tracin
 
 ## **Appendix A-1 — Full verbatim prompt log (chronological)**
 
-*Sessions: Claude Opus 5 · Claude Code (VS Code extension) · Session 1: 18/08/2026 19:20 → 19/08/2026 03:35; Session 2: 20/08/2026 (rows 39+). Every prompt is reproduced exactly as sent. AI responses are summarised in Section 3 column (2); the full responses are retained in the session transcript and available on request.*
+*Sessions: Claude Opus 5 · Claude Code (VS Code extension) · Session 1: 18/08/2026 19:20 → 19/08/2026 03:35; Session 2: 20/08/2026 (rows 39-44). Every prompt is reproduced exactly as sent. AI responses are summarised in Section 3 column (2); the full responses are retained in the session transcript and available on request.*
 
 | \# | Time | Phase | Verbatim prompt (opening \+ decisive directives) | Audit row |
 | :---- | :---- | :---- | :---- | :---- |
@@ -144,6 +144,10 @@ AI was strongest where the task was bounded by evidence I could re-check: tracin
 | 38 | 03:35 | Audit | "ghi lại tất cả prompt và response trong session này dô file @hw6/\[AI-02\] - FIT@HCMUS - AI Audit Report_En.docx.md" | *(this document)* |
 | 39 | 20/08 | Gap review | "trong hw6. Bạn đọc yêu cầu đề bài @software-testing/hw6/2026.HW06.vi.md và xem các file trongg hw6 xem đã đáp ứng đầy đủ yêu cầu của đề bài chưa. nếu chưa thì liệt kê ra cho tôi" | *(no artifact — gap analysis only)* |
 | 40 | 20/08 | Audit | "Viết prompt trên vào @software-testing/hw6/\[AI-02\] - FIT@HCMUS - AI Audit Report_En.docx.md" | *(this document)* |
+| 41 | 20/08 | Git | "bạn tự commit rồi ghi vào commit log cho tôi" | *(commit 61009aa, 4e3e738, 4d50d65)* |
+| 42 | 20/08 | Deliverable | "https://youtu.be/Nz8hUbziTyI Đây là link video youtube demo agent skill. Bạn fill link này vào report của hw6 cho tôi / Rồi bạn track hw6 skill cho tôi và ignore cái đề bài đi" | *(§9.6, commit 7122df2)* |
+| 43 | 20/08 | Step 4 | "Bây giờ tôi phải thực thi các testcase bằng postman + Newman hả" | *(tư vấn: đúng, bắt buộc theo §6.4/§11/§14; kèm lộ trình 5 bước)* |
+| 44 | 20/08 | Step 4 | "Bạn hãy thực hiện phần 4: thực thi: chạy bằng postman+ Newman cho tôi luôn. nên nhớ phải thõa mãn yêu cầu từ đề bài @software-testing/hw6/2026.HW06.vi.md" | *(§2, §4.4, §5.4, §6.4, §6.9, §6.11, §7, §7.1; commit 0dd7f42 → 170c057)* |
 
 ## **References**
 
