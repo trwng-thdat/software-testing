@@ -1,0 +1,27 @@
+<!doctype html><meta charset="utf-8"><style>body{background:#0d1117;color:#c9d1d9;font:13px/1.5 Consolas,monospace;margin:0;padding:18px}h1{color:#58a6ff;font-size:15px;margin:0 0 4px}p{color:#8b949e;font-size:12px;margin:0 0 14px}pre{margin:0;white-space:pre-wrap}</style><h1>CI - job regression, lan chay XANH (5d43840): 6 lan chay Newman deu dat</h1><p>Log lay bang: gh run view --job 96358457283 --log  |  loc cac dong thong ke va reset_db.</p><pre>[reset_db] reset DB tai: /home/runner/work/_temp/sut/hw3/docs/eshop-sut/backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+│                requests │             102 │               0 │
+│              assertions │             224 │               0 │
+[run_newman] api1 ket thuc voi ma thoat 0
+[reset_db] reset DB tai: /home/runner/work/_temp/sut/hw3/docs/eshop-sut/backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+↳ TC-API2-019 - Huy don delivered (trang thai ket thuc) -> 400
+↳ TC-API2-020 - Huy don da canceled (trang thai ket thuc) -> 400
+│                requests │             138 │               0 │
+│              assertions │             239 │               0 │
+[run_newman] api2 ket thuc voi ma thoat 0
+[reset_db] reset DB tai: /home/runner/work/_temp/sut/hw3/docs/eshop-sut/backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+│                requests │             249 │               0 │
+│              assertions │             557 │               0 │
+[run_newman] api3 ket thuc voi ma thoat 0
+[reset_db] reset DB tai: /home/runner/work/_temp/sut/hw3/docs/eshop-sut/backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+│                requests │              12 │               0 │
+│              assertions │              24 │               0 │
+  │ delivered la trang thai ket thuc -> tu choi 400'
+│                requests │              27 │               0 │
+│              assertions │              24 │               0 │
+│                requests │              12 │               0 │
+│              assertions │              18 │               0 │
+[run_newman] regression ket thuc, fail=0 (0 la dat)</pre>

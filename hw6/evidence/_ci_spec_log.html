@@ -1,0 +1,86 @@
+<!doctype html><meta charset="utf-8"><style>body{background:#0d1117;color:#c9d1d9;font:13px/1.5 Consolas,monospace;margin:0;padding:18px}h1{color:#58a6ff;font-size:15px;margin:0 0 4px}p{color:#8b949e;font-size:12px;margin:0 0 14px}pre{margin:0;white-space:pre-wrap}</style><h1>CI - job spec-gate, lan chay DO (06524ea): assertion theo dac ta that bai</h1><p>Log lay bang: gh run view --job 96359055611 --log  |  Trang Actions doi dang nhap moi xem log, nen day la ban render lai, noi dung y het.</p><pre>##[group]Run bash hw6/scripts/run_newman.sh spec-strict
+^[[36;1mbash hw6/scripts/run_newman.sh spec-strict^[[0m
+↳ SPEC-BUG-01 - [SEC-06] Client KHONG duoc phep tu doi role qua PUT /api/users/me
+↳ SPEC-BUG-02 - [SEC-01] GET /api/users/me KHONG duoc tra ve mat khau
+↳ SPEC-BUG-03 - [SEC-02] Token tu ky bang secret hardcode KHONG duoc chap nhan
+↳ SPEC-BUG-04 - [FR-04] phone phai la 10-11 chu so va bat dau bang 0
+↳ SPEC-BUG-05 - [SEC-03] GET /api/admin/users phai kiem role="admin" trong token
+↳ SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping
+↳ SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered
+↳ SPEC-BUG-08 - [SEC-02] GET /api/orders/:id phai yeu cau xac thuc
+↳ SPEC-BUG-09 - [FR-10] Thong bao loi phai cho biet ly do khong huy duoc
+↳ SPEC-BUG-10 - [SEC-03] User thuong KHONG duoc tao coupon
+↳ SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong
+↳ SPEC-BUG-12 - [FR-17] discount_value phai > 0
+↳ SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1
+↳ SPEC-BUG-14 - [FR-17] code phai la duy nhat - null khong duoc pha vo rang buoc
+↳ SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver
+↳ SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML
+│              assertions │              73 │              22 │
+ 01.  AssertionError  GET /api/users/me: role = "user" roi tra role ve "user"                                                                                                            
+                      expected 'admin' to deeply equal 'user'                                                                                                                            
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-01 - [SEC-06] Client KHONG duoc phep tu doi role qua PUT /api/users/me"        
+ 02.  AssertionError  Response KHONG chua key "password"                                                                                                                                 
+                      expected { id: 2, name: 'SPEC-BUG-01', …(8) } to not have property 'password'                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-02 - [SEC-01] GET /api/users/me KHONG duoc tra ve mat khau"                    
+ 03.  AssertionError  Token mao danh phai bi tu choi (401 hoac 403), KHONG duoc tra 200                                                                                                  
+                      ma trang thai: expected 200 to be one of [ 401, 403 ]                                                                                                              
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-03 - [SEC-02] Token tu ky bang secret hardcode KHONG duoc chap nhan"           
+ 04.  AssertionError  phone sai dinh dang phai bi tu choi 400                                                                                                                            
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-04 - [FR-04] phone phai la 10-11 chu so va bat dau bang 0"                     
+ 05.  AssertionError  Token role=user phai bi tu choi 403 o endpoint admin                                                                                                               
+                      expected 200 to deeply equal 403                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-05 - [SEC-03] GET /api/admin/users phai kiem role="admin" trong token"         
+ 06.  AssertionError  Huy don shipping phai bi tu choi 400                                                                                                                               
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping"                            
+ 07.  AssertionError  GET /api/orders/:id: status = "shipping"                                                                                                                           
+                      expected 'canceled' to deeply equal 'shipping'                                                                                                                     
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping"                            
+ 08.  AssertionError  canceled -> delivered phai bi tu choi 400                                                                                                                          
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered" 
+ 09.  AssertionError  GET /api/orders/:id: status = "canceled"                                                                                                                           
+                      expected 'delivered' to deeply equal 'canceled'                                                                                                                    
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered" 
+ 10.  AssertionError  Doc don hang khong token phai bi tu choi 401                                                                                                                       
+                      expected 200 to deeply equal 401                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-08 - [SEC-02] GET /api/orders/:id phai yeu cau xac thuc"                       
+ 11.  AssertionError  Thong bao 400 phai nhac trang thai hien tai (delivered)                                                                                                            
+                      expected 'cannot cancel this order.' to include 'delivered'                                                                                                        
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-09 - [FR-10] Thong bao loi phai cho biet ly do khong huy duoc"                 
+ 12.  AssertionError  User thuong tao coupon phai bi tu choi 403                                                                                                                         
+                      expected 200 to deeply equal 403                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-10 - [SEC-03] User thuong KHONG duoc tao coupon"                               
+ 13.  AssertionError  User thuong xoa coupon phai bi tu choi 403                                                                                                                         
+                      expected 200 to deeply equal 403                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong"                      
+ 14.  AssertionError  Coupon BIGBUY phai con trong GET /api/coupons                                                                                                                      
+                      expected [ 'SAVE10', 'VIP100', 'EXPIRED', …(1) ] to include 'BIGBUY'                                                                                               
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong"                      
+ 15.  AssertionError  discount_value am phai bi tu choi 400                                                                                                                              
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-12 - [FR-17] discount_value phai > 0"                                          
+ 16.  AssertionError  max_uses_per_user = "0" phai bi tu choi 400                                                                                                                        
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1"                                      
+ 17.  AssertionError  Gia tri luu vao DB phai >= 1 (khong duoc la 0)                                                                                                                     
+                      gia tri luu trong DB: expected +0 to be at least 1                                                                                                                 
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1"                                      
+ 18.  AssertionError  Coupon thu hai voi code=null phai bi tu choi (400 hoac 409)                                                                                                        
+                      expected 200 to be one of [ 400, 409 ]                                                                                                                             
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-14 - [FR-17] code phai la duy nhat - null khong duoc pha vo rang buoc"         
+ 19.  AssertionError  Trung code phai tra 409/400, khong phai 500                                                                                                                        
+                      expected 500 to be one of [ 400, 409 ]                                                                                                                             
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver"  
+ 20.  AssertionError  Thong bao loi khong duoc lo chi tiet noi bo cua SQLite                                                                                                             
+                      expected '{"error":"SQLITE_CONSTRAINT: UNIQUE c…' to not include 'SQLITE_CONSTRAINT'                                                                               
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver"  
+ 21.  AssertionError  Thieu body phai tra 400 (khong phai 500)                                                                                                                           
+                      expected 500 to deeply equal 400                                                                                                                                   
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML"            
+ 22.  AssertionError  Body loi phai la JSON co key error                                                                                                                                 
+                      response phai parse duoc thanh JSON: expected null not to be null                                                                                                  
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML"            
+[run_newman] spec-strict: tra ve ma thoat 1 vi con assertion theo dac ta that bai</pre>

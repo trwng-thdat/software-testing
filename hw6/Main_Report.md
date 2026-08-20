@@ -1056,7 +1056,9 @@ Hai chi tiết đáng nói:
 | ❌ **Có test FAIL** | [`06524ea`](https://github.com/trwng-thdat/software-testing/commit/06524ea) | `true` | `failure` — `regression` **vẫn xanh**, `spec-gate` đỏ với **22 assertion fail** | [run 32347386625](https://github.com/trwng-thdat/software-testing/actions/runs/32347386625) |
 
 ![Danh sách lần chạy](./evidence/ci_runs_list.png)
-_Trang Actions: cả hai lần chạy cạnh nhau, kèm commit hash và nhánh._
+_Trang Actions: cả hai lần chạy cạnh nhau, kèm commit hash và nhánh. Lịch sử có thêm vài lần chạy khác — đó là quá trình tôi dọn dần các cảnh báo của pipeline (§8.4), và các lần chạy đỏ khác là những lần tôi bật `SPEC_ENFORCED` để kiểm chứng cơ chế trước khi chốt hai lần chạy mẫu._
+
+> **Trạng thái cuối của nhánh:** `SPEC_ENFORCED=false` (commit `13a3bbe`, run xanh). Để nhánh ở cấu hình cổng hồi quy để mọi lần push về sau không đỏ vì 22 lỗi đã biết. Hai lần chạy mẫu vẫn truy nguyên được bằng link ở bảng trên.
 
 ![Lần chạy xanh](./evidence/ci_run_pass.png)
 _Lần chạy xanh `5d43840`: `regression` success, `spec-gate` skipped._
