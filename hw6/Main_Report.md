@@ -964,6 +964,8 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 15  | `65045d1` | 2026-08-19 | Rà soát của con người — áp dụng kết quả kiểm toán vào §4.1/§5.1/§6.1 | cả 3 API |
 | 16  | `61009aa` | 2026-08-20 | Báo cáo Kiểm toán AI — log prompt #39/#40, khai báo phiên 20/08 | cả 3 API      |
 | 17  | `4e3e738` | 2026-08-20 | Git commit log + đồng bộ §12 đến 20/08                    | cả 3 API      |
+| 18  | `4d50d65` | 2026-08-20 | Git commit log — điền hash thật cho dòng 17                    | cả 3 API      |
+| 19  | `7122df2` | 2026-08-20 | Agent Skill `api-test-generator` + link video demo §9.6        | cả 3 API      |
 
 **Các bước sẽ có commit riêng khi thực hiện:** Bước 4 thực thi Newman (3 commit) · Bước 5 báo lỗi (1–3 commit) · Postman collection · CI/CD 2 lần chạy · Agent Skill.
 

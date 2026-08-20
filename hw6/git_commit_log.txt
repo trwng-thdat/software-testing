@@ -12,6 +12,9 @@ Ngay xuat : 2026-08-20
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+7122df2 2026-08-20 feat(hw6): Agent Skill api-test-generator + link video demo §9.6
+4d50d65 2026-08-20 chore(hw6): điền hash thật 4e3e738 cho dòng 17 của commit log
+4e3e738 2026-08-20 docs(hw6): git commit log — cập nhật đến 20/08 và đồng bộ §12
 61009aa 2026-08-20 docs(hw6): AI Audit Report — log prompt 39/40 và mở phiên làm việc 20/08
 65045d1 2026-08-19 fix(hw6): áp dụng kết quả kiểm toán vào bảng test case §4.1/§5.1/§6.1
 f8f4ed7 2026-08-19 docs(hw6): cập nhật commit log sau Bước 2 và Bước 3
@@ -53,6 +56,8 @@ De bai muc 12 yeu cau: "Tao mot Git commit moi cho moi buoc cua quy trinh
 15   65045d1   Ra soat cua con nguoi - ap dung ket qua kiem toan ca 3 API
 16   61009aa   Kiem toan AI - log prompt 39/40, phien 20/08     ca 3 API
 17   4e3e738   Git commit log - cap nhat den 20/08              ca 3 API
+18   4d50d65   Git commit log - dien hash that cho dong 17      ca 3 API
+19   7122df2   Agent Skill api-test-generator + link video 9.6  ca 3 API
 --------------------------------------------------------------------------------
 
 [3] TRANG THAI CAC BUOC
@@ -68,7 +73,8 @@ CHUA thuc hien - se co commit rieng cho tung buoc khi lam:
   BUOC 5 - Bao cao loi + GitHub Issues                       (1-3 commit)
   Postman collection + environment + data file               (1-2 commit)
   CI/CD pipeline + 2 lan chay mau (xanh / do)                (2 commit)
-  Agent Skill - so do tu ve + ma gia                         (1-2 commit)
+  Agent Skill - so do tu ve (PNG/Mermaid) + ma gia hoan chinh (1-2 commit)
+                   (SKILL.md va video demo da xong o commit 7122df2)
 
 Khong tao commit khong tuong ung voi cong viec da lam that.
 
