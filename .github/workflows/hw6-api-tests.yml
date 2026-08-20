@@ -63,13 +63,17 @@ jobs:
           echo "spec_enforced=${SPEC_ENFORCED}" >> "$GITHUB_OUTPUT"
           echo "SPEC_ENFORCED = ${SPEC_ENFORCED}" >> "$GITHUB_STEP_SUMMARY"
 
-      # Dung git truc tiep thay vi actions/checkout thu hai: buoc post-cleanup cua
-      # action do chay `git submodule foreach` tren mot sparse checkout va tra ve
-      # exit 128, sinh ra mot canh bao vang tren trang ket qua du job van dat.
+      # Dung git truc tiep thay vi actions/checkout thu hai, va clone RA NGOAI workspace
+      # (RUNNER_TEMP). Hai ly do:
+      #   - post-cleanup cua actions/checkout chay `git submodule foreach` tren sparse
+      #     checkout va tra ve exit 128
+      #   - mot repo git long trong workspace cung khien post-cleanup cua checkout CHINH
+      #     bao exit 128
+      # Ca hai deu chi la canh bao vang nhung lam ban trang ket qua dung de chup anh.
       - name: Lay ma nguon SUT tu nhanh ${{ env.SUT_REF }} (sparse checkout)
         run: |
-          git clone --no-checkout --depth 1 --branch "${SUT_REF}"             "https://github.com/${GITHUB_REPOSITORY}.git" sut
-          cd sut
+          git clone --no-checkout --depth 1 --branch "${SUT_REF}"             "https://github.com/${GITHUB_REPOSITORY}.git" "${RUNNER_TEMP}/sut"
+          cd "${RUNNER_TEMP}/sut"
           git sparse-checkout init --no-cone
           git sparse-checkout set "${SUT_PATH}"
           git checkout
@@ -81,14 +85,14 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Cai dependency cho SUT
-        working-directory: sut/${{ env.SUT_PATH }}/backend
+        working-directory: ${{ runner.temp }}/sut/${{ env.SUT_PATH }}/backend
         run: npm ci || npm install
 
       - name: Cai Newman va reporter
         run: npm install --global newman newman-reporter-htmlextra
 
       - name: Seed DB va khoi dong SUT
-        working-directory: sut/${{ env.SUT_PATH }}/backend
+        working-directory: ${{ runner.temp }}/sut/${{ env.SUT_PATH }}/backend
         run: |
           node database.js
           nohup node server.js > "${{ runner.temp }}/sut.log" 2>&1 &
@@ -110,7 +114,7 @@ jobs:
       - name: Chay Newman - 3 API + 3 lan chay theo du lieu
         env:
           # reset_db.js can biet backend cua SUT nam dau; trong CI no khong o duong dan mac dinh
-          SUT_BACKEND_DIR: ${{ github.workspace }}/sut/${{ env.SUT_PATH }}/backend
+          SUT_BACKEND_DIR: ${{ runner.temp }}/sut/${{ env.SUT_PATH }}/backend
           SUT_BASE_URL: http://localhost:3000
         run: bash hw6/scripts/run_newman.sh regression
 
@@ -160,13 +164,17 @@ jobs:
       - name: Checkout bai lam HW06
         uses: actions/checkout@v5
 
-      # Dung git truc tiep thay vi actions/checkout thu hai: buoc post-cleanup cua
-      # action do chay `git submodule foreach` tren mot sparse checkout va tra ve
-      # exit 128, sinh ra mot canh bao vang tren trang ket qua du job van dat.
+      # Dung git truc tiep thay vi actions/checkout thu hai, va clone RA NGOAI workspace
+      # (RUNNER_TEMP). Hai ly do:
+      #   - post-cleanup cua actions/checkout chay `git submodule foreach` tren sparse
+      #     checkout va tra ve exit 128
+      #   - mot repo git long trong workspace cung khien post-cleanup cua checkout CHINH
+      #     bao exit 128
+      # Ca hai deu chi la canh bao vang nhung lam ban trang ket qua dung de chup anh.
       - name: Lay ma nguon SUT tu nhanh ${{ env.SUT_REF }} (sparse checkout)
         run: |
-          git clone --no-checkout --depth 1 --branch "${SUT_REF}"             "https://github.com/${GITHUB_REPOSITORY}.git" sut
-          cd sut
+          git clone --no-checkout --depth 1 --branch "${SUT_REF}"             "https://github.com/${GITHUB_REPOSITORY}.git" "${RUNNER_TEMP}/sut"
+          cd "${RUNNER_TEMP}/sut"
           git sparse-checkout init --no-cone
           git sparse-checkout set "${SUT_PATH}"
           git checkout
@@ -178,14 +186,14 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Cai dependency cho SUT
-        working-directory: sut/${{ env.SUT_PATH }}/backend
+        working-directory: ${{ runner.temp }}/sut/${{ env.SUT_PATH }}/backend
         run: npm ci || npm install
 
       - name: Cai Newman va reporter
         run: npm install --global newman newman-reporter-htmlextra
 
       - name: Seed DB va khoi dong SUT
-        working-directory: sut/${{ env.SUT_PATH }}/backend
+        working-directory: ${{ runner.temp }}/sut/${{ env.SUT_PATH }}/backend
         run: |
           node database.js
           nohup node server.js > "${{ runner.temp }}/sut.log" 2>&1 &
@@ -205,7 +213,7 @@ jobs:
 
       - name: Chay Newman - folder SPEC (assertion theo dac ta)
         env:
-          SUT_BACKEND_DIR: ${{ github.workspace }}/sut/${{ env.SUT_PATH }}/backend
+          SUT_BACKEND_DIR: ${{ runner.temp }}/sut/${{ env.SUT_PATH }}/backend
           SUT_BASE_URL: http://localhost:3000
         run: bash hw6/scripts/run_newman.sh spec-strict
 
