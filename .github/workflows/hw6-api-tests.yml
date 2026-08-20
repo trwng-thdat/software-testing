@@ -1,0 +1,248 @@
+# HW06 - Kiem thu API: chay Newman trong GitHub Actions
+# Sinh vien: Truong Thanh Dat - 23127344 - 23KTPM3
+#
+# Pipeline co HAI cong (gate) tach biet, va do la chu y thiet ke:
+#
+#   Job 1 "regression" - 3 folder API + 3 folder chay theo du lieu.
+#       Assertion o day ma hoa HANH VI THUC TE cua SUT (characterization test),
+#       nen job nay PHAI luon xanh. No la cong chan hoi quy: bat cu thay doi hanh vi
+#       nao cua SUT ve sau se lam do job nay.
+#
+#   Job 2 "spec-gate" - folder SPEC, noi assertion viet theo dieu DAC TA (FR/SEC) doi hoi.
+#       22 assertion o day CO Y DINH THAT BAI vi SUT that su vi pham dac ta.
+#       Job chi chay khi hw6/ci/ci.env dat SPEC_ENFORCED=true.
+#
+# Nho tach nhu vay ma hai lan chay mau cua de bai §6 deu that:
+#   - commit voi SPEC_ENFORCED=false -> pipeline XANH (moi test case API deu dat)
+#   - commit voi SPEC_ENFORCED=true  -> pipeline DO  (test case that bai vi bug con day)
+#
+# Ma nguon SUT: repo nay cho group05_eshop/ vao .gitignore (SUT co repo rieng), nhung
+# mot ban SUT y het da nam trong lich su repo o nhanh feature/23127344 duong dan
+# hw3/docs/eshop-sut. Job checkout dung ban do bang sparse-checkout, khong nhan ban them.
+
+name: hw6-api-tests
+
+on:
+  push:
+    branches:
+      - "hw6/**"
+    paths:
+      - "hw6/**"
+      - ".github/workflows/hw6-api-tests.yml"
+  pull_request:
+  workflow_dispatch:
+  # Vai tro "monitor": Postman Monitor chay tren cloud nen khong goi duoc localhost,
+  # nen viec chay dinh ky duoc giao cho GitHub Actions. 00:00 UTC = 07:00 gio Viet Nam.
+  schedule:
+    - cron: "0 0 * * *"
+
+env:
+  STUDENT_ID: "23127344"
+  SUT_REF: feature/23127344
+  SUT_PATH: hw3/docs/eshop-sut
+  NODE_VERSION: "20"
+
+jobs:
+  # ==========================================================================
+  # JOB 1 - Cong chan hoi quy: phai luon xanh
+  # ==========================================================================
+  regression:
+    name: "Regression: 3 API + 3 lan chay theo du lieu (phai xanh)"
+    runs-on: ubuntu-latest
+    outputs:
+      spec_enforced: ${{ steps.flag.outputs.spec_enforced }}
+
+    steps:
+      - name: Checkout bai lam HW06
+        uses: actions/checkout@v4
+
+      - name: Doc co SPEC_ENFORCED tu hw6/ci/ci.env
+        id: flag
+        run: |
+          set -a; . hw6/ci/ci.env; set +a
+          echo "spec_enforced=${SPEC_ENFORCED}" >> "$GITHUB_OUTPUT"
+          echo "SPEC_ENFORCED = ${SPEC_ENFORCED}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Checkout ma nguon SUT tu nhanh ${{ env.SUT_REF }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SUT_REF }}
+          sparse-checkout: ${{ env.SUT_PATH }}
+          sparse-checkout-cone-mode: false
+          path: sut
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Cai dependency cho SUT
+        working-directory: sut/${{ env.SUT_PATH }}/backend
+        run: npm ci || npm install
+
+      - name: Cai Newman va reporter
+        run: npm install --global newman newman-reporter-htmlextra
+
+      - name: Seed DB va khoi dong SUT
+        working-directory: sut/${{ env.SUT_PATH }}/backend
+        run: |
+          node database.js
+          nohup node server.js > "${{ runner.temp }}/sut.log" 2>&1 &
+          echo "SUT_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Cho SUT san sang (healthcheck, khong sleep co dinh)
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3000/api/products > /dev/null 2>&1; then
+              echo "SUT san sang sau ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::SUT khong san sang trong 30s"
+          cat "${{ runner.temp }}/sut.log" || true
+          exit 1
+
+      - name: Chay Newman - 3 API + 3 lan chay theo du lieu
+        env:
+          # reset_db.js can biet backend cua SUT nam dau; trong CI no khong o duong dan mac dinh
+          SUT_BACKEND_DIR: ${{ github.workspace }}/sut/${{ env.SUT_PATH }}/backend
+          SUT_BASE_URL: http://localhost:3000
+        run: bash hw6/scripts/run_newman.sh regression
+
+      - name: Tong hop ket qua vao Step Summary
+        if: always()
+        run: |
+          node hw6/scripts/summarize_newman.js > "${{ runner.temp }}/summary.txt" || true
+          {
+            echo "## HW06 - Regression (MSSV ${STUDENT_ID})"
+            echo ""
+            cat "${{ runner.temp }}/summary.txt"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Tai bao cao HTML len artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-regression-${{ env.STUDENT_ID }}
+          path: |
+            hw6/reports/*.html
+            hw6/reports/summary.md
+            hw6/reports/summary.json
+          if-no-files-found: warn
+
+      - name: Tai log SUT khi that bai
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sut-log-regression-${{ env.STUDENT_ID }}
+          path: ${{ runner.temp }}/sut.log
+          if-no-files-found: ignore
+
+      - name: Dung SUT
+        if: always()
+        run: kill "$SUT_PID" 2>/dev/null || true
+
+  # ==========================================================================
+  # JOB 2 - Cong dac ta: chi chay khi SPEC_ENFORCED=true, va se DO
+  # ==========================================================================
+  spec-gate:
+    name: "Spec gate: assertion theo dac ta (se do khi bug con day)"
+    runs-on: ubuntu-latest
+    needs: regression
+    if: needs.regression.outputs.spec_enforced == 'true'
+
+    steps:
+      - name: Checkout bai lam HW06
+        uses: actions/checkout@v4
+
+      - name: Checkout ma nguon SUT tu nhanh ${{ env.SUT_REF }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SUT_REF }}
+          sparse-checkout: ${{ env.SUT_PATH }}
+          sparse-checkout-cone-mode: false
+          path: sut
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Cai dependency cho SUT
+        working-directory: sut/${{ env.SUT_PATH }}/backend
+        run: npm ci || npm install
+
+      - name: Cai Newman va reporter
+        run: npm install --global newman newman-reporter-htmlextra
+
+      - name: Seed DB va khoi dong SUT
+        working-directory: sut/${{ env.SUT_PATH }}/backend
+        run: |
+          node database.js
+          nohup node server.js > "${{ runner.temp }}/sut.log" 2>&1 &
+          echo "SUT_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Cho SUT san sang
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3000/api/products > /dev/null 2>&1; then
+              echo "SUT san sang sau ${i}s"; exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::SUT khong san sang trong 30s"
+          cat "${{ runner.temp }}/sut.log" || true
+          exit 1
+
+      - name: Chay Newman - folder SPEC (assertion theo dac ta)
+        env:
+          SUT_BACKEND_DIR: ${{ github.workspace }}/sut/${{ env.SUT_PATH }}/backend
+          SUT_BASE_URL: http://localhost:3000
+        run: bash hw6/scripts/run_newman.sh spec-strict
+
+      - name: Liet ke assertion that bai vao Step Summary
+        if: always()
+        run: |
+          {
+            echo "## HW06 - Spec gate (MSSV ${STUDENT_ID})"
+            echo ""
+            echo "Moi assertion that bai duoi day la MOT VI PHAM DAC TA co that trong SUT,"
+            echo "kem dan chieu FR/SEC. Job do la dung mong doi cho tới khi SUT duoc sua."
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+          node -e "
+            const fs = require('fs');
+            const p = 'hw6/reports/spec_bugs.json';
+            if (!fs.existsSync(p)) { process.exit(0); }
+            const r = JSON.parse(fs.readFileSync(p, 'utf8'));
+            const s = r.run.stats;
+            const out = [];
+            out.push('- Assertion: ' + s.assertions.total + ' (that bai: ' + s.assertions.failed + ')');
+            out.push('');
+            out.push('| Test case | Assertion that bai | Thong bao |');
+            out.push('| --- | --- | --- |');
+            const seen = new Set();
+            for (const f of r.run.failures) {
+              const item = (f.source && f.source.name) || '(khong ro)';
+              const key = item + '|' + f.error.test;
+              if (seen.has(key)) continue;
+              seen.add(key);
+              out.push('| ' + item.split(' - ')[0] + ' | ' + f.error.test + ' | ' + String(f.error.message).replace(/\|/g, '\\\\|').slice(0, 120) + ' |');
+            }
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, out.join('\n') + '\n');
+          " || true
+
+      - name: Tai bao cao HTML len artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-spec-${{ env.STUDENT_ID }}
+          path: |
+            hw6/reports/spec_bugs.html
+            hw6/reports/spec_bugs.json
+          if-no-files-found: warn
+
+      - name: Dung SUT
+        if: always()
+        run: kill "$SUT_PID" 2>/dev/null || true

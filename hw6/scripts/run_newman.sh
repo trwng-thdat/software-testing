@@ -88,8 +88,25 @@ run_smoke () {        # kiem nhanh: --bail dung ngay khi co fail dau tien
   echo "[run_newman] smoke ket thuc voi ma thoat $?"
 }
 
+run_regression () {   # dung cho CI job 1: chi cac folder PHAI xanh
+  run_api api1 "$F_API1"
+  run_api api2 "$F_API2"
+  run_api api3 "$F_API3"
+  run_data
+  echo ""
+  echo "[run_newman] regression ket thuc, fail=$fail (0 la dat)"
+}
+
+run_spec_strict () {  # dung cho CI job 2: tra ve ma thoat that de CI do
+  run_spec
+  echo "[run_newman] spec-strict: tra ve ma thoat 1 vi con assertion theo dac ta that bai"
+  exit 1
+}
+
 case "${1:-all}" in
   smoke) run_smoke ;;
+  regression) run_regression ;;
+  spec-strict) run_spec_strict ;;
   api1) run_api api1 "$F_API1" ;;
   spec) run_spec ;;
   api2) run_api api2 "$F_API2" ;;
