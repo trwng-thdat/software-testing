@@ -1,0 +1,194 @@
+{
+  "generatedFrom": "newman JSON reporter",
+  "runs": {
+    "api1": {
+      "label": "API 1 - PUT /api/users/me (FR-04)",
+      "iterations": 1,
+      "requests": 102,
+      "requestsFromCollectionItems": 54,
+      "requestFailures": 0,
+      "assertions": 178,
+      "assertionFailures": 0,
+      "testCases": 46,
+      "testCasesPassed": 46,
+      "testCasesFailed": 0,
+      "failedList": [],
+      "durationMs": 4367
+    },
+    "api2": {
+      "label": "API 2 - PUT /api/orders/:id/cancel (FR-10)",
+      "iterations": 1,
+      "requests": 138,
+      "requestsFromCollectionItems": 54,
+      "requestFailures": 0,
+      "assertions": 193,
+      "assertionFailures": 0,
+      "testCases": 46,
+      "testCasesPassed": 46,
+      "testCasesFailed": 0,
+      "failedList": [],
+      "durationMs": 5867
+    },
+    "api3": {
+      "label": "API 3 - POST /api/admin/coupons (FR-17)",
+      "iterations": 1,
+      "requests": 249,
+      "requestsFromCollectionItems": 163,
+      "requestFailures": 0,
+      "assertions": 472,
+      "assertionFailures": 0,
+      "testCases": 85,
+      "testCasesPassed": 85,
+      "testCasesFailed": 0,
+      "failedList": [],
+      "durationMs": 10690
+    },
+    "data1": {
+      "label": "Data-driven CSV - phone (FR-04)",
+      "iterations": 6,
+      "requests": 12,
+      "requestsFromCollectionItems": 1,
+      "requestFailures": 0,
+      "assertions": 24,
+      "assertionFailures": 0,
+      "testCases": 1,
+      "testCasesPassed": 1,
+      "testCasesFailed": 0,
+      "failedList": [],
+      "durationMs": 617
+    },
+    "data3": {
+      "label": "Data-driven CSV - coupon (FR-17)",
+      "iterations": 6,
+      "requests": 12,
+      "requestsFromCollectionItems": 1,
+      "requestFailures": 0,
+      "assertions": 18,
+      "assertionFailures": 0,
+      "testCases": 1,
+      "testCasesPassed": 1,
+      "testCasesFailed": 0,
+      "failedList": [],
+      "durationMs": 508
+    },
+    "spec": {
+      "label": "SPEC - assertion theo dac ta (co y dinh fail)",
+      "iterations": 1,
+      "requests": 46,
+      "requestsFromCollectionItems": 29,
+      "requestFailures": 0,
+      "assertions": 57,
+      "assertionFailures": 22,
+      "testCases": 16,
+      "testCasesPassed": 0,
+      "testCasesFailed": 16,
+      "failedList": [
+        {
+          "id": "SPEC-BUG-01",
+          "name": "SPEC-BUG-01 - [SEC-06] Client KHONG duoc phep tu doi role qua PUT /api/users/me",
+          "failed": 1,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-02",
+          "name": "SPEC-BUG-02 - [SEC-01] GET /api/users/me KHONG duoc tra ve mat khau",
+          "failed": 1,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-03",
+          "name": "SPEC-BUG-03 - [SEC-02] Token tu ky bang secret hardcode KHONG duoc chap nhan",
+          "failed": 1,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-04",
+          "name": "SPEC-BUG-04 - [FR-04] phone phai la 10-11 chu so va bat dau bang 0",
+          "failed": 1,
+          "of": 2
+        },
+        {
+          "id": "SPEC-BUG-05",
+          "name": "SPEC-BUG-05 - [SEC-03] GET /api/admin/users phai kiem role=\"admin\" trong token",
+          "failed": 1,
+          "of": 2
+        },
+        {
+          "id": "SPEC-BUG-06",
+          "name": "SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping",
+          "failed": 2,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-07",
+          "name": "SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered",
+          "failed": 2,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-08",
+          "name": "SPEC-BUG-08 - [SEC-02] GET /api/orders/:id phai yeu cau xac thuc",
+          "failed": 1,
+          "of": 2
+        },
+        {
+          "id": "SPEC-BUG-09",
+          "name": "SPEC-BUG-09 - [FR-10] Thong bao loi phai cho biet ly do khong huy duoc",
+          "failed": 1,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-10",
+          "name": "SPEC-BUG-10 - [SEC-03] User thuong KHONG duoc tao coupon",
+          "failed": 1,
+          "of": 2
+        },
+        {
+          "id": "SPEC-BUG-11",
+          "name": "SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong",
+          "failed": 2,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-12",
+          "name": "SPEC-BUG-12 - [FR-17] discount_value phai > 0",
+          "failed": 1,
+          "of": 2
+        },
+        {
+          "id": "SPEC-BUG-13",
+          "name": "SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1",
+          "failed": 2,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-14",
+          "name": "SPEC-BUG-14 - [FR-17] code phai la duy nhat - null khong duoc pha vo rang buoc",
+          "failed": 1,
+          "of": 2
+        },
+        {
+          "id": "SPEC-BUG-15",
+          "name": "SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver",
+          "failed": 2,
+          "of": 3
+        },
+        {
+          "id": "SPEC-BUG-16",
+          "name": "SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML",
+          "failed": 2,
+          "of": 3
+        }
+      ],
+      "durationMs": 2185
+    }
+  },
+  "totals": {
+    "requests": 559,
+    "assertions": 942,
+    "failed": 22,
+    "tcTotal": 195,
+    "tcPass": 179,
+    "tcFail": 16
+  }
+}

@@ -1,0 +1,3578 @@
+
+==============================================================
+ api1  |  API1 - PUT /api/users/me (Pool A / FR-04)
+==============================================================
+[reset_db] reset DB tai: C:\HCMUS\Software Testing\group05_eshop\backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+HW06 - EShop API Testing (23127344)
+
+□ 00 - Setup (dang nhap, tao user B, tu ky token gia mao)
+└ SETUP-01 - Dang nhap admin -> tokenAdmin
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 640B, 24ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap admin thanh cong
+  ┌
+  │ '[SETUP] tokenAdmin da luu, admin id=1'
+  └
+
+└ SETUP-02 - Dang nhap user A -> tokenUser
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 635B, 5ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap user A thanh cong
+  ┌
+  │ '[SETUP] tokenUser da luu, user A id=2 role=user'
+  └
+  √  [tien dieu kien] user A phai co role="user" (DB vua reset)
+
+└ SETUP-03 - Tao user B (cho cac test IDOR)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/regis
+  │ ter'
+  └
+  POST http://localhost:3000/api/register [200 OK, 316B, 16ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang ky user B tra 200
+  ┌
+  │ '[SETUP] user B da dang ky, id=3'
+  └
+
+└ SETUP-04 - Dang nhap user B -> tokenUserB
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 643B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap user B thanh cong
+  ┌
+  │ '[SETUP] tokenUserB da luu, user B id=3'
+  └
+
+└ SETUP-05 - Tu ky 7 token gia mao (chung minh SECRET_KEY bi hardcode)
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/produc
+  │ ts'
+  └
+  GET http://localhost:3000/api/products [200 OK, 1.24kB, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  ┌
+  │ `Using "CryptoJS" is deprecated. Use "require('crypto-
+  │ js')" instead.`
+  └
+  √  Da tu ky duoc 7 token gia mao bang secret lay tu ma nguon (SEC-02)
+  GET http://localhost:3000/api/users/me [200 OK, 452B, 3ms]
+  √  Token tu ky duoc SUT chap nhan -> secret hardcode la lo hong that
+
+□ API1 - PUT /api/users/me (Pool A / FR-04)
+└ TC-API1-001 - Cap nhat ho so hop le (happy path)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 16ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Profile updated"}
+  GET http://localhost:3000/api/users/me   GET http://localhost:3000/api/users/me   GET http://localhost:3000/api/users/me [200 OK, 471B, 4ms]
+  √  GET /api/users/me: name = "Nguyen Van A"
+[200 OK, 471B, 7ms]
+  √  GET /api/users/me: phone = "0912345678"
+[200 OK, 471B, 15ms]
+  √  GET /api/users/me: shipping_address = "123 Le Loi"
+
+└ TC-API1-002 - Thieu truong name -> GHI DE thanh null
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Profile updated"}
+  GET http://localhost:3000/api/users/me [200 OK, 461B, 4ms]
+  √  GET /api/users/me: name = null
+
+└ TC-API1-003 - name la chuoi rong
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 459B, 3ms]
+  √  GET /api/users/me: name = ""
+
+└ TC-API1-004 - name sai kieu (number) -> luu thanh chuoi
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 464B, 3ms]
+  √  GET /api/users/me: name = "12345"
+
+└ TC-API1-005 - Thieu truong shipping_address -> GHI DE thanh null
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 463B, 3ms]
+  √  GET /api/users/me: shipping_address = null
+
+└ TC-API1-006 - shipping_address sai kieu (object) -> "[object Object]"
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 476B, 2ms]
+  √  GET /api/users/me: shipping_address = "[object Object]"
+
+└ TC-API1-007 - Gui key camelCase shippingAddress -> bi bo qua
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 463B, 2ms]
+  √  GET /api/users/me: shipping_address = null
+
+└ TC-API1-008 - Thieu truong phone -> GHI DE thanh null
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 463B, 4ms]
+  √  GET /api/users/me: phone = null
+
+└ TC-API1-009 - phone chua ky tu khong phai so
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 473B, 2ms]
+  √  GET /api/users/me: phone = "0912-345-678"
+
+└ TC-API1-010 - phone gui duoi dang JSON number
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 470B, 3ms]
+  √  GET /api/users/me: phone = "912345678"
+
+└ TC-API1-011 - phone khop regex client web nhung trai FR-04
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 470B, 3ms]
+  √  GET /api/users/me: phone = "912345678"
+
+└ TC-API1-012 - Khong gui role (baseline doi chieu SEC-06)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 6ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 471B, 3ms]
+  √  GET /api/users/me: role = "user"
+
+└ TC-API1-013 - Truong la khong duoc nhan dien bi bo qua
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 471B, 3ms]
+  √  GET /api/users/me KHONG co truong foo
+
+└ TC-API1-014 - name/dia chi hop le + phone sai dinh dang
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 464B, 3ms]
+  √  GET /api/users/me: phone = "abc"
+
+└ TC-API1-015 - phone 9 chu so (bien min-1)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 6ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 470B, 3ms]
+  √  GET /api/users/me: phone = "091234567"
+
+└ TC-API1-016 - phone 10 chu so (bien min)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 471B, 3ms]
+  √  GET /api/users/me: phone = "0912345678"
+
+└ TC-API1-017 - phone 11 chu so (bien max)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 472B, 3ms]
+  √  GET /api/users/me: phone = "09123456789"
+
+└ TC-API1-018 - phone 12 chu so (bien max+1)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 473B, 2ms]
+  √  GET /api/users/me: phone = "091234567890"
+
+└ TC-API1-019 - phone dung do dai nhung khong bat dau bang 0
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 471B, 3ms]
+  √  GET /api/users/me: phone = "1912345678"
+
+└ TC-API1-020 - Header Authorization co 2 dau cach -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API1-021 - role la so 0 (falsy) -> KHONG ghi
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 9ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 471B, 2ms]
+  √  GET /api/users/me: role = "user"
+
+└ TC-API1-022 - role la chuoi "0" (truthy) -> BI GHI
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 468B, 3ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  GET /api/users/me: role = "0" roi tra role ve "user"
+
+└ TC-API1-023 - Khong gui header Authorization -> 401 (+ schema 401, gop TC-034)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [401 Unauthorized, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Body JSON khop chinh xac {"error":"Unauthorized"}
+  √  Response co dung 1 key: error
+  √  Schema: chi 1 key error
+
+└ TC-API1-024 - Header khong co dau cach phan tach -> 401
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [401 Unauthorized, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Body JSON khop chinh xac {"error":"Unauthorized"}
+
+└ TC-API1-025 - JWT sai cu phap -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API1-026 - JWT ky bang secret khac -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API1-027 - Token tu ky co exp qua khu -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API1-028 - Token hop le nhung id khong ton tai -> 200 du 0 dong bi ghi
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 13ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Profile updated"}
+  GET http://localhost:3000/api/users/me   GET http://localhost:3000/api/users/me [200 OK, 224B, 4ms]
+  √  GET voi cung token id=999999 tra ve null (khong co dong nao)
+[200 OK, 466B, 5ms]
+  √  GET /api/users/me: name = "Test User"
+
+└ TC-API1-029 - [CRITICAL] Leo thang quyen qua role:"admin" (SEC-06)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Profile updated"}
+  GET http://localhost:3000/api/users/me [200 OK, 472B, 3ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  GET /api/users/me: role = "admin" roi tra role ve "user"
+
+└ TC-API1-030 - role ngoai enum ("superadmin") van duoc luu
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 477B, 2ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 6ms]
+  √  GET /api/users/me: role = "superadmin" roi tra role ve "user"
+
+└ TC-API1-031 - Payload SQL injection trong name (SEC-05)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me   GET http://localhost:3000/api/admin/users [200 OK, 488B, 4ms]
+  √  GET /api/users/me: name = "Robert'); DROP TABLE users;--"
+[200 OK, 699B, 6ms]
+  √  Bang users con nguyen (parameterized query dat)
+
+└ TC-API1-032 - Payload script/XSS trong name (SEC-04)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 484B, 3ms]
+  √  GET /api/users/me: name = "<script>alert(1)</script>"
+
+└ TC-API1-033 - Schema response thanh cong
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 1 key: message
+  √  Schema: chi 1 key message
+
+└ TC-API1-035 - Schema loi 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Response co dung 1 key: error
+  √  Body.error = "Forbidden"
+  √  Schema: chi 1 key error
+
+└ TC-API1-036 - Schema xac minh cua GET /api/users/me (10 truong)
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/users/
+  │ me'
+  └
+  GET http://localhost:3000/api/users/me [200 OK, 471B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Schema: 10 truong cua bang users
+  √  Response co dung 10 key: id, name, email, password, role, login_attempts, locked_until, reset_token, shipping_address, phone
+
+└ TC-API1-037 - Response PUT khong echo truong nao da ghi
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response KHONG chua key "name"
+  √  Response KHONG chua key "shipping_address"
+  √  Response KHONG chua key "phone"
+  √  Response co dung 1 key: message
+
+└ TC-API1-038 - GET /api/users/me lo password plaintext (SEC-01)
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/users/
+  │ me'
+  └
+  GET http://localhost:3000/api/users/me [200 OK, 484B, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response lo truong password dang plaintext (SEC-01)
+
+└ TC-API1-039 - Ngu nghia ghi-de-toan-bo: bo truong se xoa gia tri cu
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  ┌
+  │ '[SETUP] dat shipping_address = SENTINEL-039 (HTTP 200
+  │ )'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me   GET http://localhost:3000/api/users/me [200 OK, 468B, 2ms]
+  √  GET /api/users/me: shipping_address = null
+[200 OK, 468B, 3ms]
+  √  GET /api/users/me: name = "Full Replace Test"
+
+└ TC-API1-040 - Scheme header khong chuan (Basic) van duoc chap nhan
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Profile updated"}
+  GET http://localhost:3000/api/users/me [200 OK, 480B, 2ms]
+  √  GET /api/users/me: name = "Basic Scheme Accepted"
+
+└ TC-API1-041 - Header Authorization rong -> 403 (khong phai 401)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API1-042 - Token mang claim role cu sau khi leo thang (phan ky token/DB)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  ┌
+  │ '[TC-042] claim trong token: {"id":2,"role":"user","ia
+  │ t":1787204317} | role trong DB: admin'
+  └
+  √  Token dang dung van claim role="user" du DB da la admin (phan ky)
+  GET http://localhost:3000/api/users/me   GET http://localhost:3000/api/users/me [200 OK, 472B, 4ms]
+  √  GET /api/users/me: role = "admin"
+[200 OK, 472B, 7ms]
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  GET /api/users/me: role = "admin" roi tra role ve "user"
+
+└ A1-E01 - [TU BO SUNG] JSON sai cu phap -> 400 dang HTML, khong phai JSON
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [400 Bad Request, 1.66kB, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+  √  Body la HTML, KHONG phai JSON co key error
+
+└ A1-E02 - [TU BO SUNG] Khong gui body -> 500 dang HTML
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [500 Internal Server Error, 1.92kB, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 500
+  √  Body la HTML, KHONG phai JSON co key error
+
+└ A1-E03 - [TU BO SUNG] Mao danh id co that de sua ho so nguoi khac (IDOR)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Profile updated"}
+  GET http://localhost:3000/api/users/me   PUT http://localhost:3000/api/users/me [200 OK, 468B, 3ms]
+  √  GET /api/users/me: name = "HACKED BY A1-E03"
+[200 OK, 296B, 7ms]
+  √  [cleanup] tra ten admin ve gia tri seed
+
+└ A1-E04 - [TU BO SUNG] Chuoi leo thang day du: nang quyen -> dang nhap lai -> token moi mang role admin
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me   GET http://localhost:3000/api/admin/users [200 OK, 472B, 4ms]
+[200 OK, 683B, 5ms]
+  √  SEC-03 rieng: GET /api/admin/users khong kiem role nen token role=user van doc duoc
+  POST http://localhost:3000/api/login [200 OK, 657B, 3ms]
+  ┌
+  │ '[A1-E04] token moi sau leo thang: {"id":2,"role":"adm
+  │ in","iat":1787204321}'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  Chuoi leo thang: DB=admin -> dang nhap lai nhan token claim admin -> tra role ve user
+
+└ A1-E05 - [TU BO SUNG] Kiem chung DONG rang email khong sua duoc
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Profile updated"}
+  GET http://localhost:3000/api/users/me [200 OK, 471B, 3ms]
+  √  GET /api/users/me: email KHONG doi
+
+□ 99 - Teardown (don du lieu de chay lai duoc)
+└ TEARDOWN-01 - Xoa toan bo coupon do suite tao ra
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/coupon
+  │ s'
+  └
+  GET http://localhost:3000/api/coupons [200 OK, 874B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  ┌
+  │ '[TEARDOWN] se xoa 0 coupon do suite tao: []'
+  └
+  √  Xoa het coupon do suite tao ra
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  Dua profile user A ve trang thai seed (role=user)
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │             102 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │             104 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │              54 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │             178 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 4.3s                                    │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 16.23kB (approx)                       │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 5ms [min: 2ms, max: 24ms, s.d.: 3ms] │
+└─────────────────────────────────────────────────────────────┘
+[run_newman] api1 ket thuc voi ma thoat 0
+
+==============================================================
+ api2  |  API2 - PUT /api/orders/:id/cancel (Pool B / FR-10)
+==============================================================
+[reset_db] reset DB tai: C:\HCMUS\Software Testing\group05_eshop\backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+HW06 - EShop API Testing (23127344)
+
+□ 00 - Setup (dang nhap, tao user B, tu ky token gia mao)
+└ SETUP-01 - Dang nhap admin -> tokenAdmin
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 640B, 23ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap admin thanh cong
+  ┌
+  │ '[SETUP] tokenAdmin da luu, admin id=1'
+  └
+
+└ SETUP-02 - Dang nhap user A -> tokenUser
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 635B, 5ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap user A thanh cong
+  ┌
+  │ '[SETUP] tokenUser da luu, user A id=2 role=user'
+  └
+  √  [tien dieu kien] user A phai co role="user" (DB vua reset)
+
+└ SETUP-03 - Tao user B (cho cac test IDOR)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/regis
+  │ ter'
+  └
+  POST http://localhost:3000/api/register [200 OK, 316B, 16ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang ky user B tra 200
+  ┌
+  │ '[SETUP] user B da dang ky, id=3'
+  └
+
+└ SETUP-04 - Dang nhap user B -> tokenUserB
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 643B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap user B thanh cong
+  ┌
+  │ '[SETUP] tokenUserB da luu, user B id=3'
+  └
+
+└ SETUP-05 - Tu ky 7 token gia mao (chung minh SECRET_KEY bi hardcode)
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/produc
+  │ ts'
+  └
+  GET http://localhost:3000/api/products [200 OK, 1.24kB, 5ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  ┌
+  │ `Using "CryptoJS" is deprecated. Use "require('crypto-
+  │ js')" instead.`
+  └
+  √  Da tu ky duoc 7 token gia mao bang secret lay tu ma nguon (SEC-02)
+  GET http://localhost:3000/api/users/me [200 OK, 452B, 3ms]
+  √  Token tu ky duoc SUT chap nhan -> secret hardcode la lo hong that
+
+□ API2 - PUT /api/orders/:id/cancel (Pool B / FR-10)
+└ TC-API2-009 - :id = 0 (bien cau truc min-1)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /0/cancel'
+  └
+  PUT http://localhost:3000/api/orders/0/cancel [404 Not Found, 301B, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+
+└ TC-API2-010 - :id = 1 (bien cau truc min)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 9ms]
+  ┌
+  │ '[SETUP] tao don #1 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [200 OK, 308B, 9ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  [tien dieu kien] don vua tao phai co id = 1 (DB vua reset)
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 405B, 4ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-011 - :id = 2 (bien min+1)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #2 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/2/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  [tien dieu kien] don vua tao phai co id = 2 (DB vua reset)
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 542B, 4ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-012 - :id cuc lon (tran so)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /99999999999999999999/cancel'
+  └
+  PUT http://localhost:3000/api/orders/99999999999999999999/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+
+└ TC-API2-001 - Huy don pending (chuyen tiep hop le)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #3 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/3/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 678B, 3ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-002 - :id hop le nhung don khong ton tai
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /999999/cancel'
+  └
+  PUT http://localhost:3000/api/orders/999999/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+
+└ TC-API2-003 - :id khong phai so
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /abc/cancel'
+  └
+  PUT http://localhost:3000/api/orders/abc/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+
+└ TC-API2-004 - :id la segment rong -> 404 tang routing (HTML)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ //cancel'
+  └
+  PUT http://localhost:3000/api/orders//cancel [404 Not Found, 461B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body la HTML, KHONG phai JSON co key error
+
+└ TC-API2-005 - :id am
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /-1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/-1/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+
+└ TC-API2-006 - :id dang thap phan
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1.5/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1.5/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+
+└ TC-API2-007 - :id co ky tu thua -> don goc KHONG bi huy
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}abc/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 16ms]
+  ┌
+  │ '[SETUP] tao don #4 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/4abc/cancel [404 Not Found, 301B, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 813B, 2ms]
+  √  GET /api/orders/my-orders: status = "pending"
+
+└ TC-API2-008 - Body request khong co tac dung
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 8ms]
+  ┌
+  │ '[SETUP] tao don #5 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/5/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 949B, 2ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-013 - Token gia mao id=0 - khong so huu don nao
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 8ms]
+  ┌
+  │ '[SETUP] tao don #6 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/6/cancel [404 Not Found, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 1.08kB, 2ms]
+  √  GET /api/orders/my-orders: status = "pending"
+
+└ TC-API2-014 - Token gia mao id=1 (trung admin thuc) huy don cua admin
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #7 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/7/cancel [200 OK, 308B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 405B, 2ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-015 - Token gia mao id=2 (trung user A thuc)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #8 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/8/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 1.22kB, 3ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-016 - Header Authorization co 2 dau cach -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #9 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/9/cancel [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API2-017 - Huy don confirmed (chuyen tiep hop le)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #10 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/10/status [200 OK, 301B, 9ms]
+  ┌
+  │ '[SETUP] don #10 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/10/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 1.49kB, 2ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-018 - [CRITICAL] Huy don shipping bang token user - trai FR-10
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #11 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/11/status [200 OK, 301B, 8ms]
+  ┌
+  │ '[SETUP] don #11 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/11/status [200 OK, 301B, 8ms]
+  ┌
+  │ '[SETUP] don #11 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/11/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  ┌
+  │ '[BUG] don #11 o trang thai shipping da bi user huy th
+  │ anh cong (HTTP 200)'
+  └
+  √  Ghi nhan vi pham FR-10: don shipping khong duoc phep bi user huy
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 1.63kB, 3ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-019 - Huy don delivered (trang thai ket thuc) -> 400
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #12 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/12/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #12 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/12/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #12 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/12/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #12 -> delivered (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/12/cancel [400 Bad Request, 313B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+  √  Body JSON khop chinh xac {"error":"Cannot cancel this order."}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 1.77kB, 3ms]
+  √  GET /api/orders/my-orders: status = "delivered"
+
+└ TC-API2-020 - Huy don da canceled (trang thai ket thuc) -> 400
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #13 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/13/cancel [200 OK, 308B, 8ms]
+  ┌
+  │ '[SETUP] huy lan 1 don #13 -> HTTP 200'
+  └
+  PUT http://localhost:3000/api/orders/13/cancel [400 Bad Request, 313B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+  √  Body JSON khop chinh xac {"error":"Cannot cancel this order."}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 1.91kB, 3ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-021 - Huy lap: goi 2 lan lien tiep cung don
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #14 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/14/cancel [200 OK, 308B, 7ms]
+  ┌
+  │ '[SETUP] huy lan 1 don #14 -> HTTP 200'
+  └
+  PUT http://localhost:3000/api/orders/14/cancel [400 Bad Request, 313B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Lan huy dau tien tra 200
+  √  Status 400
+  √  Body JSON khop chinh xac {"error":"Cannot cancel this order."}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 2.04kB, 3ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-023 - Route admin TU CHOI shipping -> canceled (doi chung)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/admin/
+  │ orders/{{orderId}}/status'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #15 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/15/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #15 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/15/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #15 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/15/status [400 Bad Request, 338B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+  √  Body.error = "Invalid state transition from shipping to canceled"
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 2.18kB, 3ms]
+  √  GET /api/orders/my-orders: status = "shipping"
+
+└ TC-API2-024 - Route admin CHO PHEP canceled -> delivered (mau thuan FR-10)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/admin/
+  │ orders/{{orderId}}/status'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #16 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/16/cancel [200 OK, 308B, 7ms]
+  ┌
+  │ '[SETUP] huy lan 1 don #16 -> HTTP 200'
+  └
+  PUT http://localhost:3000/api/admin/orders/16/status [200 OK, 301B, 9ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body.message = "Order status updated"
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 2.32kB, 4ms]
+  √  GET /api/orders/my-orders: status = "delivered"
+
+└ TC-API2-025 - Khong gui header Authorization -> 401
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [401 Unauthorized, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Body JSON khop chinh xac {"error":"Unauthorized"}
+
+└ TC-API2-026 - Header Authorization rong -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API2-027 - Header khong co dau cach phan tach -> 401
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [401 Unauthorized, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Body JSON khop chinh xac {"error":"Unauthorized"}
+
+└ TC-API2-028 - Scheme khong chuan (Basic) van duoc chap nhan
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 16ms]
+  ┌
+  │ '[SETUP] tao don #17 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/17/cancel [200 OK, 308B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 2.45kB, 3ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-029 - JWT sai cu phap -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API2-030 - JWT ky bang secret khac -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API2-031 - Token tu ky co exp qua khu -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [403 Forbidden, 295B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API2-032 - Token hop le voi id nguoi dung khong ton tai -> 404
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #18 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/18/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 2.59kB, 3ms]
+  √  GET /api/orders/my-orders: status = "pending"
+
+└ TC-API2-033 - IDOR: user A huy don cua user B -> 404
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #19 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/19/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 405B, 3ms]
+  √  GET /api/orders/my-orders: status = "pending"
+
+└ TC-API2-034 - Admin khong so huu don van bi chan -> 404
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 6ms]
+  ┌
+  │ '[SETUP] tao don #20 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/20/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 2.73kB, 3ms]
+  √  GET /api/orders/my-orders: status = "pending"
+
+└ TC-API2-035 - Payload SQL injection trong :id (SEC-05)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1%20OR%201=1/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #21 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/1%20OR%201=1/cancel [404 Not Found, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  √  Body JSON khop chinh xac {"error":"Order not found"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 2.86kB, 3ms]
+  √  GET /api/orders/my-orders: status = "pending"
+
+└ TC-API2-036 - Schema response thanh cong (khong co id/status)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #22 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/22/cancel [200 OK, 308B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 1 key: message
+  √  Response KHONG chua key "id"
+  √  Response KHONG chua key "status"
+  √  Schema: chi 1 key message
+
+└ TC-API2-037 - Schema loi 401
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [401 Unauthorized, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Response co dung 1 key: error
+  √  Body.error = "Unauthorized"
+  √  Schema: khop dac ta
+
+└ TC-API2-038 - Schema loi 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /1/cancel'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [403 Forbidden, 295B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Response co dung 1 key: error
+  √  Body.error = "Forbidden"
+  √  Schema: khop dac ta
+
+└ TC-API2-039 - Schema 404 GIONG HET nhau cho 2 nguyen nhan khac nhau
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /999999/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #23 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/999999/cancel [404 Not Found, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 404
+  PUT http://localhost:3000/api/orders/23/cancel [404 Not Found, 301B, 3ms]
+  √  Body 404 cua 2 nguyen nhan giong het tung byte
+
+└ TC-API2-040 - Schema 400 GIONG HET nhau cho 2 nguyen nhan khac nhau
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #24 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/24/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #24 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/24/status [200 OK, 301B, 10ms]
+  ┌
+  │ '[SETUP] don #24 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/24/status [200 OK, 301B, 8ms]
+  ┌
+  │ '[SETUP] don #24 -> delivered (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/24/cancel [400 Bad Request, 313B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+  √  Body JSON khop chinh xac {"error":"Cannot cancel this order."}
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  PUT http://localhost:3000/api/orders/25/cancel [200 OK, 308B, 7ms]
+  PUT http://localhost:3000/api/orders/25/cancel [400 Bad Request, 313B, 3ms]
+  √  Body 400 cua don canceled giong het body 400 cua don delivered
+
+└ TC-API2-041 - Response PUT khong chua trang thai - phai verify bang GET
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #26 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/26/cancel [200 OK, 308B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response KHONG chua key "status"
+  √  Response co dung 1 key: message
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 3.4kB, 3ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ TC-API2-042 - GET /api/orders/:id doc duoc KHONG can token (SEC-02 o endpoint ke)
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/orders
+  │ /{{orderId}}'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #27 (pending)'
+  └
+  GET http://localhost:3000/api/orders/27 [200 OK, 403B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Tra ve full don hang cho nguoi khong dang nhap
+
+└ A2-E01 - [TU BO SUNG] Mat cap nhat khi huy don va admin doi trang thai chong nhau
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 8ms]
+  ┌
+  │ '[SETUP] tao don #28 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/28/status [200 OK, 301B, 8ms]
+  ┌
+  │ '[SETUP] don #28 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/28/status [200 OK, 301B, 8ms]
+  ┌
+  │ '[SETUP] don #28 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/28/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  PUT http://localhost:3000/api/admin/orders/28/status [200 OK, 301B, 7ms]
+  GET http://localhost:3000/api/orders/28 [200 OK, 405B, 3ms]
+  ┌
+  │ '[BUG] don #28: huy 200 + set delivered 200 -> viec hu
+  │ y bi mat, trang thai cuoi = delivered'
+  └
+  √  Admin van set duoc delivered sau khi don da bi huy -> viec huy bi MAT
+
+└ A2-E02 - [TU BO SUNG] Vuot chan ownership bang token mao danh chu don
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #29 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/29/cancel [200 OK, 308B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  GET http://localhost:3000/api/orders/my-orders [200 OK, 3.81kB, 3ms]
+  √  GET /api/orders/my-orders: status = "canceled"
+
+└ A2-E03 - [TU BO SUNG] Chuoi 2 lo hong: user huy don shipping -> admin hoi sinh thanh delivered
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #30 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/30/status [200 OK, 301B, 8ms]
+  ┌
+  │ '[SETUP] don #30 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/30/status [200 OK, 301B, 9ms]
+  ┌
+  │ '[SETUP] don #30 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/30/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  PUT http://localhost:3000/api/admin/orders/30/status [200 OK, 301B, 7ms]
+  GET http://localhost:3000/api/admin/orders [200 OK, 5.08kB, 3ms]
+  ┌
+  │ '[BUG] don #30 bi user huy o trang thai shipping roi d
+  │ uoc admin hoi sinh thanh delivered -> tinh vao doanh t
+  │ hu FR-13'
+  └
+  √  Buoc 2+3: admin set delivered tren don da canceled roi don do vao danh sach admin voi status delivered (FR-13)
+
+└ A2-E05 - [TU BO SUNG] Thong bao loi 400 khong "phu hop" nhu FR-10 doi hoi
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #31 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/31/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #31 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/31/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #31 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/31/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #31 -> delivered (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/31/cancel [400 Bad Request, 313B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+  √  Body JSON khop chinh xac {"error":"Cannot cancel this order."}
+  √  Thong bao khong he cho biet don o trang thai nao
+
+└ A2-E04 - [TU BO SUNG] Huy don mo coi sau khi admin xoa chu don
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 313B, 7ms]
+  ┌
+  │ '[SETUP] tao don #32 (pending)'
+  └
+  DELETE http://localhost:3000/api/admin/users/3 [200 OK, 293B, 6ms]
+  ┌
+  │ '[SETUP] xoa user B (id=3) -> HTTP 200'
+  └
+  PUT http://localhost:3000/api/orders/32/cancel [200 OK, 308B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Order canceled successfully"}
+  √  Token cua user da bi xoa VAN verify duoc (server.js:51 khong co exp)
+  GET http://localhost:3000/api/orders/32 [200 OK, 404B, 2ms]
+  √  GET /api/orders/:id: status = "canceled"
+
+□ 99 - Teardown (don du lieu de chay lai duoc)
+└ TEARDOWN-01 - Xoa toan bo coupon do suite tao ra
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/coupon
+  │ s'
+  └
+  GET http://localhost:3000/api/coupons [200 OK, 874B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  ┌
+  │ '[TEARDOWN] se xoa 0 coupon do suite tao: []'
+  └
+  √  Xoa het coupon do suite tao ra
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 3ms]
+  √  Dua profile user A ve trang thai seed (role=user)
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │             138 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │             104 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │              83 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │             193 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 5.8s                                    │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 43.92kB (approx)                       │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 5ms [min: 2ms, max: 23ms, s.d.: 3ms] │
+└─────────────────────────────────────────────────────────────┘
+[run_newman] api2 ket thuc voi ma thoat 0
+
+==============================================================
+ api3  |  API3 - POST /api/admin/coupons (Pool C / FR-17)
+==============================================================
+[reset_db] reset DB tai: C:\HCMUS\Software Testing\group05_eshop\backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+HW06 - EShop API Testing (23127344)
+
+□ 00 - Setup (dang nhap, tao user B, tu ky token gia mao)
+└ SETUP-01 - Dang nhap admin -> tokenAdmin
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 640B, 24ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap admin thanh cong
+  ┌
+  │ '[SETUP] tokenAdmin da luu, admin id=1'
+  └
+
+└ SETUP-02 - Dang nhap user A -> tokenUser
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 635B, 5ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap user A thanh cong
+  ┌
+  │ '[SETUP] tokenUser da luu, user A id=2 role=user'
+  └
+  √  [tien dieu kien] user A phai co role="user" (DB vua reset)
+
+└ SETUP-03 - Tao user B (cho cac test IDOR)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/regis
+  │ ter'
+  └
+  POST http://localhost:3000/api/register [200 OK, 316B, 9ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang ky user B tra 200
+  ┌
+  │ '[SETUP] user B da dang ky, id=3'
+  └
+
+└ SETUP-04 - Dang nhap user B -> tokenUserB
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 643B, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap user B thanh cong
+  ┌
+  │ '[SETUP] tokenUserB da luu, user B id=3'
+  └
+
+└ SETUP-05 - Tu ky 7 token gia mao (chung minh SECRET_KEY bi hardcode)
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/produc
+  │ ts'
+  └
+  GET http://localhost:3000/api/products [200 OK, 1.24kB, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  ┌
+  │ `Using "CryptoJS" is deprecated. Use "require('crypto-
+  │ js')" instead.`
+  └
+  √  Da tu ky duoc 7 token gia mao bang secret lay tu ma nguon (SEC-02)
+  GET http://localhost:3000/api/users/me [200 OK, 452B, 3ms]
+  √  Token tu ky duoc SUT chap nhan -> secret hardcode la lo hong that
+
+□ API3 - POST /api/admin/coupons (Pool C / FR-17)
+└ TC-API3-001 - Tao coupon hop le (happy path)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 17ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 1.02kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co code = "TESTNEW01"
+
+└ TC-API3-002 - Thieu code -> luu null (khong co not-null check)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 10ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 1.16kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co code = null
+
+└ TC-API3-003 - code rong
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 1.3kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co code = ""
+
+└ TC-API3-004 - Trung code voi coupon da seed (UNIQUE duoc thuc thi)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 355B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 500
+  √  Response co dung 1 key: error
+  √  Thong bao loi lo nguyen van rang buoc SQLite (thong tin noi bo)
+
+└ TC-API3-005 - Thieu type -> luu null (DEFAULT percent bat hoat)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 1.45kB, 2ms]
+  √  GET /api/coupons: coupon vua tao co type = null
+
+└ TC-API3-006 - type ngoai enum -> luu nguyen van
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 1.6kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co type = "installment"
+
+└ TC-API3-007 - Thieu discount_value -> luu null
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 1.75kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = null
+
+└ TC-API3-008 - discount_value sai kieu (string "10") -> INTEGER affinity ep thanh 10
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 1.9kB, 2ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 10
+
+└ TC-API3-009 - Thieu min_order_amount -> luu null (KHONG phai DEFAULT 0)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 2.05kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co min_order_amount = null
+
+└ TC-API3-010 - Thieu expired_at -> luu null
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 2.19kB, 2ms]
+  √  GET /api/coupons: coupon vua tao co expired_at = null
+
+└ TC-API3-011 - expired_at la ngay qua khu -> van tao duoc
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 2.34kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co expired_at = "2020-01-01"
+
+└ TC-API3-012 - expired_at sai dinh dang
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 2.49kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co expired_at = "not-a-date"
+
+└ TC-API3-013 - Thieu max_uses_per_user -> ep thanh 1
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 2.64kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1
+
+└ TC-API3-014 - Gui kem is_active -> bi bo qua
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 2.79kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co is_active = 1
+
+└ TC-API3-015 - discount_value = 0 (bien min-1 cua rang buoc >0)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 2.93kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 0
+
+└ TC-API3-016 - discount_value = 1 (bien min)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 3.08kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 1
+
+└ TC-API3-017 - min_order_amount = -1 (bien min-1 cua >=0)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 3.23kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co min_order_amount = -1
+
+└ TC-API3-018 - min_order_amount = 0 (bien min, bao gom)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 3.37kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co min_order_amount = 0
+
+└ TC-API3-019 - max_uses_per_user = 0 (so) -> bi ep thanh 1
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 3.52kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1
+
+└ TC-API3-020 - max_uses_per_user = "0" (chuoi) -> vuot || 1 va bi SQLite ep ve so 0
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 3.67kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 0
+
+└ TC-API3-021 - max_uses_per_user = 1 (bien min)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 3.82kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1
+
+└ TC-API3-022 - max_uses_per_user = -5 -> KHONG bi ep
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 3.97kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = -5
+
+└ TC-API3-023 - discount_value cuc lon
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 4.12kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 999999999
+
+└ TC-API3-024 - Header Authorization co 2 dau cach -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API3-025 - Tao lai coupon voi code da bi xoa -> id MOI
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  ┌
+  │ '[SETUP] tao coupon id=27 code=RECREATE01'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/27 [200 OK, 295B, 7ms]
+  ┌
+  │ '[SETUP] xoa coupon id=27 -> HTTP 200'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  √  id moi khac id cua coupon da bi xoa
+  GET http://localhost:3000/api/coupons [200 OK, 4.27kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co code = "RECREATE01"
+
+└ TC-API3-026 - Trung code khi coupon van con ton tai -> 500
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  ┌
+  │ '[SETUP] tao coupon id=29 code=DUPTEST01'
+  └
+  POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 355B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 500
+  √  Loi UNIQUE tren coupons.code
+
+└ TC-API3-027 - Xoa coupon da bi xoa (idempotent am tham)
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/{{dupId2}}'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  ┌
+  │ '[SETUP] tao coupon id=30 code=DELTWICE01'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/30 [200 OK, 295B, 6ms]
+  ┌
+  │ '[SETUP] xoa coupon id=30 -> HTTP 200'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/30 [200 OK, 295B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Coupon deleted"}
+  √  Response co dung 1 key: message
+
+└ TC-API3-028 - Khong gui header Authorization -> 401
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [401 Unauthorized, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Body JSON khop chinh xac {"error":"Unauthorized"}
+
+└ TC-API3-029 - [CRITICAL] User thuong tao duoc coupon - vi pham SEC-03
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 10ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 4.57kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co code = "USERMADE01"
+
+└ TC-API3-030 - User thuong XOA duoc coupon do admin tao
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/{{userDelId}}'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  ┌
+  │ '[SETUP] tao coupon id=32 code=ADMINOWNED01'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/32 [200 OK, 295B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Coupon deleted"}
+  GET http://localhost:3000/api/coupons [200 OK, 4.57kB, 4ms]
+  √  Coupon that su bien mat khoi GET /api/coupons
+
+└ TC-API3-031 - User thuong doc duoc GET /api/coupons khong loc
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/coupon
+  │ s'
+  └
+  GET http://localhost:3000/api/coupons [200 OK, 4.57kB, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/coupons [200 OK, 4.57kB, 3ms]
+  √  Tra ve danh sach coupon day du y het admin
+
+└ TC-API3-032 - Token gia mao claim role:"admin"
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 4.73kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co code = "FORGEDROLE01"
+
+└ TC-API3-033 - Payload SQL injection trong code (SEC-05)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons   GET http://localhost:3000/api/coupons [200 OK, 4.89kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co code = "'; DROP TABLE coupons;--"
+[200 OK, 4.89kB, 13ms]
+  √  Bang coupons con nguyen (parameterized query dat)
+
+└ TC-API3-034 - Chuoi lam dung: user thuong tao coupon gia tri cuc lon
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 6ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons   GET http://localhost:3000/api/coupons [200 OK, 5.06kB, 5ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 999999999
+[200 OK, 5.06kB, 20ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 999999999
+
+└ TC-API3-035 - JWT sai cu phap -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API3-036 - Schema response POST thanh cong (message + id)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Schema: message:string + id:int>0
+  √  Ghi nhan id coupon de teardown
+
+└ TC-API3-037 - Schema response DELETE thanh cong
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/{{schemaDelId}}'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  ┌
+  │ '[SETUP] tao coupon id=37 code=SCHEMA02'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/37 [200 OK, 295B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 1 key: message
+  √  Body.message = "Coupon deleted"
+  √  Schema: khop dac ta
+
+└ TC-API3-038 - Schema loi 401
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [401 Unauthorized, 301B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Response co dung 1 key: error
+  √  Body.error = "Unauthorized"
+  √  Schema: khop dac ta
+
+└ TC-API3-039 - Schema loi 500 khi trung code - lo text driver
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 9ms]
+  ┌
+  │ '[SETUP] tao coupon id=38 code=SCHEMA03'
+  └
+  POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 355B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 500
+  √  Response co dung 1 key: error
+  √  Schema: khop dac ta
+  √  error chua nguyen van thong bao cua SQLite (ro ri thong tin noi bo)
+
+└ TC-API3-041 - DELETE id khong ton tai -> 200, KHONG phai 404
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/999999'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/999999 [200 OK, 295B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Coupon deleted"}
+
+└ TC-API3-044 - Chuoi don du lieu: tao -> xoa -> verify (xac thuc co che teardown)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  DELETE http://localhost:3000/api/admin/coupons/39 [200 OK, 295B, 7ms]
+  GET http://localhost:3000/api/coupons [200 OK, 5.35kB, 3ms]
+  √  Tao -> xoa -> GET khong con thay code CLEANUPTEST01
+
+└ TC-API3-045 - type:"fixed" - gia tri enum hop le THU HAI
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons   GET http://localhost:3000/api/coupons [200 OK, 5.5kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co type = "fixed"
+[200 OK, 5.5kB, 14ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 50000
+
+└ TC-API3-046 - code la null
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 5.64kB, 2ms]
+  √  GET /api/coupons: coupon vua tao co code = null
+
+└ TC-API3-047 - code khac hoa/thuong voi ma da ton tai
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 5.79kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co code = "save10"
+
+└ TC-API3-048 - type la chuoi rong
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 6ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 5.94kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co type = ""
+
+└ TC-API3-049 - type la null
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 6.08kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co type = null
+
+└ TC-API3-050 - discount_value la null
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 6.24kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = null
+
+└ TC-API3-051 - discount_value am
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 6.39kB, 2ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = -10
+
+└ TC-API3-052 - min_order_amount la null
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 6.54kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co min_order_amount = null
+
+└ TC-API3-053 - min_order_amount duong (phan vung hop le ngoai bien)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 6.69kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co min_order_amount = 200000
+
+└ TC-API3-054 - expired_at la null
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 6.84kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co expired_at = null
+
+└ TC-API3-055 - expired_at la chuoi rong
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 9ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 6.98kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co expired_at = ""
+
+└ TC-API3-056 - max_uses_per_user la null -> ep thanh 1
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 7.13kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1
+
+└ TC-API3-057 - max_uses_per_user la chuoi rong -> ep thanh 1
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 7.28kB, 2ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1
+
+└ TC-API3-058 - Bien cheo: percent + discount_value = 100
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 7.43kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 100
+
+└ TC-API3-059 - Bien cheo: percent + discount_value = 101 (vuot tran khai niem)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 7.58kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 101
+
+└ TC-API3-060 - Bien cheo: type ngoai enum + discount_value
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 7.73kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co type = "installment"
+
+└ TC-API3-061 - Header Authorization rong -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API3-062 - Header khong co dau cach phan tach -> 401
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [401 Unauthorized, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Body JSON khop chinh xac {"error":"Unauthorized"}
+
+└ TC-API3-063 - Scheme khong chuan (Basic) van duoc chap nhan
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 14ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 7.88kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co code = "HW06BASIC"
+
+└ TC-API3-064 - JWT ky bang secret khac -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [403 Forbidden, 295B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API3-065 - Token tu ky co exp qua khu -> 403
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [403 Forbidden, 295B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 403
+  √  Body JSON khop chinh xac {"error":"Forbidden"}
+
+└ TC-API3-066 - Body JSON rong {} -> tao duoc coupon RONG
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons   GET http://localhost:3000/api/coupons   GET http://localhost:3000/api/coupons   GET http://localhost:3000/api/coupons   GET http://localhost:3000/api/coupons [200 OK, 8.02kB, 7ms]
+  √  GET /api/coupons: coupon vua tao co code = null
+[200 OK, 8.02kB, 20ms]
+  √  GET /api/coupons: coupon vua tao co type = null
+[200 OK, 8.02kB, 35ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = null
+[200 OK, 8.02kB, 47ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1
+[200 OK, 8.02kB, 59ms]
+  √  GET /api/coupons: coupon vua tao co expired_at = null
+
+└ TC-API3-067 - Khong gui body / sai Content-Type -> 500 dang HTML
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 1.92kB, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 500
+  √  Body la HTML, KHONG phai JSON co key error
+
+└ TC-API3-068 - JSON sai cu phap -> 400 dang HTML (bodyParser)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [400 Bad Request, 1.66kB, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+  √  Body la HTML, KHONG phai JSON co key error
+
+└ TC-API3-069 - DELETE khong gui token -> 401
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/5'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/5 [401 Unauthorized, 301B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 401
+  √  Body JSON khop chinh xac {"error":"Unauthorized"}
+
+└ TC-API3-070 - DELETE voi :id khong phai so -> 200 du khong xoa gi
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/abc'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/abc [200 OK, 295B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Coupon deleted"}
+  GET http://localhost:3000/api/coupons [200 OK, 8.02kB, 3ms]
+  √  Khong coupon nao bi xoa (so luong khong doi)
+
+└ TC-API3-071 - DELETE voi payload SQL injection trong :id
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/1%20OR%201=1'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/1%20OR%201=1 [200 OK, 295B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Coupon deleted"}
+  GET http://localhost:3000/api/coupons [200 OK, 8.02kB, 3ms]
+  √  Coupon seed id=1 (SAVE10) KHONG bi xoa - tham so hoa dat
+
+└ TC-API3-072 - code rat dai (5.000 ky tu)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 16ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 13.16kB, 3ms]
+  √  GET /api/coupons: code luu dung 5000 ky tu
+
+└ TC-API3-073 - code chi chua khoang trang
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 13.3kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co code = "   "
+
+└ TC-API3-074 - code sai kieu (number) -> luu thanh chuoi
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 13.45kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co code = "12345"
+
+└ TC-API3-075 - type sai kieu (number) -> luu thanh chuoi "1"
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 13.59kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co type = "1"
+
+└ TC-API3-076 - discount_value la so thap phan -> luu nguyen 10.5
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 13.74kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co discount_value = 10.5
+
+└ TC-API3-077 - min_order_amount sai kieu (boolean true) -> luu 1
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 13.89kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co min_order_amount = 1
+
+└ TC-API3-078 - expired_at co kem phan gio
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 14.05kB, 2ms]
+  √  GET /api/coupons: coupon vua tao co expired_at = "2099-12-31T23:59:59Z"
+
+└ TC-API3-079 - expired_at sai kieu (timestamp so) -> luu nguyen so
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 14.2kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co expired_at = 1735689600
+
+└ TC-API3-080 - max_uses_per_user la so thap phan -> luu nguyen 1.5
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 14.35kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1.5
+
+└ TC-API3-081a - max_uses_per_user = false -> ep thanh 1 (qua || 1)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 14.5kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1
+
+└ TC-API3-081b - max_uses_per_user = true -> cung luu 1 nhung KHAC co che
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 14.65kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 1
+
+└ TC-API3-082 - max_uses_per_user cuc lon
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons [200 OK, 14.81kB, 3ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 999999999
+
+└ A3-E01 - [TU BO SUNG] So 0 van lot vao DB qua nga chuoi, vo hieu hoa chinh co che || 1
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  GET http://localhost:3000/api/coupons   POST http://localhost:3000/api/admin/coupons [200 OK, 14.96kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co max_uses_per_user = 0
+[200 OK, 303B, 24ms]
+  GET http://localhost:3000/api/coupons [200 OK, 15.11kB, 3ms]
+  √  Doi chieu: gui so 0 thi thanh 1, gui chuoi "0" thi thanh 0
+
+└ A3-E02 - [TU BO SUNG] Coupon max_uses_per_user = 0 khien FR-09 chan vinh vien
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/apply
+  │ -coupon'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  ┌
+  │ '[SETUP] tao coupon id=72 code=A3E02ZERO'
+  └
+  POST http://localhost:3000/api/apply-coupon [400 Bad Request, 354B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+  √  Bi tu choi ngay lan dung DAU TIEN (usage_count 0 >= max 0)
+  ┌
+  │ '[BUG] coupon A3E02ZERO co max_uses_per_user = 0 -> vi
+  │ nh vien khong dung duoc: {"error":"Bạn đã sử dụng mã n
+  │ ày 0 lần (đã đạt giới hạn)"}'
+  └
+  √  Ghi nhan: coupon vua tao khong bao gio dung duoc
+
+└ A3-E03 - [TU BO SUNG] code:null tao duoc nhieu lan, pha vo rang buoc unique cua FR-17
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  ┌
+  │ '[SETUP] tao coupon id=73 code=null'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Response co dung 2 key: message, id
+  √  Body.message = "Coupon created"
+  √  Ghi nhan id coupon de teardown
+  ┌
+  │ '[BUG] 2 coupon code=null cung ton tai: id 73 va 74'
+  └
+  √  Ca hai lan goi deu thanh cong voi id khac nhau (SQL coi moi NULL la khac biet)
+  GET http://localhost:3000/api/coupons [200 OK, 15.54kB, 4ms]
+  √  GET /api/coupons: coupon vua tao co code = null
+
+└ A3-E05 - [TU BO SUNG] discount_value am tao coupon LAM TANG tien phai tra
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/apply
+  │ -coupon'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 7ms]
+  ┌
+  │ '[SETUP] tao coupon id=75 code=A3E05NEG'
+  └
+  POST http://localhost:3000/api/apply-coupon [200 OK, 402B, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  final_amount = 550000 > total_amount = 500000 (giam gia lam tang tien)
+
+└ A3-E04 - [TU BO SUNG] User thuong xoa coupon SEED cua he thong (SAVE10)
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/1'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/1 [200 OK, 295B, 6ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  √  Body JSON khop chinh xac {"message":"Coupon deleted"}
+  GET http://localhost:3000/api/coupons [200 OK, 15.54kB, 3ms]
+  ┌
+  │ '[BUG] coupon seed SAVE10 da bi mot user role=user xoa
+  │ '
+  └
+  √  SAVE10 bien mat khoi GET /api/coupons - user thuong pha duoc du lieu goc
+
+□ 99 - Teardown (don du lieu de chay lai duoc)
+└ TEARDOWN-01 - Xoa toan bo coupon do suite tao ra
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/coupon
+  │ s'
+  └
+  GET http://localhost:3000/api/coupons [200 OK, 15.54kB, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  ┌
+  │ '[TEARDOWN] se xoa 70 coupon do suite tao: [5,6,7,8,9,
+  │ 10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,
+  │ 28,29,30,31,32,33,34,35,36,37,38,40,41,42,43,44,45,46,
+  │ 47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,
+  │ 65,66,67,68,69,70,71,72,73,74,75]'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/5   PUT http://localhost:3000/api/users/me [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/6 [200 OK, 296B, 9ms]
+  √  Dua profile user A ve trang thai seed (role=user)
+[200 OK, 295B, 8ms]
+  DELETE http://localhost:3000/api/admin/coupons/7 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/8 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/9 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/10 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/11 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/12 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/13 [200 OK, 295B, 8ms]
+  DELETE http://localhost:3000/api/admin/coupons/14 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/15 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/16 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/17 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/18 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/19 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/20 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/21 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/22 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/23 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/24 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/25 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/26 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/27 [200 OK, 295B, 2ms]
+  DELETE http://localhost:3000/api/admin/coupons/28 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/29 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/30 [200 OK, 295B, 4ms]
+  DELETE http://localhost:3000/api/admin/coupons/31 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/32 [200 OK, 295B, 2ms]
+  DELETE http://localhost:3000/api/admin/coupons/33 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/34 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/35 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/36 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/37 [200 OK, 295B, 3ms]
+  DELETE http://localhost:3000/api/admin/coupons/38 [200 OK, 295B, 8ms]
+  DELETE http://localhost:3000/api/admin/coupons/40 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/41 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/42 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/43 [200 OK, 295B, 8ms]
+  DELETE http://localhost:3000/api/admin/coupons/44 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/45 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/46 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/47 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/48 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/49 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/50 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/51 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/52 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/53 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/54 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/55 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/56 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/57 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/58 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/59 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/60 [200 OK, 295B, 8ms]
+  DELETE http://localhost:3000/api/admin/coupons/61 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/62 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/63 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/64 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/65 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/66 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/67 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/68 [200 OK, 295B, 9ms]
+  DELETE http://localhost:3000/api/admin/coupons/69 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/70 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/71 [200 OK, 295B, 6ms]
+  DELETE http://localhost:3000/api/admin/coupons/72 [200 OK, 295B, 8ms]
+  DELETE http://localhost:3000/api/admin/coupons/73 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/74 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/75 [200 OK, 295B, 7ms]
+  √  Xoa het coupon do suite tao ra
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │             249 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │             182 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │             100 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │             472 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 10.6s                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 518.95kB (approx)                      │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 6ms [min: 2ms, max: 59ms, s.d.: 5ms] │
+└─────────────────────────────────────────────────────────────┘
+[run_newman] api3 ket thuc voi ma thoat 0
+
+==============================================================
+ data-driven  |  Collection Runner + data file CSV
+==============================================================
+[reset_db] reset DB tai: C:\HCMUS\Software Testing\group05_eshop\backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+HW06 - EShop API Testing (23127344)
+
+Iteration 1/6
+
+□ DATA1 - Chay theo du lieu: phone (FR-04)
+└ DD-API1-PHONE - Bien phone doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 35ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status = 200 (dong CSV DD-P01)
+  ┌
+  │ '[DATA] DD-P01 phone=91234567 hopLeTheoFR04=false | bi
+  │ en min-1 theo FR-04 (ky vong dac ta: tu choi)'
+  └
+  √  FR-04 (10-11 chu so, bat dau 0) KHONG duoc thuc thi o backend
+  GET http://localhost:3000/api/users/me [200 OK, 475B, 4ms]
+  √  GET /api/users/me luu dung gia tri phone tu CSV
+
+Iteration 2/6
+
+└ DD-API1-PHONE - Bien phone doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status = 200 (dong CSV DD-P02)
+  ┌
+  │ '[DATA] DD-P02 phone=912345678 hopLeTheoFR04=false | b
+  │ ien min - hop le theo ca FR-04 va backend'
+  └
+  √  FR-04 (10-11 chu so, bat dau 0) KHONG duoc thuc thi o backend
+  GET http://localhost:3000/api/users/me [200 OK, 476B, 3ms]
+  √  GET /api/users/me luu dung gia tri phone tu CSV
+
+Iteration 3/6
+
+└ DD-API1-PHONE - Bien phone doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status = 200 (dong CSV DD-P03)
+  ┌
+  │ '[DATA] DD-P03 phone=9123456789 hopLeTheoFR04=false | 
+  │ bien max - hop le theo ca FR-04 va backend'
+  └
+  √  FR-04 (10-11 chu so, bat dau 0) KHONG duoc thuc thi o backend
+  GET http://localhost:3000/api/users/me [200 OK, 477B, 2ms]
+  √  GET /api/users/me luu dung gia tri phone tu CSV
+
+Iteration 4/6
+
+└ DD-API1-PHONE - Bien phone doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status = 200 (dong CSV DD-P04)
+  ┌
+  │ '[DATA] DD-P04 phone=91234567890 hopLeTheoFR04=false |
+  │  bien max+1 (ky vong dac ta: tu choi)'
+  └
+  √  FR-04 (10-11 chu so, bat dau 0) KHONG duoc thuc thi o backend
+  GET http://localhost:3000/api/users/me [200 OK, 478B, 3ms]
+  √  GET /api/users/me luu dung gia tri phone tu CSV
+
+Iteration 5/6
+
+└ DD-API1-PHONE - Bien phone doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 10ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status = 200 (dong CSV DD-P05)
+  ┌
+  │ '[DATA] DD-P05 phone=1912345678 hopLeTheoFR04=false | 
+  │ dung do dai nhung khong bat dau bang 0'
+  └
+  √  FR-04 (10-11 chu so, bat dau 0) KHONG duoc thuc thi o backend
+  GET http://localhost:3000/api/users/me [200 OK, 477B, 3ms]
+  √  GET /api/users/me luu dung gia tri phone tu CSV
+
+Iteration 6/6
+
+└ DD-API1-PHONE - Bien phone doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status = 200 (dong CSV DD-P06)
+  ┌
+  │ '[DATA] DD-P06 phone=0912-345-678 hopLeTheoFR04=false 
+  │ | co ky tu khong phai so'
+  └
+  √  FR-04 (10-11 chu so, bat dau 0) KHONG duoc thuc thi o backend
+  GET http://localhost:3000/api/users/me [200 OK, 479B, 3ms]
+  √  GET /api/users/me luu dung gia tri phone tu CSV
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               6 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              12 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              12 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               6 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              24 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 617ms                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 1.43kB (approx)                        │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 7ms [min: 2ms, max: 35ms, s.d.: 8ms] │
+└─────────────────────────────────────────────────────────────┘
+HW06 - EShop API Testing (23127344)
+
+Iteration 1/6
+
+□ DATA3 - Chay theo du lieu: coupon (FR-17)
+└ DD-API3-COUPON - Bien coupon doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 29ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Tao coupon thanh cong (dong CSV DD-C01)
+  GET http://localhost:3000/api/coupons [200 OK, 1.02kB, 4ms]
+  ┌
+  │ '[DATA] DD-C01 gui=1 -> luu=1 | bien min hop le'
+  └
+  √  max_uses_per_user luu thanh 1
+
+Iteration 2/6
+
+└ DD-API3-COUPON - Bien coupon doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Tao coupon thanh cong (dong CSV DD-C02)
+  GET http://localhost:3000/api/coupons [200 OK, 1.17kB, 4ms]
+  ┌
+  │ "[DATA] DD-C02 gui=0 -> luu=0 | CSV chi truyen duoc CH
+  │ UOI: '0' la truthy nen vuot co che || 1 roi bi SQLite 
+  │ ep ve so 0. Nhanh so 0 (JSON number) nam o TC-API3-019
+  │ ."
+  └
+  √  max_uses_per_user luu thanh 0
+
+Iteration 3/6
+
+└ DD-API3-COUPON - Bien coupon doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Tao coupon thanh cong (dong CSV DD-C03)
+  GET http://localhost:3000/api/coupons [200 OK, 1.31kB, 2ms]
+  ┌
+  │ '[DATA] DD-C03 gui=-5 -> luu=-5 | so am truthy nen KHO
+  │ NG bi ep'
+  └
+  √  max_uses_per_user luu thanh -5
+
+Iteration 4/6
+
+└ DD-API3-COUPON - Bien coupon doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Tao coupon thanh cong (dong CSV DD-C04)
+  GET http://localhost:3000/api/coupons [200 OK, 1.46kB, 3ms]
+  ┌
+  │ '[DATA] DD-C04 gui=1.5 -> luu=1.5 | so thap phan luu n
+  │ guyen (REAL)'
+  └
+  √  max_uses_per_user luu thanh 1.5
+
+Iteration 5/6
+
+└ DD-API3-COUPON - Bien coupon doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Tao coupon thanh cong (dong CSV DD-C05)
+  GET http://localhost:3000/api/coupons [200 OK, 1.62kB, 4ms]
+  ┌
+  │ '[DATA] DD-C05 gui=999999999 -> luu=999999999 | khong 
+  │ co gioi han tren'
+  └
+  √  max_uses_per_user luu thanh 999999999
+
+Iteration 6/6
+
+└ DD-API3-COUPON - Bien coupon doc tu data file CSV (newman -d)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 303B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Tao coupon thanh cong (dong CSV DD-C06)
+  GET http://localhost:3000/api/coupons [200 OK, 1.76kB, 3ms]
+  ┌
+  │ '[DATA] DD-C06 gui=2 -> luu=2 | gia tri hop le thong t
+  │ huong'
+  └
+  √  max_uses_per_user luu thanh 2
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               6 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              12 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              12 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               6 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              18 │               0 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 508ms                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 6.94kB (approx)                        │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 7ms [min: 2ms, max: 29ms, s.d.: 6ms] │
+└─────────────────────────────────────────────────────────────┘
+
+==============================================================
+ spec  |  SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug)
+==============================================================
+[reset_db] reset DB tai: C:\HCMUS\Software Testing\group05_eshop\backend
+[reset_db] OK sau 1 lan kiem tra: user A role=user, 4 coupon seed, 0 don hang.
+HW06 - EShop API Testing (23127344)
+
+□ 00 - Setup (dang nhap, tao user B, tu ky token gia mao)
+└ SETUP-01 - Dang nhap admin -> tokenAdmin
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 640B, 25ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap admin thanh cong
+  ┌
+  │ '[SETUP] tokenAdmin da luu, admin id=1'
+  └
+
+└ SETUP-02 - Dang nhap user A -> tokenUser
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 635B, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap user A thanh cong
+  ┌
+  │ '[SETUP] tokenUser da luu, user A id=2 role=user'
+  └
+  √  [tien dieu kien] user A phai co role="user" (DB vua reset)
+
+└ SETUP-03 - Tao user B (cho cac test IDOR)
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/regis
+  │ ter'
+  └
+  POST http://localhost:3000/api/register [200 OK, 316B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang ky user B tra 200
+  ┌
+  │ '[SETUP] user B da dang ky, id=3'
+  └
+
+└ SETUP-04 - Dang nhap user B -> tokenUserB
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/login
+  │ '
+  └
+  POST http://localhost:3000/api/login [200 OK, 643B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Dang nhap user B thanh cong
+  ┌
+  │ '[SETUP] tokenUserB da luu, user B id=3'
+  └
+
+└ SETUP-05 - Tu ky 7 token gia mao (chung minh SECRET_KEY bi hardcode)
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/produc
+  │ ts'
+  └
+  GET http://localhost:3000/api/products [200 OK, 1.24kB, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  ┌
+  │ `Using "CryptoJS" is deprecated. Use "require('crypto-
+  │ js')" instead.`
+  └
+  √  Da tu ky duoc 7 token gia mao bang secret lay tu ma nguon (SEC-02)
+  GET http://localhost:3000/api/users/me [200 OK, 452B, 3ms]
+  √  Token tu ky duoc SUT chap nhan -> secret hardcode la lo hong that
+
+□ SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug)
+└ SPEC-BUG-01 - [SEC-06] Client KHONG duoc phep tu doi role qua PUT /api/users/me
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 16ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  GET http://localhost:3000/api/users/me [200 OK, 462B, 3ms]
+  1. GET /api/users/me: role = "user" roi tra role ve "user"
+
+└ SPEC-BUG-02 - [SEC-01] GET /api/users/me KHONG duoc tra ve mat khau
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/users/
+  │ me'
+  └
+  GET http://localhost:3000/api/users/me [200 OK, 462B, 4ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 200
+  2. Response KHONG chua key "password"
+
+└ SPEC-BUG-03 - [SEC-02] Token tu ky bang secret hardcode KHONG duoc chap nhan
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  3. Token mao danh phai bi tu choi (401 hoac 403), KHONG duoc tra 200
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [cleanup] tra ten admin ve gia tri seed neu da bi ghi
+
+└ SPEC-BUG-04 - [FR-04] phone phai la 10-11 chu so va bat dau bang 0
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/users/
+  │ me'
+  └
+  PUT http://localhost:3000/api/users/me [200 OK, 296B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  4. phone sai dinh dang phai bi tu choi 400
+
+└ SPEC-BUG-05 - [SEC-03] GET /api/admin/users phai kiem role="admin" trong token
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/admin/
+  │ users'
+  └
+  GET http://localhost:3000/api/admin/users [200 OK, 673B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  5. Token role=user phai bi tu choi 403 o endpoint admin
+
+└ SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #1 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/1/status [200 OK, 301B, 8ms]
+  ┌
+  │ '[SETUP] don #1 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/1/status [200 OK, 301B, 9ms]
+  ┌
+  │ '[SETUP] don #1 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/1/cancel [200 OK, 308B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  6. Huy don shipping phai bi tu choi 400
+  GET http://localhost:3000/api/orders/1 [200 OK, 403B, 2ms]
+  7. GET /api/orders/:id: status = "shipping"
+
+└ SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/admin/
+  │ orders/{{orderId}}/status'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #2 (pending)'
+  └
+  PUT http://localhost:3000/api/orders/2/cancel [200 OK, 308B, 8ms]
+  ┌
+  │ '[SETUP] huy lan 1 don #2 -> HTTP 200'
+  └
+  PUT http://localhost:3000/api/admin/orders/2/status [200 OK, 301B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  8. canceled -> delivered phai bi tu choi 400
+  GET http://localhost:3000/api/orders/2 [200 OK, 404B, 2ms]
+  9. GET /api/orders/:id: status = "canceled"
+
+└ SPEC-BUG-08 - [SEC-02] GET /api/orders/:id phai yeu cau xac thuc
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/orders
+  │ /{{orderId}}'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #3 (pending)'
+  └
+  GET http://localhost:3000/api/orders/3 [200 OK, 402B, 2ms]
+  √  [moi request] co header X-Student-Id = 23127344
+ 10. Doc don hang khong token phai bi tu choi 401
+
+└ SPEC-BUG-09 - [FR-10] Thong bao loi phai cho biet ly do khong huy duoc
+  ┌
+  │ '[X-Student-Id] 23127344 -> PUT {{baseUrl}}/api/orders
+  │ /{{orderId}}/cancel'
+  └
+  POST http://localhost:3000/api/checkout [200 OK, 312B, 7ms]
+  ┌
+  │ '[SETUP] tao don #4 (pending)'
+  └
+  PUT http://localhost:3000/api/admin/orders/4/status [200 OK, 301B, 8ms]
+  ┌
+  │ '[SETUP] don #4 -> confirmed (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/4/status [200 OK, 301B, 9ms]
+  ┌
+  │ '[SETUP] don #4 -> shipping (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/admin/orders/4/status [200 OK, 301B, 7ms]
+  ┌
+  │ '[SETUP] don #4 -> delivered (HTTP 200)'
+  └
+  PUT http://localhost:3000/api/orders/4/cancel [400 Bad Request, 313B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  √  Status 400
+ 11. Thong bao 400 phai nhac trang thai hien tai (delivered)
+
+└ SPEC-BUG-10 - [SEC-03] User thuong KHONG duoc tao coupon
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+ 12. User thuong tao coupon phai bi tu choi 403
+
+└ SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong
+  ┌
+  │ '[X-Student-Id] 23127344 -> DELETE {{baseUrl}}/api/adm
+  │ in/coupons/2'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/2 [200 OK, 295B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+ 13. User thuong xoa coupon phai bi tu choi 403
+  GET http://localhost:3000/api/coupons [200 OK, 871B, 3ms]
+ 14. Coupon BIGBUY phai con trong GET /api/coupons
+
+└ SPEC-BUG-12 - [FR-17] discount_value phai > 0
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+ 15. discount_value am phai bi tu choi 400
+
+└ SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 8ms]
+  √  [moi request] co header X-Student-Id = 23127344
+ 16. max_uses_per_user = "0" phai bi tu choi 400
+  GET http://localhost:3000/api/coupons [200 OK, 1.17kB, 2ms]
+ 17. Gia tri luu vao DB phai >= 1 (khong duoc la 0)
+
+└ SPEC-BUG-14 - [FR-17] code phai la duy nhat - null khong duoc pha vo rang buoc
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 8ms]
+  ┌
+  │ '[SETUP] tao coupon id=8 code=null'
+  └
+  POST http://localhost:3000/api/admin/coupons [200 OK, 302B, 7ms]
+  √  [moi request] co header X-Student-Id = 23127344
+ 18. Coupon thu hai voi code=null phai bi tu choi (400 hoac 409)
+
+└ SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 355B, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+ 19. Trung code phai tra 409/400, khong phai 500
+ 20. Thong bao loi khong duoc lo chi tiet noi bo cua SQLite
+
+└ SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML
+  ┌
+  │ '[X-Student-Id] 23127344 -> POST {{baseUrl}}/api/admin
+  │ /coupons'
+  └
+  POST http://localhost:3000/api/admin/coupons [500 Internal Server Error, 1.92kB, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+ 21. Thieu body phai tra 400 (khong phai 500)
+ 22. Body loi phai la JSON co key error
+
+□ 99 - Teardown (don du lieu de chay lai duoc)
+└ TEARDOWN-01 - Xoa toan bo coupon do suite tao ra
+  ┌
+  │ '[X-Student-Id] 23127344 -> GET {{baseUrl}}/api/coupon
+  │ s'
+  └
+  GET http://localhost:3000/api/coupons [200 OK, 1.45kB, 3ms]
+  √  [moi request] co header X-Student-Id = 23127344
+  ┌
+  │ '[TEARDOWN] se xoa 5 coupon do suite tao: [5,6,7,8,9]'
+  └
+  DELETE http://localhost:3000/api/admin/coupons/5   PUT http://localhost:3000/api/users/me [200 OK, 295B, 15ms]
+  DELETE http://localhost:3000/api/admin/coupons/6 [200 OK, 296B, 19ms]
+  √  Dua profile user A ve trang thai seed (role=user)
+[200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/7 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/8 [200 OK, 295B, 7ms]
+  DELETE http://localhost:3000/api/admin/coupons/9 [200 OK, 295B, 7ms]
+  √  Xoa het coupon do suite tao ra
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              46 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              44 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │              27 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              57 │              22 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 2.1s                                    │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 8.85kB (approx)                        │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 6ms [min: 2ms, max: 25ms, s.d.: 4ms] │
+└─────────────────────────────────────────────────────────────┘
+
+[31m   # [39m[31m failure        [39m[31m detail                                                                                                                                                             [39m
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 01.  AssertionError  GET /api/users/me: role = "user" roi tra role ve "user"                                                                                                            
+                      expected 'admin' to deeply equal 'user'                                                                                                                            
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-01 - [SEC-06] Client KHONG duoc phep tu doi role qua PUT /api/users/me"        
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 02.  AssertionError  Response KHONG chua key "password"                                                                                                                                 
+                      expected { id: 2, name: 'SPEC-BUG-01', …(8) } to not have property 'password'                                                                                      
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-02 - [SEC-01] GET /api/users/me KHONG duoc tra ve mat khau"                    
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 03.  AssertionError  Token mao danh phai bi tu choi (401 hoac 403), KHONG duoc tra 200                                                                                                  
+                      ma trang thai: expected 200 to be one of [ 401, 403 ]                                                                                                              
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-03 - [SEC-02] Token tu ky bang secret hardcode KHONG duoc chap nhan"           
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 04.  AssertionError  phone sai dinh dang phai bi tu choi 400                                                                                                                            
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-04 - [FR-04] phone phai la 10-11 chu so va bat dau bang 0"                     
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 05.  AssertionError  Token role=user phai bi tu choi 403 o endpoint admin                                                                                                               
+                      expected 200 to deeply equal 403                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-05 - [SEC-03] GET /api/admin/users phai kiem role="admin" trong token"         
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 06.  AssertionError  Huy don shipping phai bi tu choi 400                                                                                                                               
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping"                            
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 07.  AssertionError  GET /api/orders/:id: status = "shipping"                                                                                                                           
+                      expected 'canceled' to deeply equal 'shipping'                                                                                                                     
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-06 - [FR-10] User KHONG duoc huy don dang shipping"                            
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 08.  AssertionError  canceled -> delivered phai bi tu choi 400                                                                                                                          
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered" 
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 09.  AssertionError  GET /api/orders/:id: status = "canceled"                                                                                                                           
+                      expected 'delivered' to deeply equal 'canceled'                                                                                                                    
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-07 - [FR-10] canceled la trang thai KET THUC, khong the chuyen sang delivered" 
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 10.  AssertionError  Doc don hang khong token phai bi tu choi 401                                                                                                                       
+                      expected 200 to deeply equal 401                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-08 - [SEC-02] GET /api/orders/:id phai yeu cau xac thuc"                       
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 11.  AssertionError  Thong bao 400 phai nhac trang thai hien tai (delivered)                                                                                                            
+                      expected 'cannot cancel this order.' to include 'delivered'                                                                                                        
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-09 - [FR-10] Thong bao loi phai cho biet ly do khong huy duoc"                 
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 12.  AssertionError  User thuong tao coupon phai bi tu choi 403                                                                                                                         
+                      expected 200 to deeply equal 403                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-10 - [SEC-03] User thuong KHONG duoc tao coupon"                               
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 13.  AssertionError  User thuong xoa coupon phai bi tu choi 403                                                                                                                         
+                      expected 200 to deeply equal 403                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong"                      
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 14.  AssertionError  Coupon BIGBUY phai con trong GET /api/coupons                                                                                                                      
+                      expected [ 'SAVE10', 'VIP100', 'EXPIRED', …(1) ] to include 'BIGBUY'                                                                                               
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-11 - [SEC-03] User thuong KHONG duoc xoa coupon he thong"                      
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 15.  AssertionError  discount_value am phai bi tu choi 400                                                                                                                              
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-12 - [FR-17] discount_value phai > 0"                                          
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 16.  AssertionError  max_uses_per_user = "0" phai bi tu choi 400                                                                                                                        
+                      expected 200 to deeply equal 400                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1"                                      
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 17.  AssertionError  Gia tri luu vao DB phai >= 1 (khong duoc la 0)                                                                                                                     
+                      gia tri luu trong DB: expected +0 to be at least 1                                                                                                                 
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-13 - [FR-17] max_uses_per_user phai >= 1"                                      
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 18.  AssertionError  Coupon thu hai voi code=null phai bi tu choi (400 hoac 409)                                                                                                        
+                      expected 200 to be one of [ 400, 409 ]                                                                                                                             
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-14 - [FR-17] code phai la duy nhat - null khong duoc pha vo rang buoc"         
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 19.  AssertionError  Trung code phai tra 409/400, khong phai 500                                                                                                                        
+                      expected 500 to be one of [ 400, 409 ]                                                                                                                             
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver"  
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 20.  AssertionError  Thong bao loi khong duoc lo chi tiet noi bo cua SQLite                                                                                                             
+                      expected '{"error":"SQLITE_CONSTRAINT: UNIQUE c…' to not include 'SQLITE_CONSTRAINT'                                                                               
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-15 - [Xu ly loi] Trung code phai tra 409, khong duoc tra 500 kem text driver"  
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 21.  AssertionError  Thieu body phai tra 400 (khong phai 500)                                                                                                                           
+                      expected 500 to deeply equal 400                                                                                                                                   
+                      at assertion:0 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML"            
+[90m     [39m[90m                [39m[90m                                                                                                                                                                    [39m
+ 22.  AssertionError  Body loi phai la JSON co key error                                                                                                                                 
+                      response phai parse duoc thanh JSON: expected null not to be null                                                                                                  
+                      at assertion:1 in test-script                                                                                                                                      
+                      inside "SPEC - Assertion theo dac ta (CO Y DINH THAT BAI - phoi bay bug) / SPEC-BUG-16 - [Xu ly loi] Thieu body phai tra 400 JSON, khong duoc 500 HTML"            
+[run_newman] spec ket thuc voi ma thoat 1 (KY VONG khac 0: moi fail la mot bug)
+
+Bao cao HTML nam trong hw6/reports/
