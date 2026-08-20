@@ -6,25 +6,23 @@
 > • Bảng có ô để trống → thêm/bớt hàng tùy số lượng thực tế.
 > • Xóa toàn bộ khối hướng dẫn này trước khi nộp.
 
-| Trường thông tin                            | Giá trị                                               |
-| ------------------------------------------- | ----------------------------------------------------- |
-| MSSV                                        | «MSSV»                                                |
-| Họ và tên                                   | «HỌ VÀ TÊN»                                           |
-| Lớp / Nhóm                                  | «Kiểm thử phần mềm - 23KTPMx» / Nhóm «xx»             |
-| Ngày nộp                                    | «YYYY-MM-DD»                                          |
-| SUT                                         | EShop — https://github.com/ttbhanh/eshop-sut          |
-| Môi trường triển khai SUT                   | «http://localhost:3000» (hostname khớp Newman run)    |
-| GitHub repo công khai (collection + script) | «URL»                                                 |
-| GitHub repo chứa Bug Issues                 | «URL»                                                 |
-| Công cụ thực thi                            | Postman «x.y» + Newman «x.y» «/ Karate / RestAssured» |
-| Công cụ AI đã dùng                          | «Claude Opus 5 / ChatGPT / …»                         |
-| CI/CD pipeline                              | «GitHub Actions — URL workflow»                       |
-| Video demo Agent Skill (tùy chọn)           | «YouTube unlisted URL»                                |
-| Điểm tự đánh giá                            | **«000»** / 100                                       |
+| Trường thông tin                            | Giá trị                                                                                          |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| MSSV                                        | 23127344                                                                                         |
+| Họ và tên                                   | TRƯƠNG THÀNH ĐẠT                                                                                 |
+| Lớp / Nhóm                                  | Kiểm thử phần mềm - 23KTPM3 / Nhóm 05                                                            |
+| Ngày nộp                                    | 2026-08-20                                                                                       |
+| SUT                                         | EShop — https://github.com/ttbhanh/eshop-sut                                                     |
+| Môi trường triển khai SUT                   | `http://localhost:3000` (hostname khớp Newman run) — commit SUT `bdb7bd8`, Node.js v22.22.1      |
+| GitHub repo công khai (collection + script) | https://github.com/trwng-thdat/software-testing — nhánh `hw6/api-testing`                        |
+| GitHub repo chứa Bug Issues                 | https://github.com/DuyITLOR/group05_eshop — issue #377–#392                                      |
+| Công cụ thực thi                            | Postman (collection schema v2.1.0) + Newman 6.2.2 + reporter `htmlextra` 1.23.1 và `json`         |
+| Công cụ AI đã dùng                          | Claude Opus 5 (Claude Code, VS Code extension) — công cụ AI duy nhất dùng trong bài tập này       |
+| CI/CD pipeline                              | GitHub Actions — [`.github/workflows/hw6-api-tests.yml`](../.github/workflows/hw6-api-tests.yml) · https://github.com/trwng-thdat/software-testing/actions/workflows/hw6-api-tests.yml |
+| Video demo Agent Skill (tùy chọn)           | https://youtu.be/Nz8hUbziTyI                                                                     |
+| Điểm tự đánh giá                            | **«000»** / 100                                                                                  |
 
-> **Khai báo sử dụng AI.** «Chọn 1 trong 2:»
-> — _Nếu KHÔNG dùng AI:_ "I do not use any AI help in this exercise."
-> — _Nếu CÓ dùng AI:_ "I use AI tools for the following tasks:" «liệt kê: sinh test case cho 3 API, đối chiếu đặc tả với mã nguồn SUT, sinh script Postman, phân tích kết quả Newman, soạn thảo báo cáo…». Toàn bộ nhật ký tương tác được ghi trong AI Audit Report (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát, chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
+> **Khai báo sử dụng AI.** Tôi có sử dụng công cụ AI. *"I use AI tools for the following tasks:"* — phân tích đặc tả `api_specification.md` và đối chiếu với mã nguồn SUT (`server.js`, `database.js`); phân vùng miền giá trị (EP) và phân tích giá trị biên (BVA) cho từng tham số của 3 API; dựng mô hình chuyển trạng thái FR-10; ánh xạ yêu cầu bảo mật SEC-01–SEC-07; trích schema response; lập ma trận phủ; sinh 167 test case cho 3 API theo lối dẫn dắt từng bước (P1 → P11, mỗi kỹ thuật một lượt prompt riêng, không dùng một prompt chung chung); sinh bộ script tạo Postman collection (`postman/src/`) và script phụ trợ (`scripts/`); dựng workflow CI/CD GitHub Actions; phân tích kết quả Newman; dựng Agent Skill `api-test-generator`; và soạn thảo báo cáo. Toàn bộ nhật ký tương tác được ghi trong `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát, chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
 
 ---
 
@@ -1247,11 +1245,13 @@ _Issue #378 (BUG-01): tiêu đề `[HW06]`, nhãn đầy đủ, bước tái hi�
 
 ## 11. Phê bình AI (200–300 từ)
 
-> ✍️ **Bắt buộc 200–300 từ.** Trả lời đủ 3 câu hỏi: (1) AI sai / thiên lệch / chưa đầy đủ ở đâu? (2) Vì sao nó không phát hiện được? (3) Rút ra nguyên tắc gì khi hợp tác với AI? Dẫn chứng bằng ID test case và số liệu cụ thể ở §4–§6, tránh viết chung chung.
+Bản đầy đủ: [`AI_Critique.md`](./AI_Critique.md) (268 từ). Tóm tắt:
 
-«Đoạn văn 200–300 từ.»
+Qua bài này AI sai theo một mô thức nhất quán — sinh ra thứ **trông đúng nhưng chưa neo vào hành vi thật**, chỉ lộ khi buộc chạy thật. (1) **Tin công cụ trung gian thay vì nguồn thật:** khi tạo 12 saved example, AI lấy execution đầu tiên trong báo cáo JSON của Newman, làm 4/12 example sai — example của một `PUT` lại mang body của lệnh `GET` xác minh, vì Newman gộp mọi `pm.sendRequest` vào cùng item (§7.7 lỗi 2, `record_examples.js`). (2) **Hiểu sai ngữ nghĩa runtime:** viết assertion async thành nhiều `pm.test` riêng tưởng chạy tuần tự, khiến `A2-E03` đọc trạng thái trước khi ghi kịp (§7.8). (3) **Lỗi số học/phạm vi:** đếm "17 lỗi" trong khi chỉ 16, và ban đầu định né các lỗi trùng issue người khác.
 
-_Số từ: «nnn»._
+**Vì sao không tự thấy:** mỗi bước AI chỉ nhìn dữ liệu trong tầm — script validate của chính nó chạy sạch, JSON Newman "hợp lệ", không có tín hiệu báo sai.
+
+**Nguyên tắc:** AI mạnh khi kiểm chứng đối chiếu nguồn thật, yếu khi suy diễn qua một lớp trung gian. Mọi con số trong bài đều truy về response thật của SUT hoặc báo cáo Newman đã chạy.
 
 ---
 
@@ -1339,7 +1339,7 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 | ☐   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | «»                      |
 | ☐   | (Tùy chọn) OpenAPI .yaml/.json đã kiểm toán             | «»                      |
 | ☑   | Báo cáo lỗi + ảnh GitHub Issues                         | §10 + 16 issue #377–#392 + 16 ảnh ở `evidence/issues/` |
-| ☐   | Phê bình AI + AI Audit Report (Markdown + PDF)          | «»                      |
+| ☑/☐ | Phê bình AI + AI Audit Report (Markdown + PDF)          | [`AI_Critique.md`](./AI_Critique.md) + [AI Audit Report](./%5BAI-02%5D%20-%20FIT@HCMUS%20-%20AI%20Audit%20Report_En.docx.md); **còn thiếu bản PDF** |
 | ☐   | Git commit log (.txt)                                   | «»                      |
 | ☑   | README.md (bảng tự đánh giá + tổng hợp kết quả)         | [`hw6/README.md`](./README.md) — tổng hợp 3 API, 196 TC, 17 lỗi, 2 lần chạy CI |
 

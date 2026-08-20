@@ -86,6 +86,7 @@ Số liệu trên CI (Ubuntu) **trùng khớp tuyệt đối** với máy local 
 | Workflow CI/CD | [`../.github/workflows/hw6-api-tests.yml`](../.github/workflows/hw6-api-tests.yml) |
 | Script | [`scripts/`](./scripts/) — probe, reset DB, chạy Newman, tổng hợp, chụp ảnh |
 | Agent Skill | [`skills/SKILL.md`](./skills/SKILL.md) · video: https://youtu.be/Nz8hUbziTyI |
+| Phê bình AI | [`AI_Critique.md`](./AI_Critique.md) — 296 từ |
 | AI Audit Report | [`[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md`](./%5BAI-02%5D%20-%20FIT@HCMUS%20-%20AI%20Audit%20Report_En.docx.md) — 44 prompt verbatim |
 | Git commit log | [`git_commit_log.txt`](./git_commit_log.txt) |
 
@@ -122,6 +123,5 @@ python hw6/scripts/capture_issues.py        # chụp 16 ảnh GitHub Issue
 | --- | --- |
 | §9.2 — sơ đồ bộ sinh test **tự vẽ** | Đề §11 quy định sơ đồ không được do AI sinh |
 | §9.3 — mã giả hoàn chỉnh | Bản hiện tại còn 5 bước để trống |
-| §11 — phê bình AI 200–300 từ | |
 | Excel test case + bảng tổng hợp | |
 | Bản PDF của báo cáo chính, phê bình AI, AI Audit Report | |
