@@ -14,6 +14,15 @@ Luu y     : File nay la snapshot. Commit cuoi cung (commit sinh ra chinh
 
 [1] LOG THO (moi nhat truoc) - dung dinh dang lenh o Main_Report.md muc 12
 --------------------------------------------------------------------------------
+6c49e33 2026-08-20 docs(hw6): gan link 16 anh bug vao cot Anh cua §10 va §4.5/§5.5/§6.5
+28dffc9 2026-08-20 docs(hw6): tu danh gia 100/100 + ten file zip 23127344_HW06_AI_API_100.zip
+02d7970 2026-08-20 docs(hw6): ma gia §9.3 day du + Excel test case (de §14)
+6bb970b 2026-08-20 chore(hw6): bo generator_preview.png trung (giu generator.png) + sua duong dan gitignore
+f15e83e 2026-08-20 docs(hw6): so do bo sinh test §9.2 (Excalidraw, ban nhap de chinh)
+7595cc8 2026-08-20 docs(hw6): phe binh AI (AI_Critique.md, 296 tu) + dong bo §11
+74fdf87 2026-08-20 test(hw6): chup 16 anh GitHub Issue (Buoc 5 hoan tat)
+b4751ef 2026-08-20 docs(hw6): tao 16 GitHub Issue cho toan bo loi + gan link vao bao cao
+198b3bb 2026-08-20 docs(hw6): them hw6/README.md (de bai §14 bat buoc) + commit log dong 44-47
 9b6804f 2026-08-20 docs(hw6): nhung 4 anh chup tay + 11 anh Newman vao bao cao
 a8828fc 2026-08-20 fix(hw6): sua 4/12 saved example bi sai - ghi example bang lenh goi SUT truc tiep
 505eb6c 2026-08-20 fix(hw6): che gia tri JWT trong saved example + ghi lai phat hien cua secret scanner

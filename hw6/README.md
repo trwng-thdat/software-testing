@@ -100,6 +100,7 @@ node hw6/scripts/summarize_newman.js        # trích số liệu ra summary.md
 python hw6/scripts/capture_evidence.py      # chụp 24 ảnh báo cáo Newman
 python hw6/scripts/capture_ci_evidence.py   # chụp 9 ảnh CI/CD
 python hw6/scripts/capture_issues.py        # chụp 16 ảnh GitHub Issue
+python hw6/scripts/build_testcase_xlsx.py   # sinh Excel test case
 ```
 
 ---
@@ -122,5 +123,5 @@ python hw6/scripts/capture_issues.py        # chụp 16 ảnh GitHub Issue
 
 | Việc | Ghi chú |
 | --- | --- |
-| §9.2 — sơ đồ bộ sinh test **tự vẽ** | Đề §11 quy định sơ đồ không được do AI sinh |
+| §9.2 — sơ đồ: bạn **tự tinh chỉnh** bản nháp | Bản nháp `diagrams/generator.excalidraw` đã có; đề §11 cấm sơ đồ do AI sinh trực tiếp nên cần chỉnh tay rồi xuất lại PNG |
 | Bản PDF của báo cáo chính, phê bình AI, AI Audit Report | |

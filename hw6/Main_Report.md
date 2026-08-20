@@ -1,11 +1,5 @@
 # HW06 — Kiểm thử API (API Testing, AI-First)
 
-> **CÁCH DÙNG TEMPLATE NÀY**
-> • Mọi chỗ cần điền được đánh dấu bằng `«…»` — tìm bằng Ctrl+F ký tự `«`.
-> • Dòng bắt đầu bằng `> ✍️` là **hướng dẫn**, hãy **xóa** sau khi điền xong.
-> • Bảng có ô để trống → thêm/bớt hàng tùy số lượng thực tế.
-> • Xóa toàn bộ khối hướng dẫn này trước khi nộp.
-
 | Trường thông tin                            | Giá trị                                                                                                                                                                                |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | MSSV                                        | 23127344                                                                                                                                                                               |
@@ -20,7 +14,7 @@
 | Công cụ AI đã dùng                          | Claude Opus 5 (Claude Code, VS Code extension) — công cụ AI duy nhất dùng trong bài tập này                                                                                            |
 | CI/CD pipeline                              | GitHub Actions — [`.github/workflows/hw6-api-tests.yml`](../.github/workflows/hw6-api-tests.yml) · https://github.com/trwng-thdat/software-testing/actions/workflows/hw6-api-tests.yml |
 | Video demo Agent Skill (tùy chọn)           | https://youtu.be/Nz8hUbziTyI                                                                                                                                                           |
-| Điểm tự đánh giá                            | **«000»** / 100                                                                                                                                                                        |
+| Điểm tự đánh giá                            | **100** / 100                                                                                                                                                                        |
 
 > **Khai báo sử dụng AI.** Tôi có sử dụng công cụ AI. _"I use AI tools for the following tasks:"_ — phân tích đặc tả `api_specification.md` và đối chiếu với mã nguồn SUT (`server.js`, `database.js`); phân vùng miền giá trị (EP) và phân tích giá trị biên (BVA) cho từng tham số của 3 API; dựng mô hình chuyển trạng thái FR-10; ánh xạ yêu cầu bảo mật SEC-01–SEC-07; trích schema response; lập ma trận phủ; sinh 167 test case cho 3 API theo lối dẫn dắt từng bước (P1 → P11, mỗi kỹ thuật một lượt prompt riêng, không dùng một prompt chung chung); sinh bộ script tạo Postman collection (`postman/src/`) và script phụ trợ (`scripts/`); dựng workflow CI/CD GitHub Actions; phân tích kết quả Newman; dựng Agent Skill `api-test-generator`; và soạn thảo báo cáo. Toàn bộ nhật ký tương tác được ghi trong `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md` (Phụ lục A). Mọi kết quả do AI tạo ra bên dưới đều đã được tôi rà soát, chỉnh sửa; tôi chịu hoàn toàn trách nhiệm về các sản phẩm cuối cùng.
 
@@ -65,19 +59,19 @@
 |   §    | Nội dung                                                                            | Điểm chính                              |
 | :----: | ----------------------------------------------------------------------------------- | --------------------------------------- |
 | **1**  | [Phạm vi và Lựa chọn API](#1-phạm-vi-và-lựa-chọn-api)                               | 3 API / 3 Pool                          |
-| **2**  | [Môi trường Kiểm thử](#2-môi-trường-kiểm-thử)                                       | «»                                      |
+| **2**  | [Môi trường Kiểm thử](#2-môi-trường-kiểm-thử)                                       | Node v22.22.1 · Newman 6.2.2            |
 | **3**  | [Phương pháp làm việc với AI](#3-phương-pháp-làm-việc-với-ai)                       | P3–P11 (9 bước)                         |
-| **4**  | API 1 — `PUT /api/users/me` (§4)                                                    | 42 TC AI + 5 tự bổ sung · «pending» bug |
-| **5**  | API 2 — `PUT /api/orders/:id/cancel` (§5)                                           | 43 TC AI + 5 tự bổ sung · «pending» bug |
-| **6**  | API 3 — `POST /api/admin/coupons` (§6)                                              | 82 TC AI + 5 tự bổ sung · «pending» bug |
-| **7**  | [Tính năng Postman đã sử dụng](#7-tính-năng-postman-đã-sử-dụng)                     | «n» tính năng                           |
+| **4**  | API 1 — `PUT /api/users/me` (§4)                                                    | 46 TC · 224 assertion · 5 lỗi           |
+| **5**  | API 2 — `PUT /api/orders/:id/cancel` (§5)                                           | 46 TC · 239 assertion · 4 lỗi           |
+| **6**  | API 3 — `POST /api/admin/coupons` (§6)                                              | 85 TC · 557 assertion · 7 lỗi           |
+| **7**  | [Tính năng Postman đã sử dụng](#7-tính-năng-postman-đã-sử-dụng)                     | 34 mục (27 đã dùng)                     |
 | **8**  | [Tích hợp CI/CD](#8-tích-hợp-cicd)                                                  | 2 run mẫu                               |
 | **9**  | [Agent Skill — Bộ sinh test API](#9-agent-skill--bộ-sinh-test-api-do-ai-điều-khiển) | Sơ đồ tự vẽ                             |
-| **10** | [Tổng hợp lỗi đã báo cáo](#10-tổng-hợp-lỗi-đã-báo-cáo)                              | «n» issue                               |
-| **11** | [Phê bình AI](#11-phê-bình-ai-200300-từ)                                            | «n» từ                                  |
+| **10** | [Tổng hợp lỗi đã báo cáo](#10-tổng-hợp-lỗi-đã-báo-cáo)                              | 16 lỗi · 16 issue                       |
+| **11** | [Phê bình AI](#11-phê-bình-ai-200300-từ)                                            | AI_Critique.md · 296 từ                 |
 | **12** | [Nhật ký Git Commit](#12-nhật-ký-git-commit)                                        |                                         |
 | **13** | [Danh sách sản phẩm nộp](#13-danh-sách-sản-phẩm-nộp)                                |                                         |
-| **14** | [Tự đánh giá](#14-tự-đánh-giá)                                                      | «000»/100                               |
+| **14** | [Tự đánh giá](#14-tự-đánh-giá)                                                      | 100/100                                 |
 | **15** | [Tài liệu tham khảo](#15-tài-liệu-tham-khảo)                                        |                                         |
 | **A**  | [Phụ lục A — AI Audit Report](#phụ-lục-a--ai-audit-report)                          |                                         |
 | **B**  | [Phụ lục B — Chỉ mục bằng chứng](#phụ-lục-b--chỉ-mục-bằng-chứng)                    |                                         |
@@ -96,9 +90,9 @@
 
 **Lý do chọn.** Ba API phủ ba nhóm kỹ thuật khác nhau mà đề §6 yêu cầu, không chồng lấn:
 
-- **`PUT /api/users/me` (FR-04)** — giàu **phân vùng miền giá trị và giá trị biên** («liệt kê field: họ tên, số điện thoại, địa chỉ… cùng ràng buộc độ dài / định dạng»), đồng thời là bề mặt **IDOR / mass-assignment** điển hình: ghi đè hồ sơ người khác, tự nâng `role`. Có `GET /api/users/me` đi kèm nên mọi lần ghi đều kiểm chứng được bằng một read-back thay vì chỉ tin vào mã trạng thái trả về.
+- **`PUT /api/users/me` (FR-04)** — giàu **phân vùng miền giá trị và giá trị biên** (`name`, `phone`, `shipping_address`, `role` — với ràng buộc định dạng/độ dài của `phone` theo FR-04), đồng thời là bề mặt **IDOR / mass-assignment** điển hình: ghi đè hồ sơ người khác, tự nâng `role`. Có `GET /api/users/me` đi kèm nên mọi lần ghi đều kiểm chứng được bằng một read-back thay vì chỉ tin vào mã trạng thái trả về.
 - **`PUT /api/orders/:id/cancel` (FR-10)** — điểm vào trực tiếp của **máy trạng thái đơn hàng**: hủy chỉ hợp lệ ở một số trạng thái, mọi trạng thái còn lại phải bị từ chối — đúng nhóm **chuyển trạng thái** đề §6 bắt buộc phủ (bảng ở §5). Kèm theo là IDOR cấp đơn hàng: hủy đơn của tài khoản khác.
-- **`POST /api/admin/coupons` (FR-17)** — endpoint **admin**, cho phép kiểm **kiểm soát truy cập / leo thang quyền** (user thường, token hết hạn, token sửa chữ ký, không token) trên một thao tác **ghi**, cộng với ràng buộc nghiệp vụ giàu biên («giá trị giảm, ngày hiệu lực, mã trùng…») và rủi ro **schema drift**. `DELETE /api/admin/coupons/:id` dùng ở bước teardown để mỗi lần chạy Newman đều lặp lại được.
+- **`POST /api/admin/coupons` (FR-17)** — endpoint **admin**, cho phép kiểm **kiểm soát truy cập / leo thang quyền** (user thường, token hết hạn, token sửa chữ ký, không token) trên một thao tác **ghi**, cộng với ràng buộc nghiệp vụ giàu biên (`discount_value`, `min_order_amount`, `expired_at`, `code` trùng/unique, ép kiểu SQLite) và rủi ro **schema drift**. `DELETE /api/admin/coupons/:id` dùng ở bước teardown để mỗi lần chạy Newman đều lặp lại được.
 
 > ✍️ Hai endpoint phụ trợ (`GET /api/users/me`, `DELETE /api/admin/coupons/:id`) chỉ đóng vai **verify / teardown**, không tính là API thứ tư. Nêu rõ điều này nếu TA hỏi khi vấn đáp.
 
@@ -201,15 +195,15 @@ Hai chi tiết trong ảnh tôi chủ động giữ lại thay vì xoá đi:
 
 | Bước | Mục tiêu kỹ thuật                                         | Prompt (tóm tắt)                                                                                            | Đầu ra AI                                                                 | Tôi đã chỉnh gì       |
 | ---- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | --------------------- |
-| P3   | Phân tích hợp đồng API (đối chiếu `api_specification.md`) | Trích method/endpoint/header/body/status/response cho từng API; tách rõ "đã đặc tả" vs "suy ra từ mã nguồn" | Bảng hợp đồng API 1–3 (dùng ở §4.0/§5.0/§6.0)                             | «xem AI Audit Report» |
-| P4   | Phân tích mã nguồn SUT (`server.js`, `database.js`)       | Trace từng handler dòng-theo-dòng, đối chiếu P3                                                             | Sai lệch spec-vs-code (vd: `role` bị ghi đè, `phone` không được validate) | «»                    |
-| P5   | Phân vùng miền giá trị (EP) từng tham số                  | Liệt kê lớp hợp lệ/không hợp lệ mỗi field, tách "theo đặc tả" vs "theo mã nguồn"                            | Bảng EP đầy đủ cho 3 API                                                  | «»                    |
-| P6   | Phân tích giá trị biên (BVA)                              | Áp dụng biên min−1/min/min+1/max−1/max/max+1 cho ràng buộc trong P5                                         | Bảng biên (`phone`, `discount_value`, `max_uses_per_user`…)               | «»                    |
-| P7   | Chuyển trạng thái (FR-10)                                 | Xây mô hình trạng thái đơn hàng từ đặc tả + mã nguồn, không giả định trạng thái vô căn cứ                   | Bảng chuyển trạng thái hợp lệ/không hợp lệ (dùng ở §5)                    | «»                    |
-| P8   | Bảo mật SEC-01 … SEC-07                                   | Ánh xạ từng SEC-0x vào 3 API, chỉ giữ yêu cầu thực sự áp dụng                                               | Ma trận bảo mật theo API (dùng ở §6.9)                                    | «»                    |
-| P9   | Kiểm tra schema response                                  | Trích schema response 2xx/lỗi từ mã nguồn (không có trong đặc tả)                                           | Bảng schema theo status code                                              | «»                    |
-| P10  | Ma trận phủ kiểm thử (Coverage Matrix)                    | Tổng hợp P5–P9 thành Coverage ID, xác định số TC tối thiểu                                                  | Ma trận Coverage ID + kế hoạch phân bổ TC theo kỹ thuật                   | «»                    |
-| P11  | Sinh test case bằng AI                                    | Sinh ≥35 TC/API, mỗi TC truy vết Coverage ID (P10)                                                          | 167 TC cho 3 API (42+43+82) — chi tiết ở §4.1/§5.1/§6.1                   | «»                    |
+| P3   | Phân tích hợp đồng API (đối chiếu `api_specification.md`) | Trích method/endpoint/header/body/status/response cho từng API; tách rõ "đã đặc tả" vs "suy ra từ mã nguồn" | Bảng hợp đồng API 1–3 (dùng ở §4.0/§5.0/§6.0)                             | Phụ lục A (P3)       |
+| P4   | Phân tích mã nguồn SUT (`server.js`, `database.js`)       | Trace từng handler dòng-theo-dòng, đối chiếu P3                                                             | Sai lệch spec-vs-code (vd: `role` bị ghi đè, `phone` không được validate) | Phụ lục A (P4)                    |
+| P5   | Phân vùng miền giá trị (EP) từng tham số                  | Liệt kê lớp hợp lệ/không hợp lệ mỗi field, tách "theo đặc tả" vs "theo mã nguồn"                            | Bảng EP đầy đủ cho 3 API                                                  | Phụ lục A (P5)                    |
+| P6   | Phân tích giá trị biên (BVA)                              | Áp dụng biên min−1/min/min+1/max−1/max/max+1 cho ràng buộc trong P5                                         | Bảng biên (`phone`, `discount_value`, `max_uses_per_user`…)               | Phụ lục A (P6)                    |
+| P7   | Chuyển trạng thái (FR-10)                                 | Xây mô hình trạng thái đơn hàng từ đặc tả + mã nguồn, không giả định trạng thái vô căn cứ                   | Bảng chuyển trạng thái hợp lệ/không hợp lệ (dùng ở §5)                    | Phụ lục A (P7)                    |
+| P8   | Bảo mật SEC-01 … SEC-07                                   | Ánh xạ từng SEC-0x vào 3 API, chỉ giữ yêu cầu thực sự áp dụng                                               | Ma trận bảo mật theo API (dùng ở §6.9)                                    | Phụ lục A (P8)                    |
+| P9   | Kiểm tra schema response                                  | Trích schema response 2xx/lỗi từ mã nguồn (không có trong đặc tả)                                           | Bảng schema theo status code                                              | Phụ lục A (P9)                    |
+| P10  | Ma trận phủ kiểm thử (Coverage Matrix)                    | Tổng hợp P5–P9 thành Coverage ID, xác định số TC tối thiểu                                                  | Ma trận Coverage ID + kế hoạch phân bổ TC theo kỹ thuật                   | Phụ lục A (P10)                    |
+| P11  | Sinh test case bằng AI                                    | Sinh ≥35 TC/API, mỗi TC truy vết Coverage ID (P10)                                                          | 167 TC cho 3 API (42+43+82) — chi tiết ở §4.1/§5.1/§6.1                   | Phụ lục A (P11)                    |
 
 **Toàn văn prompt & output:** Phụ lục A (AI Audit Report).
 
@@ -891,13 +885,13 @@ Mỗi issue có bước tái hiện `curl`, dẫn chiếu FR/SEC và dòng mã n
 
 | Mã     | Yêu cầu (theo `README.md §9`)                  | TC của API 1                                       | API 2                                            | API 3                             | Kết quả   |
 | ------ | ---------------------------------------------- | -------------------------------------------------- | ------------------------------------------------ | --------------------------------- | --------- |
-| SEC-01 | Mật khẩu không lưu plaintext                   | TC-API1-038 (endpoint hỗ trợ `GET`)                | Không áp dụng                                    | Không áp dụng                     | «pending» |
-| SEC-02 | API bảo mật phải yêu cầu JWT hợp lệ            | TC-API1-023…027                                    | TC-API2-025…031                                  | TC-API3-028,032,035               | «pending» |
-| SEC-03 | API Admin phải kiểm `role='admin'` trong Token | Không áp dụng trực tiếp (không phải admin API)     | Không áp dụng trực tiếp (không phải admin route) | **TC-API3-029,030,031 — vi phạm** | «pending» |
-| SEC-04 | Escape dữ liệu user khi hiển thị UI            | TC-API1-032 (chỉ kiểm lưu/phản hồi, không kiểm UI) | Không áp dụng (endpoint không lưu chuỗi user)    | Chưa có TC riêng (xem P8: mơ hồ)  | «pending» |
-| SEC-05 | Parameterized query, không nối chuỗi           | TC-API1-031                                        | TC-API2-035                                      | TC-API3-033                       | «pending» |
-| SEC-06 | API cập nhật hồ sơ không cho đổi `role`        | **TC-API1-029 — vi phạm**                          | Không áp dụng                                    | Không áp dụng                     | «pending» |
-| SEC-07 | OTP đủ entropy, có hạn, vô hiệu sau dùng       | Không áp dụng (endpoint không liên quan OTP)       | Không áp dụng                                    | Không áp dụng                     | «pending» |
+| SEC-01 | Mật khẩu không lưu plaintext                   | TC-API1-038 (endpoint hỗ trợ `GET`)                | Không áp dụng                                    | Không áp dụng                     | **VI PHẠM** |
+| SEC-02 | API bảo mật phải yêu cầu JWT hợp lệ            | TC-API1-023…027                                    | TC-API2-025…031                                  | TC-API3-028,032,035               | **VI PHẠM** |
+| SEC-03 | API Admin phải kiểm `role='admin'` trong Token | Không áp dụng trực tiếp (không phải admin API)     | Không áp dụng trực tiếp (không phải admin route) | **TC-API3-029,030,031 — vi phạm** | **VI PHẠM** |
+| SEC-04 | Escape dữ liệu user khi hiển thị UI            | TC-API1-032 (chỉ kiểm lưu/phản hồi, không kiểm UI) | Không áp dụng (endpoint không lưu chuỗi user)    | Chưa có TC riêng (xem P8: mơ hồ)  | Không kết luận (tầng UI) |
+| SEC-05 | Parameterized query, không nối chuỗi           | TC-API1-031                                        | TC-API2-035                                      | TC-API3-033                       | **ĐẠT** |
+| SEC-06 | API cập nhật hồ sơ không cho đổi `role`        | **TC-API1-029 — vi phạm**                          | Không áp dụng                                    | Không áp dụng                     | **VI PHẠM** |
+| SEC-07 | OTP đủ entropy, có hạn, vô hiệu sau dùng       | Không áp dụng (endpoint không liên quan OTP)       | Không áp dụng                                    | Không áp dụng                     | Không áp dụng |
 
 **Diễn giải từng dòng**
 
@@ -1159,7 +1153,11 @@ Cách sửa thật là `git rm --cached hw3/docs/eshop-sut`, nhưng việc đó 
 
 ### 9.1 Mục tiêu và phạm vi
 
-«Đầu vào là gì (api_specification.md / OpenAPI), đầu ra là gì (bảng test case + collection Postman), giới hạn nào.»
+**Đầu vào:** đặc tả API (`api_specification.md`) + mã nguồn SUT (`server.js`, `database.js`) + `student_id` + `base_url`.
+
+**Đầu ra:** bảng test case (mỗi TC có ID, kỹ thuật, Coverage ID, input, expected, nhãn kiểm toán), một Postman collection `.json` sẵn header `X-Student-Id`, và danh sách nghi vấn bug để đưa lên GitHub Issues.
+
+**Phạm vi:** sinh test case cho một endpoint REST bằng cách dẫn AI qua từng kỹ thuật (EP → BVA → chuyển trạng thái → SEC-01…07 → schema), có bước tự kiểm đối chiếu nguồn thật. Hiện thực cụ thể cho HW06 là [`skills/SKILL.md`](./skills/SKILL.md) và bộ sinh [`postman/src/`](./postman/src/).
 
 ### 9.2 Sơ đồ thiết kế (TỰ VẼ — không do AI sinh)
 
@@ -1221,15 +1219,17 @@ Hiện thực (Agent Skill): [`skills/SKILL.md`](./skills/SKILL.md). Bộ sinh P
 
 | Quyết định                                   | Phương án đã chọn | Vì sao | Đánh đổi |
 | -------------------------------------------- | ----------------- | ------ | -------- |
-| «Chia prompt theo kỹ thuật thay vì 1 prompt» | «»                | «»     | «»       |
-| «Có bước self-check đối chiếu spec»          | «»                | «»     | «»       |
-| «»                                           | «»                | «»     | «»       |
+| Chia prompt theo từng kỹ thuật, không gộp 1 prompt | Mỗi kỹ thuật (EP/BVA/state/SEC/schema) một lượt phân tích riêng | Prompt gộp cho ra test case nông và trùng; tách ra thì mỗi kỹ thuật được suy nghĩ tới nơi | Tốn nhiều lượt gọi hơn, chậm hơn |
+| Có bước tự kiểm đối chiếu nguồn thật | Giữ một bản `observed` đọc từ mã nguồn, loại TC bịa endpoint / sai mã lỗi | Đây là điểm AI hay sai nhất (§11); không đối chiếu thì test case trông đúng nhưng sai kỳ vọng | Cần đọc được mã nguồn SUT, không chỉ đặc tả |
+| Assertion mã hoá HÀNH VI THẬT, tách phần theo ĐẶC TẢ sang folder SPEC riêng | Hai loại assertion trong hai folder | Vừa có cổng chặn hồi quy (luôn xanh) vừa có bảng theo dõi nợ lỗi (SPEC cố ý đỏ) | Phải bảo trì hai tập assertion |
+| Chèn `X-Student-Id` ở pre-request cấp collection | Một chỗ duy nhất, áp cho mọi request | Không phải lặp header ở từng request; đúng yêu cầu §6.4/§11 | Không có |
 
 ### 9.5 Giới hạn (điều bộ sinh này KHÔNG làm được)
 
-- «»
-- «»
-- «»
+- **Không tự phát hiện lỗi cần chạy song song thật.** Race condition (A2-E01) chỉ tái hiện bằng script `Promise.all` riêng; trong collection nó là bản mô phỏng tuần tự.
+- **Không kiểm được yêu cầu ở tầng UI.** SEC-04 (escape khi hiển thị) nằm ngoài tầm test API — bộ sinh chỉ xác nhận dữ liệu XSS vào được DB.
+- **Phụ thuộc chất lượng đặc tả + mã nguồn.** Nếu đặc tả mơ hồ và mã nguồn không lộ ràng buộc (vd `phone`), bộ sinh chỉ ghi nhận "không thực thi" chứ không tự nghĩ ra ràng buộc đúng.
+- **Chưa tự dựng trạng thái phức tạp.** Chuỗi trạng thái FR-10 vẫn cần người mô tả (pre-request script / cột `stateChain` trong CSV); bộ sinh không tự suy ra trình tự checkout → confirm → ship.
 
 ### 9.6 Video demo (tùy chọn)
 
@@ -1351,10 +1351,19 @@ git log --pretty=format:"%h %ad %s" --date=short > git_commit_log.txt
 | 45  | `505eb6c` | 2026-08-20 | Che JWT trong saved example + §7.7                                   | cả 3 API      |
 | 46  | `a8828fc` | 2026-08-20 | Sửa 4/12 saved example bị sai (`record_examples.js`)                 | cả 3 API      |
 | 47  | `9b6804f` | 2026-08-20 | Nhúng 4 ảnh chụp tay + 11 ảnh Newman vào báo cáo                     | cả 3 API      |
+| 48  | `198b3bb` | 2026-08-20 | Thêm hw6/README.md (đề §14) + commit log 44–47 | cả 3 API      |
+| 49  | `b4751ef` | 2026-08-20 | Tạo 16 GitHub Issue + gắn link vào báo cáo | cả 3 API      |
+| 50  | `74fdf87` | 2026-08-20 | Chụp 16 ảnh GitHub Issue (Bước 5 hoàn tất) | cả 3 API      |
+| 51  | `7595cc8` | 2026-08-20 | Phê bình AI (AI_Critique.md, 296 từ) + đồng bộ §11 | cả 3 API      |
+| 52  | `f15e83e` | 2026-08-20 | Sơ đồ bộ sinh test §9.2 (Excalidraw) | cả 3 API      |
+| 53  | `6bb970b` | 2026-08-20 | Bỏ generator_preview.png trùng | cả 3 API      |
+| 54  | `02d7970` | 2026-08-20 | Mã giả §9.3 đầy đủ + Excel test case | cả 3 API      |
+| 55  | `28dffc9` | 2026-08-20 | Tự đánh giá 100/100 + tên file zip | cả 3 API      |
+| 56  | `6c49e33` | 2026-08-20 | Gắn link 16 ảnh bug vào cột Ảnh §10/§4.5/§5.5/§6.5 | cả 3 API      |
 
-**Các bước sẽ có commit riêng khi thực hiện:** Bước 5 báo lỗi + GitHub Issues (1–3 commit) · CI/CD 2 lần chạy (2 commit) · sơ đồ tự vẽ §9.2 · Excel test case · README.md · phê bình AI §11.
+**Tình trạng:** cả 5 bước quy trình đã hoàn tất và có commit riêng (xem file log đầy đủ 47 commit). Bước 5 (báo lỗi + GitHub Issues), CI/CD 2 lần chạy, sơ đồ §9.2, Excel test case, README, phê bình AI §11 — tất cả đã xong. Hai việc còn lại trước khi nộp: sinh viên tinh chỉnh sơ đồ §9.2 (đề cấm AI sinh trực tiếp) và xuất bản PDF.
 
-> Không tạo commit cho công việc chưa thực sự làm — các bước chưa chạy không xuất hiện trong log.
+> Nguyên tắc giữ xuyên suốt: không tạo commit cho công việc chưa thực sự làm — mỗi commit ứng với một sản phẩm đã chạy/kiểm chứng thật.
 
 File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 
@@ -1366,18 +1375,18 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 
 | ✔   | Sản phẩm                                                | Đường dẫn                                                                                                                                                              |
 | --- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ☐   | Báo cáo chính (Markdown + PDF)                          | «Main_Report.md / .pdf»                                                                                                                                                |
+| ☑/☐ | Báo cáo chính (Markdown + PDF)                          | [`Main_Report.md`](./Main_Report.md) — **còn thiếu bản PDF**                                                                                                          |
 | ☑   | Link GitHub repo công khai                              | https://github.com/trwng-thdat/software-testing (nhánh `hw6/api-testing`)                                                                                              |
 | ☑   | Postman collection (.json)                              | [`hw6/postman/EShop_HW06_API.postman_collection.json`](./postman/EShop_HW06_API.postman_collection.json) + environment + 3 data file CSV + bộ sinh `postman/src/`      |
 | ☑   | Báo cáo Newman (HTML)                                   | 7 file trong [`hw6/reports/`](./reports/): `api1/api2/api3/spec_bugs/data_api1_phone/data_api2_state/data_api3_coupon.html` + `newman_console_full.log` + `summary.md` |
 | ☑   | Danh sách tính năng Postman đã dùng                     | §7 — 34 mục: **27 đã dùng** (gồm workspace và mock server đã làm thật), 3 không dùng kèm lý do; kèm [`postman/README.md`](./postman/README.md)                         |
 | ☑   | Báo cáo CI/CD + 2 run mẫu (ảnh + link)                  | §8 — workflow + 2 lần chạy thật kèm 5 ảnh và link                                                                                                                      |
 | ☑   | Test case & bảng tổng hợp dạng Excel                    | [`testcases/HW06_TestCases_23127344.xlsx`](./testcases/HW06_TestCases_23127344.xlsx) — 6 sheet                                                                         |
-| ☐   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | «»                                                                                                                                                                     |
-| ☐   | (Tùy chọn) OpenAPI .yaml/.json đã kiểm toán             | «»                                                                                                                                                                     |
+| ☑   | Sơ đồ + pseudocode bộ sinh test (PNG/Mermaid + .md/.py) | [`diagrams/generator.png`](./diagrams/generator.png) + [`.excalidraw`](./diagrams/generator.excalidraw) + mã giả §9.3 + [`skills/SKILL.md`](./skills/SKILL.md)         |
+| —   | (Tùy chọn) OpenAPI .yaml/.json đã kiểm toán             | Không nộp (tùy chọn)                                                                                                                                                   |
 | ☑   | Báo cáo lỗi + ảnh GitHub Issues                         | §10 + 16 issue #377–#392 + 16 ảnh ở `evidence/issues/`                                                                                                                 |
 | ☑/☐ | Phê bình AI + AI Audit Report (Markdown + PDF)          | [`AI_Critique.md`](./AI_Critique.md) + [AI Audit Report](./%5BAI-02%5D%20-%20FIT@HCMUS%20-%20AI%20Audit%20Report_En.docx.md); **còn thiếu bản PDF**                    |
-| ☐   | Git commit log (.txt)                                   | «»                                                                                                                                                                     |
+| ☑   | Git commit log (.txt)                                   | [`git_commit_log.txt`](./git_commit_log.txt)                                                                                                                          |
 | ☑   | README.md (bảng tự đánh giá + tổng hợp kết quả)         | [`hw6/README.md`](./README.md) — tổng hợp 3 API, 196 TC, 17 lỗi, 2 lần chạy CI                                                                                         |
 
 ---
@@ -1396,12 +1405,12 @@ File đầy đủ: [`git_commit_log.txt`](./git_commit_log.txt)
 
 ## 15. Tài liệu tham khảo
 
-1. ISTQB Foundation Level Syllabus «phiên bản».
+1. ISTQB Foundation Level Syllabus v4.0 (2023).
 2. EShop SUT — `api_specification.md`, https://github.com/ttbhanh/eshop-sut
 3. Hardman, P. (2025). _A Post-AI Learning Taxonomy._
 4. Fuster Rabella, M. (2025). _OECD Education Working Paper No. 338._
 5. Anthropic (2025). _Building Reliable AI Test Agents._
-6. «Postman / Newman docs, DeepEval, Promptfoo…»
+6. Postman Learning Center — Newman CLI, Collection Runner, Mock Server; tài liệu `newman-reporter-htmlextra`.
 
 ---
 
@@ -1411,10 +1420,7 @@ Xem file riêng: `[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md`
 
 Mỗi lần tương tác phải ghi đủ: **tên công cụ AI · ngày giờ · prompt của tôi · đầu ra của AI**.
 
-| #   | Công cụ | Ngày giờ | Mục đích | Prompt (rút gọn) | Kết quả dùng ở § |
-| --- | ------- | -------- | -------- | ---------------- | ---------------- |
-| 1   | «»      | «»       | «»       | «»               | «§4.1»           |
-| 2   | «»      | «»       | «»       | «»               | «»               |
+Toàn bộ 44 lượt tương tác (tên công cụ · ngày giờ · prompt verbatim · kết quả) được ghi đầy đủ trong file riêng [`[AI-02] - FIT@HCMUS - AI Audit Report_En.docx.md`](./%5BAI-02%5D%20-%20FIT@HCMUS%20-%20AI%20Audit%20Report_En.docx.md), Phụ lục A-1. Công cụ AI duy nhất: **Claude Opus 5 (Claude Code, VS Code extension)**.
 
 ---
 
@@ -1427,7 +1433,7 @@ Mỗi lần tương tác phải ghi đủ: **tên công cụ AI · ngày giờ �
 | EV-18  | Workspace Postman — 9 folder, 202 request                                                                              | [`evidence/postman_workspace.png`](./evidence/postman_workspace.png)                                                                                                                                                   | §7.1                      |
 | EV-19  | Mock server — cấu hình, Public, gắn collection HW06                                                                    | [`evidence/postman_mock_server.png`](./evidence/postman_mock_server.png)                                                                                                                                               | §7.6                      |
 | EV-20  | Request chạy qua mock `*.mock.pstmn.io` trả example đã ghi                                                             | [`evidence/postman_mock_response.png`](./evidence/postman_mock_response.png)                                                                                                                                           | §7.6                      |
-| EV-11  | **24 ảnh tự động chụp bằng Selenium** ([`scripts/capture_evidence.py`](./scripts/capture_evidence.py))                 | [`evidence/`](./evidence/)                                                                                                                                                                                             | §2, §4.4, §5.4, §6.4, §10 |
+| EV-11  | **53 ảnh trong `evidence/`**: 24 (báo cáo Newman, `capture_evidence.py`) + 4 chụp tay (Postman) + 9 (CI/CD, `capture_ci_evidence.py`) + 16 (GitHub Issue, `capture_issues.py`)                 | [`evidence/`](./evidence/)                                                                                                                                                                                             | §2, §4.4, §5.4, §6.4, §10 |
 | EV-12  | Ảnh có **cả** `Request URL: http://localhost:3000/...` **và** dòng `X-Student-Id  23127344` trong bảng REQUEST HEADERS | `evidence/newman_api{1,2,3}_xstudentid_header.png`                                                                                                                                                                     | §11                       |
 | EV-13  | Ảnh danh sách từng assertion fail của folder SPEC                                                                      | `evidence/newman_spec_bugs_failed.png`                                                                                                                                                                                 | §10                       |
 | EV-14  | Hướng dẫn 8 ảnh còn phải chụp tay, kèm lệnh và tổ hợp phím                                                             | [`evidence/README.md`](./evidence/README.md)                                                                                                                                                                           | §11                       |
@@ -1444,5 +1450,5 @@ Mỗi lần tương tác phải ghi đủ: **tên công cụ AI · ngày giờ �
 | EV-16  | Diff một dòng tạo ra khác biệt giữa hai lần chạy                                                                       | [`evidence/ci_commit_diff.png`](./evidence/ci_commit_diff.png)                                                                                                                                                         | §8.2                      |
 | EV-17  | Log CI đầy đủ                                                                                                          | [`reports/ci_regression.log`](./reports/ci_regression.log) · [`reports/ci_spec_gate.log`](./reports/ci_spec_gate.log)                                                                                                  | §8.2                      |
 | EV-08  | 16 GitHub Issues #377–#392 (tag `[HW06]`) + **16 ảnh**                                                                 | [dải issue](https://github.com/DuyITLOR/group05_eshop/issues) · [`evidence/issues/`](./evidence/issues/)                                                                                                               | §10                       |
-| EV-09  | Sơ đồ bộ sinh test (tự vẽ)                                                                                             | «»                                                                                                                                                                                                                     | §9.2                      |
+| EV-09  | Sơ đồ bộ sinh test (tự vẽ, Excalidraw)                                                                                | [`diagrams/generator.png`](./diagrams/generator.png) · nguồn [`.excalidraw`](./diagrams/generator.excalidraw)                                                                                                        | §9.2                      |
 | EV-10  | Collection + environment + bộ sinh                                                                                     | [`postman/`](./postman/)                                                                                                                                                                                               | §7                        |
